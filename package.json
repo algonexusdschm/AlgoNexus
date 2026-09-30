@@ -1,0 +1,14 @@
+{
+  "name": "algonexus",
+  "version": "1.0.0",
+  "description": "AlgoNexus College Tech Fest - Website, Registration & Payment Gateway",
+  "scripts": {
+    "start": "cd backend && node server.js",
+    "dev:backend": "cd backend && node --watch server.js",
+    "dev:frontend": "cd frontend && npm run dev",
+    "build": "cd frontend && npm install && npm run build"
+  },
+  "keywords": ["college-fest", "hackathon", "razorpay", "react", "tailwind"],
+  "author": "AlgoNexus Team",
+  "license": "MIT"
+}

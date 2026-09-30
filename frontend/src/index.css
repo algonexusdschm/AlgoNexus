@@ -1,0 +1,165 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  body {
+    background-color: #0b0e14;
+    color: #f1f5f9;
+    font-family: 'Plus Jakarta Sans', sans-serif;
+    overflow-x: hidden;
+  }
+}
+
+/* 3D Minecraft & Voxel Utility Classes */
+
+/* Clean Bedrock Background without distracting grid lines */
+.voxel-grid {
+  background-color: transparent;
+}
+
+/* Isometric 3D Voxel Box */
+.voxel-box {
+  background: linear-gradient(135deg, #181e2b 0%, #121722 100%);
+  border: 2px solid #2e374d;
+  box-shadow: 
+    inset 2px 2px 0px rgba(255, 255, 255, 0.12),
+    inset -2px -2px 0px rgba(0, 0, 0, 0.6),
+    0px 8px 0px #080a0f,
+    0px 12px 20px rgba(0, 0, 0, 0.6);
+  transition: all 0.25s cubic-bezier(0.2, 0, 0, 1);
+}
+
+.voxel-box:hover {
+  border-color: #00f0ff;
+  transform: translateY(-3px);
+  box-shadow: 
+    inset 2px 2px 0px rgba(0, 240, 255, 0.3),
+    inset -2px -2px 0px rgba(0, 0, 0, 0.7),
+    0px 11px 0px #080a0f,
+    0px 16px 28px rgba(0, 240, 255, 0.15);
+}
+
+/* 3D Tactile Minecraft Buttons */
+.btn-voxel-diamond {
+  background: linear-gradient(180deg, #22d3ee 0%, #0891b2 100%);
+  border: 2px solid #000;
+  box-shadow: 
+    inset 2px 2px 0px rgba(255, 255, 255, 0.5),
+    inset -2px -2px 0px rgba(0, 0, 0, 0.4),
+    0px 4px 0px #000;
+  color: #000;
+  font-family: 'Silkscreen', monospace;
+  font-weight: 700;
+  transition: transform 0.1s ease, box-shadow 0.1s ease;
+}
+
+.btn-voxel-diamond:hover {
+  background: linear-gradient(180deg, #38bdf8 0%, #06b6d4 100%);
+  filter: brightness(1.08);
+}
+
+.btn-voxel-diamond:active {
+  transform: translateY(3px);
+  box-shadow: 
+    inset 2px 2px 0px rgba(255, 255, 255, 0.3),
+    inset -2px -2px 0px rgba(0, 0, 0, 0.6),
+    0px 1px 0px #000;
+}
+
+.btn-voxel-emerald {
+  background: linear-gradient(180deg, #34d399 0%, #059669 100%);
+  border: 2px solid #000;
+  box-shadow: 
+    inset 2px 2px 0px rgba(255, 255, 255, 0.5),
+    inset -2px -2px 0px rgba(0, 0, 0, 0.4),
+    0px 4px 0px #000;
+  color: #000;
+  font-family: 'Silkscreen', monospace;
+  font-weight: 700;
+  transition: transform 0.1s ease, box-shadow 0.1s ease;
+}
+
+.btn-voxel-emerald:hover {
+  background: linear-gradient(180deg, #4ade80 0%, #10b981 100%);
+}
+
+.btn-voxel-emerald:active {
+  transform: translateY(3px);
+  box-shadow: 
+    inset 2px 2px 0px rgba(255, 255, 255, 0.3),
+    inset -2px -2px 0px rgba(0, 0, 0, 0.6),
+    0px 1px 0px #000;
+}
+
+.btn-voxel-redstone {
+  background: linear-gradient(180deg, #fb7185 0%, #e11d48 100%);
+  border: 2px solid #000;
+  box-shadow: 
+    inset 2px 2px 0px rgba(255, 255, 255, 0.5),
+    inset -2px -2px 0px rgba(0, 0, 0, 0.5),
+    0px 4px 0px #000;
+  color: #fff;
+  font-family: 'Silkscreen', monospace;
+  font-weight: 700;
+  transition: transform 0.1s ease, box-shadow 0.1s ease;
+}
+
+.btn-voxel-redstone:hover {
+  background: linear-gradient(180deg, #f43f5e 0%, #be123c 100%);
+}
+
+.btn-voxel-redstone:active {
+  transform: translateY(3px);
+  box-shadow: 0px 1px 0px #000;
+}
+
+.btn-voxel-dark {
+  background: linear-gradient(180deg, #222938 0%, #141923 100%);
+  border: 2px solid #000;
+  box-shadow: 
+    inset 2px 2px 0px rgba(255, 255, 255, 0.2),
+    inset -2px -2px 0px rgba(0, 0, 0, 0.5),
+    0px 4px 0px #000;
+  color: #e2e8f0;
+  font-family: 'Silkscreen', monospace;
+  transition: transform 0.1s ease, box-shadow 0.1s ease;
+}
+
+.btn-voxel-dark:hover {
+  border-color: #00f0ff;
+  color: #00f0ff;
+}
+
+.btn-voxel-dark:active {
+  transform: translateY(3px);
+  box-shadow: 0px 1px 0px #000;
+}
+
+/* Redstone Glowing Wire Line */
+.redstone-wire {
+  height: 3px;
+  background: linear-gradient(90deg, #ff2a4b, #ff7185, #ff2a4b);
+  box-shadow: 0 0 10px #ff2a4b, 0 0 4px #ff2a4b;
+}
+
+/* Pixel Font Heading Helper */
+.font-mc {
+  font-family: 'Silkscreen', monospace;
+  letter-spacing: -0.02em;
+}
+
+/* Custom Scrollbar in Voxel Dark */
+::-webkit-scrollbar {
+  width: 10px;
+}
+::-webkit-scrollbar-track {
+  background: #0b0e14;
+}
+::-webkit-scrollbar-thumb {
+  background: #222938;
+  border: 2px solid #0b0e14;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: #00f0ff;
+}
