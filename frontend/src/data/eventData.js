@@ -53,21 +53,21 @@ export const PAST_YEAR_GALLERY = [
   },
   {
     id: 5,
-    title: "36-Hour Hackathon Arena at 2:00 AM",
-    category: "Hackathons",
+    title: "Stage Ceremonies & Faculty Dignitaries",
+    category: "Stage & Ceremonies",
     year: "2025",
-    caption: "Teams burning the midnight oil to build AI-driven solutions during the intense 36-hr coding sprint.",
-    image: "https://images.unsplash.com/photo-1531482615713-2afd69097998?auto=format&fit=crop&w=1200&q=80",
-    tags: ["Hackathon", "NightCoding", "AI/ML"]
+    caption: "Honorable faculty members, department heads, and anchor leads gracing the grand inauguration stage of AlgoNexus.",
+    image: "/images/gallery/gallery_stage_dignitaries.jpg",
+    tags: ["Inauguration", "Dignitaries", "DepartmentHeads", "StageEvent"]
   },
   {
     id: 6,
-    title: "Grand Keynote on Distributed AI",
-    category: "Stage & Keynotes",
+    title: "Grand Valedictory & Traditional Celebration",
+    category: "Celebrations",
     year: "2025",
-    caption: "Chief Guest & Industry Architect delivering the keynote to over 1,200 enthusiastic engineering students.",
-    image: "https://images.unsplash.com/photo-1475721027785-f74eccf877e2?auto=format&fit=crop&w=1200&q=80",
-    tags: ["Keynote", "MainAuditorium", "TechTalks"]
+    caption: "Student council heads and faculty coordinators in festive attire celebrating the triumphant culmination of the fest.",
+    image: "/images/gallery/gallery_cultural_celebration.jpg",
+    tags: ["Valedictory", "StudentCouncil", "Celebration", "FestiveMoments"]
   }
 ];
 
