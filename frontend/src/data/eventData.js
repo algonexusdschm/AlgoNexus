@@ -17,6 +17,42 @@ export const EVENT_DETAILS = {
 export const PAST_YEAR_GALLERY = [
   {
     id: 1,
+    title: "AlgoNexus Organizing Committee & Student Council",
+    category: "Organizers & Council",
+    year: "2025",
+    caption: "The entire student organizing committee and faculty mentors gathered in the tech lab after the triumph of AlgoNexus 2025.",
+    image: "/images/gallery/gallery_team_all.jpg",
+    tags: ["OrganizingTeam", "StudentCouncil", "DepartmentOfCSE", "AlgoNexus2025"]
+  },
+  {
+    id: 2,
+    title: "Core Event Leadership & Executive Leads",
+    category: "Core Leads",
+    year: "2025",
+    caption: "Student executive leads and event coordinators in formal attire managing hackathon tracks, stage logistics, and registrations.",
+    image: "/images/gallery/gallery_core_leads.jpg",
+    tags: ["CoreLeadership", "EventLeads", "ExecutiveCommittee"]
+  },
+  {
+    id: 3,
+    title: "Faculty Mentors & Department Coordinators",
+    category: "Faculty & Mentors",
+    year: "2025",
+    caption: "Guiding faculty members and student heads whose steadfast mentorship and encouragement powered AlgoNexus.",
+    image: "/images/gallery/gallery_faculty_mentors.jpg",
+    tags: ["FacultyMentors", "DepartmentHeads", "Guidance"]
+  },
+  {
+    id: 4,
+    title: "Faculty In-Charge & Student Lead",
+    category: "Faculty & Mentors",
+    year: "2025",
+    caption: "Faculty in-charge with lead coordinator celebrating the flawless execution of technical arena challenges.",
+    image: "/images/gallery/gallery_mentor_lead.jpg",
+    tags: ["FacultyCoordinator", "StudentLead", "Celebration"]
+  },
+  {
+    id: 5,
     title: "36-Hour Hackathon Arena at 2:00 AM",
     category: "Hackathons",
     year: "2025",
@@ -25,76 +61,13 @@ export const PAST_YEAR_GALLERY = [
     tags: ["Hackathon", "NightCoding", "AI/ML"]
   },
   {
-    id: 2,
+    id: 6,
     title: "Grand Keynote on Distributed AI",
     category: "Stage & Keynotes",
     year: "2025",
     caption: "Chief Guest & Industry Architect delivering the keynote to over 1,200 enthusiastic engineering students.",
     image: "https://images.unsplash.com/photo-1475721027785-f74eccf877e2?auto=format&fit=crop&w=1200&q=80",
     tags: ["Keynote", "MainAuditorium", "TechTalks"]
-  },
-  {
-    id: 3,
-    title: "1v1 Speed Algo Debugging Arena",
-    category: "Competitions",
-    year: "2025",
-    caption: "High-stakes algorithmic duels on projector screens with real-time test case validation.",
-    image: "https://images.unsplash.com/photo-1517694712202-14dd9538aa97?auto=format&fit=crop&w=1200&q=80",
-    tags: ["CompetitiveProgramming", "SpeedCoding", "C++"]
-  },
-  {
-    id: 4,
-    title: "Robo-Combat & Autonomous Maze Solvers",
-    category: "Competitions",
-    year: "2025",
-    caption: "Custom microcontroller bots competing in obstacle navigation and wired battle bots cage match.",
-    image: "https://images.unsplash.com/photo-1485827404703-89b55fcc595e?auto=format&fit=crop&w=1200&q=80",
-    tags: ["Robotics", "IoT", "Hardware"]
-  },
-  {
-    id: 5,
-    title: "Winners Holding Grand Cheque ₹1,00,000",
-    category: "Prize Ceremony",
-    year: "2025",
-    caption: "Team 'BitShift' from IIT Madras taking home the AlgoNexus 2025 Grand Champion trophy & cash prize.",
-    image: "https://images.unsplash.com/photo-1511578314322-379afb476865?auto=format&fit=crop&w=1200&q=80",
-    tags: ["Prizes", "Champions", "Celebration"]
-  },
-  {
-    id: 6,
-    title: "Hands-on Generative AI & LLM Workshop",
-    category: "Stage & Keynotes",
-    year: "2025",
-    caption: "Practical masterclass on fine-tuning open source models and deploying vector embeddings.",
-    image: "https://images.unsplash.com/photo-1522071820081-009f0129c71c?auto=format&fit=crop&w=1200&q=80",
-    tags: ["Workshop", "GenAI", "HandsOn"]
-  },
-  {
-    id: 7,
-    title: "Food Truck Street & Networking Lounge",
-    category: "Campus Vibes",
-    year: "2025",
-    caption: "Vibrant college lawns with music, midnight coffee, waffle booths, and startup founder networking.",
-    image: "https://images.unsplash.com/photo-1511795409834-ef04bbd61622?auto=format&fit=crop&w=1200&q=80",
-    tags: ["Networking", "CampusLife", "NightFest"]
-  },
-  {
-    id: 8,
-    title: "Hardware Hackers & Embedded Breadboards",
-    category: "Hackathons",
-    year: "2025",
-    caption: "Soldering and tinkering with ESP32s, sensors, and drones during the 24-hr IoT track.",
-    image: "https://images.unsplash.com/photo-1581092160607-ee22621dd758?auto=format&fit=crop&w=1200&q=80",
-    tags: ["IoT", "Makers", "Hardware"]
-  },
-  {
-    id: 9,
-    title: "Closing Musical Night & After-Party",
-    category: "Campus Vibes",
-    year: "2025",
-    caption: "Electrifying EDM concert celebrating three days of non-stop creativity and engineering brilliance.",
-    image: "https://images.unsplash.com/photo-1492684223066-81342ee5ff30?auto=format&fit=crop&w=1200&q=80",
-    tags: ["MusicNight", "AfterParty", "Vibes"]
   }
 ];
 
