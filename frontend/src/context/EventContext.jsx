@@ -171,7 +171,7 @@ export function EventProvider({ children }) {
           const merged = {
             upiId: data.upi_id || paymentSettings.upiId,
             payeeName: data.payee_name || paymentSettings.payeeName,
-            qrCodeImage: data.qr_code_image || paymentSettings.qrCodeImage,
+            qrCodeImage: data.qr_code_image !== undefined && data.qr_code_image !== null ? data.qr_code_image : paymentSettings.qrCodeImage,
             bankDetails: {
               bankName: data.bank_name || paymentSettings.bankDetails?.bankName,
               accountNumber: data.account_number || paymentSettings.bankDetails?.accountNumber,
@@ -197,6 +197,39 @@ export function EventProvider({ children }) {
         }
       })
       .catch(() => {});
+
+    // Realtime channel to sync payment settings instantly across all devices/browsers
+    const paymentChannel = supabase
+      .channel('payment_settings_sync')
+      .on(
+        'postgres_changes',
+        { event: '*', schema: 'public', table: 'payment_settings' },
+        (payload) => {
+          if (payload.new) {
+            const data = payload.new;
+            setPaymentSettings(prev => {
+              const updated = {
+                ...prev,
+                upiId: data.upi_id || prev.upiId,
+                payeeName: data.payee_name || prev.payeeName,
+                qrCodeImage: data.qr_code_image !== undefined && data.qr_code_image !== null ? data.qr_code_image : prev.qrCodeImage,
+                bankDetails: {
+                  bankName: data.bank_name || prev.bankDetails?.bankName,
+                  accountNumber: data.account_number || prev.bankDetails?.accountNumber,
+                  ifscCode: data.ifsc_code || prev.bankDetails?.ifscCode,
+                  accountHolder: data.account_holder || prev.bankDetails?.accountHolder,
+                  accountType: data.account_type || prev.bankDetails?.accountType,
+                  branch: data.branch || prev.bankDetails?.branch
+                },
+                instructions: data.instructions || prev.instructions
+              };
+              localStorage.setItem(STORAGE_KEYS.PAYMENT_SETTINGS, JSON.stringify(updated));
+              return updated;
+            });
+          }
+        }
+      )
+      .subscribe();
 
     // 2. Fetch Event Settings from Supabase
     supabase
@@ -288,6 +321,10 @@ export function EventProvider({ children }) {
         }
       })
       .catch(() => {});
+
+    return () => {
+      supabase.removeChannel(paymentChannel);
+    };
   }, []);
 
   // Sync Payment & Bank Settings (with Cloud QR upload)

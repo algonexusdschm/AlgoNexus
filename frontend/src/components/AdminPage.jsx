@@ -73,6 +73,51 @@ export default function AdminPage({ onBackToWebsite }) {
     vip: pricingTiers.find(t => t.id === 'all-access-vip')?.price || 1299
   });
 
+  // Keep admin forms in sync whenever cloud Supabase settings finish loading
+  useEffect(() => {
+    if (paymentSettings) {
+      setPaymentForm({
+        upiId: paymentSettings.upiId || 'algonexus.fest@oksbi',
+        payeeName: paymentSettings.payeeName || 'AlgoNexus 2026 Organizing Committee',
+        qrCodeImage: paymentSettings.qrCodeImage || '',
+        bankDetails: {
+          bankName: paymentSettings.bankDetails?.bankName || 'State Bank of India',
+          accountNumber: paymentSettings.bankDetails?.accountNumber || '41829019283',
+          ifscCode: paymentSettings.bankDetails?.ifscCode || 'SBIN0001234',
+          accountHolder: paymentSettings.bankDetails?.accountHolder || 'AlgoNexus 2026 Student Council',
+          accountType: paymentSettings.bankDetails?.accountType || 'Current Account',
+          branch: paymentSettings.bankDetails?.branch || 'Campus Main Branch'
+        },
+        instructions: paymentSettings.instructions || 'Scan with Google Pay, PhonePe, Paytm, or BHIM. Enter 12-digit UTR and attach screenshot.'
+      });
+    }
+  }, [paymentSettings]);
+
+  useEffect(() => {
+    if (eventSettings) {
+      setEventForm(prev => ({
+        ...prev,
+        name: eventSettings.name || 'AlgoNexus 2026',
+        tagline: eventSettings.tagline || 'Architecting the Future of Code & Intelligence',
+        dates: eventSettings.dates || 'October 16 - 18, 2026',
+        targetDate: eventSettings.targetDate || '2026-10-16T09:00:00+05:30',
+        venue: eventSettings.venue || 'Auditorium & Tech Hub, Main Campus',
+        prizePool: eventSettings.prizePool || '₹2,50,000+',
+        edition: eventSettings.edition || '4th National Edition'
+      }));
+    }
+  }, [eventSettings]);
+
+  useEffect(() => {
+    if (pricingTiers && pricingTiers.length > 0) {
+      setPricesForm({
+        solo: pricingTiers.find(t => t.id === 'solo-coder')?.price || 299,
+        squad: pricingTiers.find(t => t.id === 'hackathon-squad')?.price || 799,
+        vip: pricingTiers.find(t => t.id === 'all-access-vip')?.price || 1299
+      });
+    }
+  }, [pricingTiers]);
+
   // UI status
   const [saveSuccessMsg, setSaveSuccessMsg] = useState('');
   const [search, setSearch] = useState('');
