@@ -44,12 +44,12 @@ export const PAST_YEAR_GALLERY = [
   },
   {
     id: 4,
-    title: "Faculty In-Charge & Student Lead",
-    category: "Faculty & Mentors",
+    title: "AlgoNexus Department Inauguration & Felicitations",
+    category: "Celebrations & Faculty",
     year: "2025",
-    caption: "Faculty in-charge with lead coordinator celebrating the flawless execution of technical arena challenges.",
-    image: "/images/gallery/gallery_mentor_lead.jpg",
-    tags: ["FacultyCoordinator", "StudentLead", "Celebration"]
+    caption: "Faculty coordinators, professors, and organizing student committee members celebrating the grand launch and felicitations of AlgoNexus.",
+    image: "/images/gallery/gallery_department_celebration.jpg",
+    tags: ["Inauguration", "DepartmentCelebration", "FacultyAndStudents", "AlgoNexus2025"]
   },
   {
     id: 5,
