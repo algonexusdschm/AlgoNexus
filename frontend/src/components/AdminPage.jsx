@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { 
   Shield, Lock, Unlock, QrCode, Building2, Upload, Check, RefreshCw, 
   Download, Search, Eye, AlertCircle, Save, ExternalLink, ArrowLeft, 
