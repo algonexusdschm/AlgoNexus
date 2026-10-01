@@ -1,5 +1,6 @@
 import React, { createContext, useContext, useState, useEffect } from 'react';
 import { EVENT_DETAILS, REGISTRATION_TIERS, PAST_YEAR_GALLERY, EVENT_TRACKS } from '../data/eventData';
+import { supabase, uploadImageToSupabase } from '../lib/supabaseClient';
 
 const EventContext = createContext();
 
@@ -157,44 +158,162 @@ export function EventProvider({ children }) {
     }
   });
 
-  // Fetch initial data from backend if available, fallback to localStorage
+  // Fetch initial data from Supabase Cloud (with fallback to local API / localStorage)
   useEffect(() => {
-    // Fetch payment settings
-    fetch('/api/payment-settings')
-      .then(res => res.ok ? res.json() : null)
-      .then(data => {
-        if (data && data.upiId) {
-          setPaymentSettings(prev => {
-            const merged = { ...prev, ...data };
-            localStorage.setItem(STORAGE_KEYS.PAYMENT_SETTINGS, JSON.stringify(merged));
-            return merged;
-          });
+    // 1. Fetch Payment & Bank Settings from Supabase
+    supabase
+      .from('payment_settings')
+      .select('*')
+      .eq('id', 1)
+      .maybeSingle()
+      .then(({ data, error }) => {
+        if (data && !error) {
+          const merged = {
+            upiId: data.upi_id || paymentSettings.upiId,
+            payeeName: data.payee_name || paymentSettings.payeeName,
+            qrCodeImage: data.qr_code_image || paymentSettings.qrCodeImage,
+            bankDetails: {
+              bankName: data.bank_name || paymentSettings.bankDetails?.bankName,
+              accountNumber: data.account_number || paymentSettings.bankDetails?.accountNumber,
+              ifscCode: data.ifsc_code || paymentSettings.bankDetails?.ifscCode,
+              accountHolder: data.account_holder || paymentSettings.bankDetails?.accountHolder,
+              accountType: data.account_type || paymentSettings.bankDetails?.accountType,
+              branch: data.branch || paymentSettings.bankDetails?.branch
+            },
+            instructions: data.instructions || paymentSettings.instructions
+          };
+          setPaymentSettings(merged);
+          localStorage.setItem(STORAGE_KEYS.PAYMENT_SETTINGS, JSON.stringify(merged));
+        } else {
+          // Fallback to local /api/payment-settings
+          fetch('/api/payment-settings')
+            .then(res => res.ok ? res.json() : null)
+            .then(d => {
+              if (d && d.upiId) {
+                setPaymentSettings(prev => ({ ...prev, ...d }));
+              }
+            })
+            .catch(() => {});
         }
       })
       .catch(() => {});
 
-    // Fetch registrations
-    fetch('/api/registrations')
-      .then(res => res.ok ? res.json() : null)
-      .then(data => {
-        if (data && data.registrations && data.registrations.length > 0) {
-          setRegistrations(data.registrations);
-          localStorage.setItem(STORAGE_KEYS.REGISTRATIONS, JSON.stringify(data.registrations));
+    // 2. Fetch Event Settings from Supabase
+    supabase
+      .from('event_settings')
+      .select('*')
+      .eq('id', 1)
+      .maybeSingle()
+      .then(({ data, error }) => {
+        if (data && !error) {
+          const mapped = {
+            ...eventSettings,
+            name: data.name || eventSettings.name,
+            tagline: data.tagline || eventSettings.tagline,
+            dates: data.dates || eventSettings.dates,
+            targetDate: data.target_date || eventSettings.targetDate,
+            venue: data.venue || eventSettings.venue,
+            prizePool: data.prize_pool || eventSettings.prizePool
+          };
+          setEventSettings(mapped);
+          localStorage.setItem(STORAGE_KEYS.SETTINGS, JSON.stringify(mapped));
+        }
+      })
+      .catch(() => {});
+
+    // 3. Fetch Registrations from Supabase
+    supabase
+      .from('registrations')
+      .select('*')
+      .order('created_at', { ascending: false })
+      .then(({ data, error }) => {
+        if (data && !error && data.length > 0) {
+          const mapped = data.map(r => ({
+            id: r.id,
+            ticketId: r.ticket_id,
+            tier: { id: r.tier_id, name: r.tier_name, price: Number(r.amount) || 299 },
+            attendee: {
+              fullName: r.full_name,
+              email: r.email,
+              phone: r.phone,
+              college: r.college,
+              github: r.github || '',
+              teamName: r.team_name || '',
+              teamMembers: r.team_members ? r.team_members.split(', ') : [],
+              track: r.track || 'General'
+            },
+            paymentMethod: r.payment_method,
+            utrNumber: r.utr_number || '',
+            paymentScreenshot: r.payment_screenshot || '',
+            bankName: r.bank_name || '',
+            checkedIn: r.checked_in || false,
+            checkedInAt: r.checked_in_at || null,
+            createdAt: r.created_at
+          }));
+          setRegistrations(mapped);
+          localStorage.setItem(STORAGE_KEYS.REGISTRATIONS, JSON.stringify(mapped));
+        } else {
+          // Fallback to local /api/registrations
+          fetch('/api/registrations')
+            .then(res => res.ok ? res.json() : null)
+            .then(d => {
+              if (d && d.registrations && d.registrations.length > 0) {
+                setRegistrations(d.registrations);
+              }
+            })
+            .catch(() => {});
+        }
+      })
+      .catch(() => {});
+
+    // 4. Fetch Committee Members from Supabase
+    supabase
+      .from('team_members')
+      .select('*')
+      .then(({ data, error }) => {
+        if (data && !error && data.length > 0) {
+          const mapped = data.map(m => ({
+            id: m.id,
+            name: m.name,
+            email: m.email || '',
+            role: m.role,
+            passcode: m.passcode,
+            isEventHead: m.is_event_head || false,
+            permissions: m.permissions || ['registrations', 'checkin'],
+            status: m.status || 'Active',
+            addedAt: m.added_at ? m.added_at.split('T')[0] : '2026'
+          }));
+          setTeamMembers(mapped);
+          localStorage.setItem(STORAGE_KEYS.TEAM_MEMBERS, JSON.stringify(mapped));
         }
       })
       .catch(() => {});
   }, []);
 
-  // Sync to localStorage whenever state changes
+  // Sync Payment & Bank Settings (with Cloud QR upload)
   const updatePaymentSettings = async (newSettings) => {
+    let finalQrImage = newSettings.qrCodeImage ?? paymentSettings.qrCodeImage;
+
+    // Upload QR code to Supabase Storage if newly attached as a data URL
+    if (finalQrImage && typeof finalQrImage === 'string' && finalQrImage.startsWith('data:')) {
+      try {
+        const uploadedUrl = await uploadImageToSupabase(finalQrImage, 'organizer-assets', 'qr-codes');
+        if (uploadedUrl) finalQrImage = uploadedUrl;
+      } catch (err) {
+        console.warn('QR cloud storage upload notice:', err);
+      }
+    }
+
     const updated = {
       ...paymentSettings,
       ...newSettings,
+      qrCodeImage: finalQrImage,
       bankDetails: {
         ...paymentSettings.bankDetails,
         ...(newSettings.bankDetails || {})
       }
     };
+
     setPaymentSettings(updated);
     try {
       localStorage.setItem(STORAGE_KEYS.PAYMENT_SETTINGS, JSON.stringify(updated));
@@ -202,20 +321,39 @@ export function EventProvider({ children }) {
       console.warn('LocalStorage limit reached for payment settings:', e);
     }
 
-    // Attempt API update
+    // 1. Sync to Supabase Cloud PostgreSQL
+    try {
+      await supabase.from('payment_settings').upsert({
+        id: 1,
+        upi_id: updated.upiId,
+        payee_name: updated.payeeName,
+        qr_code_image: updated.qrCodeImage,
+        bank_name: updated.bankDetails?.bankName,
+        account_number: updated.bankDetails?.accountNumber,
+        ifsc_code: updated.bankDetails?.ifscCode,
+        account_holder: updated.bankDetails?.accountHolder,
+        account_type: updated.bankDetails?.accountType,
+        branch: updated.bankDetails?.branch,
+        instructions: updated.instructions,
+        updated_at: new Date().toISOString()
+      });
+    } catch (err) {
+      console.warn('Supabase payment sync notice:', err);
+    }
+
+    // 2. Also send to local backend if available
     try {
       await fetch('/api/payment-settings', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(updated)
       });
-    } catch (err) {
-      console.warn('Backend sync failed, using localStorage persist:', err);
-    }
+    } catch (err) {}
+
     return updated;
   };
 
-  const updateEventSettings = (newSettings) => {
+  const updateEventSettings = async (newSettings) => {
     const updated = { ...eventSettings, ...newSettings };
     setEventSettings(updated);
     try {
@@ -223,6 +361,21 @@ export function EventProvider({ children }) {
     } catch (e) {
       console.warn('LocalStorage error:', e);
     }
+
+    // Sync to Supabase
+    try {
+      await supabase.from('event_settings').upsert({
+        id: 1,
+        name: updated.name,
+        tagline: updated.tagline,
+        dates: updated.dates,
+        target_date: updated.targetDate,
+        venue: updated.venue,
+        prize_pool: updated.prizePool,
+        updated_at: new Date().toISOString()
+      });
+    } catch (err) {}
+
     return updated;
   };
 
@@ -236,8 +389,26 @@ export function EventProvider({ children }) {
     return newTiers;
   };
 
+  // Add Registration with Cloud Receipt Upload
   const addRegistration = async (registration) => {
-    const updated = [registration, ...registrations];
+    let finalReceiptImage = registration.paymentScreenshot;
+
+    // Upload receipt screenshot to Supabase Storage if newly attached
+    if (finalReceiptImage && typeof finalReceiptImage === 'string' && finalReceiptImage.startsWith('data:')) {
+      try {
+        const uploadedUrl = await uploadImageToSupabase(finalReceiptImage, 'payment-receipts', 'receipts');
+        if (uploadedUrl) finalReceiptImage = uploadedUrl;
+      } catch (err) {
+        console.warn('Receipt cloud storage upload notice:', err);
+      }
+    }
+
+    const registrationToSave = {
+      ...registration,
+      paymentScreenshot: finalReceiptImage
+    };
+
+    const updated = [registrationToSave, ...registrations];
     setRegistrations(updated);
     try {
       localStorage.setItem(STORAGE_KEYS.REGISTRATIONS, JSON.stringify(updated));
@@ -245,26 +416,53 @@ export function EventProvider({ children }) {
       console.warn('LocalStorage error:', e);
     }
 
-    // Also send to backend
+    // 1. Insert into Supabase registrations table
+    try {
+      await supabase.from('registrations').insert({
+        ticket_id: registrationToSave.ticketId,
+        tier_id: registrationToSave.tier?.id || 'solo-coder',
+        tier_name: registrationToSave.tier?.name || 'Solo Coder Pass',
+        amount: registrationToSave.tier?.price || 299,
+        full_name: registrationToSave.attendee?.fullName || 'Student',
+        email: registrationToSave.attendee?.email || '',
+        phone: registrationToSave.attendee?.phone || '',
+        college: registrationToSave.attendee?.college || '',
+        github: registrationToSave.attendee?.github || '',
+        team_name: registrationToSave.attendee?.teamName || '',
+        team_members: Array.isArray(registrationToSave.attendee?.teamMembers)
+          ? registrationToSave.attendee.teamMembers.join(', ')
+          : (registrationToSave.attendee?.teamMembers || ''),
+        track: registrationToSave.attendee?.track || 'General AI/Hack',
+        payment_method: registrationToSave.paymentMethod || 'UPI QR',
+        utr_number: registrationToSave.utrNumber || '',
+        payment_screenshot: finalReceiptImage || '',
+        bank_name: registrationToSave.bankName || '',
+        checked_in: false
+      });
+    } catch (err) {
+      console.warn('Supabase registration insert notice:', err);
+    }
+
+    // 2. Also send to local backend
     try {
       await fetch('/api/verify-payment', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
-          registrationData: registration.attendee,
-          paymentMethod: registration.paymentMethod,
-          utrNumber: registration.utrNumber,
-          paymentScreenshot: registration.paymentScreenshot,
-          bankName: registration.bankName,
+          registrationData: registrationToSave.attendee,
+          paymentMethod: registrationToSave.paymentMethod,
+          utrNumber: registrationToSave.utrNumber,
+          paymentScreenshot: finalReceiptImage,
+          bankName: registrationToSave.bankName,
           isSimulated: true
         })
       });
-    } catch (err) {
-      console.warn('Backend sync failed:', err);
-    }
-    return registration;
+    } catch (err) {}
+
+    return registrationToSave;
   };
 
+  // Gate Check-In synced with Supabase
   const checkInAttendee = async (ticketId) => {
     const updated = registrations.map(reg => {
       if (reg.ticketId.toUpperCase() === ticketId.toUpperCase()) {
@@ -274,6 +472,14 @@ export function EventProvider({ children }) {
     });
     setRegistrations(updated);
     localStorage.setItem(STORAGE_KEYS.REGISTRATIONS, JSON.stringify(updated));
+
+    // Update in Supabase
+    try {
+      await supabase
+        .from('registrations')
+        .update({ checked_in: true, checked_in_at: new Date().toISOString() })
+        .eq('ticket_id', ticketId);
+    } catch (e) {}
 
     try {
       await fetch(`/api/check-in/${ticketId}`, { method: 'POST' });
