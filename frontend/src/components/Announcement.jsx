@@ -47,7 +47,7 @@ export default function Announcement({ onOpenRegister }) {
               </div>
 
               <h3 className="text-2xl sm:text-4xl font-extrabold text-white leading-tight">
-                36-Hour Hackathon with {eventSettings.prizePool} Cash Bounties & VC Mentorship
+                48-Hour Hackathon with {eventSettings.prizePool} Cash Bounties & VC Mentorship
               </h3>
 
               <p className="text-slate-300 leading-relaxed text-sm sm:text-base font-light">
@@ -65,11 +65,11 @@ export default function Announcement({ onOpenRegister }) {
                 </div>
                 <div className="flex items-center gap-2 text-slate-200">
                   <span className="w-3.5 h-3.5 bg-mc-gold/20 border border-mc-gold flex items-center justify-center text-mc-gold text-[9px] font-bold">✓</span>
-                  <span>Official AlgoNexus Swag Box & Cloud Credits</span>
+                  <span>48-Hour Dedicated Workspace & High-Speed Power Setup</span>
                 </div>
                 <div className="flex items-center gap-2 text-slate-200">
                   <span className="w-3.5 h-3.5 bg-mc-redstone/20 border border-mc-redstone flex items-center justify-center text-mc-redstone text-[9px] font-bold">✓</span>
-                  <span>Direct Hiring Fast-Track with Sponsor Startups</span>
+                  <span>Official Certificate of Excellence & Achievement</span>
                 </div>
               </div>
 
@@ -91,14 +91,16 @@ export default function Announcement({ onOpenRegister }) {
                   <Calendar className="w-3.5 h-3.5 text-mc-gold" />
                   <span>EXPEDITION TIMELINE</span>
                 </h4>
-                <span className="text-[10px] font-mono text-slate-500">3 PHASES</span>
+                <span className="text-[10px] font-mono text-mc-emerald px-1.5 py-0.5 bg-mc-emerald/10 border border-mc-emerald/30">
+                  {eventSettings.datesAnnounced ? '3 PHASES' : 'TO BE ANNOUNCED SOON'}
+                </span>
               </div>
 
               <div className="space-y-2.5 text-xs">
                 <div className="p-3 bg-mc-deepslate border border-mc-border">
                   <div className="flex items-center justify-between text-[11px] font-mc text-mc-diamond mb-1">
-                    <span>PHASE 1 • OCT 16</span>
-                    <span className="font-mono text-[10px]">09:00 AM</span>
+                    <span>{eventSettings.datesAnnounced ? 'PHASE 1 • DAY 1' : 'PHASE 1 • TO BE ANNOUNCED SOON'}</span>
+                    <span className="font-mono text-[10px]">{eventSettings.datesAnnounced ? '09:00 AM' : 'KICKOFF'}</span>
                   </div>
                   <p className="font-bold text-white">Opening Ceremony & Inception Sprint</p>
                   <p className="text-[11px] text-slate-400 mt-0.5">Problem statements revealed, team setups, initial sprint check-ins.</p>
@@ -106,8 +108,8 @@ export default function Announcement({ onOpenRegister }) {
 
                 <div className="p-3 bg-mc-deepslate border border-mc-border">
                   <div className="flex items-center justify-between text-[11px] font-mc text-mc-redstone mb-1">
-                    <span>PHASE 2 • OCT 17</span>
-                    <span className="font-mono text-[10px]">24-HR PROGRESS</span>
+                    <span>{eventSettings.datesAnnounced ? 'PHASE 2 • DAY 2' : 'PHASE 2 • TO BE ANNOUNCED SOON'}</span>
+                    <span className="font-mono text-[10px]">{eventSettings.datesAnnounced ? '24-HR PROGRESS' : '48-HR SPRINT'}</span>
                   </div>
                   <p className="font-bold text-white">Redstone Mentorship & Algorithmic Duels</p>
                   <p className="text-[11px] text-slate-400 mt-0.5">1v1 Speed Coding, Obsidian CTF battles, midnight maker labs.</p>
@@ -115,11 +117,11 @@ export default function Announcement({ onOpenRegister }) {
 
                 <div className="p-3 bg-mc-deepslate border border-mc-border">
                   <div className="flex items-center justify-between text-[11px] font-mc text-mc-emerald mb-1">
-                    <span>PHASE 3 • OCT 18</span>
+                    <span>{eventSettings.datesAnnounced ? 'PHASE 3 • DAY 3' : 'PHASE 3 • TO BE ANNOUNCED SOON'}</span>
                     <span className="font-mono text-[10px]">GRAND FINALE</span>
                   </div>
                   <p className="font-bold text-white">Top 10 Demo Pitches & Bounties Distribution</p>
-                  <p className="text-[11px] text-slate-400 mt-0.5">Live jury evaluation, cash prize distribution, after-party concert.</p>
+                  <p className="text-[11px] text-slate-400 mt-0.5">Live jury evaluation, cash prize distribution, after-party celebrations.</p>
                 </div>
               </div>
             </div>

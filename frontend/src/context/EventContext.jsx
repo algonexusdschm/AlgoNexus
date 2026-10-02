@@ -239,11 +239,13 @@ export function EventProvider({ children }) {
       .maybeSingle()
       .then(({ data, error }) => {
         if (data && !error) {
+          const isAnnounced = data.dates && !data.dates.toLowerCase().includes('soon') && !data.dates.toLowerCase().includes('tba');
           const mapped = {
             ...eventSettings,
             name: data.name || eventSettings.name,
             tagline: data.tagline || eventSettings.tagline,
             dates: data.dates || eventSettings.dates,
+            datesAnnounced: isAnnounced,
             targetDate: data.target_date || eventSettings.targetDate,
             venue: data.venue || eventSettings.venue,
             prizePool: data.prize_pool || eventSettings.prizePool
@@ -253,6 +255,35 @@ export function EventProvider({ children }) {
         }
       })
       .catch(() => {});
+
+    // Realtime channel to sync event dates and announcement status across all devices
+    const eventChannel = supabase
+      .channel('event_settings_sync')
+      .on(
+        'postgres_changes',
+        { event: '*', schema: 'public', table: 'event_settings' },
+        (payload) => {
+          if (payload.new) {
+            const data = payload.new;
+            const isAnnounced = data.dates && !data.dates.toLowerCase().includes('soon') && !data.dates.toLowerCase().includes('tba');
+            setEventSettings(prev => {
+              const updated = {
+                ...prev,
+                name: data.name || prev.name,
+                tagline: data.tagline || prev.tagline,
+                dates: data.dates || prev.dates,
+                datesAnnounced: isAnnounced,
+                targetDate: data.target_date || prev.targetDate,
+                venue: data.venue || prev.venue,
+                prizePool: data.prize_pool || prev.prizePool
+              };
+              localStorage.setItem(STORAGE_KEYS.SETTINGS, JSON.stringify(updated));
+              return updated;
+            });
+          }
+        }
+      )
+      .subscribe();
 
     // 3. Fetch Registrations from Supabase
     supabase
@@ -324,6 +355,7 @@ export function EventProvider({ children }) {
 
     return () => {
       supabase.removeChannel(paymentChannel);
+      supabase.removeChannel(eventChannel);
     };
   }, []);
 
@@ -392,6 +424,9 @@ export function EventProvider({ children }) {
 
   const updateEventSettings = async (newSettings) => {
     const updated = { ...eventSettings, ...newSettings };
+    if (updated.datesAnnounced === false) {
+      updated.dates = 'To Be Announced Soon';
+    }
     setEventSettings(updated);
     try {
       localStorage.setItem(STORAGE_KEYS.SETTINGS, JSON.stringify(updated));
@@ -406,7 +441,7 @@ export function EventProvider({ children }) {
         name: updated.name,
         tagline: updated.tagline,
         dates: updated.dates,
-        target_date: updated.targetDate,
+        target_date: updated.datesAnnounced ? (updated.targetDate || '') : '',
         venue: updated.venue,
         prize_pool: updated.prizePool,
         updated_at: new Date().toISOString()

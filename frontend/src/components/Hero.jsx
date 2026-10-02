@@ -53,7 +53,7 @@ export default function Hero({ onOpenRegister }) {
 
           <div className="inline-flex items-center gap-2 px-3 py-1 bg-mc-deepslate border-2 border-mc-border text-slate-300 text-xs font-medium">
             <Calendar className="w-3.5 h-3.5 text-mc-diamond" />
-            <span>{eventSettings.dates}</span>
+            <span>{eventSettings.datesAnnounced ? eventSettings.dates : 'Dates To Be Announced Soon'}</span>
           </div>
 
           <div className="inline-flex items-center gap-2 px-3 py-1 bg-mc-deepslate border-2 border-mc-border text-slate-300 text-xs font-medium">
@@ -80,7 +80,7 @@ export default function Hero({ onOpenRegister }) {
             </h1>
 
             <p className="text-base sm:text-lg text-slate-300 max-w-xl mx-auto lg:mx-0 leading-relaxed font-light">
-              Welcome to <strong className="font-bold text-white font-mc tracking-wide">{eventSettings.name}</strong>. India's premier collegiate tech conclave. Forge breakthrough algorithms, engineer 36-hour solutions, and claim legendary bounties in our national arena.
+              Welcome to <strong className="font-bold text-white font-mc tracking-wide">{eventSettings.name}</strong>. India's premier collegiate tech conclave. Forge breakthrough algorithms, engineer 48-hour solutions, and claim legendary bounties in our national arena.
             </p>
 
             {/* Tactile Minecraft 3D Action Buttons */}
@@ -103,34 +103,57 @@ export default function Hero({ onOpenRegister }) {
 
             {/* Minecraft Inventory-Style Live Countdown HUD */}
             <div className="pt-4 max-w-lg mx-auto lg:mx-0">
-              <div className="p-4 voxel-box rounded-xl">
-                <div className="flex items-center justify-between text-xs font-mc text-mc-diamond mb-3 border-b border-mc-border pb-2">
-                  <span className="flex items-center gap-2">
-                    <Clock className="w-3.5 h-3.5 text-mc-redstone animate-spin" />
-                    <span>COUNTDOWN TO INCEPTION</span>
-                  </span>
-                  <span className="text-[10px] text-slate-400 font-mono">T-MINUS</span>
-                </div>
+              {eventSettings.datesAnnounced ? (
+                <div className="p-4 voxel-box rounded-xl">
+                  <div className="flex items-center justify-between text-xs font-mc text-mc-diamond mb-3 border-b border-mc-border pb-2">
+                    <span className="flex items-center gap-2">
+                      <Clock className="w-3.5 h-3.5 text-mc-redstone animate-spin" />
+                      <span>COUNTDOWN TO INCEPTION</span>
+                    </span>
+                    <span className="text-[10px] text-slate-400 font-mono">T-MINUS</span>
+                  </div>
 
-                <div className="grid grid-cols-4 gap-2 text-center">
-                  <div className="bg-[#0b0e14] p-2.5 border border-mc-border">
-                    <span className="block text-2xl sm:text-3xl font-black text-white font-mc">{timeLeft.days}</span>
-                    <span className="text-[10px] text-slate-400 uppercase tracking-widest font-mono">DAYS</span>
-                  </div>
-                  <div className="bg-[#0b0e14] p-2.5 border border-mc-border">
-                    <span className="block text-2xl sm:text-3xl font-black text-mc-diamond font-mc">{timeLeft.hours}</span>
-                    <span className="text-[10px] text-slate-400 uppercase tracking-widest font-mono">HOURS</span>
-                  </div>
-                  <div className="bg-[#0b0e14] p-2.5 border border-mc-border">
-                    <span className="block text-2xl sm:text-3xl font-black text-mc-emerald font-mc">{timeLeft.minutes}</span>
-                    <span className="text-[10px] text-slate-400 uppercase tracking-widest font-mono">MINS</span>
-                  </div>
-                  <div className="bg-[#0b0e14] p-2.5 border border-mc-border">
-                    <span className="block text-2xl sm:text-3xl font-black text-mc-redstone font-mc">{timeLeft.seconds}</span>
-                    <span className="text-[10px] text-slate-400 uppercase tracking-widest font-mono">SECS</span>
+                  <div className="grid grid-cols-4 gap-2 text-center">
+                    <div className="bg-[#0b0e14] p-2.5 border border-mc-border">
+                      <span className="block text-2xl sm:text-3xl font-black text-white font-mc">{timeLeft.days}</span>
+                      <span className="text-[10px] text-slate-400 uppercase tracking-widest font-mono">DAYS</span>
+                    </div>
+                    <div className="bg-[#0b0e14] p-2.5 border border-mc-border">
+                      <span className="block text-2xl sm:text-3xl font-black text-mc-diamond font-mc">{timeLeft.hours}</span>
+                      <span className="text-[10px] text-slate-400 uppercase tracking-widest font-mono">HOURS</span>
+                    </div>
+                    <div className="bg-[#0b0e14] p-2.5 border border-mc-border">
+                      <span className="block text-2xl sm:text-3xl font-black text-mc-emerald font-mc">{timeLeft.minutes}</span>
+                      <span className="text-[10px] text-slate-400 uppercase tracking-widest font-mono">MINS</span>
+                    </div>
+                    <div className="bg-[#0b0e14] p-2.5 border border-mc-border">
+                      <span className="block text-2xl sm:text-3xl font-black text-mc-redstone font-mc">{timeLeft.seconds}</span>
+                      <span className="text-[10px] text-slate-400 uppercase tracking-widest font-mono">SECS</span>
+                    </div>
                   </div>
                 </div>
-              </div>
+              ) : (
+                <div className="p-4 voxel-box rounded-xl bg-gradient-to-r from-[#0b0e14] via-[#0e1628] to-[#0b0e14] border-2 border-mc-diamond/50">
+                  <div className="flex items-center justify-between text-xs font-mc text-mc-diamond mb-2.5 border-b border-mc-border pb-2">
+                    <span className="flex items-center gap-2">
+                      <Clock className="w-3.5 h-3.5 text-mc-gold animate-pulse" />
+                      <span>COUNTDOWN STATUS</span>
+                    </span>
+                    <span className="text-[10px] text-mc-emerald font-mono px-2 py-0.5 bg-mc-emerald/10 border border-mc-emerald/30 uppercase font-semibold">
+                      REVEALING SOON
+                    </span>
+                  </div>
+
+                  <div className="py-2.5 text-center">
+                    <div className="text-xl sm:text-2xl font-black text-mc-diamond font-mc tracking-wider">
+                      [DATES TO BE ANNOUNCED SOON]
+                    </div>
+                    <p className="text-xs text-slate-400 mt-1 font-light">
+                      Official dates unlocking soon! Pass bookings and pre-registrations are live.
+                    </p>
+                  </div>
+                </div>
+              )}
             </div>
 
           </div>
@@ -177,7 +200,7 @@ export default function Hero({ onOpenRegister }) {
                 <Clock className="w-5 h-5" />
               </div>
               <div>
-                <div className="text-xl font-bold text-white font-mc">36 HOURS</div>
+                <div className="text-xl font-bold text-white font-mc">48 HOURS</div>
                 <div className="text-[11px] text-slate-400">Non-Stop Sprint</div>
               </div>
             </div>

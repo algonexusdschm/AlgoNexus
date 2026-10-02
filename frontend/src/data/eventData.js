@@ -4,7 +4,8 @@ export const EVENT_DETAILS = {
   name: "AlgoNexus 2026",
   tagline: "Architecting the Future of Code & Intelligence",
   edition: "4th National Edition",
-  dates: "October 16 - 18, 2026",
+  dates: "To Be Announced Soon",
+  datesAnnounced: false,
   targetDate: "2026-10-16T09:00:00+05:30",
   venue: "Auditorium & Tech Hub, Main Campus",
   location: "Silicon Hall & Central Labs, Bangalore / Delhi",
@@ -120,7 +121,7 @@ export const REGISTRATION_TIERS = [
     features: [
       "Access to Algorithmic Duels & Speed Coding",
       "Attend All Keynotes & Tech Workshops",
-      "Official AlgoNexus Swag Kit (T-Shirt + Stickers)",
+      "Dedicated Workstation & High-Speed Wi-Fi Zone",
       "Free Lunch & Refreshments during Fest",
       "Official Certificate of Participation"
     ],
@@ -135,12 +136,12 @@ export const REGISTRATION_TIERS = [
     currency: "INR",
     type: "team",
     features: [
-      "Guaranteed Entry to 36-Hr Flagship Hackathon",
+      "Guaranteed Entry to 48-Hr Flagship Hackathon",
       "Covers entire team of up to 4 members",
       "Midnight Meals, Energy Drinks & Snacks",
       "Direct 1-on-1 Mentorship from Tech Leads",
       "Eligible for ₹2.5L+ Cash Prizes & Pool Awards",
-      "Team Swag Boxes & Cloud Credits ($100 each)"
+      "Cloud Developer Sandbox & Infrastructure Access"
     ],
     popular: true,
     color: "from-indigo-500 to-purple-600"
@@ -156,9 +157,9 @@ export const REGISTRATION_TIERS = [
       "Everything in Solo Hacker Pass",
       "VIP Seating at Keynotes & Fireside Chats",
       "Exclusive Invite to Sponsor Dinner & Networking",
-      "Direct Resume Referral to Hiring Partners",
+      "Direct 1-on-1 Mentorship & Industry Jury Feedback",
       "Fast-Track Gate Check-in & Priority Wi-Fi Zone",
-      "Limited Edition AlgoNexus Hoodie"
+      "VIP Certificate of Excellence & Networking Access"
     ],
     popular: false,
     color: "from-amber-500 to-rose-600"

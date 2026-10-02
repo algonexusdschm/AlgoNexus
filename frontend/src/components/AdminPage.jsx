@@ -59,7 +59,8 @@ export default function AdminPage({ onBackToWebsite }) {
   const [eventForm, setEventForm] = useState({
     name: eventSettings.name || 'AlgoNexus 2026',
     tagline: eventSettings.tagline || 'Architecting the Future of Code & Intelligence',
-    dates: eventSettings.dates || 'October 16 - 18, 2026',
+    dates: eventSettings.dates || 'To Be Announced Soon',
+    datesAnnounced: eventSettings.datesAnnounced ?? false,
     targetDate: eventSettings.targetDate || '2026-10-16T09:00:00+05:30',
     venue: eventSettings.venue || 'Auditorium & Tech Hub, Main Campus',
     prizePool: eventSettings.prizePool || '₹2,50,000+',
@@ -99,7 +100,8 @@ export default function AdminPage({ onBackToWebsite }) {
         ...prev,
         name: eventSettings.name || 'AlgoNexus 2026',
         tagline: eventSettings.tagline || 'Architecting the Future of Code & Intelligence',
-        dates: eventSettings.dates || 'October 16 - 18, 2026',
+        dates: eventSettings.dates || 'To Be Announced Soon',
+        datesAnnounced: eventSettings.datesAnnounced ?? false,
         targetDate: eventSettings.targetDate || '2026-10-16T09:00:00+05:30',
         venue: eventSettings.venue || 'Auditorium & Tech Hub, Main Campus',
         prizePool: eventSettings.prizePool || '₹2,50,000+',
@@ -846,6 +848,45 @@ export default function AdminPage({ onBackToWebsite }) {
 
             <form onSubmit={handleSaveEventInfo} className="space-y-6">
               
+              {/* TRIGGER TOGGLE: DATES TO BE ANNOUNCED SOON VS LIVE COUNTDOWN */}
+              <div className="p-4 sm:p-5 rounded-2xl bg-gradient-to-r from-slate-900 via-[#101736] to-slate-900 border-2 border-cyan-500/40 shadow-xl space-y-3">
+                <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+                  <div>
+                    <div className="flex items-center gap-2">
+                      <span className={`w-3 h-3 rounded-full ${eventForm.datesAnnounced ? 'bg-emerald-400 animate-pulse' : 'bg-amber-400 animate-pulse'}`} />
+                      <span className="text-sm font-bold text-white font-mono uppercase tracking-wider">
+                        {eventForm.datesAnnounced ? 'Countdown Status: Official Dates Announced (Live Countdown Active)' : 'Countdown Status: To Be Announced Soon'}
+                      </span>
+                    </div>
+                    <p className="text-xs text-slate-300 mt-1">
+                      {eventForm.datesAnnounced 
+                        ? 'Official dates are visible on the website and the live countdown clock is ticking.' 
+                        : 'Website displays "Dates To Be Announced Soon" badge. The countdown clock stays on hold until you unlock dates.'}
+                    </p>
+                  </div>
+
+                  {/* Trigger Button */}
+                  <button
+                    type="button"
+                    onClick={() => {
+                      const nextStatus = !eventForm.datesAnnounced;
+                      setEventForm(prev => ({
+                        ...prev,
+                        datesAnnounced: nextStatus,
+                        dates: nextStatus ? (prev.dates === 'To Be Announced Soon' ? 'December 20 and 21' : prev.dates) : 'To Be Announced Soon'
+                      }));
+                    }}
+                    className={`px-5 py-3 rounded-xl font-bold text-xs flex items-center justify-center gap-2 border transition-all shadow-lg shrink-0 ${
+                      eventForm.datesAnnounced
+                        ? 'bg-amber-500/20 text-amber-300 border-amber-500/50 hover:bg-amber-500/30'
+                        : 'bg-emerald-500/20 text-emerald-300 border-emerald-500/50 hover:bg-emerald-500/30'
+                    }`}
+                  >
+                    <span>{eventForm.datesAnnounced ? '⚡ Switch to "To Be Announced Soon"' : '🚀 Announce Dates & Start Live Countdown'}</span>
+                  </button>
+                </div>
+              </div>
+
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                 <div>
                   <label className="block text-xs font-bold uppercase text-slate-300 mb-1">Event Name</label>
@@ -868,23 +909,44 @@ export default function AdminPage({ onBackToWebsite }) {
                 </div>
 
                 <div>
-                  <label className="block text-xs font-bold uppercase text-slate-300 mb-1">Event Dates (Display)</label>
+                  <label className="block text-xs font-bold uppercase text-slate-300 mb-1 flex items-center justify-between">
+                    <span>Event Dates (Display)</span>
+                    <span className={`text-[10px] font-mono px-1.5 py-0.5 rounded ${eventForm.datesAnnounced ? 'bg-emerald-500/20 text-emerald-300' : 'bg-amber-500/20 text-amber-300'}`}>
+                      {eventForm.datesAnnounced ? 'Announced' : 'TBA Soon'}
+                    </span>
+                  </label>
                   <input
                     type="text"
                     value={eventForm.dates}
                     onChange={(e) => setEventForm({ ...eventForm, dates: e.target.value })}
-                    className="w-full px-3.5 py-2.5 rounded-xl bg-slate-900 border border-slate-700 text-white text-sm"
+                    disabled={!eventForm.datesAnnounced}
+                    placeholder="e.g. December 20 and 21, 2026"
+                    className={`w-full px-3.5 py-2.5 rounded-xl border text-sm ${
+                      eventForm.datesAnnounced 
+                        ? 'bg-slate-900 border-slate-700 text-white' 
+                        : 'bg-slate-950 border-slate-800 text-slate-400 cursor-not-allowed'
+                    }`}
                   />
                 </div>
 
                 <div>
-                  <label className="block text-xs font-bold uppercase text-slate-300 mb-1">Countdown Target (ISO)</label>
+                  <label className="block text-xs font-bold uppercase text-slate-300 mb-1 flex items-center justify-between">
+                    <span>Countdown Target (ISO)</span>
+                    <span className={`text-[10px] font-mono px-1.5 py-0.5 rounded ${eventForm.datesAnnounced ? 'bg-emerald-500/20 text-emerald-300' : 'bg-amber-500/20 text-amber-300'}`}>
+                      {eventForm.datesAnnounced ? 'Timer Active' : 'Timer Paused'}
+                    </span>
+                  </label>
                   <input
                     type="text"
                     value={eventForm.targetDate}
                     onChange={(e) => setEventForm({ ...eventForm, targetDate: e.target.value })}
-                    placeholder="2026-10-16T09:00:00+05:30"
-                    className="w-full px-3.5 py-2.5 rounded-xl bg-slate-900 border border-slate-700 text-white font-mono text-xs"
+                    disabled={!eventForm.datesAnnounced}
+                    placeholder="2026-12-20T09:00:00"
+                    className={`w-full px-3.5 py-2.5 rounded-xl border font-mono text-xs ${
+                      eventForm.datesAnnounced 
+                        ? 'bg-slate-900 border-slate-700 text-white' 
+                        : 'bg-slate-950 border-slate-800 text-slate-400 cursor-not-allowed'
+                    }`}
                   />
                 </div>
 
