@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { 
   X, Ticket, Users, AlertCircle, ArrowRight, Loader2, 
-  QrCode, Building2, CreditCard, Copy, Check, Upload, Smartphone, ExternalLink,
+  QrCode, Copy, Check, Upload, Smartphone,
   User, Mail, Phone, School, Compass, ShieldCheck
 } from 'lucide-react';
 import { QRCodeSVG } from 'qrcode.react';
@@ -16,8 +16,7 @@ export default function RegistrationModal({
 }) {
   const { paymentSettings, pricingTiers, addRegistration } = useEvent();
   const [selectedTier, setSelectedTier] = useState(initialTier || pricingTiers[0]);
-  const [step, setStep] = useState(1); // 1: Attendee Info, 2: Payment Gateway
-  const [paymentTab, setPaymentTab] = useState('upi'); // 'upi', 'netbanking', 'card'
+  const [step, setStep] = useState(1); // 1: Attendee Info, 2: UPI Payment
   const [loading, setLoading] = useState(false);
   const [errorMessage, setErrorMessage] = useState('');
 
@@ -32,28 +31,15 @@ export default function RegistrationModal({
   const settings = paymentSettings || {
     upiId: 'algonexus.fest@oksbi',
     payeeName: 'AlgoNexus 2026 Organizing Committee',
-    qrCodeImage: '',
-    bankDetails: {
-      bankName: 'State Bank of India',
-      accountNumber: '41829019283',
-      ifscCode: 'SBIN0001234',
-      accountHolder: 'AlgoNexus 2026 Student Council',
-      accountType: 'Current Account',
-      branch: 'College Campus Branch'
-    }
+    qrCodeImage: ''
   };
 
   // Copy indicator states
   const [copiedUpi, setCopiedUpi] = useState(false);
-  const [copiedAcc, setCopiedAcc] = useState(false);
-  const [copiedIfsc, setCopiedIfsc] = useState(false);
 
   // Payment Verification fields
   const [utrNumber, setUtrNumber] = useState('');
-  const [netBankingUtr, setNetBankingUtr] = useState('');
   const [screenshotPreview, setScreenshotPreview] = useState('');
-  const [selectedBank, setSelectedBank] = useState(settings.bankDetails?.bankName || 'State Bank of India');
-  const [cardData, setCardData] = useState({ number: '', expiry: '', cvv: '', name: '' });
 
   // Form State
   const [formData, setFormData] = useState({
@@ -306,115 +292,11 @@ export default function RegistrationModal({
   };
 
   // Handle Net Banking Submit
-  const handleNetBankingSubmit = (e) => {
-    e.preventDefault();
-    const cleanNetUtr = netBankingUtr.trim();
-    if (!cleanNetUtr) {
-      setErrorMessage('Please enter the IMPS / NEFT / UTR reference number from your bank transfer');
-      return;
-    }
-    if (cleanNetUtr.length < 6) {
-      setErrorMessage('Transfer reference number must be at least 6 characters');
-      return;
-    }
-    completePayment('NET_BANKING', { 
-      bank: selectedBank, 
-      utr: cleanNetUtr, 
-      screenshot: screenshotPreview 
-    });
-  };
-
-  // Handle Card Submission with strict validation
-  const handleCardSubmit = (e) => {
-    e.preventDefault();
-    const cleanCard = cardData.number.replace(/\D/g, '');
-    if (!cleanCard || cleanCard.length < 13 || cleanCard.length > 19) {
-      setErrorMessage('Please enter a valid 13 to 19 digit card number');
-      return;
-    }
-
-    const expiryMatch = cardData.expiry.trim().match(/^(0[1-9]|1[0-2])\/(\d{2})$/);
-    if (!expiryMatch) {
-      setErrorMessage('Please enter a valid expiry date in MM/YY format (e.g. 08/28)');
-      return;
-    }
-
-    const cleanCvv = cardData.cvv.replace(/\D/g, '');
-    if (cleanCvv.length < 3 || cleanCvv.length > 4) {
-      setErrorMessage('Please enter a valid 3 or 4 digit CVV code');
-      return;
-    }
-
-    if (!cardData.name.trim() || cardData.name.trim().length < 2) {
-      setErrorMessage('Please enter the cardholder name as printed on the card');
-      return;
-    }
-
-    completePayment('CARD', { 
-      cardLast4: cleanCard.slice(-4),
-      cardholderName: cardData.name.trim()
-    });
-  };
-
   // Auto-fill test simulation helper
   const handleAutoFillUpi = () => {
     const randomUtr = Math.floor(100000000000 + Math.random() * 900000000000).toString();
     setUtrNumber(randomUtr);
     completePayment('UPI_QR', { utr: randomUtr, screenshot: screenshotPreview });
-  };
-
-  // Launch Native Razorpay Checkout Popup if clicked
-  const handleLaunchRazorpay = async () => {
-    setLoading(true);
-    setErrorMessage('');
-    try {
-      const orderRes = await fetch('/api/create-order', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          amount: selectedTier.price,
-          passType: selectedTier.name,
-          attendeeName: formData.fullName.trim(),
-          email: formData.email.trim(),
-          phone: formData.phone.trim()
-        })
-      });
-
-      const orderData = await orderRes.json();
-      if (orderData.mode === 'live_razorpay' && window.Razorpay) {
-        const options = {
-          key: orderData.keyId,
-          amount: orderData.amount,
-          currency: 'INR',
-          name: 'AlgoNexus 2026',
-          description: `${selectedTier.name} Registration`,
-          order_id: orderData.orderId,
-          handler: async function (response) {
-            completePayment('RAZORPAY_POPUP', {
-              utr: response.razorpay_payment_id,
-              orderId: response.razorpay_order_id
-            });
-          },
-          prefill: {
-            name: formData.fullName.trim(),
-            email: formData.email.trim(),
-            contact: formData.phone.trim()
-          },
-          theme: { color: '#06b6d4' },
-          modal: { ondismiss: () => setLoading(false) }
-        };
-        const rzp = new window.Razorpay(options);
-        rzp.open();
-      } else {
-        // Fallback simulated checkout
-        setTimeout(() => {
-          completePayment('RAZORPAY_SIMULATION', { utr: `pay_rzp_${Date.now()}` });
-        }, 1200);
-      }
-    } catch (err) {
-      setLoading(false);
-      setErrorMessage(err.message || 'Razorpay initialization failed');
-    }
   };
 
   return (
@@ -677,7 +559,7 @@ export default function RegistrationModal({
                   type="submit"
                   className="px-6 py-3 rounded-xl bg-gradient-to-r from-cyan-500 to-indigo-600 text-white font-semibold text-sm flex items-center gap-2 shadow-lg shadow-cyan-500/25 hover:opacity-95 transition-all"
                 >
-                  <span>Proceed to Payment Options (UPI / NetBanking / Cards)</span>
+                  <span>Proceed to Pay via UPI QR</span>
                   <ArrowRight className="w-4 h-4" />
                 </button>
               </div>
@@ -700,59 +582,21 @@ export default function RegistrationModal({
                 </div>
               </div>
 
-              {/* Payment Method Tabs */}
-              <div className="grid grid-cols-3 rounded-2xl overflow-hidden border border-slate-800 bg-slate-950">
-                <button
-                  type="button"
-                  onClick={() => {
-                    setPaymentTab('upi');
-                    if (errorMessage) setErrorMessage('');
-                  }}
-                  className={`py-3 flex items-center justify-center gap-2 text-xs font-bold transition-all ${
-                    paymentTab === 'upi'
-                      ? 'bg-cyan-500/20 text-cyan-300 border-b-2 border-cyan-400'
-                      : 'text-slate-400 hover:text-white'
-                  }`}
-                >
-                  <QrCode className="w-4 h-4" />
-                  <span>UPI & GPay QR</span>
-                </button>
-
-                <button
-                  type="button"
-                  onClick={() => {
-                    setPaymentTab('netbanking');
-                    if (errorMessage) setErrorMessage('');
-                  }}
-                  className={`py-3 flex items-center justify-center gap-2 text-xs font-bold transition-all ${
-                    paymentTab === 'netbanking'
-                      ? 'bg-indigo-500/20 text-indigo-300 border-b-2 border-indigo-400'
-                      : 'text-slate-400 hover:text-white'
-                  }`}
-                >
-                  <Building2 className="w-4 h-4" />
-                  <span>Net Banking</span>
-                </button>
-
-                <button
-                  type="button"
-                  onClick={() => {
-                    setPaymentTab('card');
-                    if (errorMessage) setErrorMessage('');
-                  }}
-                  className={`py-3 flex items-center justify-center gap-2 text-xs font-bold transition-all ${
-                    paymentTab === 'card'
-                      ? 'bg-pink-500/20 text-pink-300 border-b-2 border-pink-400'
-                      : 'text-slate-400 hover:text-white'
-                  }`}
-                >
-                  <CreditCard className="w-4 h-4" />
-                  <span>Cards</span>
-                </button>
+              {/* Official UPI Payment Header */}
+              <div className="p-3 rounded-2xl bg-cyan-500/10 border border-cyan-500/30 flex items-center justify-between">
+                <div className="flex items-center gap-2.5">
+                  <div className="w-8 h-8 rounded-xl bg-cyan-500/20 flex items-center justify-center text-cyan-400 shrink-0">
+                    <QrCode className="w-4 h-4" />
+                  </div>
+                  <div>
+                    <div className="text-xs font-bold text-white">Official College UPI & GPay Payment</div>
+                    <div className="text-[10px] text-slate-400">Scan using Google Pay, PhonePe, Paytm, or BHIM</div>
+                  </div>
+                </div>
+                <span className="text-[10px] font-mono px-2 py-0.5 rounded-full bg-emerald-500/20 text-emerald-300 border border-emerald-500/30 font-semibold shrink-0">
+                  Instant Verification
+                </span>
               </div>
-
-              {/* PAYMENT OPTION 1: UPI & GPAY QR CODE */}
-              {paymentTab === 'upi' && (
                 <div className="space-y-6">
                   <div className="grid grid-cols-1 sm:grid-cols-2 gap-5 items-center">
                     
@@ -905,234 +749,6 @@ export default function RegistrationModal({
                     </div>
                   </form>
                 </div>
-              )}
-
-              {/* PAYMENT OPTION 2: NET BANKING & DIRECT BANK TRANSFER */}
-              {paymentTab === 'netbanking' && (
-                <div className="space-y-5">
-                  
-                  {/* Official College Bank Card */}
-                  <div className="p-4 rounded-2xl bg-gradient-to-br from-slate-900 via-indigo-950/40 to-slate-900 border border-indigo-500/40 space-y-3 shadow-lg">
-                    <div className="flex items-center justify-between border-b border-indigo-500/20 pb-2">
-                      <div className="flex items-center gap-2 text-indigo-300 text-xs font-bold uppercase tracking-wider">
-                        <Building2 className="w-4 h-4 text-cyan-400" />
-                        <span>Official College Festival Bank Account</span>
-                      </div>
-                      <span className="text-xs font-mono font-bold text-cyan-400">Pay: ₹{selectedTier.price}</span>
-                    </div>
-
-                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 text-xs">
-                      <div>
-                        <span className="text-[10px] uppercase text-slate-400 block">Bank Name</span>
-                        <span className="font-semibold text-white">{settings.bankDetails?.bankName || 'State Bank of India'}</span>
-                      </div>
-
-                      <div>
-                        <span className="text-[10px] uppercase text-slate-400 block">Account Holder Name</span>
-                        <span className="font-semibold text-white">{settings.bankDetails?.accountHolder || 'AlgoNexus 2026 Organizing Committee'}</span>
-                      </div>
-
-                      <div>
-                        <span className="text-[10px] uppercase text-slate-400 block">Account Number</span>
-                        <div className="flex items-center gap-2 mt-0.5">
-                          <span className="font-mono font-bold text-cyan-300">{settings.bankDetails?.accountNumber || '41829019283'}</span>
-                          <button
-                            type="button"
-                            onClick={handleCopyAcc}
-                            className="px-2 py-0.5 rounded bg-slate-800 hover:bg-slate-700 text-[10px] text-slate-300 flex items-center gap-1 border border-slate-700 transition-colors"
-                          >
-                            {copiedAcc ? <Check className="w-3 h-3 text-emerald-400" /> : <Copy className="w-3 h-3" />}
-                            <span>{copiedAcc ? 'Copied' : 'Copy'}</span>
-                          </button>
-                        </div>
-                      </div>
-
-                      <div>
-                        <span className="text-[10px] uppercase text-slate-400 block">IFSC Code</span>
-                        <div className="flex items-center gap-2 mt-0.5">
-                          <span className="font-mono font-bold text-cyan-300">{settings.bankDetails?.ifscCode || 'SBIN0001234'}</span>
-                          <button
-                            type="button"
-                            onClick={handleCopyIfsc}
-                            className="px-2 py-0.5 rounded bg-slate-800 hover:bg-slate-700 text-[10px] text-slate-300 flex items-center gap-1 border border-slate-700 transition-colors"
-                          >
-                            {copiedIfsc ? <Check className="w-3 h-3 text-emerald-400" /> : <Copy className="w-3 h-3" />}
-                            <span>{copiedIfsc ? 'Copied' : 'Copy'}</span>
-                          </button>
-                        </div>
-                      </div>
-
-                      <div className="sm:col-span-2 text-[11px] text-slate-400 border-t border-white/5 pt-2">
-                        <span>Account Type: <strong className="text-slate-300">{settings.bankDetails?.accountType || 'Current'}</strong></span>
-                        <span className="mx-2">•</span>
-                        <span>Branch: <strong className="text-slate-300">{settings.bankDetails?.branch || 'Campus Branch'}</strong></span>
-                      </div>
-                    </div>
-                  </div>
-
-                  {/* Transfer Reference & Receipt Form */}
-                  <form onSubmit={handleNetBankingSubmit} className="space-y-4 pt-1">
-                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-                      <div>
-                        <label className="block text-xs font-semibold text-slate-300 mb-1">
-                          IMPS / NEFT / UTR Reference No. *
-                        </label>
-                        <input
-                          type="text"
-                          placeholder="e.g. 129038472910"
-                          value={netBankingUtr}
-                          onChange={(e) => {
-                            setNetBankingUtr(e.target.value);
-                            if (errorMessage) setErrorMessage('');
-                          }}
-                          className="w-full px-3 py-2 rounded-xl bg-slate-900 border border-slate-700 text-white font-mono text-sm placeholder-slate-500 focus:outline-none focus:border-cyan-400"
-                        />
-                      </div>
-
-                      <div>
-                        <label className="block text-xs font-semibold text-slate-300 mb-1">
-                          Attach Transfer Screenshot (Optional)
-                        </label>
-                        <label className="flex items-center gap-2 px-3 py-2 rounded-xl bg-slate-900 border border-slate-700 text-slate-300 text-xs cursor-pointer hover:border-cyan-400 transition-colors">
-                          <Upload className="w-4 h-4 text-cyan-400 shrink-0" />
-                          <span className="truncate">{screenshotPreview ? 'Receipt Attached ✓' : 'Upload Receipt'}</span>
-                          <input
-                            type="file"
-                            accept="image/*"
-                            onChange={handleScreenshotChange}
-                            className="hidden"
-                          />
-                        </label>
-                      </div>
-                    </div>
-
-                    <div className="flex flex-col sm:flex-row items-center justify-between gap-3 pt-2">
-                      <button
-                        type="button"
-                        onClick={() => {
-                          const testUtr = 'NET' + Math.floor(1000000000 + Math.random() * 9000000000);
-                          setNetBankingUtr(testUtr);
-                          completePayment('NET_BANKING', { bank: settings.bankDetails?.bankName || 'State Bank of India', utr: testUtr });
-                        }}
-                        className="text-xs text-indigo-400 hover:underline py-1"
-                      >
-                        ⚡ Simulate Instant Net Banking Transfer
-                      </button>
-
-                      <div className="flex items-center gap-2 w-full sm:w-auto">
-                        <button
-                          type="button"
-                          onClick={() => {
-                            setStep(1);
-                            if (errorMessage) setErrorMessage('');
-                          }}
-                          className="px-4 py-2.5 rounded-xl bg-slate-800 text-slate-300 hover:text-white text-xs"
-                        >
-                          Back
-                        </button>
-                        <button
-                          type="submit"
-                          disabled={loading}
-                          className="flex-1 sm:flex-initial px-6 py-2.5 rounded-xl bg-gradient-to-r from-indigo-500 to-cyan-500 text-white font-bold text-xs flex items-center justify-center gap-1.5 shadow-lg shadow-indigo-500/20 disabled:opacity-50"
-                        >
-                          {loading ? <Loader2 className="w-4 h-4 animate-spin" /> : <span>Confirm & Get E-Ticket</span>}
-                        </button>
-                      </div>
-                    </div>
-                  </form>
-
-                </div>
-              )}
-
-              {/* PAYMENT OPTION 3: CARDS */}
-              {paymentTab === 'card' && (
-                <form onSubmit={handleCardSubmit} className="space-y-3">
-                  <div>
-                    <label className="block text-xs text-slate-300 mb-1">Card Number *</label>
-                    <input
-                      type="text"
-                      placeholder="4532 8901 2345 8892"
-                      value={cardData.number}
-                      onChange={handleCardNumberChange}
-                      maxLength={19}
-                      required
-                      className="w-full px-3 py-2 rounded-xl bg-slate-900 border border-slate-700 text-white text-xs font-mono placeholder-slate-500 focus:outline-none focus:border-cyan-400"
-                    />
-                  </div>
-
-                  <div className="grid grid-cols-2 gap-3">
-                    <div>
-                      <label className="block text-xs text-slate-300 mb-1">Expiry (MM/YY) *</label>
-                      <input
-                        type="text"
-                        placeholder="MM/YY (e.g. 12/28)"
-                        value={cardData.expiry}
-                        onChange={handleCardExpiryChange}
-                        maxLength={5}
-                        required
-                        className="w-full px-3 py-2 rounded-xl bg-slate-900 border border-slate-700 text-white text-xs font-mono placeholder-slate-500 focus:outline-none focus:border-cyan-400"
-                      />
-                    </div>
-                    <div>
-                      <label className="block text-xs text-slate-300 mb-1">CVV *</label>
-                      <input
-                        type="password"
-                        placeholder="•••"
-                        value={cardData.cvv}
-                        onChange={handleCardCvvChange}
-                        maxLength={4}
-                        required
-                        className="w-full px-3 py-2 rounded-xl bg-slate-900 border border-slate-700 text-white text-xs font-mono placeholder-slate-500 focus:outline-none focus:border-cyan-400"
-                      />
-                    </div>
-                  </div>
-
-                  <div>
-                    <label className="block text-xs text-slate-300 mb-1">Cardholder Name *</label>
-                    <input
-                      type="text"
-                      placeholder="Name as printed on card"
-                      value={cardData.name}
-                      onChange={handleCardNameChange}
-                      required
-                      className="w-full px-3 py-2 rounded-xl bg-slate-900 border border-slate-700 text-white text-xs placeholder-slate-500 focus:outline-none focus:border-cyan-400"
-                    />
-                  </div>
-
-                  <div className="pt-4 flex items-center justify-between gap-3">
-                    <button
-                      type="button"
-                      onClick={() => {
-                        setStep(1);
-                        if (errorMessage) setErrorMessage('');
-                      }}
-                      className="px-4 py-2.5 rounded-xl bg-slate-800 text-slate-300 hover:text-white text-xs"
-                    >
-                      Back
-                    </button>
-                    <button
-                      type="submit"
-                      disabled={loading}
-                      className="flex-1 py-3 rounded-xl bg-gradient-to-r from-pink-500 to-rose-600 text-white font-bold text-xs flex items-center justify-center gap-2 shadow-lg disabled:opacity-50"
-                    >
-                      {loading ? <Loader2 className="w-4 h-4 animate-spin" /> : <span>Pay ₹{selectedTier.price} via Card</span>}
-                    </button>
-                  </div>
-                </form>
-              )}
-
-              {/* Extra Option: Trigger Native Razorpay Modal */}
-              <div className="pt-2 border-t border-slate-800 flex items-center justify-between text-xs text-slate-400">
-                <span>Want to use official Razorpay checkout popup?</span>
-                <button
-                  type="button"
-                  onClick={handleLaunchRazorpay}
-                  className="text-cyan-400 font-bold hover:underline flex items-center gap-1"
-                >
-                  <span>Open Razorpay Popup</span>
-                  <ExternalLink className="w-3.5 h-3.5" />
-                </button>
-              </div>
 
             </div>
           )}
