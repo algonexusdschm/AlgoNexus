@@ -27,6 +27,16 @@ export default function RegistrationModal({
     }
   }, [initialTier]);
 
+  // Keep selected tier in sync if pass pricing changes live from cloud on another device
+  useEffect(() => {
+    if (selectedTier && pricingTiers && pricingTiers.length > 0) {
+      const match = pricingTiers.find(t => t.id === selectedTier.id);
+      if (match && match.price !== selectedTier.price) {
+        setSelectedTier(prev => ({ ...prev, price: match.price }));
+      }
+    }
+  }, [pricingTiers]);
+
   // Payment settings from context with safe fallback (synced with official FamPay QR)
   const settings = paymentSettings || {
     upiId: '8010086323@fam',

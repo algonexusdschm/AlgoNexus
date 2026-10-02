@@ -209,7 +209,7 @@ export function EventProvider({ children }) {
     } catch (err) {}
   };
 
-  // 2. Fetch & Sync Event Settings and Edition Tag from Supabase
+  // 2. Fetch & Sync Event Settings, Edition Tag and Pass Pricing from Supabase
   const syncEventSettingsFromSupabase = async () => {
     try {
       const { data, error } = await supabase
@@ -219,8 +219,23 @@ export function EventProvider({ children }) {
         .maybeSingle();
 
       if (data && !error) {
-        let parsedTagline = data.tagline || '';
+        let rawTagline = data.tagline || '';
+        let parsedTagline = rawTagline;
         let parsedEdition = '4th National Edition';
+        let parsedPrices = null;
+
+        // Parse :::prices::: from tagline
+        if (parsedTagline.includes(':::prices:::')) {
+          const priceParts = parsedTagline.split(':::prices:::');
+          parsedTagline = priceParts[0];
+          try {
+            parsedPrices = JSON.parse(priceParts[1]);
+          } catch (e) {
+            console.warn('Could not parse cloud prices JSON:', e);
+          }
+        }
+
+        // Parse :::edition::: from tagline
         if (parsedTagline.includes(':::edition:::')) {
           const parts = parsedTagline.split(':::edition:::');
           parsedTagline = parts[0];
@@ -246,6 +261,22 @@ export function EventProvider({ children }) {
           } catch (e) {}
           return mapped;
         });
+
+        // Sync Pass Prices across all devices
+        if (parsedPrices && typeof parsedPrices === 'object') {
+          setPricingTiers(prev => {
+            const updated = prev.map(t => {
+              if (parsedPrices[t.id] !== undefined) {
+                return { ...t, price: Number(parsedPrices[t.id]) };
+              }
+              return t;
+            });
+            try {
+              localStorage.setItem(STORAGE_KEYS.TIERS, JSON.stringify(updated));
+            } catch (e) {}
+            return updated;
+          });
+        }
       }
     } catch (err) {}
   };
@@ -376,6 +407,14 @@ export function EventProvider({ children }) {
             } catch (e) {}
             return updated;
           });
+        }
+      })
+      .on('broadcast', { event: 'PRICING_TIERS_UPDATED' }, ({ payload }) => {
+        if (payload && Array.isArray(payload)) {
+          setPricingTiers(payload);
+          try {
+            localStorage.setItem(STORAGE_KEYS.TIERS, JSON.stringify(payload));
+          } catch (e) {}
         }
       })
       .on('broadcast', { event: 'TEAM_UPDATED' }, () => {
@@ -511,7 +550,7 @@ export function EventProvider({ children }) {
     return updated;
   };
 
-  const updateEventSettings = async (newSettings) => {
+  const updateEventSettings = async (newSettings, optionalNewTiers = null) => {
     const updated = { ...eventSettings, ...newSettings };
     if (updated.datesAnnounced === false) {
       updated.dates = 'To Be Announced Soon';
@@ -526,9 +565,17 @@ export function EventProvider({ children }) {
     // Broadcast immediately to all connected browsers/devices
     broadcastChange('EVENT_SETTINGS_UPDATED', updated);
 
-    // Sync to Supabase Cloud with edition encoded in tagline
+    const activeTiers = optionalNewTiers || pricingTiers;
+    const priceMap = {};
+    if (Array.isArray(activeTiers)) {
+      activeTiers.forEach(t => {
+        if (t && t.id) priceMap[t.id] = Number(t.price);
+      });
+    }
+
+    // Sync to Supabase Cloud with edition and pass prices encoded in tagline
     try {
-      const payloadTagline = `${updated.tagline || ''}:::edition:::${updated.edition || '4th National Edition'}`;
+      const payloadTagline = `${updated.tagline || ''}:::edition:::${updated.edition || '4th National Edition'}:::prices:::${JSON.stringify(priceMap)}`;
       await supabase.from('event_settings').upsert({
         id: 1,
         name: updated.name,
@@ -546,13 +593,41 @@ export function EventProvider({ children }) {
     return updated;
   };
 
-  const updatePricingTiers = (newTiers) => {
+  const updatePricingTiers = async (newTiers) => {
     setPricingTiers(newTiers);
     try {
       localStorage.setItem(STORAGE_KEYS.TIERS, JSON.stringify(newTiers));
     } catch (e) {
       console.warn('LocalStorage error:', e);
     }
+
+    // 1. Broadcast immediately to all connected browsers/devices in real-time
+    broadcastChange('PRICING_TIERS_UPDATED', newTiers);
+
+    // 2. Persist pass pricing to Supabase Cloud event_settings
+    try {
+      const priceMap = {};
+      if (Array.isArray(newTiers)) {
+        newTiers.forEach(t => {
+          if (t && t.id) priceMap[t.id] = Number(t.price);
+        });
+      }
+
+      const payloadTagline = `${eventSettings.tagline || ''}:::edition:::${eventSettings.edition || '4th National Edition'}:::prices:::${JSON.stringify(priceMap)}`;
+      await supabase.from('event_settings').upsert({
+        id: 1,
+        name: eventSettings.name,
+        tagline: payloadTagline,
+        dates: eventSettings.dates,
+        target_date: eventSettings.datesAnnounced ? (eventSettings.targetDate || '') : '',
+        venue: eventSettings.venue,
+        prize_pool: eventSettings.prizePool,
+        updated_at: new Date().toISOString()
+      });
+    } catch (err) {
+      console.warn('Supabase pricing tiers sync error:', err);
+    }
+
     return newTiers;
   };
 

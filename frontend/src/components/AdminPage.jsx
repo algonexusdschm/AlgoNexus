@@ -304,18 +304,19 @@ export default function AdminPage({ onBackToWebsite }) {
   // Handle Save Event & Announcement Info
   const handleSaveEventInfo = async (e) => {
     e.preventDefault();
-    await updateEventSettings(eventForm);
 
     // Also update pricing tiers
     const updatedTiers = pricingTiers.map(t => {
-      if (t.id === 'solo-coder') return { ...t, price: Number(pricesForm.solo) };
-      if (t.id === 'hackathon-squad') return { ...t, price: Number(pricesForm.squad) };
-      if (t.id === 'all-access-vip') return { ...t, price: Number(pricesForm.vip) };
+      if (t.id === 'solo-coder') return { ...t, price: Number(pricesForm.solo) || 299 };
+      if (t.id === 'hackathon-squad') return { ...t, price: Number(pricesForm.squad) || 799 };
+      if (t.id === 'all-access-vip') return { ...t, price: Number(pricesForm.vip) || 1299 };
       return t;
     });
-    updatePricingTiers(updatedTiers);
 
-    setSaveSuccessMsg('Event details, edition tag & ticket prices updated and synced live across all links!');
+    await updatePricingTiers(updatedTiers);
+    await updateEventSettings(eventForm, updatedTiers);
+
+    setSaveSuccessMsg('Event details, edition tag & pass prices updated and synced live across all devices!');
     setTimeout(() => setSaveSuccessMsg(''), 4000);
   };
 
