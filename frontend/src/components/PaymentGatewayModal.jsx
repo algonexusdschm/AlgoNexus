@@ -12,8 +12,8 @@ export default function PaymentGatewayModal({
 }) {
   const [activeTab, setActiveTab] = useState('upi'); // 'upi', 'netbanking', 'card', 'razorpay'
   const [settings, setSettings] = useState({
-    upiId: 'algonexus.fest@oksbi',
-    payeeName: 'AlgoNexus 2026 Organizing Committee',
+    upiId: '8010086323@okbizaxis',
+    payeeName: 'Department of Data Science, Smt. Chandibai Himathmal Mansukhani College',
     qrCodeImage: '',
     instructions: 'Scan using any UPI App (Google Pay, PhonePe, Paytm, BHIM). Enter 12-digit UTR and attach screenshot.'
   });

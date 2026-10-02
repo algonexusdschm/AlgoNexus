@@ -7,9 +7,13 @@ export const EVENT_DETAILS = {
   dates: "To Be Announced Soon",
   datesAnnounced: false,
   targetDate: "2026-10-16T09:00:00+05:30",
-  venue: "Auditorium & Tech Hub, Main Campus",
-  location: "Silicon Hall & Central Labs, Bangalore / Delhi",
-  organizers: "Department of Computer Science & Engineering, Tech Nexus Council",
+  venue: "Smt. Chandibai Himathmal Mansukhani College",
+  location: "Smt. Chandibai Himathmal Mansukhani College, Ulhasnagar, Maharashtra",
+  college: "Smt. Chandibai Himathmal Mansukhani College",
+  department: "Department of Data Science",
+  email: "algonexusdschm@gmail.com",
+  phone: "+91 80100 86323",
+  organizers: "Department of Data Science, Smt. Chandibai Himathmal Mansukhani College",
   prizePool: "₹2,50,000+",
   participantsExpected: "2,000+ Hackers & Coders",
   collegesExpected: "80+ Universities Across India"
@@ -23,7 +27,7 @@ export const PAST_YEAR_GALLERY = [
     year: "2025",
     caption: "The entire student organizing committee and faculty mentors gathered in the tech lab after the triumph of AlgoNexus 2025.",
     image: "/images/gallery/gallery_team_all.jpg",
-    tags: ["OrganizingTeam", "StudentCouncil", "DepartmentOfCSE", "AlgoNexus2025"]
+    tags: ["OrganizingTeam", "StudentCouncil", "DepartmentOfDataScience", "CHMCollege", "AlgoNexus2025"]
   },
   {
     id: 2,
@@ -177,10 +181,14 @@ export const FAQ_LIST = [
   },
   {
     q: "How does the payment and ticket confirmation work?",
-    a: "Payments are processed securely via Razorpay (UPI, GPay, PhonePe, Paytm, Debit/Credit Cards, Net Banking). Upon successful payment, your digital entry pass with a unique QR code is generated instantly for download."
+    a: "Payments are processed directly via official UPI (Google Pay, PhonePe, Paytm, BHIM, QR code). Upon submitting your 12-digit UTR/transaction reference, your official entry ticket and unique QR pass are generated instantly."
   },
   {
     q: "Will accommodation and food be provided?",
     a: "Yes! All registered participants receive complimentary meals, refreshments, and midnight snacks during hackathon hours. Outstation hostel accommodation can be requested post-registration."
+  },
+  {
+    q: "Where is the venue and how do I contact the organizing committee?",
+    a: "AlgoNexus 2026 is hosted on-campus at Smt. Chandibai Himathmal Mansukhani College, organized by the Department of Data Science. For queries, sponsorships, or urgent support, reach out via email at algonexusdschm@gmail.com or mobile at +91 80100 86323."
   }
 ];

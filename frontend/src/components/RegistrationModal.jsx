@@ -29,8 +29,8 @@ export default function RegistrationModal({
 
   // Payment settings from context with safe fallback
   const settings = paymentSettings || {
-    upiId: 'algonexus.fest@oksbi',
-    payeeName: 'AlgoNexus 2026 Organizing Committee',
+    upiId: '8010086323@okbizaxis',
+    payeeName: 'Department of Data Science, Smt. Chandibai Himathmal Mansukhani College',
     qrCodeImage: ''
   };
 
@@ -193,7 +193,7 @@ export default function RegistrationModal({
   };
 
   // UPI deep link for mobile devices
-  const upiIntentUrl = `upi://pay?pa=${encodeURIComponent(settings.upiId || 'algonexus.fest@oksbi')}&pn=${encodeURIComponent(settings.payeeName || 'AlgoNexus')}&am=${selectedTier.price}&cu=INR&tn=AlgoNexus-${encodeURIComponent(formData.fullName.trim() || 'Pass')}`;
+  const upiIntentUrl = `upi://pay?pa=${encodeURIComponent(settings.upiId || '8010086323@okbizaxis')}&pn=${encodeURIComponent(settings.payeeName || 'CHM College Data Science')}&am=${selectedTier.price}&cu=INR&tn=AlgoNexus-${encodeURIComponent(formData.fullName.trim() || 'Pass')}`;
 
   // Complete Payment Verification & Pass Creation
   const completePayment = async (method, additionalData = {}) => {

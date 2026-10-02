@@ -14,8 +14,8 @@ export default function AdminDashboard({ isOpen, onClose }) {
 
   // Settings State
   const [settings, setSettings] = useState({
-    upiId: 'algonexus.fest@oksbi',
-    payeeName: 'AlgoNexus 2026 Organizing Committee',
+    upiId: '8010086323@okbizaxis',
+    payeeName: 'Department of Data Science, Smt. Chandibai Himathmal Mansukhani College',
     qrCodeImage: '',
     instructions: 'Scan using any UPI App (Google Pay, PhonePe, Paytm, BHIM). Enter 12-digit UTR and attach screenshot.'
   });
@@ -494,7 +494,7 @@ export default function AdminDashboard({ isOpen, onClose }) {
                     type="text"
                     value={settings.upiId}
                     onChange={(e) => setSettings({ ...settings, upiId: e.target.value })}
-                    placeholder="e.g. algonexus.fest@oksbi or 9876543210@paytm"
+                    placeholder="e.g. 8010086323@okbizaxis or collegename@upi"
                     required
                     className="w-full px-3.5 py-2.5 rounded-xl bg-slate-900 border border-slate-700 text-white font-mono text-sm focus:outline-none focus:border-cyan-400"
                   />

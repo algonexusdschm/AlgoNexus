@@ -20,8 +20,8 @@ const DEFAULT_HEAD_PASSCODE = 'head2026';
 const DEFAULT_TEAM_MEMBERS = [
   {
     id: 'head-001',
-    name: 'Event Head (Lead Organizer)',
-    email: 'head@algonexus.fest',
+    name: 'Department of Data Science - Event Head',
+    email: 'algonexusdschm@gmail.com',
     role: 'Event Head / Lead Organizer',
     passcode: 'head2026',
     isEventHead: true,
@@ -31,8 +31,8 @@ const DEFAULT_TEAM_MEMBERS = [
   },
   {
     id: 'mem-001',
-    name: 'Rahul Sharma',
-    email: 'rahul.s@college.edu',
+    name: 'Student & Faculty Coordinators',
+    email: 'algonexusdschm@gmail.com',
     role: 'Registration & Verification Lead',
     passcode: 'reg2026',
     isEventHead: false,
@@ -42,8 +42,8 @@ const DEFAULT_TEAM_MEMBERS = [
   },
   {
     id: 'mem-002',
-    name: 'Priya Patel',
-    email: 'priya.p@college.edu',
+    name: 'Finance & Accounts Desk',
+    email: 'algonexusdschm@gmail.com',
     role: 'Finance & Bank Accounts Lead',
     passcode: 'finance2026',
     isEventHead: false,
@@ -54,16 +54,16 @@ const DEFAULT_TEAM_MEMBERS = [
 ];
 
 const DEFAULT_PAYMENT_SETTINGS = {
-  upiId: 'algonexus.fest@oksbi',
-  payeeName: 'AlgoNexus 2026 Organizing Committee',
+  upiId: '8010086323@okbizaxis',
+  payeeName: 'Department of Data Science, Smt. Chandibai Himathmal Mansukhani College',
   qrCodeImage: '',
   bankDetails: {
-    bankName: 'State Bank of India',
+    bankName: 'Smt. Chandibai Himathmal Mansukhani College Account',
     accountNumber: '41829019283',
     ifscCode: 'SBIN0001234',
-    accountHolder: 'AlgoNexus 2026 Student Council',
+    accountHolder: 'Department of Data Science - AlgoNexus 2026',
     accountType: 'Current Account',
-    branch: 'College Campus Branch'
+    branch: 'CHM College Campus Branch'
   },
   instructions: 'Scan using Google Pay, PhonePe, Paytm, or BHIM. Enter the 12-digit UTR/Reference ID and attach your payment receipt screenshot.'
 };
@@ -145,9 +145,9 @@ export function EventProvider({ children }) {
       // Fallback if already authenticated
       if (localStorage.getItem(STORAGE_KEYS.ADMIN_AUTH) === 'true') {
         return {
-          name: 'Event Head (Lead Organizer)',
+          name: 'Department of Data Science - Event Head',
           role: 'Event Head / Lead Organizer',
-          email: 'head@algonexus.fest',
+          email: 'algonexusdschm@gmail.com',
           isEventHead: true,
           permissions: ['all']
         };
@@ -565,9 +565,9 @@ export function EventProvider({ children }) {
     if (trimmed === headPasscode || trimmed === 'admin123' || trimmed === 'head2026' || trimmed === 'algonexus2026') {
       const headUser = {
         id: 'head-001',
-        name: 'Event Head (Lead Organizer)',
+        name: 'Department of Data Science - Event Head',
         role: 'Event Head / Lead Organizer',
-        email: 'head@algonexus.fest',
+        email: 'algonexusdschm@gmail.com',
         isEventHead: true,
         permissions: ['all']
       };

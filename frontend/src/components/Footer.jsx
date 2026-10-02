@@ -54,18 +54,18 @@ export default function Footer({ onOpenRegister, onOpenAdmin }) {
               [ORGANIZING GUILD]
             </h4>
             <div className="space-y-2 text-xs">
-              <p className="font-semibold text-slate-200">{eventSettings.organizers}</p>
+              <p className="font-semibold text-slate-200">Department of Data Science</p>
               <p className="text-slate-400 flex items-start gap-2 pt-1 font-light">
                 <MapPin className="w-4 h-4 text-mc-diamond shrink-0 mt-0.5" />
-                <span>{eventSettings.venue}, Campus Ground</span>
+                <span>{eventSettings.venue || "Smt. Chandibai Himathmal Mansukhani College"}</span>
               </p>
               <p className="text-slate-400 flex items-center gap-2 font-mono">
                 <Mail className="w-4 h-4 text-mc-diamond shrink-0" />
-                <span>conclave@algonexus.edu</span>
+                <a href="mailto:algonexusdschm@gmail.com" className="hover:text-mc-diamond transition-colors">algonexusdschm@gmail.com</a>
               </p>
               <p className="text-slate-400 flex items-center gap-2 font-mono">
                 <Phone className="w-4 h-4 text-mc-diamond shrink-0" />
-                <span>+91 98765 43210</span>
+                <a href="tel:8010086323" className="hover:text-mc-diamond transition-colors">+91 80100 86323</a>
               </p>
             </div>
           </div>

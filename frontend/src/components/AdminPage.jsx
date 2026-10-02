@@ -41,16 +41,16 @@ export default function AdminPage({ onBackToWebsite }) {
 
   // Payment & Bank Form State
   const [paymentForm, setPaymentForm] = useState({
-    upiId: paymentSettings.upiId || 'algonexus.fest@oksbi',
-    payeeName: paymentSettings.payeeName || 'AlgoNexus 2026 Organizing Committee',
+    upiId: paymentSettings.upiId || '8010086323@okbizaxis',
+    payeeName: paymentSettings.payeeName || 'Department of Data Science, Smt. Chandibai Himathmal Mansukhani College',
     qrCodeImage: paymentSettings.qrCodeImage || '',
     bankDetails: {
-      bankName: paymentSettings.bankDetails?.bankName || 'State Bank of India',
+      bankName: paymentSettings.bankDetails?.bankName || 'Smt. Chandibai Himathmal Mansukhani College Account',
       accountNumber: paymentSettings.bankDetails?.accountNumber || '41829019283',
       ifscCode: paymentSettings.bankDetails?.ifscCode || 'SBIN0001234',
-      accountHolder: paymentSettings.bankDetails?.accountHolder || 'AlgoNexus 2026 Student Council',
+      accountHolder: paymentSettings.bankDetails?.accountHolder || 'Department of Data Science - AlgoNexus 2026',
       accountType: paymentSettings.bankDetails?.accountType || 'Current Account',
-      branch: paymentSettings.bankDetails?.branch || 'Campus Main Branch'
+      branch: paymentSettings.bankDetails?.branch || 'CHM College Campus Branch'
     },
     instructions: paymentSettings.instructions || 'Scan with Google Pay, PhonePe, Paytm, or BHIM. Enter 12-digit UTR and attach screenshot.'
   });
@@ -78,16 +78,16 @@ export default function AdminPage({ onBackToWebsite }) {
   useEffect(() => {
     if (paymentSettings) {
       setPaymentForm({
-        upiId: paymentSettings.upiId || 'algonexus.fest@oksbi',
-        payeeName: paymentSettings.payeeName || 'AlgoNexus 2026 Organizing Committee',
+        upiId: paymentSettings.upiId || '8010086323@okbizaxis',
+        payeeName: paymentSettings.payeeName || 'Department of Data Science, Smt. Chandibai Himathmal Mansukhani College',
         qrCodeImage: paymentSettings.qrCodeImage || '',
         bankDetails: {
-          bankName: paymentSettings.bankDetails?.bankName || 'State Bank of India',
+          bankName: paymentSettings.bankDetails?.bankName || 'Smt. Chandibai Himathmal Mansukhani College Account',
           accountNumber: paymentSettings.bankDetails?.accountNumber || '41829019283',
           ifscCode: paymentSettings.bankDetails?.ifscCode || 'SBIN0001234',
-          accountHolder: paymentSettings.bankDetails?.accountHolder || 'AlgoNexus 2026 Student Council',
+          accountHolder: paymentSettings.bankDetails?.accountHolder || 'Department of Data Science - AlgoNexus 2026',
           accountType: paymentSettings.bankDetails?.accountType || 'Current Account',
-          branch: paymentSettings.bankDetails?.branch || 'Campus Main Branch'
+          branch: paymentSettings.bankDetails?.branch || 'CHM College Campus Branch'
         },
         instructions: paymentSettings.instructions || 'Scan with Google Pay, PhonePe, Paytm, or BHIM. Enter 12-digit UTR and attach screenshot.'
       });
@@ -645,7 +645,7 @@ export default function AdminPage({ onBackToWebsite }) {
                       type="text"
                       value={paymentForm.upiId}
                       onChange={(e) => setPaymentForm({ ...paymentForm, upiId: e.target.value })}
-                      placeholder="e.g. algonexus.fest@oksbi"
+                      placeholder="e.g. 8010086323@okbizaxis"
                       required
                       className="w-full px-3.5 py-2.5 rounded-xl bg-slate-900 border border-slate-700 text-white font-mono text-sm focus:outline-none focus:border-cyan-400"
                     />
@@ -1445,7 +1445,7 @@ export default function AdminPage({ onBackToWebsite }) {
                   </label>
                   <input
                     type="text"
-                    placeholder="e.g. sneha.d@college.edu"
+                    placeholder="e.g. algonexusdschm@gmail.com"
                     value={newMemberForm.email}
                     onChange={(e) => setNewMemberForm({ ...newMemberForm, email: e.target.value })}
                     className="w-full px-3.5 py-2.5 rounded-xl bg-slate-900 border border-slate-700 text-white text-xs focus:outline-none focus:border-emerald-400"

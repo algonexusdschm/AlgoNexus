@@ -69,7 +69,7 @@ export default function Hero({ onOpenRegister }) {
           <div className="lg:col-span-7 text-center lg:text-left space-y-6">
             
             <div className="inline-block px-3 py-1 bg-mc-diamond/10 border border-mc-diamond/40 text-mc-diamond font-mc text-xs tracking-wider">
-              {eventSettings.edition} • {eventSettings.tagline}
+              {eventSettings.edition} • Department of Data Science, Smt. CHM College
             </div>
 
             <h1 className="text-4xl sm:text-6xl md:text-7xl font-black tracking-tight text-white leading-[1.08]">
