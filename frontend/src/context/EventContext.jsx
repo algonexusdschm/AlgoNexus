@@ -585,9 +585,13 @@ export function EventProvider({ children }) {
 
   const loginAdmin = (password) => {
     const trimmed = (password || '').trim();
-    
-    // 1. Check if Event Head (matches master passcode, 'admin123', 'head2026', or 'algonexus2026')
-    if (trimmed === headPasscode || trimmed === 'admin123' || trimmed === 'head2026' || trimmed === 'algonexus2026') {
+    if (!trimmed) {
+      return { success: false, error: 'Please enter a passcode.' };
+    }
+
+    // 1. Check if Event Head (MUST strictly match the current active master passcode ONLY)
+    const currentActiveMasterKey = headPasscode || DEFAULT_HEAD_PASSCODE;
+    if (trimmed === currentActiveMasterKey) {
       const headUser = {
         id: 'head-001',
         name: 'Department of Data Science - Event Head',
@@ -603,8 +607,10 @@ export function EventProvider({ children }) {
       return { success: true, user: headUser };
     }
 
-    // 2. Check if matches any active team member
-    const matchedMember = teamMembers.find(m => m.status === 'Active' && m.passcode === trimmed);
+    // 2. Check if matches any active committee member (excluding event head)
+    const matchedMember = teamMembers.find(
+      m => !m.isEventHead && m.id !== 'head-001' && m.status === 'Active' && m.passcode === trimmed
+    );
     if (matchedMember) {
       const memberUser = {
         id: matchedMember.id,
@@ -623,7 +629,7 @@ export function EventProvider({ children }) {
 
     return { 
       success: false, 
-      error: 'Invalid Passcode! Enter Event Head master passcode or your assigned Member passcode.' 
+      error: 'Invalid Passcode! Please check your credentials and try again.' 
     };
   };
 
