@@ -32,7 +32,7 @@ export default function Navbar({ onOpenRegister, onOpenAdmin }) {
           {/* Desktop Nav Links */}
           <div className="hidden md:flex items-center space-x-7 text-xs font-semibold uppercase tracking-wider text-slate-300">
             <a href="#announcement" className="hover:text-mc-diamond transition-colors">Announcement</a>
-            <a href="#gallery" className="hover:text-mc-diamond transition-colors">2025 Memories</a>
+            <a href="#gallery" className="hover:text-mc-diamond transition-colors">Last Event Memories</a>
             <a href="#passes" className="hover:text-mc-diamond transition-colors">Event Passes</a>
             <a href="#faq" className="hover:text-mc-diamond transition-colors">FAQ</a>
           </div>
@@ -84,7 +84,7 @@ export default function Navbar({ onOpenRegister, onOpenAdmin }) {
             onClick={() => setMobileMenuOpen(false)}
             className="block px-3 py-2 text-slate-300 hover:text-mc-diamond"
           >
-            Last Year Gallery (2025)
+            Last Event Memories
           </a>
           <a
             href="#passes"

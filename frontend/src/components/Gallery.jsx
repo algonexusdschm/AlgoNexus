@@ -39,13 +39,13 @@ export default function Gallery() {
           <div>
             <div className="inline-flex items-center gap-2 px-3 py-1 bg-mc-deepslate border border-mc-diamond/40 text-mc-diamond text-xs font-mc mb-3">
               <Camera className="w-3.5 h-3.5 text-mc-diamond" />
-              <span>[2025 VOXEL RETROSPECTIVE]</span>
+              <span>[LAST EVENT MEMORIES]</span>
             </div>
             <h2 className="text-3xl sm:text-5xl font-black text-white">
-              PHOTO GALLERY OF <span className="text-mc-diamond font-mc">LAST YEAR'S EVENT</span>
+              PHOTO GALLERY OF <span className="text-mc-diamond font-mc">LAST EVENT MEMORIES</span>
             </h2>
             <p className="text-slate-400 text-xs sm:text-sm mt-2 max-w-xl font-light">
-              Relive the high-voltage coding battles, late-night hackathon sprints, robotic showdowns, and victory celebrations from our 2025 season.
+              Relive the high-voltage coding battles, late-night hackathon sprints, and victory celebrations from our last event memories.
             </p>
           </div>
 

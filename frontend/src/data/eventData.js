@@ -24,16 +24,16 @@ export const PAST_YEAR_GALLERY = [
     id: 1,
     title: "AlgoNexus Organizing Committee & Student Council",
     category: "Organizers & Council",
-    year: "2025",
-    caption: "The entire student organizing committee and faculty mentors gathered in the tech lab after the triumph of AlgoNexus 2025.",
+    year: "Last Event",
+    caption: "The entire student organizing committee and faculty mentors gathered in the tech lab after the triumph of our last event.",
     image: "/images/gallery/gallery_team_all.jpg",
-    tags: ["OrganizingTeam", "StudentCouncil", "DepartmentOfDataScience", "CHMCollege", "AlgoNexus2025"]
+    tags: ["OrganizingTeam", "StudentCouncil", "DepartmentOfDataScience", "CHMCollege", "LastEventMemories"]
   },
   {
     id: 2,
     title: "Core Event Leadership & Executive Leads",
     category: "Core Leads",
-    year: "2025",
+    year: "Last Event",
     caption: "Student executive leads and event coordinators in formal attire managing hackathon tracks, stage logistics, and registrations.",
     image: "/images/gallery/gallery_core_leads.jpg",
     tags: ["CoreLeadership", "EventLeads", "ExecutiveCommittee"]
@@ -42,7 +42,7 @@ export const PAST_YEAR_GALLERY = [
     id: 3,
     title: "Faculty Mentors & Department Coordinators",
     category: "Faculty & Mentors",
-    year: "2025",
+    year: "Last Event",
     caption: "Guiding faculty members and student heads whose steadfast mentorship and encouragement powered AlgoNexus.",
     image: "/images/gallery/gallery_faculty_mentors.jpg",
     tags: ["FacultyMentors", "DepartmentHeads", "Guidance"]
@@ -51,16 +51,16 @@ export const PAST_YEAR_GALLERY = [
     id: 4,
     title: "AlgoNexus Department Inauguration & Felicitations",
     category: "Celebrations & Faculty",
-    year: "2025",
+    year: "Last Event",
     caption: "Faculty coordinators, professors, and organizing student committee members celebrating the grand launch and felicitations of AlgoNexus.",
     image: "/images/gallery/gallery_department_celebration.jpg",
-    tags: ["Inauguration", "DepartmentCelebration", "FacultyAndStudents", "AlgoNexus2025"]
+    tags: ["Inauguration", "DepartmentCelebration", "FacultyAndStudents", "LastEventMemories"]
   },
   {
     id: 5,
     title: "Stage Ceremonies & Faculty Dignitaries",
     category: "Stage & Ceremonies",
-    year: "2025",
+    year: "Last Event",
     caption: "Honorable faculty members, department heads, and anchor leads gracing the grand inauguration stage of AlgoNexus.",
     image: "/images/gallery/gallery_stage_dignitaries.jpg",
     tags: ["Inauguration", "Dignitaries", "DepartmentHeads", "StageEvent"]
@@ -69,7 +69,7 @@ export const PAST_YEAR_GALLERY = [
     id: 6,
     title: "Grand Valedictory & Traditional Celebration",
     category: "Celebrations",
-    year: "2025",
+    year: "Last Event",
     caption: "Student council heads and faculty coordinators in festive attire celebrating the triumphant culmination of the fest.",
     image: "/images/gallery/gallery_cultural_celebration.jpg",
     tags: ["Valedictory", "StudentCouncil", "Celebration", "FestiveMoments"]

@@ -92,7 +92,7 @@ export default function Hero({ onOpenRegister }) {
               href="#gallery"
               className="w-full sm:w-auto px-7 py-4 btn-voxel-dark text-sm uppercase tracking-wider flex items-center justify-center gap-2"
             >
-              <span>EXPLORE 2025 RETRO</span>
+              <span>LAST EVENT MEMORIES</span>
             </a>
           </div>
 
