@@ -3,7 +3,7 @@ import {
   Shield, Lock, Unlock, QrCode, Building2, Upload, Check, RefreshCw, 
   Download, Search, Eye, AlertCircle, Save, ExternalLink, ArrowLeft, 
   Users, IndianRupee, Calendar, MapPin, Sparkles, Trophy, Trash2, Copy,
-  Crown, UserPlus, UserCheck, Key, EyeOff, UserX, CheckCircle2, ShieldAlert
+  Crown, UserPlus, UserCheck, Key, EyeOff, UserX, CheckCircle2, ShieldAlert, Edit2
 } from 'lucide-react';
 import { useEvent } from '../context/EventContext';
 
@@ -140,12 +140,24 @@ export default function AdminPage({ onBackToWebsite }) {
     permissions: ['registrations', 'checkin']
   });
 
+  // Edit Committee Member Modal State
+  const [editingMember, setEditingMember] = useState(null);
+  const [editMemberForm, setEditMemberForm] = useState({
+    name: '',
+    email: '',
+    role: 'Registration & Verification Lead',
+    passcode: '',
+    permissions: ['registrations', 'checkin']
+  });
+  const [showEditMemberPass, setShowEditMemberPass] = useState(false);
+
   // Change Master Passcode Modal State
   const [isHeadPasscodeModalOpen, setIsHeadPasscodeModalOpen] = useState(false);
   const [newMasterPasscode, setNewMasterPasscode] = useState('');
   const [masterPasscodeSuccess, setMasterPasscodeSuccess] = useState('');
 
-  // Password Visibility & Copied states
+  // Password Visibility, Loading & Copied states
+  const [isLoggingIn, setIsLoggingIn] = useState(false);
   const [revealedPasscodes, setRevealedPasscodes] = useState({});
   const [copiedId, setCopiedId] = useState(null);
   const [memberSuccessMsg, setMemberSuccessMsg] = useState('');
@@ -167,11 +179,11 @@ export default function AdminPage({ onBackToWebsite }) {
     setNewMemberForm(prev => ({ ...prev, passcode: `${prefix}-${num}` }));
   };
 
-  const handleCreateMember = (e) => {
+  const handleCreateMember = async (e) => {
     e.preventDefault();
     if (!newMemberForm.name.trim()) return;
     const finalPasscode = newMemberForm.passcode.trim() || `MEM-${Math.floor(1000 + Math.random() * 9000)}`;
-    addTeamMember({
+    await addTeamMember({
       name: newMemberForm.name.trim(),
       email: newMemberForm.email.trim(),
       role: newMemberForm.role,
@@ -190,19 +202,46 @@ export default function AdminPage({ onBackToWebsite }) {
     setTimeout(() => setMemberSuccessMsg(''), 5000);
   };
 
-  const handleRemoveMember = (id, name) => {
+  const handleOpenEditMember = (member) => {
+    setEditingMember(member);
+    setEditMemberForm({
+      name: member.name || '',
+      email: member.email || '',
+      role: member.role || 'Registration & Verification Lead',
+      passcode: member.passcode || '',
+      permissions: member.permissions || ['registrations', 'checkin']
+    });
+    setShowEditMemberPass(false);
+  };
+
+  const handleSaveEditMember = async (e) => {
+    e.preventDefault();
+    if (!editingMember || !editMemberForm.name.trim()) return;
+    await updateTeamMember(editingMember.id, {
+      name: editMemberForm.name.trim(),
+      email: editMemberForm.email.trim(),
+      role: editMemberForm.role,
+      passcode: editMemberForm.passcode.trim(),
+      permissions: editMemberForm.permissions
+    });
+    setMemberSuccessMsg(`Updated member "${editMemberForm.name}". New credentials synced across all links & devices!`);
+    setEditingMember(null);
+    setTimeout(() => setMemberSuccessMsg(''), 5000);
+  };
+
+  const handleRemoveMember = async (id, name) => {
     if (window.confirm(`Are you sure you want to revoke access and remove member "${name}"?`)) {
-      removeTeamMember(id);
+      await removeTeamMember(id);
       setMemberSuccessMsg(`Revoked access for "${name}".`);
       setTimeout(() => setMemberSuccessMsg(''), 4000);
     }
   };
 
-  const handleSaveMasterPasscode = (e) => {
+  const handleSaveMasterPasscode = async (e) => {
     e.preventDefault();
     if (!newMasterPasscode.trim()) return;
-    updateHeadPasscode(newMasterPasscode.trim());
-    setMasterPasscodeSuccess('Event Head Master Passcode updated successfully!');
+    await updateHeadPasscode(newMasterPasscode.trim());
+    setMasterPasscodeSuccess('Event Head Master Passcode updated and synced live across all links and devices!');
     setTimeout(() => {
       setMasterPasscodeSuccess('');
       setIsHeadPasscodeModalOpen(false);
@@ -210,23 +249,31 @@ export default function AdminPage({ onBackToWebsite }) {
     }, 2000);
   };
 
-  // Handle Login
-  const handleLogin = (e) => {
+  // Handle Login with live cloud validation
+  const handleLogin = async (e) => {
     e.preventDefault();
-    const res = loginAdmin(passcode);
-    if (res && res.success) {
-      setAuthError('');
-      if (!res.user.isEventHead) {
-        if (res.user.permissions?.includes('registrations')) {
-          setActiveTab('registrations');
-        } else if (res.user.permissions?.includes('payment-bank')) {
-          setActiveTab('payment-bank');
-        } else {
-          setActiveTab('registrations');
+    setIsLoggingIn(true);
+    setAuthError('');
+    try {
+      const res = await loginAdmin(passcode);
+      if (res && res.success) {
+        setAuthError('');
+        if (!res.user.isEventHead) {
+          if (res.user.permissions?.includes('registrations')) {
+            setActiveTab('registrations');
+          } else if (res.user.permissions?.includes('payment-bank')) {
+            setActiveTab('payment-bank');
+          } else {
+            setActiveTab('registrations');
+          }
         }
+      } else {
+        setAuthError(res?.error || 'Invalid Admin Passcode.');
       }
-    } else {
-      setAuthError(res?.error || 'Invalid Admin Passcode.');
+    } catch (err) {
+      setAuthError('Error verifying credentials with cloud database. Please try again.');
+    } finally {
+      setIsLoggingIn(false);
     }
   };
 
@@ -255,9 +302,9 @@ export default function AdminPage({ onBackToWebsite }) {
   };
 
   // Handle Save Event & Announcement Info
-  const handleSaveEventInfo = (e) => {
+  const handleSaveEventInfo = async (e) => {
     e.preventDefault();
-    updateEventSettings(eventForm);
+    await updateEventSettings(eventForm);
 
     // Also update pricing tiers
     const updatedTiers = pricingTiers.map(t => {
@@ -268,7 +315,7 @@ export default function AdminPage({ onBackToWebsite }) {
     });
     updatePricingTiers(updatedTiers);
 
-    setSaveSuccessMsg('Event details, dates & ticket prices updated! Changes are live on the website.');
+    setSaveSuccessMsg('Event details, edition tag & ticket prices updated and synced live across all links!');
     setTimeout(() => setSaveSuccessMsg(''), 4000);
   };
 
@@ -381,10 +428,20 @@ export default function AdminPage({ onBackToWebsite }) {
 
             <button
               type="submit"
-              className="w-full py-3.5 rounded-xl bg-gradient-to-r from-cyan-500 to-indigo-600 text-white font-bold text-sm shadow-lg shadow-cyan-500/25 hover:opacity-95 transition-all flex items-center justify-center gap-2"
+              disabled={isLoggingIn}
+              className="w-full py-3.5 rounded-xl bg-gradient-to-r from-cyan-500 to-indigo-600 text-white font-bold text-sm shadow-lg shadow-cyan-500/25 hover:opacity-95 transition-all flex items-center justify-center gap-2 disabled:opacity-60 disabled:cursor-not-allowed"
             >
-              <Unlock className="w-4 h-4" />
-              <span>Unlock Organizer Console</span>
+              {isLoggingIn ? (
+                <>
+                  <RefreshCw className="w-4 h-4 animate-spin" />
+                  <span>Verifying Credentials...</span>
+                </>
+              ) : (
+                <>
+                  <Unlock className="w-4 h-4" />
+                  <span>Unlock Organizer Console</span>
+                </>
+              )}
             </button>
           </form>
 
@@ -1389,13 +1446,23 @@ export default function AdminPage({ onBackToWebsite }) {
                     <div className="pt-3 border-t border-white/5 flex items-center justify-between text-[11px] text-slate-500">
                       <span>Added: {member.addedAt || '2026'}</span>
                       {isHead && (
-                        <button
-                          onClick={() => handleRemoveMember(member.id, member.name)}
-                          className="text-rose-400 hover:text-rose-300 flex items-center gap-1 transition-all text-xs font-semibold px-2 py-1 rounded-lg hover:bg-rose-500/10"
-                        >
-                          <Trash2 className="w-3.5 h-3.5" />
-                          <span>Revoke Access</span>
-                        </button>
+                        <div className="flex items-center gap-1.5">
+                          <button
+                            onClick={() => handleOpenEditMember(member)}
+                            className="text-cyan-400 hover:text-cyan-300 flex items-center gap-1 transition-all text-xs font-semibold px-2 py-1 rounded-lg hover:bg-cyan-500/10"
+                            title="Edit Member or Passcode"
+                          >
+                            <Edit2 className="w-3.5 h-3.5" />
+                            <span>Edit</span>
+                          </button>
+                          <button
+                            onClick={() => handleRemoveMember(member.id, member.name)}
+                            className="text-rose-400 hover:text-rose-300 flex items-center gap-1 transition-all text-xs font-semibold px-2 py-1 rounded-lg hover:bg-rose-500/10"
+                          >
+                            <Trash2 className="w-3.5 h-3.5" />
+                            <span>Revoke</span>
+                          </button>
+                        </div>
                       )}
                     </div>
                   </div>
@@ -1668,6 +1735,185 @@ export default function AdminPage({ onBackToWebsite }) {
                 >
                   <Save className="w-4 h-4" />
                   <span>Update Master Key</span>
+                </button>
+              </div>
+            </form>
+          </div>
+        </div>
+      )}
+
+      {/* MODAL 3: EDIT COMMITTEE MEMBER */}
+      {editingMember && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/85 backdrop-blur-md p-4">
+          <div className="relative max-w-lg w-full glass-card p-6 sm:p-8 rounded-3xl border-2 border-cyan-500/40 shadow-2xl space-y-6">
+            <div className="flex items-center justify-between border-b border-white/10 pb-4">
+              <div className="flex items-center gap-2.5">
+                <div className="w-9 h-9 rounded-xl bg-cyan-500/20 text-cyan-400 flex items-center justify-center">
+                  <Edit2 className="w-5 h-5" />
+                </div>
+                <div>
+                  <h4 className="text-base font-bold text-white">Edit Committee Member</h4>
+                  <p className="text-[11px] text-slate-400">Update member role, passcode, and module permissions</p>
+                </div>
+              </div>
+              <button
+                onClick={() => setEditingMember(null)}
+                className="p-1.5 rounded-full bg-slate-800 text-slate-400 hover:text-white"
+              >
+                ✕
+              </button>
+            </div>
+
+            <form onSubmit={handleSaveEditMember} className="space-y-4">
+              <div>
+                <label className="block text-xs font-semibold text-slate-300 mb-1">
+                  Full Name *
+                </label>
+                <input
+                  type="text"
+                  required
+                  value={editMemberForm.name}
+                  onChange={(e) => setEditMemberForm({ ...editMemberForm, name: e.target.value })}
+                  className="w-full px-3.5 py-2.5 rounded-xl bg-slate-900 border border-slate-700 text-white text-xs focus:outline-none focus:border-cyan-400"
+                />
+              </div>
+
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                <div>
+                  <label className="block text-xs font-semibold text-slate-300 mb-1">
+                    College Email / ID
+                  </label>
+                  <input
+                    type="text"
+                    value={editMemberForm.email}
+                    onChange={(e) => setEditMemberForm({ ...editMemberForm, email: e.target.value })}
+                    className="w-full px-3.5 py-2.5 rounded-xl bg-slate-900 border border-slate-700 text-white text-xs focus:outline-none focus:border-cyan-400"
+                  />
+                </div>
+
+                <div>
+                  <label className="block text-xs font-semibold text-slate-300 mb-1">
+                    Committee Role *
+                  </label>
+                  <select
+                    value={editMemberForm.role}
+                    onChange={(e) => setEditMemberForm({ ...editMemberForm, role: e.target.value })}
+                    className="w-full px-3.5 py-2.5 rounded-xl bg-slate-900 border border-slate-700 text-white text-xs focus:outline-none focus:border-cyan-400"
+                  >
+                    <option value="Registration & Verification Lead">Registration & Verification Lead</option>
+                    <option value="Finance & Accounts Coordinator">Finance & Accounts Coordinator</option>
+                    <option value="Discipline & Gate Security Lead">Discipline & Gate Security Lead</option>
+                    <option value="Hackathon Arena Coordinator">Hackathon Arena Coordinator</option>
+                    <option value="Technical & Web Lead">Technical & Web Lead</option>
+                    <option value="Sponsorship & PR Lead">Sponsorship & PR Lead</option>
+                    <option value="Student Volunteer">Student Volunteer</option>
+                  </select>
+                </div>
+              </div>
+
+              <div>
+                <label className="block text-xs font-semibold text-slate-300 mb-1">
+                  Member Login Passcode *
+                </label>
+                <div className="relative">
+                  <input
+                    type={showEditMemberPass ? "text" : "password"}
+                    required
+                    value={editMemberForm.passcode}
+                    onChange={(e) => setEditMemberForm({ ...editMemberForm, passcode: e.target.value })}
+                    className="w-full pl-3.5 pr-10 py-2.5 rounded-xl bg-slate-900 border border-slate-700 text-white text-xs font-mono focus:outline-none focus:border-cyan-400"
+                  />
+                  <button
+                    type="button"
+                    onClick={() => setShowEditMemberPass(!showEditMemberPass)}
+                    className="absolute right-3 top-1/2 -translate-y-1/2 p-1 text-slate-400 hover:text-white"
+                  >
+                    {showEditMemberPass ? <EyeOff className="w-3.5 h-3.5" /> : <Eye className="w-3.5 h-3.5" />}
+                  </button>
+                </div>
+              </div>
+
+              <div>
+                <label className="block text-xs font-semibold text-slate-300 mb-2">
+                  Module Permissions
+                </label>
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 text-xs text-slate-300">
+                  <label className="flex items-center gap-2 p-2.5 rounded-xl bg-slate-900/60 border border-slate-800 cursor-pointer">
+                    <input
+                      type="checkbox"
+                      checked={editMemberForm.permissions.includes('registrations')}
+                      onChange={(e) => {
+                        const next = e.target.checked
+                          ? [...editMemberForm.permissions, 'registrations']
+                          : editMemberForm.permissions.filter(p => p !== 'registrations');
+                        setEditMemberForm({ ...editMemberForm, permissions: next });
+                      }}
+                      className="rounded text-cyan-500"
+                    />
+                    <span>📋 Registrations & UTR Desk</span>
+                  </label>
+
+                  <label className="flex items-center gap-2 p-2.5 rounded-xl bg-slate-900/60 border border-slate-800 cursor-pointer">
+                    <input
+                      type="checkbox"
+                      checked={editMemberForm.permissions.includes('checkin')}
+                      onChange={(e) => {
+                        const next = e.target.checked
+                          ? [...editMemberForm.permissions, 'checkin']
+                          : editMemberForm.permissions.filter(p => p !== 'checkin');
+                        setEditMemberForm({ ...editMemberForm, permissions: next });
+                      }}
+                      className="rounded text-cyan-500"
+                    />
+                    <span>🎟️ Gate Check-In & Scanner</span>
+                  </label>
+
+                  <label className="flex items-center gap-2 p-2.5 rounded-xl bg-slate-900/60 border border-slate-800 cursor-pointer">
+                    <input
+                      type="checkbox"
+                      checked={editMemberForm.permissions.includes('payment-bank')}
+                      onChange={(e) => {
+                        const next = e.target.checked
+                          ? [...editMemberForm.permissions, 'payment-bank']
+                          : editMemberForm.permissions.filter(p => p !== 'payment-bank');
+                        setEditMemberForm({ ...editMemberForm, permissions: next });
+                      }}
+                      className="rounded text-cyan-500"
+                    />
+                    <span>🏛️ College Bank & QR Code</span>
+                  </label>
+
+                  <label className="flex items-center gap-2 p-2.5 rounded-xl bg-slate-900/60 border border-slate-800 cursor-pointer">
+                    <input
+                      type="checkbox"
+                      checked={editMemberForm.permissions.includes('event-info')}
+                      onChange={(e) => {
+                        const next = e.target.checked
+                          ? [...editMemberForm.permissions, 'event-info']
+                          : editMemberForm.permissions.filter(p => p !== 'event-info');
+                        setEditMemberForm({ ...editMemberForm, permissions: next });
+                      }}
+                      className="rounded text-cyan-500"
+                    />
+                    <span>✨ Event Dates & Prices</span>
+                  </label>
+                </div>
+              </div>
+
+              <div className="pt-4 border-t border-white/10 flex items-center justify-end gap-3">
+                <button
+                  type="button"
+                  onClick={() => setEditingMember(null)}
+                  className="px-4 py-2 rounded-xl bg-slate-800 text-slate-300 text-xs font-semibold hover:bg-slate-700"
+                >
+                  Cancel
+                </button>
+                <button
+                  type="submit"
+                  className="px-5 py-2.5 rounded-xl bg-cyan-500 hover:bg-cyan-400 text-slate-950 font-bold text-xs shadow-lg shadow-cyan-950 flex items-center gap-1.5"
+                >
+                  <Save className="w-4 h-4" />
+                  <span>Save Member Changes</span>
                 </button>
               </div>
             </form>

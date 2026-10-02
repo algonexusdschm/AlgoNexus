@@ -1,4 +1,4 @@
-import React, { createContext, useContext, useState, useEffect } from 'react';
+import React, { createContext, useContext, useState, useEffect, useRef } from 'react';
 import { EVENT_DETAILS, REGISTRATION_TIERS, PAST_YEAR_GALLERY, EVENT_TRACKS } from '../data/eventData';
 import { supabase, uploadImageToSupabase } from '../lib/supabaseClient';
 
@@ -158,229 +158,290 @@ export function EventProvider({ children }) {
     }
   });
 
-  // Fetch initial data from Supabase Cloud (with fallback to local API / localStorage)
-  useEffect(() => {
-    // 1. Fetch Payment & Bank Settings from Supabase
-    supabase
-      .from('payment_settings')
-      .select('*')
-      .eq('id', 1)
-      .maybeSingle()
-      .then(({ data, error }) => {
-        if (data && !error) {
+  // Shared Broadcast Channel reference for instant cross-device/browser sync
+  const syncChannelRef = useRef(null);
+
+  const broadcastChange = (event, payload = {}) => {
+    try {
+      if (syncChannelRef.current) {
+        syncChannelRef.current.send({
+          type: 'broadcast',
+          event,
+          payload
+        });
+      }
+    } catch (err) {
+      console.warn('Live sync broadcast notice:', err);
+    }
+  };
+
+  // 1. Fetch & Sync Payment & Bank Settings from Supabase
+  const syncPaymentSettingsFromSupabase = async () => {
+    try {
+      const { data, error } = await supabase
+        .from('payment_settings')
+        .select('*')
+        .eq('id', 1)
+        .maybeSingle();
+
+      if (data && !error) {
+        setPaymentSettings(prev => {
           const merged = {
-            upiId: data.upi_id || paymentSettings.upiId,
-            payeeName: data.payee_name || paymentSettings.payeeName,
-            qrCodeImage: data.qr_code_image !== undefined && data.qr_code_image !== null ? data.qr_code_image : paymentSettings.qrCodeImage,
+            upiId: data.upi_id || prev.upiId,
+            payeeName: data.payee_name || prev.payeeName,
+            qrCodeImage: data.qr_code_image !== undefined && data.qr_code_image !== null ? data.qr_code_image : prev.qrCodeImage,
             bankDetails: {
-              bankName: data.bank_name || paymentSettings.bankDetails?.bankName,
-              accountNumber: data.account_number || paymentSettings.bankDetails?.accountNumber,
-              ifscCode: data.ifsc_code || paymentSettings.bankDetails?.ifscCode,
-              accountHolder: data.account_holder || paymentSettings.bankDetails?.accountHolder,
-              accountType: data.account_type || paymentSettings.bankDetails?.accountType,
-              branch: data.branch || paymentSettings.bankDetails?.branch
+              bankName: data.bank_name || prev.bankDetails?.bankName,
+              accountNumber: data.account_number || prev.bankDetails?.accountNumber,
+              ifscCode: data.ifsc_code || prev.bankDetails?.ifscCode,
+              accountHolder: data.account_holder || prev.bankDetails?.accountHolder,
+              accountType: data.account_type || prev.bankDetails?.accountType,
+              branch: data.branch || prev.bankDetails?.branch
             },
-            instructions: data.instructions || paymentSettings.instructions
+            instructions: data.instructions || prev.instructions
           };
-          setPaymentSettings(merged);
-          localStorage.setItem(STORAGE_KEYS.PAYMENT_SETTINGS, JSON.stringify(merged));
-        } else {
-          // Fallback to local /api/payment-settings
-          fetch('/api/payment-settings')
-            .then(res => res.ok ? res.json() : null)
-            .then(d => {
-              if (d && d.upiId) {
-                setPaymentSettings(prev => ({ ...prev, ...d }));
-              }
-            })
-            .catch(() => {});
-        }
-      })
-      .catch(() => {});
+          try {
+            localStorage.setItem(STORAGE_KEYS.PAYMENT_SETTINGS, JSON.stringify(merged));
+          } catch (e) {}
+          return merged;
+        });
+      }
+    } catch (err) {}
+  };
 
-    // Realtime channel to sync payment settings instantly across all devices/browsers
-    const paymentChannel = supabase
-      .channel('payment_settings_sync')
-      .on(
-        'postgres_changes',
-        { event: '*', schema: 'public', table: 'payment_settings' },
-        (payload) => {
-          if (payload.new) {
-            const data = payload.new;
-            setPaymentSettings(prev => {
-              const updated = {
-                ...prev,
-                upiId: data.upi_id || prev.upiId,
-                payeeName: data.payee_name || prev.payeeName,
-                qrCodeImage: data.qr_code_image !== undefined && data.qr_code_image !== null ? data.qr_code_image : prev.qrCodeImage,
-                bankDetails: {
-                  bankName: data.bank_name || prev.bankDetails?.bankName,
-                  accountNumber: data.account_number || prev.bankDetails?.accountNumber,
-                  ifscCode: data.ifsc_code || prev.bankDetails?.ifscCode,
-                  accountHolder: data.account_holder || prev.bankDetails?.accountHolder,
-                  accountType: data.account_type || prev.bankDetails?.accountType,
-                  branch: data.branch || prev.bankDetails?.branch
-                },
-                instructions: data.instructions || prev.instructions
-              };
-              localStorage.setItem(STORAGE_KEYS.PAYMENT_SETTINGS, JSON.stringify(updated));
-              return updated;
-            });
-          }
-        }
-      )
-      .subscribe();
+  // 2. Fetch & Sync Event Settings and Edition Tag from Supabase
+  const syncEventSettingsFromSupabase = async () => {
+    try {
+      const { data, error } = await supabase
+        .from('event_settings')
+        .select('*')
+        .eq('id', 1)
+        .maybeSingle();
 
-    // 2. Fetch Event Settings from Supabase
-    supabase
-      .from('event_settings')
-      .select('*')
-      .eq('id', 1)
-      .maybeSingle()
-      .then(({ data, error }) => {
-        if (data && !error) {
-          const isAnnounced = data.dates && !data.dates.toLowerCase().includes('soon') && !data.dates.toLowerCase().includes('tba');
+      if (data && !error) {
+        let parsedTagline = data.tagline || '';
+        let parsedEdition = '4th National Edition';
+        if (parsedTagline.includes(':::edition:::')) {
+          const parts = parsedTagline.split(':::edition:::');
+          parsedTagline = parts[0];
+          parsedEdition = parts[1] || '4th National Edition';
+        }
+
+        const isAnnounced = Boolean(data.dates && !data.dates.toLowerCase().includes('soon') && !data.dates.toLowerCase().includes('tba'));
+
+        setEventSettings(prev => {
           const mapped = {
-            ...eventSettings,
-            name: data.name || eventSettings.name,
-            tagline: data.tagline || eventSettings.tagline,
-            dates: data.dates || eventSettings.dates,
+            ...prev,
+            name: (data.name !== null && data.name !== undefined && data.name !== '') ? data.name : prev.name,
+            tagline: parsedTagline,
+            edition: parsedEdition,
+            dates: (data.dates !== null && data.dates !== undefined && data.dates !== '') ? data.dates : prev.dates,
             datesAnnounced: isAnnounced,
-            targetDate: data.target_date || eventSettings.targetDate,
-            venue: data.venue || eventSettings.venue,
-            prizePool: data.prize_pool || eventSettings.prizePool
+            targetDate: (data.target_date !== null && data.target_date !== undefined) ? data.target_date : prev.targetDate,
+            venue: (data.venue !== null && data.venue !== undefined && data.venue !== '') ? data.venue : prev.venue,
+            prizePool: (data.prize_pool !== null && data.prize_pool !== undefined && data.prize_pool !== '') ? data.prize_pool : prev.prizePool
           };
-          setEventSettings(mapped);
-          localStorage.setItem(STORAGE_KEYS.SETTINGS, JSON.stringify(mapped));
-        }
-      })
-      .catch(() => {});
+          try {
+            localStorage.setItem(STORAGE_KEYS.SETTINGS, JSON.stringify(mapped));
+          } catch (e) {}
+          return mapped;
+        });
+      }
+    } catch (err) {}
+  };
 
-    // Realtime channel to sync event dates and announcement status across all devices
-    const eventChannel = supabase
-      .channel('event_settings_sync')
-      .on(
-        'postgres_changes',
-        { event: '*', schema: 'public', table: 'event_settings' },
-        (payload) => {
-          if (payload.new) {
-            const data = payload.new;
-            const isAnnounced = data.dates && !data.dates.toLowerCase().includes('soon') && !data.dates.toLowerCase().includes('tba');
-            setEventSettings(prev => {
-              const updated = {
-                ...prev,
-                name: data.name || prev.name,
-                tagline: data.tagline || prev.tagline,
-                dates: data.dates || prev.dates,
-                datesAnnounced: isAnnounced,
-                targetDate: data.target_date || prev.targetDate,
-                venue: data.venue || prev.venue,
-                prizePool: data.prize_pool || prev.prizePool
-              };
-              localStorage.setItem(STORAGE_KEYS.SETTINGS, JSON.stringify(updated));
-              return updated;
-            });
-          }
-        }
-      )
-      .subscribe();
-
-    // 3. Fetch Registrations from Supabase
-    supabase
-      .from('registrations')
-      .select('*')
-      .order('created_at', { ascending: false })
-      .then(({ data, error }) => {
-        if (data && !error && data.length > 0) {
-          const mapped = data.map(r => ({
-            id: r.id,
-            ticketId: r.ticket_id,
-            tier: { id: r.tier_id, name: r.tier_name, price: Number(r.amount) || 299 },
-            attendee: {
-              fullName: r.full_name,
-              email: r.email,
-              phone: r.phone,
-              college: r.college,
-              github: r.github || '',
-              teamName: r.team_name || '',
-              teamMembers: r.team_members ? r.team_members.split(', ') : [],
-              track: r.track || 'General'
-            },
-            paymentMethod: r.payment_method,
-            utrNumber: r.utr_number || '',
-            paymentScreenshot: r.payment_screenshot || '',
-            bankName: r.bank_name || '',
-            checkedIn: r.checked_in || false,
-            checkedInAt: r.checked_in_at || null,
-            createdAt: r.created_at
-          }));
-          setRegistrations(mapped);
-          localStorage.setItem(STORAGE_KEYS.REGISTRATIONS, JSON.stringify(mapped));
-        } else {
-          // Fallback to local /api/registrations
-          fetch('/api/registrations')
-            .then(res => res.ok ? res.json() : null)
-            .then(d => {
-              if (d && d.registrations && d.registrations.length > 0) {
-                setRegistrations(d.registrations);
-              }
-            })
-            .catch(() => {});
-        }
-      })
-      .catch(() => {});
-
-    // 4. Fetch Committee Members from Supabase & Sync Master Passcode
-    const syncTeamMembersFromSupabase = () => {
-      supabase
+  // 3. Fetch & Sync Committee Members & Passcodes from Supabase
+  const syncTeamMembersFromSupabase = async () => {
+    try {
+      const { data, error } = await supabase
         .from('team_members')
         .select('*')
-        .order('added_at', { ascending: true })
-        .then(({ data, error }) => {
-          if (data && !error && data.length > 0) {
-            const mapped = data.map(m => ({
-              id: m.id,
-              name: m.name,
-              email: m.email || '',
-              role: m.role,
-              passcode: m.passcode,
-              isEventHead: m.is_event_head || false,
-              permissions: m.permissions || ['registrations', 'checkin'],
-              status: m.status || 'Active',
-              addedAt: m.added_at ? m.added_at.split('T')[0] : '2026'
-            }));
-            setTeamMembers(mapped);
-            localStorage.setItem(STORAGE_KEYS.TEAM_MEMBERS, JSON.stringify(mapped));
+        .order('added_at', { ascending: true });
 
-            // Sync Event Head master passcode directly from Supabase
-            const headMember = mapped.find(m => m.isEventHead || m.id === 'head-001');
-            if (headMember && headMember.passcode) {
-              setHeadPasscode(headMember.passcode);
-              localStorage.setItem(STORAGE_KEYS.HEAD_PASSCODE, headMember.passcode);
-            }
-          }
-        })
-        .catch(() => {});
-    };
+      if (data && !error && data.length > 0) {
+        const mapped = data.map(m => ({
+          id: m.id,
+          name: m.name,
+          email: m.email || '',
+          role: m.role,
+          passcode: m.passcode,
+          isEventHead: m.is_event_head || false,
+          permissions: m.permissions || ['registrations', 'checkin'],
+          status: m.status || 'Active',
+          addedAt: m.added_at ? m.added_at.split('T')[0] : '2026'
+        }));
+        setTeamMembers(mapped);
+        try {
+          localStorage.setItem(STORAGE_KEYS.TEAM_MEMBERS, JSON.stringify(mapped));
+        } catch (e) {}
 
-    syncTeamMembersFromSupabase();
-
-    // Realtime channel for team members and passcodes
-    const teamChannel = supabase
-      .channel('team_members_sync')
-      .on(
-        'postgres_changes',
-        { event: '*', schema: 'public', table: 'team_members' },
-        () => {
-          syncTeamMembersFromSupabase();
+        const headMember = mapped.find(m => m.isEventHead || m.id === 'head-001');
+        if (headMember && headMember.passcode) {
+          setHeadPasscode(headMember.passcode);
+          try {
+            localStorage.setItem(STORAGE_KEYS.HEAD_PASSCODE, headMember.passcode);
+          } catch (e) {}
         }
-      )
+        return mapped;
+      }
+    } catch (err) {}
+    return null;
+  };
+
+  // 4. Fetch & Sync Registrations from Supabase
+  const syncRegistrationsFromSupabase = async () => {
+    try {
+      const { data, error } = await supabase
+        .from('registrations')
+        .select('*')
+        .order('created_at', { ascending: false });
+
+      if (data && !error && data.length > 0) {
+        const mapped = data.map(r => ({
+          id: r.id,
+          ticketId: r.ticket_id,
+          tier: { id: r.tier_id, name: r.tier_name, price: Number(r.amount) || 299 },
+          attendee: {
+            fullName: r.full_name,
+            email: r.email,
+            phone: r.phone,
+            college: r.college,
+            github: r.github || '',
+            teamName: r.team_name || '',
+            teamMembers: r.team_members ? r.team_members.split(', ') : [],
+            track: r.track || 'General'
+          },
+          paymentMethod: r.payment_method,
+          utrNumber: r.utr_number || '',
+          paymentScreenshot: r.payment_screenshot || '',
+          bankName: r.bank_name || '',
+          checkedIn: r.checked_in || false,
+          checkedInAt: r.checked_in_at || null,
+          createdAt: r.created_at
+        }));
+        setRegistrations(mapped);
+        try {
+          localStorage.setItem(STORAGE_KEYS.REGISTRATIONS, JSON.stringify(mapped));
+        } catch (e) {}
+      }
+    } catch (err) {}
+  };
+
+  // Mount real-time broadcast channel, postgres changes, and window focus listeners
+  useEffect(() => {
+    // Initial fetch from cloud
+    syncPaymentSettingsFromSupabase();
+    syncEventSettingsFromSupabase();
+    syncTeamMembersFromSupabase();
+    syncRegistrationsFromSupabase();
+
+    // 1. Supabase Broadcast Channel: Instant sub-second sync across all devices, links & tabs
+    const broadcastChannel = supabase.channel('algonexus_live_sync', {
+      config: { broadcast: { self: false } }
+    });
+
+    broadcastChannel
+      .on('broadcast', { event: 'EVENT_SETTINGS_UPDATED' }, ({ payload }) => {
+        if (payload) {
+          setEventSettings(prev => {
+            const merged = { ...prev, ...payload };
+            try {
+              localStorage.setItem(STORAGE_KEYS.SETTINGS, JSON.stringify(merged));
+            } catch (e) {}
+            return merged;
+          });
+        }
+      })
+      .on('broadcast', { event: 'PAYMENT_SETTINGS_UPDATED' }, ({ payload }) => {
+        if (payload) {
+          setPaymentSettings(prev => {
+            const merged = { ...prev, ...payload };
+            try {
+              localStorage.setItem(STORAGE_KEYS.PAYMENT_SETTINGS, JSON.stringify(merged));
+            } catch (e) {}
+            return merged;
+          });
+        }
+      })
+      .on('broadcast', { event: 'HEAD_PASSCODE_UPDATED' }, ({ payload }) => {
+        if (payload?.passcode) {
+          setHeadPasscode(payload.passcode);
+          try {
+            localStorage.setItem(STORAGE_KEYS.HEAD_PASSCODE, payload.passcode);
+          } catch (e) {}
+          setTeamMembers(prev => {
+            const updated = prev.map(m => (m.isEventHead || m.id === 'head-001') ? { ...m, passcode: payload.passcode } : m);
+            try {
+              localStorage.setItem(STORAGE_KEYS.TEAM_MEMBERS, JSON.stringify(updated));
+            } catch (e) {}
+            return updated;
+          });
+        }
+      })
+      .on('broadcast', { event: 'TEAM_UPDATED' }, () => {
+        syncTeamMembersFromSupabase();
+      })
+      .on('broadcast', { event: 'REGISTRATIONS_UPDATED' }, () => {
+        syncRegistrationsFromSupabase();
+      })
       .subscribe();
 
+    syncChannelRef.current = broadcastChannel;
+
+    // 2. Fallback Postgres Changes channels
+    const paymentChannel = supabase
+      .channel('payment_settings_pg_sync')
+      .on('postgres_changes', { event: '*', schema: 'public', table: 'payment_settings' }, () => {
+        syncPaymentSettingsFromSupabase();
+      })
+      .subscribe();
+
+    const eventChannel = supabase
+      .channel('event_settings_pg_sync')
+      .on('postgres_changes', { event: '*', schema: 'public', table: 'event_settings' }, () => {
+        syncEventSettingsFromSupabase();
+      })
+      .subscribe();
+
+    const teamChannel = supabase
+      .channel('team_members_pg_sync')
+      .on('postgres_changes', { event: '*', schema: 'public', table: 'team_members' }, () => {
+        syncTeamMembersFromSupabase();
+      })
+      .subscribe();
+
+    // 3. Tab Focus & Network Online Auto-Refresh
+    // When switching tabs or unlocking a phone, immediately re-verify credentials & data from cloud
+    const handleReSync = () => {
+      syncPaymentSettingsFromSupabase();
+      syncEventSettingsFromSupabase();
+      syncTeamMembersFromSupabase();
+      syncRegistrationsFromSupabase();
+    };
+
+    window.addEventListener('focus', handleReSync);
+    window.addEventListener('online', handleReSync);
+    const handleVisibilityChange = () => {
+      if (document.visibilityState === 'visible') {
+        handleReSync();
+      }
+    };
+    document.addEventListener('visibilitychange', handleVisibilityChange);
+
+    // Periodic background sync every 12 seconds
+    const intervalId = setInterval(handleReSync, 12000);
+
     return () => {
+      if (syncChannelRef.current) {
+        supabase.removeChannel(syncChannelRef.current);
+      }
       supabase.removeChannel(paymentChannel);
       supabase.removeChannel(eventChannel);
       supabase.removeChannel(teamChannel);
+      window.removeEventListener('focus', handleReSync);
+      window.removeEventListener('online', handleReSync);
+      document.removeEventListener('visibilitychange', handleVisibilityChange);
+      clearInterval(intervalId);
     };
   }, []);
 
@@ -414,6 +475,9 @@ export function EventProvider({ children }) {
     } catch (e) {
       console.warn('LocalStorage limit reached for payment settings:', e);
     }
+
+    // Broadcast immediately so phone, laptop & tablet update in real-time
+    broadcastChange('PAYMENT_SETTINGS_UPDATED', updated);
 
     // 1. Sync to Supabase Cloud PostgreSQL
     try {
@@ -459,19 +523,25 @@ export function EventProvider({ children }) {
       console.warn('LocalStorage error:', e);
     }
 
-    // Sync to Supabase
+    // Broadcast immediately to all connected browsers/devices
+    broadcastChange('EVENT_SETTINGS_UPDATED', updated);
+
+    // Sync to Supabase Cloud with edition encoded in tagline
     try {
+      const payloadTagline = `${updated.tagline || ''}:::edition:::${updated.edition || '4th National Edition'}`;
       await supabase.from('event_settings').upsert({
         id: 1,
         name: updated.name,
-        tagline: updated.tagline,
+        tagline: payloadTagline,
         dates: updated.dates,
         target_date: updated.datesAnnounced ? (updated.targetDate || '') : '',
         venue: updated.venue,
         prize_pool: updated.prizePool,
         updated_at: new Date().toISOString()
       });
-    } catch (err) {}
+    } catch (err) {
+      console.warn('Supabase event_settings update error:', err);
+    }
 
     return updated;
   };
@@ -583,15 +653,55 @@ export function EventProvider({ children }) {
     } catch (e) {}
   };
 
-  const loginAdmin = (password) => {
+  const loginAdmin = async (password) => {
     const trimmed = (password || '').trim();
     if (!trimmed) {
       return { success: false, error: 'Please enter a passcode.' };
     }
 
-    // 1. Check if Event Head (MUST strictly match the current active master passcode ONLY)
-    const currentActiveMasterKey = headPasscode || DEFAULT_HEAD_PASSCODE;
-    if (trimmed === currentActiveMasterKey) {
+    // Always fetch latest team credentials directly from Supabase Cloud to ensure cross-device sync
+    let activeHeadPass = headPasscode || DEFAULT_HEAD_PASSCODE;
+    let activeMembers = teamMembers || DEFAULT_TEAM_MEMBERS;
+
+    try {
+      const { data: cloudMembers, error } = await supabase
+        .from('team_members')
+        .select('*')
+        .order('added_at', { ascending: true });
+
+      if (cloudMembers && !error && cloudMembers.length > 0) {
+        const mapped = cloudMembers.map(m => ({
+          id: m.id,
+          name: m.name,
+          email: m.email || '',
+          role: m.role,
+          passcode: m.passcode,
+          isEventHead: m.is_event_head || false,
+          permissions: m.permissions || ['registrations', 'checkin'],
+          status: m.status || 'Active',
+          addedAt: m.added_at ? m.added_at.split('T')[0] : '2026'
+        }));
+        activeMembers = mapped;
+        setTeamMembers(mapped);
+        try {
+          localStorage.setItem(STORAGE_KEYS.TEAM_MEMBERS, JSON.stringify(mapped));
+        } catch (e) {}
+
+        const headMember = mapped.find(m => m.isEventHead || m.id === 'head-001');
+        if (headMember && headMember.passcode) {
+          activeHeadPass = headMember.passcode;
+          setHeadPasscode(headMember.passcode);
+          try {
+            localStorage.setItem(STORAGE_KEYS.HEAD_PASSCODE, headMember.passcode);
+          } catch (e) {}
+        }
+      }
+    } catch (err) {
+      console.warn('Supabase cloud passcode check notice:', err);
+    }
+
+    // 1. Check if Event Head (matches active master passcode)
+    if (trimmed === activeHeadPass) {
       const headUser = {
         id: 'head-001',
         name: 'Department of Data Science - Event Head',
@@ -608,7 +718,7 @@ export function EventProvider({ children }) {
     }
 
     // 2. Check if matches any active committee member (excluding event head)
-    const matchedMember = teamMembers.find(
+    const matchedMember = activeMembers.find(
       m => !m.isEventHead && m.id !== 'head-001' && m.status === 'Active' && m.passcode === trimmed
     );
     if (matchedMember) {
@@ -661,6 +771,9 @@ export function EventProvider({ children }) {
       console.warn('Error saving team members locally:', e);
     }
 
+    // Broadcast change immediately
+    broadcastChange('TEAM_UPDATED');
+
     // Sync to Supabase Cloud so phone, laptop & tablet update immediately
     try {
       await supabase.from('team_members').insert([{
@@ -690,8 +803,13 @@ export function EventProvider({ children }) {
 
     if (updatedFields.passcode && (updatedFields.isEventHead || id === 'head-001')) {
       setHeadPasscode(updatedFields.passcode);
-      localStorage.setItem(STORAGE_KEYS.HEAD_PASSCODE, updatedFields.passcode);
+      try {
+        localStorage.setItem(STORAGE_KEYS.HEAD_PASSCODE, updatedFields.passcode);
+      } catch (e) {}
     }
+
+    // Broadcast change immediately
+    broadcastChange('TEAM_UPDATED');
 
     // Sync to Supabase Cloud
     try {
@@ -722,6 +840,9 @@ export function EventProvider({ children }) {
       console.warn('Error removing team member locally:', e);
     }
 
+    // Broadcast change immediately
+    broadcastChange('TEAM_UPDATED');
+
     // Sync to Supabase Cloud
     try {
       await supabase.from('team_members').delete().eq('id', id);
@@ -740,7 +861,16 @@ export function EventProvider({ children }) {
     } catch (e) {}
 
     // Update in local team members state
-    setTeamMembers(prev => prev.map(m => (m.isEventHead || m.id === 'head-001') ? { ...m, passcode: trimmed } : m));
+    setTeamMembers(prev => {
+      const next = prev.map(m => (m.isEventHead || m.id === 'head-001') ? { ...m, passcode: trimmed } : m);
+      try {
+        localStorage.setItem(STORAGE_KEYS.TEAM_MEMBERS, JSON.stringify(next));
+      } catch (e) {}
+      return next;
+    });
+
+    // Broadcast to other open tabs/devices immediately
+    broadcastChange('HEAD_PASSCODE_UPDATED', { passcode: trimmed });
 
     // Persist to Supabase Cloud so all devices sync instantly
     try {
