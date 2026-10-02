@@ -33,7 +33,6 @@ export default function Navbar({ onOpenRegister, onOpenAdmin }) {
           <div className="hidden md:flex items-center space-x-7 text-xs font-semibold uppercase tracking-wider text-slate-300">
             <a href="#announcement" className="hover:text-mc-diamond transition-colors">Announcement</a>
             <a href="#gallery" className="hover:text-mc-diamond transition-colors">2025 Memories</a>
-            <a href="#tracks" className="hover:text-mc-diamond transition-colors">Tracks & Quests</a>
             <a href="#passes" className="hover:text-mc-diamond transition-colors">Event Passes</a>
             <a href="#faq" className="hover:text-mc-diamond transition-colors">FAQ</a>
           </div>
@@ -86,13 +85,6 @@ export default function Navbar({ onOpenRegister, onOpenAdmin }) {
             className="block px-3 py-2 text-slate-300 hover:text-mc-diamond"
           >
             Last Year Gallery (2025)
-          </a>
-          <a
-            href="#tracks"
-            onClick={() => setMobileMenuOpen(false)}
-            className="block px-3 py-2 text-slate-300 hover:text-mc-diamond"
-          >
-            Tracks & Quests
           </a>
           <a
             href="#passes"

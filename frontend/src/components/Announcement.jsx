@@ -1,18 +1,9 @@
 import React from 'react';
-import { Bell, BrainCircuit, Globe, Code2, ShieldAlert, Cpu, ArrowRight, Calendar, CheckCircle2, Box } from 'lucide-react';
-import { EVENT_TRACKS } from '../data/eventData';
+import { Bell, ArrowRight, Calendar, CheckCircle2, Box } from 'lucide-react';
 import { useEvent } from '../context/EventContext';
 
 export default function Announcement({ onOpenRegister }) {
   const { eventSettings } = useEvent();
-  
-  const iconMap = {
-    BrainCircuit: <BrainCircuit className="w-6 h-6 text-mc-diamond" />,
-    Globe: <Globe className="w-6 h-6 text-mc-lapis" />,
-    Code2: <Code2 className="w-6 h-6 text-mc-emerald" />,
-    ShieldAlert: <ShieldAlert className="w-6 h-6 text-mc-redstone" />,
-    Cpu: <Cpu className="w-6 h-6 text-mc-gold" />
-  };
 
   return (
     <section id="announcement" className="py-20 relative border-b-4 border-mc-border bg-[#0d121c]/75 backdrop-blur-sm">
@@ -126,33 +117,6 @@ export default function Announcement({ onOpenRegister }) {
               </div>
             </div>
 
-          </div>
-        </div>
-
-        {/* Tracks Grid (Styled as 3D Voxel Quest Modules) */}
-        <div id="tracks" className="pt-6">
-          <div className="text-center max-w-2xl mx-auto mb-10">
-            <h3 className="text-2xl sm:text-3xl font-black text-white mb-2">
-              COMPETITION TRACKS & <span className="text-mc-diamond font-mc">BOUNTY POOLS</span>
-            </h3>
-            <p className="text-slate-400 text-xs">Choose your specialization or compete across multi-domain challenges.</p>
-          </div>
-
-          <div className="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-5 gap-4">
-            {EVENT_TRACKS.map((track) => (
-              <div key={track.id} className="voxel-box p-5 rounded-xl flex flex-col justify-between group">
-                <div>
-                  <div className="p-3 bg-mc-deepslate border border-mc-border w-fit mb-4 group-hover:scale-110 transition-transform">
-                    {iconMap[track.icon] || <Box className="w-6 h-6 text-mc-diamond" />}
-                  </div>
-                  <h4 className="text-sm font-bold text-white mb-1.5">{track.name}</h4>
-                  <p className="text-[11px] text-slate-400 leading-relaxed mb-4">{track.desc}</p>
-                </div>
-                <div className="pt-3 border-t border-mc-border flex items-center justify-between">
-                  <span className="text-[11px] font-mc font-bold text-mc-emerald">{track.prize}</span>
-                </div>
-              </div>
-            ))}
           </div>
         </div>
 

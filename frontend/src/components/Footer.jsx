@@ -42,7 +42,6 @@ export default function Footer({ onOpenRegister, onOpenAdmin }) {
             <ul className="space-y-2.5 text-xs">
               <li><a href="#announcement" className="hover:text-mc-diamond transition-colors">Announcement 2026</a></li>
               <li><a href="#gallery" className="hover:text-mc-diamond transition-colors">Photo Gallery (2025)</a></li>
-              <li><a href="#tracks" className="hover:text-mc-diamond transition-colors">Competition Tracks & Bounties</a></li>
               <li><a href="#passes" className="hover:text-mc-diamond transition-colors">Passes & Pricing Tiers</a></li>
               <li><a href="#faq" className="hover:text-mc-diamond transition-colors">Frequently Asked Questions</a></li>
             </ul>
