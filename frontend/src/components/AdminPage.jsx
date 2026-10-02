@@ -44,7 +44,7 @@ export default function AdminPage({ onBackToWebsite }) {
 
   // Payment & Bank Form State
   const [paymentForm, setPaymentForm] = useState({
-    upiId: paymentSettings.upiId || '8010086323@okbizaxis',
+    upiId: paymentSettings.upiId || '8010086323@fam',
     payeeName: paymentSettings.payeeName || 'Department of Data Science, Smt. Chandibai Himathmal Mansukhani College',
     qrCodeImage: paymentSettings.qrCodeImage || '',
     bankDetails: {
@@ -81,7 +81,7 @@ export default function AdminPage({ onBackToWebsite }) {
   useEffect(() => {
     if (paymentSettings) {
       setPaymentForm({
-        upiId: paymentSettings.upiId || '8010086323@okbizaxis',
+        upiId: paymentSettings.upiId || '8010086323@fam',
         payeeName: paymentSettings.payeeName || 'Department of Data Science, Smt. Chandibai Himathmal Mansukhani College',
         qrCodeImage: paymentSettings.qrCodeImage || '',
         bankDetails: {
@@ -709,7 +709,7 @@ export default function AdminPage({ onBackToWebsite }) {
                       type="text"
                       value={paymentForm.upiId}
                       onChange={(e) => setPaymentForm({ ...paymentForm, upiId: e.target.value })}
-                      placeholder="e.g. 8010086323@okbizaxis"
+                      placeholder="e.g. 8010086323@fam"
                       required
                       className="w-full px-3.5 py-2.5 rounded-xl bg-slate-900 border border-slate-700 text-white font-mono text-sm focus:outline-none focus:border-cyan-400"
                     />

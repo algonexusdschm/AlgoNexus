@@ -54,9 +54,9 @@ const DEFAULT_TEAM_MEMBERS = [
 ];
 
 const DEFAULT_PAYMENT_SETTINGS = {
-  upiId: '8010086323@okbizaxis',
+  upiId: '8010086323@fam',
   payeeName: 'Department of Data Science, Smt. Chandibai Himathmal Mansukhani College',
-  qrCodeImage: '',
+  qrCodeImage: 'https://vcswkusqdkyhyanytjlc.supabase.co/storage/v1/object/public/organizer-assets/qr-codes/1790917868549-hyt2j0.png',
   bankDetails: {
     bankName: 'Smt. Chandibai Himathmal Mansukhani College Account',
     accountNumber: '41829019283',

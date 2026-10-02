@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { 
   X, Ticket, Users, AlertCircle, ArrowRight, Loader2, 
-  QrCode, Copy, Check, Upload, Smartphone,
+  QrCode, Copy, Check, Upload, Smartphone, Download, ExternalLink,
   User, Mail, Phone, School, Compass, ShieldCheck
 } from 'lucide-react';
 import { QRCodeSVG } from 'qrcode.react';
@@ -27,11 +27,11 @@ export default function RegistrationModal({
     }
   }, [initialTier]);
 
-  // Payment settings from context with safe fallback
+  // Payment settings from context with safe fallback (synced with official FamPay QR)
   const settings = paymentSettings || {
-    upiId: '8010086323@okbizaxis',
+    upiId: '8010086323@fam',
     payeeName: 'Department of Data Science, Smt. Chandibai Himathmal Mansukhani College',
-    qrCodeImage: ''
+    qrCodeImage: 'https://vcswkusqdkyhyanytjlc.supabase.co/storage/v1/object/public/organizer-assets/qr-codes/1790917868549-hyt2j0.png'
   };
 
   // Copy indicator states
@@ -192,8 +192,31 @@ export default function RegistrationModal({
     }
   };
 
-  // UPI deep link for mobile devices
-  const upiIntentUrl = `upi://pay?pa=${encodeURIComponent(settings.upiId || '8010086323@okbizaxis')}&pn=${encodeURIComponent(settings.payeeName || 'CHM College Data Science')}&am=${selectedTier.price}&cu=INR&tn=AlgoNexus-${encodeURIComponent(formData.fullName.trim() || 'Pass')}`;
+  // UPI details matching the official uploaded QR code (8010086323@fam)
+  const activeUpiId = (settings.upiId || '8010086323@fam').trim();
+  const activePayeeName = (settings.payeeName || 'Department of Data Science, Smt. Chandibai Himathmal Mansukhani College').trim();
+  const passPrice = selectedTier?.price || 299;
+  const payerName = (formData.fullName.trim() || 'Pass');
+
+  // Generic UPI deep link (matches exact QR payment format)
+  const upiIntentUrl = `upi://pay?pa=${encodeURIComponent(activeUpiId)}&pn=${encodeURIComponent(activePayeeName)}&am=${passPrice}&cu=INR&tn=AlgoNexus-${encodeURIComponent(payerName)}`;
+  
+  // Specific UPI App Schemes (Mobile direct deep links)
+  const gpayIntentUrl = `tez://upi/pay?pa=${encodeURIComponent(activeUpiId)}&pn=${encodeURIComponent(activePayeeName)}&am=${passPrice}&cu=INR&tn=AlgoNexus-${encodeURIComponent(payerName)}`;
+  const phonepeIntentUrl = `phonepe://pay?pa=${encodeURIComponent(activeUpiId)}&pn=${encodeURIComponent(activePayeeName)}&am=${passPrice}&cu=INR&tn=AlgoNexus-${encodeURIComponent(payerName)}`;
+  const paytmIntentUrl = `paytmmp://pay?pa=${encodeURIComponent(activeUpiId)}&pn=${encodeURIComponent(activePayeeName)}&am=${passPrice}&cu=INR&tn=AlgoNexus-${encodeURIComponent(payerName)}`;
+
+  // Download / Save QR code image helper for mobile scan-from-gallery
+  const handleDownloadQr = () => {
+    const qrSrc = settings.qrCodeImage || 'https://vcswkusqdkyhyanytjlc.supabase.co/storage/v1/object/public/organizer-assets/qr-codes/1790917868549-hyt2j0.png';
+    const link = document.createElement('a');
+    link.href = qrSrc;
+    link.download = 'AlgoNexus_Payment_QR.png';
+    link.target = '_blank';
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+  };
 
   // Complete Payment Verification & Pass Creation
   const completePayment = async (method, additionalData = {}) => {
@@ -603,16 +626,21 @@ export default function RegistrationModal({
                     {/* QR Code Card */}
                     <div className="flex flex-col items-center justify-center p-4 rounded-2xl bg-white text-slate-950 shadow-xl border border-cyan-500/40">
                       <div className="flex items-center justify-between w-full mb-2 pb-1.5 border-b border-slate-200">
-                        <span className="text-[10px] font-extrabold uppercase tracking-wider text-slate-700">Scan & Pay with Any UPI App</span>
+                        <span className="text-[10px] font-extrabold uppercase tracking-wider text-slate-700">Official College UPI QR</span>
                         <span className="text-xs font-mono font-bold text-emerald-600">₹{selectedTier.price}</span>
                       </div>
 
-                      <div className="p-2 bg-slate-50 rounded-xl border border-slate-200 my-1">
+                      {/* Interactive QR Code: Tapping directly opens UPI app on mobile */}
+                      <a
+                        href={upiIntentUrl}
+                        className="block relative p-2 bg-slate-50 rounded-xl border border-slate-200 my-1 group hover:border-cyan-500 transition-all text-center"
+                        title="Tap to pay directly in UPI App"
+                      >
                         {settings.qrCodeImage ? (
                           <img
                             src={settings.qrCodeImage}
-                            alt="College GPay QR Code"
-                            className="w-40 h-40 object-contain rounded-lg"
+                            alt="Official College UPI QR Code"
+                            className="w-40 h-40 object-contain rounded-lg mx-auto"
                           />
                         ) : (
                           <QRCodeSVG
@@ -622,21 +650,35 @@ export default function RegistrationModal({
                             includeMargin={false}
                           />
                         )}
-                      </div>
+                        <span className="text-[10px] text-cyan-700 font-bold flex items-center justify-center gap-1 mt-1.5 group-hover:underline">
+                          <Smartphone className="w-3 h-3" />
+                          <span>Tap QR to Pay in App</span>
+                        </span>
+                      </a>
 
-                      <div className="text-[10px] font-bold text-slate-500 uppercase tracking-widest mt-2">
+                      {/* Save QR to Photos Button for Mobile Users scanning from gallery */}
+                      <button
+                        type="button"
+                        onClick={handleDownloadQr}
+                        className="w-full mt-2 py-2 px-3 rounded-xl bg-slate-100 hover:bg-slate-200 border border-slate-300 text-slate-800 text-[11px] font-bold flex items-center justify-center gap-1.5 transition-colors shadow-sm"
+                      >
+                        <Download className="w-3.5 h-3.5 text-cyan-600" />
+                        <span>Save QR to Gallery (Scan in App)</span>
+                      </button>
+
+                      <div className="text-[9px] font-bold text-slate-400 uppercase tracking-widest mt-2">
                         Google Pay • PhonePe • Paytm • BHIM
                       </div>
                     </div>
 
-                    {/* UPI ID & Intent Links */}
+                    {/* UPI ID & Direct Mobile Intent Links */}
                     <div className="space-y-3">
                       <div>
                         <label className="block text-[10px] font-semibold text-slate-400 uppercase tracking-wider mb-1">
                           Official College UPI ID
                         </label>
                         <div className="flex items-center gap-2 p-2 rounded-xl bg-slate-900 border border-slate-700">
-                          <span className="font-mono text-xs font-bold text-white flex-1 truncate">{settings.upiId || 'algonexus.fest@oksbi'}</span>
+                          <span className="font-mono text-xs font-bold text-white flex-1 truncate">{activeUpiId}</span>
                           <button
                             type="button"
                             onClick={handleCopyUpi}
@@ -649,29 +691,51 @@ export default function RegistrationModal({
                       </div>
 
                       <div>
-                        <label className="block text-[10px] font-semibold text-slate-400 uppercase tracking-wider mb-1">
-                          Pay Directly via Installed App:
+                        <label className="block text-[10px] font-semibold text-slate-400 uppercase tracking-wider mb-1.5 flex items-center justify-between">
+                          <span>Pay with Downloaded UPI App:</span>
+                          <span className="text-[9px] text-cyan-400 font-mono">1-Tap Redirect</span>
                         </label>
                         <div className="grid grid-cols-2 gap-2">
                           <a
-                            href={upiIntentUrl}
-                            className="p-2 rounded-xl bg-slate-900 hover:bg-slate-800 border border-slate-700 text-xs font-semibold text-slate-200 flex items-center justify-center gap-1.5 transition-colors"
+                            href={gpayIntentUrl}
+                            className="py-2.5 px-3 rounded-xl bg-slate-900 hover:bg-slate-800 border border-slate-700 hover:border-cyan-500 text-xs font-bold text-slate-200 flex items-center justify-center gap-1.5 transition-all shadow-sm"
+                            title="Open Google Pay"
                           >
-                            <Smartphone className="w-3.5 h-3.5 text-cyan-400" />
+                            <span className="text-cyan-400 font-black">G</span>
                             <span>Google Pay</span>
                           </a>
+
+                          <a
+                            href={phonepeIntentUrl}
+                            className="py-2.5 px-3 rounded-xl bg-slate-900 hover:bg-slate-800 border border-slate-700 hover:border-purple-500 text-xs font-bold text-slate-200 flex items-center justify-center gap-1.5 transition-all shadow-sm"
+                            title="Open PhonePe"
+                          >
+                            <span className="text-purple-400 font-black">₹</span>
+                            <span>PhonePe</span>
+                          </a>
+
+                          <a
+                            href={paytmIntentUrl}
+                            className="py-2.5 px-3 rounded-xl bg-slate-900 hover:bg-slate-800 border border-slate-700 hover:border-sky-500 text-xs font-bold text-slate-200 flex items-center justify-center gap-1.5 transition-all shadow-sm"
+                            title="Open Paytm"
+                          >
+                            <span className="text-sky-400 font-black">P</span>
+                            <span>Paytm</span>
+                          </a>
+
                           <a
                             href={upiIntentUrl}
-                            className="p-2 rounded-xl bg-slate-900 hover:bg-slate-800 border border-slate-700 text-xs font-semibold text-slate-200 flex items-center justify-center gap-1.5 transition-colors"
+                            className="py-2.5 px-3 rounded-xl bg-gradient-to-r from-cyan-600/20 to-indigo-600/20 hover:from-cyan-600/30 hover:to-indigo-600/30 border border-cyan-500/40 text-xs font-bold text-cyan-200 flex items-center justify-center gap-1.5 transition-all shadow-sm"
+                            title="Open in Any Installed UPI App"
                           >
-                            <Smartphone className="w-3.5 h-3.5 text-indigo-400" />
-                            <span>PhonePe / Paytm</span>
+                            <Smartphone className="w-3.5 h-3.5 text-cyan-400" />
+                            <span>Any UPI App</span>
                           </a>
                         </div>
                       </div>
 
                       <div className="p-2.5 rounded-xl bg-cyan-950/40 border border-cyan-800/40 text-[11px] text-slate-300 leading-snug">
-                        ⚡ <strong>Note:</strong> After completing payment in GPay/PhonePe, enter the <strong>12-digit UTR number</strong> below to verify your pass.
+                        💡 <strong>How to Pay on Mobile:</strong> Tap any app button above to pay directly, or save the QR to scan from your gallery. Enter your <strong>12-digit UTR number</strong> below after payment.
                       </div>
                     </div>
 

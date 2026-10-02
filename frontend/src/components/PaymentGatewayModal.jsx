@@ -1,6 +1,7 @@
-import React, { useState, useEffect } from 'react';
-import { X, QrCode, Building2, CreditCard, ShieldCheck, Copy, Check, Upload, ArrowRight, Loader2, Smartphone, AlertCircle, ExternalLink } from 'lucide-react';
+import React, { useState } from 'react';
+import { X, QrCode, Building2, CreditCard, ShieldCheck, Copy, Check, Upload, ArrowRight, Loader2, Smartphone, AlertCircle, ExternalLink, Download } from 'lucide-react';
 import { QRCodeSVG } from 'qrcode.react';
+import { useEvent } from '../context/EventContext';
 
 export default function PaymentGatewayModal({
   isOpen,
@@ -10,13 +11,14 @@ export default function PaymentGatewayModal({
   registrationData,
   onPaymentSuccess
 }) {
+  const { paymentSettings } = useEvent();
   const [activeTab, setActiveTab] = useState('upi'); // 'upi', 'netbanking', 'card', 'razorpay'
-  const [settings, setSettings] = useState({
-    upiId: '8010086323@okbizaxis',
+  const settings = paymentSettings || {
+    upiId: '8010086323@fam',
     payeeName: 'Department of Data Science, Smt. Chandibai Himathmal Mansukhani College',
-    qrCodeImage: '',
+    qrCodeImage: 'https://vcswkusqdkyhyanytjlc.supabase.co/storage/v1/object/public/organizer-assets/qr-codes/1790917868549-hyt2j0.png',
     instructions: 'Scan using any UPI App (Google Pay, PhonePe, Paytm, BHIM). Enter 12-digit UTR and attach screenshot.'
-  });
+  };
 
   const [loading, setLoading] = useState(false);
   const [copied, setCopied] = useState(false);
@@ -26,20 +28,6 @@ export default function PaymentGatewayModal({
   const [selectedBank, setSelectedBank] = useState('HDFC Bank');
   const [cardData, setCardData] = useState({ number: '', expiry: '', cvv: '', name: '' });
   const [errorMessage, setErrorMessage] = useState('');
-
-  // Fetch organizer payment settings (custom GPay QR, UPI ID)
-  useEffect(() => {
-    if (isOpen) {
-      fetch('/api/payment-settings')
-        .then(res => res.json())
-        .then(data => {
-          if (data && data.upiId) {
-            setSettings(data);
-          }
-        })
-        .catch(err => console.error('Error fetching settings:', err));
-    }
-  }, [isOpen]);
 
   if (!isOpen) return null;
 
