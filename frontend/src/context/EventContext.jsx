@@ -330,32 +330,57 @@ export function EventProvider({ children }) {
       })
       .catch(() => {});
 
-    // 4. Fetch Committee Members from Supabase
-    supabase
-      .from('team_members')
-      .select('*')
-      .then(({ data, error }) => {
-        if (data && !error && data.length > 0) {
-          const mapped = data.map(m => ({
-            id: m.id,
-            name: m.name,
-            email: m.email || '',
-            role: m.role,
-            passcode: m.passcode,
-            isEventHead: m.is_event_head || false,
-            permissions: m.permissions || ['registrations', 'checkin'],
-            status: m.status || 'Active',
-            addedAt: m.added_at ? m.added_at.split('T')[0] : '2026'
-          }));
-          setTeamMembers(mapped);
-          localStorage.setItem(STORAGE_KEYS.TEAM_MEMBERS, JSON.stringify(mapped));
+    // 4. Fetch Committee Members from Supabase & Sync Master Passcode
+    const syncTeamMembersFromSupabase = () => {
+      supabase
+        .from('team_members')
+        .select('*')
+        .order('added_at', { ascending: true })
+        .then(({ data, error }) => {
+          if (data && !error && data.length > 0) {
+            const mapped = data.map(m => ({
+              id: m.id,
+              name: m.name,
+              email: m.email || '',
+              role: m.role,
+              passcode: m.passcode,
+              isEventHead: m.is_event_head || false,
+              permissions: m.permissions || ['registrations', 'checkin'],
+              status: m.status || 'Active',
+              addedAt: m.added_at ? m.added_at.split('T')[0] : '2026'
+            }));
+            setTeamMembers(mapped);
+            localStorage.setItem(STORAGE_KEYS.TEAM_MEMBERS, JSON.stringify(mapped));
+
+            // Sync Event Head master passcode directly from Supabase
+            const headMember = mapped.find(m => m.isEventHead || m.id === 'head-001');
+            if (headMember && headMember.passcode) {
+              setHeadPasscode(headMember.passcode);
+              localStorage.setItem(STORAGE_KEYS.HEAD_PASSCODE, headMember.passcode);
+            }
+          }
+        })
+        .catch(() => {});
+    };
+
+    syncTeamMembersFromSupabase();
+
+    // Realtime channel for team members and passcodes
+    const teamChannel = supabase
+      .channel('team_members_sync')
+      .on(
+        'postgres_changes',
+        { event: '*', schema: 'public', table: 'team_members' },
+        () => {
+          syncTeamMembersFromSupabase();
         }
-      })
-      .catch(() => {});
+      )
+      .subscribe();
 
     return () => {
       supabase.removeChannel(paymentChannel);
       supabase.removeChannel(eventChannel);
+      supabase.removeChannel(teamChannel);
     };
   }, []);
 
@@ -609,8 +634,8 @@ export function EventProvider({ children }) {
     localStorage.removeItem(STORAGE_KEYS.CURRENT_ADMIN_USER);
   };
 
-  // Team Member Management (Event Head exclusive)
-  const addTeamMember = (memberData) => {
+  // Team Member Management (Event Head exclusive - fully synced with Supabase)
+  const addTeamMember = async (memberData) => {
     const newMember = {
       id: 'mem-' + Date.now(),
       name: memberData.name,
@@ -627,23 +652,58 @@ export function EventProvider({ children }) {
     try {
       localStorage.setItem(STORAGE_KEYS.TEAM_MEMBERS, JSON.stringify(updated));
     } catch (e) {
-      console.warn('Error saving team members:', e);
+      console.warn('Error saving team members locally:', e);
+    }
+
+    // Sync to Supabase Cloud so phone, laptop & tablet update immediately
+    try {
+      await supabase.from('team_members').insert([{
+        id: newMember.id,
+        name: newMember.name,
+        email: newMember.email,
+        role: newMember.role,
+        passcode: newMember.passcode,
+        is_event_head: false,
+        permissions: newMember.permissions,
+        status: newMember.status
+      }]);
+    } catch (err) {
+      console.warn('Supabase addTeamMember error:', err);
     }
     return newMember;
   };
 
-  const updateTeamMember = (id, updatedFields) => {
+  const updateTeamMember = async (id, updatedFields) => {
     const updated = teamMembers.map(m => m.id === id ? { ...m, ...updatedFields } : m);
     setTeamMembers(updated);
     try {
       localStorage.setItem(STORAGE_KEYS.TEAM_MEMBERS, JSON.stringify(updated));
     } catch (e) {
-      console.warn('Error updating team member:', e);
+      console.warn('Error updating team member locally:', e);
+    }
+
+    if (updatedFields.passcode && (updatedFields.isEventHead || id === 'head-001')) {
+      setHeadPasscode(updatedFields.passcode);
+      localStorage.setItem(STORAGE_KEYS.HEAD_PASSCODE, updatedFields.passcode);
+    }
+
+    // Sync to Supabase Cloud
+    try {
+      const payload = {};
+      if (updatedFields.name !== undefined) payload.name = updatedFields.name;
+      if (updatedFields.email !== undefined) payload.email = updatedFields.email;
+      if (updatedFields.role !== undefined) payload.role = updatedFields.role;
+      if (updatedFields.passcode !== undefined) payload.passcode = updatedFields.passcode;
+      if (updatedFields.status !== undefined) payload.status = updatedFields.status;
+      if (updatedFields.permissions !== undefined) payload.permissions = updatedFields.permissions;
+      await supabase.from('team_members').update(payload).eq('id', id);
+    } catch (err) {
+      console.warn('Supabase updateTeamMember error:', err);
     }
     return updated;
   };
 
-  const removeTeamMember = (id) => {
+  const removeTeamMember = async (id) => {
     const memberToRemove = teamMembers.find(m => m.id === id);
     if (memberToRemove && memberToRemove.isEventHead) {
       return false; // Cannot delete Event Head
@@ -653,18 +713,38 @@ export function EventProvider({ children }) {
     try {
       localStorage.setItem(STORAGE_KEYS.TEAM_MEMBERS, JSON.stringify(updated));
     } catch (e) {
-      console.warn('Error removing team member:', e);
+      console.warn('Error removing team member locally:', e);
+    }
+
+    // Sync to Supabase Cloud
+    try {
+      await supabase.from('team_members').delete().eq('id', id);
+    } catch (err) {
+      console.warn('Supabase removeTeamMember error:', err);
     }
     return true;
   };
 
-  const updateHeadPasscode = (newPasscode) => {
+  const updateHeadPasscode = async (newPasscode) => {
     const trimmed = (newPasscode || '').trim();
     if (!trimmed) return false;
     setHeadPasscode(trimmed);
     try {
       localStorage.setItem(STORAGE_KEYS.HEAD_PASSCODE, trimmed);
     } catch (e) {}
+
+    // Update in local team members state
+    setTeamMembers(prev => prev.map(m => (m.isEventHead || m.id === 'head-001') ? { ...m, passcode: trimmed } : m));
+
+    // Persist to Supabase Cloud so all devices sync instantly
+    try {
+      await supabase
+        .from('team_members')
+        .update({ passcode: trimmed })
+        .eq('is_event_head', true);
+    } catch (err) {
+      console.warn('Supabase updateHeadPasscode error:', err);
+    }
     return true;
   };
 

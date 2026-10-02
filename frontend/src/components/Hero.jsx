@@ -67,22 +67,22 @@ export default function Hero({ onOpenRegister }) {
             {eventSettings.edition} • Department of Data Science, Smt. CHM College
           </div>
 
-          <h1 className="text-4xl sm:text-6xl md:text-7xl font-black tracking-tight text-white leading-[1.08]">
+          <h1 className="text-3xl sm:text-5xl md:text-6xl lg:text-7xl font-black tracking-tight text-white leading-[1.1] break-words">
             BUILD. CODE. <br />
             <span className="text-mc-diamond drop-shadow-[0_0_20px_rgba(0,240,255,0.4)]">
               DOMINATE THE NEXUS.
             </span>
           </h1>
 
-          <p className="text-base sm:text-lg text-slate-300 max-w-2xl mx-auto leading-relaxed font-light">
+          <p className="text-sm sm:text-base md:text-lg text-slate-300 max-w-2xl mx-auto leading-relaxed font-light px-2 sm:px-0">
             Welcome to <strong className="font-bold text-white font-mc tracking-wide">{eventSettings.name}</strong>. India's premier collegiate tech conclave. Forge breakthrough algorithms, engineer 48-hour solutions, and claim legendary bounties in our national arena.
           </p>
 
           {/* Tactile Minecraft 3D Action Buttons */}
-          <div className="flex flex-col sm:flex-row items-center justify-center gap-4 pt-2">
+          <div className="flex flex-col sm:flex-row items-center justify-center gap-3 sm:gap-4 pt-2 w-full px-2 sm:px-0">
             <button
               onClick={() => onOpenRegister()}
-              className="w-full sm:w-auto px-8 py-4 btn-voxel-diamond text-sm uppercase tracking-wider flex items-center justify-center gap-2.5 shadow-lg"
+              className="w-full sm:w-auto px-6 sm:px-8 py-3.5 sm:py-4 btn-voxel-diamond text-xs sm:text-sm uppercase tracking-wider flex items-center justify-center gap-2.5 shadow-lg"
             >
               <span>[CLAIM YOUR PASS]</span>
               <ArrowRight className="w-4 h-4 stroke-[3]" />
@@ -90,40 +90,40 @@ export default function Hero({ onOpenRegister }) {
 
             <a
               href="#gallery"
-              className="w-full sm:w-auto px-7 py-4 btn-voxel-dark text-sm uppercase tracking-wider flex items-center justify-center gap-2"
+              className="w-full sm:w-auto px-6 sm:px-7 py-3.5 sm:py-4 btn-voxel-dark text-xs sm:text-sm uppercase tracking-wider flex items-center justify-center gap-2"
             >
               <span>LAST EVENT MEMORIES</span>
             </a>
           </div>
 
           {/* Minecraft Inventory-Style Live Countdown HUD */}
-          <div className="pt-4 max-w-xl mx-auto">
+          <div className="pt-4 max-w-xl mx-auto w-full px-2 sm:px-0">
             {eventSettings.datesAnnounced ? (
-              <div className="p-4 voxel-box rounded-xl">
+              <div className="p-3 sm:p-4 voxel-box rounded-xl">
                 <div className="flex items-center justify-between text-xs font-mc text-mc-diamond mb-3 border-b border-mc-border pb-2">
                   <span className="flex items-center gap-2">
                     <Clock className="w-3.5 h-3.5 text-mc-redstone animate-spin" />
-                    <span>COUNTDOWN TO INCEPTION</span>
+                    <span className="text-[11px] sm:text-xs">COUNTDOWN TO INCEPTION</span>
                   </span>
-                  <span className="text-[10px] text-slate-400 font-mono">T-MINUS</span>
+                  <span className="text-[9px] sm:text-[10px] text-slate-400 font-mono">T-MINUS</span>
                 </div>
 
-                <div className="grid grid-cols-4 gap-2 text-center">
-                  <div className="bg-[#0b0e14] p-2.5 border border-mc-border">
-                    <span className="block text-2xl sm:text-3xl font-black text-white font-mc">{timeLeft.days}</span>
-                    <span className="text-[10px] text-slate-400 uppercase tracking-widest font-mono">DAYS</span>
+                <div className="grid grid-cols-4 gap-1.5 sm:gap-2 text-center">
+                  <div className="bg-[#0b0e14] p-1.5 sm:p-2.5 border border-mc-border">
+                    <span className="block text-xl sm:text-3xl font-black text-white font-mc">{timeLeft.days}</span>
+                    <span className="text-[8px] sm:text-[10px] text-slate-400 uppercase tracking-widest font-mono">DAYS</span>
                   </div>
-                  <div className="bg-[#0b0e14] p-2.5 border border-mc-border">
-                    <span className="block text-2xl sm:text-3xl font-black text-mc-diamond font-mc">{timeLeft.hours}</span>
-                    <span className="text-[10px] text-slate-400 uppercase tracking-widest font-mono">HOURS</span>
+                  <div className="bg-[#0b0e14] p-1.5 sm:p-2.5 border border-mc-border">
+                    <span className="block text-xl sm:text-3xl font-black text-mc-diamond font-mc">{timeLeft.hours}</span>
+                    <span className="text-[8px] sm:text-[10px] text-slate-400 uppercase tracking-widest font-mono">HOURS</span>
                   </div>
-                  <div className="bg-[#0b0e14] p-2.5 border border-mc-border">
-                    <span className="block text-2xl sm:text-3xl font-black text-mc-emerald font-mc">{timeLeft.minutes}</span>
-                    <span className="text-[10px] text-slate-400 uppercase tracking-widest font-mono">MINS</span>
+                  <div className="bg-[#0b0e14] p-1.5 sm:p-2.5 border border-mc-border">
+                    <span className="block text-xl sm:text-3xl font-black text-mc-emerald font-mc">{timeLeft.minutes}</span>
+                    <span className="text-[8px] sm:text-[10px] text-slate-400 uppercase tracking-widest font-mono">MINS</span>
                   </div>
-                  <div className="bg-[#0b0e14] p-2.5 border border-mc-border">
-                    <span className="block text-2xl sm:text-3xl font-black text-mc-redstone font-mc">{timeLeft.seconds}</span>
-                    <span className="text-[10px] text-slate-400 uppercase tracking-widest font-mono">SECS</span>
+                  <div className="bg-[#0b0e14] p-1.5 sm:p-2.5 border border-mc-border">
+                    <span className="block text-xl sm:text-3xl font-black text-mc-redstone font-mc">{timeLeft.seconds}</span>
+                    <span className="text-[8px] sm:text-[10px] text-slate-400 uppercase tracking-widest font-mono">SECS</span>
                   </div>
                 </div>
               </div>

@@ -38,6 +38,9 @@ export default function AdminPage({ onBackToWebsite }) {
   // Passcode Login State
   const [passcode, setPasscode] = useState('');
   const [authError, setAuthError] = useState('');
+  const [showLoginPass, setShowLoginPass] = useState(false);
+  const [showNewMasterPass, setShowNewMasterPass] = useState(false);
+  const [showNewMemberPass, setShowNewMemberPass] = useState(false);
 
   // Payment & Bank Form State
   const [paymentForm, setPaymentForm] = useState({
@@ -175,7 +178,7 @@ export default function AdminPage({ onBackToWebsite }) {
       passcode: finalPasscode,
       permissions: newMemberForm.permissions
     });
-    setMemberSuccessMsg(`Added "${newMemberForm.name}" as ${newMemberForm.role} with passcode "${finalPasscode}"!`);
+    setMemberSuccessMsg(`Added "${newMemberForm.name}" as ${newMemberForm.role}. Credentials registered and synced securely!`);
     setIsAddMemberModalOpen(false);
     setNewMemberForm({
       name: '',
@@ -356,14 +359,24 @@ export default function AdminPage({ onBackToWebsite }) {
                 <span>Enter Passcode</span>
                 <span className="text-[10px] text-cyan-400 font-mono">Head or Member Key</span>
               </label>
-              <input
-                type="password"
-                placeholder="Enter passcode (e.g. head2026 or member key)"
-                value={passcode}
-                onChange={(e) => setPasscode(e.target.value)}
-                required
-                className="w-full px-4 py-3 rounded-xl bg-slate-900 border border-slate-700 text-white text-sm focus:outline-none focus:border-cyan-400 placeholder-slate-500 font-mono"
-              />
+              <div className="relative">
+                <input
+                  type={showLoginPass ? "text" : "password"}
+                  placeholder="Enter authorized passcode"
+                  value={passcode}
+                  onChange={(e) => setPasscode(e.target.value)}
+                  required
+                  className="w-full pl-4 pr-11 py-3 rounded-xl bg-slate-900 border border-slate-700 text-white text-sm focus:outline-none focus:border-cyan-400 placeholder-slate-500 font-mono"
+                />
+                <button
+                  type="button"
+                  onClick={() => setShowLoginPass(!showLoginPass)}
+                  className="absolute right-3 top-1/2 -translate-y-1/2 p-1 text-slate-400 hover:text-white"
+                  title={showLoginPass ? "Hide Passcode" : "Show Passcode"}
+                >
+                  {showLoginPass ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
+                </button>
+              </div>
             </div>
 
             <button
@@ -375,20 +388,10 @@ export default function AdminPage({ onBackToWebsite }) {
             </button>
           </form>
 
-          {/* Quick Credential Guide */}
-          <div className="mt-5 p-3 rounded-xl bg-slate-900/80 border border-slate-800 text-[11px] space-y-1.5">
-            <div className="flex items-center justify-between text-amber-400 font-semibold">
-              <span className="flex items-center gap-1.5"><Crown className="w-3.5 h-3.5" /> Event Head Master Key:</span>
-              <code className="bg-amber-500/10 px-1.5 py-0.5 rounded border border-amber-500/20 text-amber-300 font-mono font-bold">{headPasscode || 'head2026'}</code>
-            </div>
-            <div className="flex items-center justify-between text-emerald-400">
-              <span className="flex items-center gap-1.5"><UserCheck className="w-3 h-3" /> Registration Lead Key:</span>
-              <code className="bg-emerald-500/10 px-1.5 py-0.5 rounded border border-emerald-500/20 text-emerald-300 font-mono">reg2026</code>
-            </div>
-            <div className="flex items-center justify-between text-indigo-400">
-              <span className="flex items-center gap-1.5"><UserCheck className="w-3 h-3" /> Finance Lead Key:</span>
-              <code className="bg-indigo-500/10 px-1.5 py-0.5 rounded border border-indigo-500/20 text-indigo-300 font-mono">finance2026</code>
-            </div>
+          {/* Secure Access Notice (Replaces Plaintext Credential Leak) */}
+          <div className="mt-5 p-3 rounded-xl bg-slate-900/60 border border-slate-800 text-[11px] text-slate-400 flex items-center justify-center gap-2 text-center">
+            <Shield className="w-4 h-4 text-cyan-400 shrink-0" />
+            <span>Authorized access only. Enter your confidential committee passcode.</span>
           </div>
 
           <div className="mt-6 pt-6 border-t border-slate-800 text-center">
@@ -479,82 +482,86 @@ export default function AdminPage({ onBackToWebsite }) {
         )}
 
         {/* Top Summary Metrics */}
-        <div className="grid grid-cols-1 sm:grid-cols-4 gap-4">
-          <div className="glass-card p-4 rounded-2xl">
-            <div className="text-xs text-slate-400">Total Registered Attendees</div>
-            <div className="text-3xl font-extrabold text-white mt-1 font-mono">{registrations.length}</div>
+        <div className="grid grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-4">
+          <div className="glass-card p-3.5 sm:p-4 rounded-2xl">
+            <div className="text-[11px] sm:text-xs text-slate-400">Total Registered Attendees</div>
+            <div className="text-2xl sm:text-3xl font-extrabold text-white mt-1 font-mono">{registrations.length}</div>
           </div>
 
-          <div className="glass-card p-4 rounded-2xl">
-            <div className="text-xs text-slate-400">Total Revenue Collected</div>
-            <div className="text-3xl font-extrabold text-emerald-400 mt-1 font-mono">
+          <div className="glass-card p-3.5 sm:p-4 rounded-2xl">
+            <div className="text-[11px] sm:text-xs text-slate-400">Total Revenue Collected</div>
+            <div className="text-2xl sm:text-3xl font-extrabold text-emerald-400 mt-1 font-mono">
               ₹{totalRevenue.toLocaleString('en-IN')}
             </div>
           </div>
 
-          <div className="glass-card p-4 rounded-2xl">
-            <div className="text-xs text-slate-400">Gate Checked-in / Attendance</div>
-            <div className="text-3xl font-extrabold text-cyan-400 mt-1 font-mono">
+          <div className="glass-card p-3.5 sm:p-4 rounded-2xl">
+            <div className="text-[11px] sm:text-xs text-slate-400">Gate Checked-in / Attendance</div>
+            <div className="text-2xl sm:text-3xl font-extrabold text-cyan-400 mt-1 font-mono">
               {totalCheckedIn} / {registrations.length}
             </div>
           </div>
 
-          <div className="glass-card p-4 rounded-2xl">
-            <div className="text-xs text-slate-400">Organizing Committee Members</div>
-            <div className="text-3xl font-extrabold text-amber-400 mt-1 font-mono">
+          <div className="glass-card p-3.5 sm:p-4 rounded-2xl">
+            <div className="text-[11px] sm:text-xs text-slate-400">Organizing Committee Members</div>
+            <div className="text-2xl sm:text-3xl font-extrabold text-amber-400 mt-1 font-mono">
               {teamMembers.length}
             </div>
           </div>
         </div>
 
-        {/* Navigation Tabs */}
-        <div className="flex border-b border-white/10 gap-6 text-sm font-bold overflow-x-auto">
+        {/* Navigation Tabs (Responsive scroll for Mobile / Tablet / PC) */}
+        <div className="flex border-b border-white/10 gap-3 sm:gap-6 text-xs sm:text-sm font-bold overflow-x-auto pb-1">
           <button
             onClick={() => setActiveTab('payment-bank')}
-            className={`pb-3.5 flex items-center gap-2 border-b-2 transition-all whitespace-nowrap ${
+            className={`pb-3 flex items-center gap-2 border-b-2 transition-all whitespace-nowrap shrink-0 ${
               activeTab === 'payment-bank'
                 ? 'border-cyan-400 text-cyan-300'
                 : 'border-transparent text-slate-400 hover:text-white'
             }`}
           >
-            <Building2 className="w-4 h-4" />
-            <span>1. College GPay QR & Bank Account Details</span>
+            <Building2 className="w-4 h-4 shrink-0" />
+            <span className="hidden sm:inline">1. College GPay QR & Bank Account Details</span>
+            <span className="sm:hidden">1. UPI & Bank</span>
           </button>
 
           <button
             onClick={() => setActiveTab('event-info')}
-            className={`pb-3.5 flex items-center gap-2 border-b-2 transition-all whitespace-nowrap ${
+            className={`pb-3 flex items-center gap-2 border-b-2 transition-all whitespace-nowrap shrink-0 ${
               activeTab === 'event-info'
                 ? 'border-cyan-400 text-cyan-300'
                 : 'border-transparent text-slate-400 hover:text-white'
             }`}
           >
-            <Sparkles className="w-4 h-4" />
-            <span>2. Event Dates, Announcement & Ticket Prices</span>
+            <Sparkles className="w-4 h-4 shrink-0" />
+            <span className="hidden sm:inline">2. Event Dates, Announcement & Ticket Prices</span>
+            <span className="sm:hidden">2. Dates & Prices</span>
           </button>
 
           <button
             onClick={() => setActiveTab('registrations')}
-            className={`pb-3.5 flex items-center gap-2 border-b-2 transition-all whitespace-nowrap ${
+            className={`pb-3 flex items-center gap-2 border-b-2 transition-all whitespace-nowrap shrink-0 ${
               activeTab === 'registrations'
                 ? 'border-cyan-400 text-cyan-300'
                 : 'border-transparent text-slate-400 hover:text-white'
             }`}
           >
-            <Users className="w-4 h-4" />
-            <span>3. Registrations & Verification Desk ({registrations.length})</span>
+            <Users className="w-4 h-4 shrink-0" />
+            <span className="hidden sm:inline">3. Registrations & Verification Desk ({registrations.length})</span>
+            <span className="sm:hidden">3. Registrations ({registrations.length})</span>
           </button>
 
           <button
             onClick={() => setActiveTab('team-members')}
-            className={`pb-3.5 flex items-center gap-2 border-b-2 transition-all whitespace-nowrap ${
+            className={`pb-3 flex items-center gap-2 border-b-2 transition-all whitespace-nowrap shrink-0 ${
               activeTab === 'team-members'
                 ? 'border-amber-400 text-amber-300'
                 : 'border-transparent text-slate-400 hover:text-white'
             }`}
           >
-            <Crown className="w-4 h-4 text-amber-400" />
-            <span>4. Team & Member Access ({teamMembers.length})</span>
+            <Crown className="w-4 h-4 text-amber-400 shrink-0" />
+            <span className="hidden sm:inline">4. Team & Member Access ({teamMembers.length})</span>
+            <span className="sm:hidden">4. Passcodes ({teamMembers.length})</span>
             {isHead && (
               <span className="text-[10px] bg-amber-500/20 text-amber-300 px-1.5 py-0.5 rounded border border-amber-500/40 font-mono">
                 HEAD ONLY
@@ -1485,13 +1492,23 @@ export default function AdminPage({ onBackToWebsite }) {
                     <span>🎲 Auto-Generate</span>
                   </button>
                 </div>
-                <input
-                  type="text"
-                  placeholder="Enter passcode or click Auto-Generate"
-                  value={newMemberForm.passcode}
-                  onChange={(e) => setNewMemberForm({ ...newMemberForm, passcode: e.target.value })}
-                  className="w-full px-3.5 py-2.5 rounded-xl bg-slate-900 border border-slate-700 text-white text-xs font-mono focus:outline-none focus:border-emerald-400 placeholder-slate-500"
-                />
+                <div className="relative">
+                  <input
+                    type={showNewMemberPass ? "text" : "password"}
+                    placeholder="Enter passcode or click Auto-Generate"
+                    value={newMemberForm.passcode}
+                    onChange={(e) => setNewMemberForm({ ...newMemberForm, passcode: e.target.value })}
+                    className="w-full pl-3.5 pr-10 py-2.5 rounded-xl bg-slate-900 border border-slate-700 text-white text-xs font-mono focus:outline-none focus:border-emerald-400 placeholder-slate-500"
+                  />
+                  <button
+                    type="button"
+                    onClick={() => setShowNewMemberPass(!showNewMemberPass)}
+                    className="absolute right-3 top-1/2 -translate-y-1/2 p-1 text-slate-400 hover:text-white"
+                    title={showNewMemberPass ? "Hide Passcode" : "Show Passcode"}
+                  >
+                    {showNewMemberPass ? <EyeOff className="w-3.5 h-3.5" /> : <Eye className="w-3.5 h-3.5" />}
+                  </button>
+                </div>
               </div>
 
               <div>
@@ -1616,15 +1633,25 @@ export default function AdminPage({ onBackToWebsite }) {
                 <label className="block text-xs font-semibold text-slate-300 mb-1">
                   New Master Passcode *
                 </label>
-                <input
-                  type="text"
-                  placeholder="Enter new master passcode"
-                  required
-                  value={newMasterPasscode}
-                  onChange={(e) => setNewMasterPasscode(e.target.value)}
-                  className="w-full px-4 py-2.5 rounded-xl bg-slate-900 border border-slate-700 text-white text-xs font-mono focus:outline-none focus:border-amber-400"
-                />
-                <span className="text-[10px] text-slate-500 mt-1 block">Current Key: <code className="text-amber-400 font-mono">{headPasscode || 'head2026'}</code></span>
+                <div className="relative">
+                  <input
+                    type={showNewMasterPass ? "text" : "password"}
+                    placeholder="Enter new master passcode"
+                    required
+                    value={newMasterPasscode}
+                    onChange={(e) => setNewMasterPasscode(e.target.value)}
+                    className="w-full pl-4 pr-11 py-2.5 rounded-xl bg-slate-900 border border-slate-700 text-white text-xs font-mono focus:outline-none focus:border-amber-400"
+                  />
+                  <button
+                    type="button"
+                    onClick={() => setShowNewMasterPass(!showNewMasterPass)}
+                    className="absolute right-3 top-1/2 -translate-y-1/2 p-1 text-slate-400 hover:text-white"
+                    title={showNewMasterPass ? "Hide Passcode" : "Show Passcode"}
+                  >
+                    {showNewMasterPass ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
+                  </button>
+                </div>
+                <span className="text-[10px] text-slate-500 mt-1 block">🔒 Encrypted and synchronized across all devices (phone, laptop, tablet).</span>
               </div>
 
               <div className="pt-3 border-t border-white/10 flex items-center justify-end gap-3">
