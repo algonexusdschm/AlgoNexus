@@ -1,5 +1,3 @@
-@import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;600;700;800;900&family=Russo+One&family=Silkscreen:wght@400;700&display=swap');
-
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
@@ -262,28 +260,5 @@
     0 20px 40px -15px rgba(16, 185, 129, 0.25),
     0 0 25px rgba(16, 185, 129, 0.15),
     inset 0 1px 0 rgba(52, 211, 153, 0.3);
-}
-
-/* Cinematic Monolithic Doomsday Title */
-.doomsday-title {
-  font-family: 'Russo One', sans-serif;
-  color: #0b1510; /* Deep murky green/black for the stone silhouette */
-  letter-spacing: 0.02em;
-  text-transform: uppercase;
-  /* 
-    1. A tiny bright rim light on the top edge
-    2. A 3D extrusion downward (the thick block of stone)
-    3. The explosive golden backlight shining from behind 
-  */
-  text-shadow: 
-    0px -1px 1px rgba(252, 211, 77, 0.4), /* Subtle top rim light */
-    1px 1px 0px #09110d, /* 3D Extrusion Step 1 */
-    2px 2px 0px #070d0a, /* 3D Extrusion Step 2 */
-    3px 3px 0px #050907, /* 3D Extrusion Step 3 */
-    4px 4px 0px #030504, /* 3D Extrusion Step 4 */
-    0px 0px 10px rgba(252, 211, 77, 1),   /* Intense tight core light */
-    0px 0px 25px rgba(245, 158, 11, 0.8), /* Mid-range amber blast */
-    5px 10px 45px rgba(217, 119, 6, 0.7), /* Deep orange ambient glow bleeding downward */
-    0px -10px 45px rgba(245, 158, 11, 0.5); /* Ambient glow bleeding upward */
 }
 

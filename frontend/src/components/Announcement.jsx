@@ -11,17 +11,16 @@ export default function Announcement({ onOpenRegister }) {
         
         {/* Section Header */}
         <div className="text-center max-w-3xl mx-auto mb-16">
-          <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-emerald-950/80 border border-emerald-500/30 text-emerald-400 text-xs font-mono backdrop-blur-md mb-6">
-            <span className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse shadow-[0_0_8px_#10b981]" />
-            <span>[OFFICIAL MISSION BRIEFING]</span>
+          <div className="inline-flex items-center gap-2 px-3 py-1 bg-mc-deepslate border border-mc-redstone/40 text-mc-redstone text-xs font-mc mb-3">
+            <span className="w-2 h-2 bg-mc-redstone animate-pulse-redstone" />
+            <span>[OFFICIAL QUEST ANNOUNCEMENT]</span>
           </div>
 
-          <h2 className="text-3xl sm:text-5xl md:text-6xl font-black tracking-tighter uppercase mb-6">
-            <span className="text-white drop-shadow-md block mb-2 tracking-wide text-xl sm:text-2xl font-bold">PREPARE FOR</span>
-            <span className="doomsday-title text-[3rem] sm:text-[4rem] md:text-[5.5rem] leading-[0.9] block">{eventSettings.name}</span>
+          <h2 className="text-2xl sm:text-4xl md:text-5xl font-black text-white mb-3 font-mc">
+            ANNOUNCING <span className="text-mc-diamond">{eventSettings.name}</span>
           </h2>
-          <p className="text-slate-300 text-base sm:text-lg font-light leading-relaxed">
-            Assemble your squadrons for the ultimate collegiate hackathon. Three days of non-stop algorithmic sprints, architectural showdowns, and high-stakes coding duels in the heart of the Latverian Citadel.
+          <p className="text-slate-400 text-sm sm:text-base font-light">
+            Prepare your squads for the national voxel conclave. Three days of non-stop algorithmic sprint, architecture showdowns, and high-stakes coding duels.
           </p>
         </div>
 
