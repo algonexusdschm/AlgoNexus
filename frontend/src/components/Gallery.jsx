@@ -41,8 +41,9 @@ export default function Gallery() {
               <Camera className="w-3.5 h-3.5 text-mc-diamond" />
               <span>[LAST EVENT MEMORIES]</span>
             </div>
-            <h2 className="text-2xl sm:text-4xl md:text-5xl font-black text-white font-mc">
-              PHOTO GALLERY OF <span className="text-mc-diamond">LAST EVENT MEMORIES</span>
+            <h2 className="text-4xl sm:text-5xl md:text-6xl flex flex-col items-start mb-6">
+              <span className="avengers-chrome block pb-1">PHOTO GALLERY OF</span>
+              <span className="doomsday-neon block text-xl sm:text-2xl md:text-3xl mt-1">LAST EVENT MEMORIES</span>
             </h2>
             <p className="text-slate-400 text-xs sm:text-sm mt-2 max-w-xl font-light">
               Relive the high-voltage coding battles, late-night hackathon sprints, and victory celebrations from our last event memories.
