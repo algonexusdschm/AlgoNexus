@@ -277,7 +277,7 @@ export default function MinecraftBackground() {
         ref={bgImageRef}
         className="absolute inset-0 bg-cover bg-center transition-transform duration-300 ease-out pointer-events-none will-change-transform"
         style={{
-          backgroundImage: "url('/images/minecraft_hero_plains.jpg')",
+          backgroundImage: "url('https://vcswkusqdkyhyanytjlc.supabase.co/storage/v1/object/public/organizer-assets/wallpapers/minecraft_hero_plains.jpg')",
           backgroundPosition: 'center 35%',
           opacity: 0.88,
           filter: 'brightness(1.05) contrast(1.12) saturate(1.18)',
