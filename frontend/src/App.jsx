@@ -10,6 +10,7 @@ import RegistrationModal from './components/RegistrationModal';
 import TicketModal from './components/TicketModal';
 import AdminPage from './components/AdminPage';
 import MinecraftBackground from './components/MinecraftBackground';
+import CursorLens from './components/CursorLens';
 import { EventProvider, useEvent } from './context/EventContext';
 
 function MainEventApp() {
@@ -82,9 +83,12 @@ function MainEventApp() {
 
   // Public Event Website
   return (
-    <div className="min-h-screen bg-[#070913] text-slate-100 flex flex-col relative selection:bg-cyan-500/30 overflow-x-hidden">
+    <div className="min-h-screen bg-[#070913] text-slate-100 flex flex-col relative selection:bg-cyan-500/30 overflow-x-hidden cursor-crosshair">
       {/* 3D Multiverse Incursion World Background */}
       <MinecraftBackground />
+
+      {/* Multiverse Interactive Cursor Spotlight */}
+      <CursorLens />
 
       {/* Top Navbar with Admin Portal Trigger */}
       <Navbar

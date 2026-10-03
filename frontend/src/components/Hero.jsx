@@ -47,7 +47,7 @@ export default function Hero({ onOpenRegister }) {
         <div className="flex flex-wrap items-center justify-center gap-3 mb-8">
           <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-emerald-950/80 border border-emerald-500/30 text-emerald-400 text-xs font-mono backdrop-blur-md">
             <span className="w-2.5 h-2.5 rounded-full bg-emerald-500 animate-pulse shadow-[0_0_8px_#10b981]" />
-            <span>REGISTRATIONS OPEN</span>
+            <span>MULTIVERSE INCURSION: ACTIVE</span>
           </div>
 
           <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-slate-900/80 border border-white/15 text-slate-300 text-xs font-mono backdrop-blur-md">
@@ -57,7 +57,7 @@ export default function Hero({ onOpenRegister }) {
 
           <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-slate-900/80 border border-white/15 text-slate-300 text-xs font-mono backdrop-blur-md">
             <MapPin className="w-3.5 h-3.5 text-emerald-400" />
-            <span>{eventSettings.venue}</span>
+            <span>Latverian Citadel • {eventSettings.venue}</span>
           </div>
         </div>
 
@@ -67,16 +67,16 @@ export default function Hero({ onOpenRegister }) {
             {eventSettings.edition} • Department of Data Science, Smt. CHM College
           </div>
 
-          <h1 className="text-4xl sm:text-6xl md:text-7xl font-black tracking-tight text-white leading-[1.1] break-words">
-            ALGONEXUS <br />
-            <span className="text-transparent bg-clip-text bg-gradient-to-r from-amber-200 via-emerald-300 to-emerald-500 drop-shadow-[0_0_20px_rgba(16,185,129,0.2)]">
-              INNOVATE. BUILD. CONQUER.
+          <h1 className="text-4xl sm:text-6xl md:text-7xl font-black tracking-tight text-white leading-[1.1] break-words uppercase">
+            ALGONEXUS: <br />
+            <span className="text-transparent bg-clip-text bg-gradient-to-r from-emerald-300 via-amber-200 to-emerald-500 drop-shadow-[0_0_20px_rgba(16,185,129,0.2)]">
+              DOOMSDAY PROTOCOL
             </span>
           </h1>
 
           <p className="text-base sm:text-lg md:text-xl text-slate-300 max-w-3xl mx-auto leading-relaxed font-light">
-            Welcome to <strong className="font-bold text-white tracking-wide">{eventSettings.name}</strong>, the premier collegiate hackathon. 
-            Join hundreds of developers, designers, and creators for 48 hours of non-stop innovation, collaboration, and building the future.
+            Welcome to <strong className="font-bold text-white tracking-wide">{eventSettings.name}</strong>, the premier collegiate multiverse hackathon. 
+            As cosmic rifts shatter reality, forge breakthrough algorithms and command high-level computation to save the timeline.
           </p>
 
           {/* Action Buttons */}
