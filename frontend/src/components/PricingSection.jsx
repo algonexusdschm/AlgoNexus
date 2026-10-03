@@ -29,23 +29,40 @@ export default function PricingSection({ onSelectTier }) {
           {pricingTiers.map((tier) => {
             const isDiamond = tier.popular;
             const isVIP = tier.id === 'all-access-vip';
+            const isSolo = tier.id === 'solo-coder';
 
             return (
               <div
                 key={tier.id}
                 className={`relative rounded-2xl p-7 flex flex-col justify-between transition-all duration-300 ${
                   isDiamond
-                    ? 'bg-gradient-to-b from-[#1b263b] to-[#121927] border-2 border-mc-diamond shadow-diamond-glow md:-translate-y-2'
+                    ? 'bg-gradient-to-b from-[#1b2b3b] via-[#121c27] to-[#0b121a] border-2 border-cyan-400 shadow-[0_0_25px_rgba(6,182,212,0.35)] md:-translate-y-2'
                     : isVIP
-                    ? 'bg-gradient-to-b from-[#221c33] to-[#14121f] border-2 border-mc-amethyst hover:border-mc-diamond'
+                    ? 'bg-gradient-to-b from-[#2e121a] via-[#1c0b10] to-[#12070a] border-2 border-rose-500 shadow-[0_0_20px_rgba(244,63,94,0.3)] hover:border-rose-400 hover:shadow-[0_0_30px_rgba(244,63,94,0.5)]'
+                    : isSolo
+                    ? 'bg-gradient-to-b from-[#0e241b] via-[#091712] to-[#07100c] border-2 border-emerald-500 shadow-[0_0_20px_rgba(16,185,129,0.3)] hover:border-emerald-400 hover:shadow-[0_0_30px_rgba(16,185,129,0.45)]'
                     : 'voxel-box'
                 }`}
               >
-                {/* Popular Diamond Ribbon */}
+                {/* Popular Ribbon */}
                 {isDiamond && (
-                  <div className="absolute -top-4 left-1/2 -translate-x-1/2 px-4 py-1 bg-mc-diamond border-2 border-black text-slate-950 text-[10px] font-mc font-black tracking-wider uppercase shadow-voxel-btn flex items-center gap-1.5 whitespace-nowrap">
+                  <div className="absolute -top-4 left-1/2 -translate-x-1/2 px-4 py-1 bg-cyan-400 border-2 border-black text-slate-950 text-[10px] font-mc font-black tracking-wider uppercase shadow-voxel-btn flex items-center gap-1.5 whitespace-nowrap">
                     <Star className="w-3 h-3 fill-current" />
-                    <span>FLAGSHIP EXPEDITION</span>
+                    <span>FLAGSHIP SQUAD PASS</span>
+                  </div>
+                )}
+
+                {isSolo && (
+                  <div className="absolute -top-4 left-1/2 -translate-x-1/2 px-4 py-1 bg-emerald-400 border-2 border-black text-slate-950 text-[10px] font-mc font-black tracking-wider uppercase shadow-voxel-btn flex items-center gap-1.5 whitespace-nowrap">
+                    <Sparkles className="w-3 h-3 fill-current" />
+                    <span>BEST FOR INDIVIDUALS</span>
+                  </div>
+                )}
+
+                {isVIP && (
+                  <div className="absolute -top-4 left-1/2 -translate-x-1/2 px-4 py-1 bg-rose-500 border-2 border-black text-white text-[10px] font-mc font-black tracking-wider uppercase shadow-voxel-btn flex items-center gap-1.5 whitespace-nowrap">
+                    <Box className="w-3 h-3 fill-current" />
+                    <span>ALL-INCLUSIVE PASS</span>
                   </div>
                 )}
 
@@ -53,10 +70,12 @@ export default function PricingSection({ onSelectTier }) {
                   <div className="flex items-center justify-between">
                     <span className={`text-[10px] font-mc px-2 py-0.5 border ${
                       isDiamond
-                        ? 'bg-mc-diamond/20 border-mc-diamond text-mc-diamond'
+                        ? 'bg-cyan-500/20 border-cyan-400 text-cyan-300'
                         : isVIP
-                        ? 'bg-mc-amethyst/20 border-mc-amethyst text-mc-amethyst'
-                        : 'bg-mc-deepslate border-mc-border text-slate-400'
+                        ? 'bg-rose-500/20 border-rose-400 text-rose-300'
+                        : isSolo
+                        ? 'bg-emerald-500/20 border-emerald-400 text-emerald-300'
+                        : 'bg-mc-deepslate border-mc-border text-slate-300'
                     }`}>
                       {tier.badge}
                     </span>
@@ -68,7 +87,7 @@ export default function PricingSection({ onSelectTier }) {
                   <div className="mt-3 mb-6 flex items-baseline gap-1.5 border-b border-mc-border pb-4">
                     <span className="text-sm font-bold text-slate-400">₹</span>
                     <span className={`text-4xl sm:text-5xl font-black font-mc ${
-                      isDiamond ? 'text-mc-diamond' : isVIP ? 'text-mc-amethyst' : 'text-white'
+                      isDiamond ? 'text-cyan-300 drop-shadow-[0_0_12px_rgba(6,182,212,0.4)]' : isVIP ? 'text-rose-400 drop-shadow-[0_0_12px_rgba(244,63,94,0.4)]' : 'text-emerald-400 drop-shadow-[0_0_12px_rgba(16,185,129,0.4)]'
                     }`}>
                       {tier.price}
                     </span>
@@ -81,14 +100,14 @@ export default function PricingSection({ onSelectTier }) {
                       <div key={idx} className="flex items-start gap-2.5">
                         <span className={`w-4 h-4 border flex items-center justify-center shrink-0 text-[10px] font-bold ${
                           isDiamond
-                            ? 'bg-mc-diamond/20 border-mc-diamond text-mc-diamond'
+                            ? 'bg-cyan-500/20 border-cyan-400 text-cyan-300'
                             : isVIP
-                            ? 'bg-mc-amethyst/20 border-mc-amethyst text-mc-amethyst'
-                            : 'bg-mc-emerald/20 border-mc-emerald text-mc-emerald'
+                            ? 'bg-rose-500/20 border-rose-400 text-rose-300'
+                            : 'bg-emerald-500/20 border-emerald-400 text-emerald-300'
                         }`}>
                           ✓
                         </span>
-                        <span className="text-slate-300 leading-snug font-light">{feature}</span>
+                        <span className="text-slate-200 leading-snug font-light">{feature}</span>
                       </div>
                     ))}
                   </div>
@@ -99,10 +118,10 @@ export default function PricingSection({ onSelectTier }) {
                   onClick={() => onSelectTier(tier)}
                   className={`w-full py-3.5 text-xs uppercase tracking-wider flex items-center justify-center gap-2 ${
                     isDiamond
-                      ? 'btn-voxel-diamond'
+                      ? 'btn-voxel-diamond shadow-[0_0_20px_rgba(6,182,212,0.35)]'
                       : isVIP
-                      ? 'btn-voxel-redstone'
-                      : 'btn-voxel-emerald'
+                      ? 'btn-voxel-redstone shadow-[0_0_20px_rgba(244,63,94,0.35)]'
+                      : 'btn-voxel-emerald shadow-[0_0_20px_rgba(16,185,129,0.35)]'
                   }`}
                 >
                   <span>[SELECT & REGISTER]</span>

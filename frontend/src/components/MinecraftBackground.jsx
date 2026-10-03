@@ -83,21 +83,21 @@ export default function MinecraftBackground() {
     const goldTex = createOreTexture('#161d2b', '#fbbf24', '#fef08a');
     const deepslateTex = createOreTexture('#121722', '#2a3449', '#1e2638');
 
-    // Lights
-    const ambientLight = new THREE.AmbientLight(0xffffff, 0.8);
+    // Natural Sunlit Lights & Vibrant Emerald / Redstone Glows
+    const ambientLight = new THREE.AmbientLight(0xffffff, 1.1);
     scene.add(ambientLight);
 
-    const dirLight = new THREE.DirectionalLight(0xffffff, 1.2);
-    dirLight.position.set(10, 20, 15);
-    scene.add(dirLight);
+    const sunLight = new THREE.DirectionalLight(0xfff5dd, 1.6);
+    sunLight.position.set(12, 25, 18);
+    scene.add(sunLight);
 
-    const cyanLight = new THREE.PointLight(0x00f0ff, 2.5, 25);
-    cyanLight.position.set(-8, 5, 5);
-    scene.add(cyanLight);
+    const emeraldLight = new THREE.PointLight(0x10b981, 3.2, 35);
+    emeraldLight.position.set(10, 6, 8);
+    scene.add(emeraldLight);
 
-    const redLight = new THREE.PointLight(0xff2a4b, 2.5, 25);
-    redLight.position.set(8, -5, 5);
-    scene.add(redLight);
+    const redstoneLight = new THREE.PointLight(0xff2a4b, 3.0, 35);
+    redstoneLight.position.set(-10, -4, 8);
+    scene.add(redstoneLight);
 
     // 1. Floating 3D Voxel Ore Blocks in Background
     const blockCount = 28;
@@ -151,34 +151,35 @@ export default function MinecraftBackground() {
       blocks.push(mesh);
     }
 
-    // 2. Ambient Minecraft Voxel Particles (Enchanting / Portal Sparks)
-    const particleCount = 120;
-    const particleGeo = new THREE.BoxGeometry(0.1, 0.1, 0.1);
+    // 2. Ambient Minecraft Natural Voxel Particles (Emerald Slime & Redstone Embers)
+    const particleCount = 150;
+    const particleGeo = new THREE.BoxGeometry(0.12, 0.12, 0.12);
     const particleGroup = new THREE.Group();
     scene.add(particleGroup);
 
+    const particleColors = [0x10b981, 0x34d399, 0x4ade80, 0xff2a4b, 0xff4d6d, 0x00f0ff, 0xfbbf24];
     const particles = [];
     for (let i = 0; i < particleCount; i++) {
-      const isRedstone = Math.random() > 0.6;
+      const pColor = particleColors[Math.floor(Math.random() * particleColors.length)];
       const pMesh = new THREE.Mesh(
         particleGeo,
         new THREE.MeshBasicMaterial({
-          color: isRedstone ? 0xff2a4b : (Math.random() > 0.5 ? 0x00f0ff : 0x10b981),
+          color: pColor,
           transparent: true,
-          opacity: 0.4 + Math.random() * 0.5
+          opacity: 0.5 + Math.random() * 0.5
         })
       );
 
       pMesh.position.set(
-        (Math.random() - 0.5) * 30,
-        (Math.random() - 0.5) * 26,
-        -2 - Math.random() * 12
+        (Math.random() - 0.5) * 32,
+        (Math.random() - 0.5) * 28,
+        -2 - Math.random() * 14
       );
 
       pMesh.userData = {
-        vy: 0.006 + Math.random() * 0.012,
-        vx: (Math.random() - 0.5) * 0.004,
-        rotSpeed: (Math.random() - 0.5) * 0.03
+        vy: 0.007 + Math.random() * 0.014,
+        vx: (Math.random() - 0.5) * 0.005,
+        rotSpeed: (Math.random() - 0.5) * 0.04
       };
 
       particleGroup.add(pMesh);
@@ -198,7 +199,7 @@ export default function MinecraftBackground() {
       targetCameraX = mouseX * 2.5;
       targetCameraY = mouseY * 2.0;
 
-      // Parallax effect on the Minecraft character background
+      // Parallax effect on the natural Minecraft plains background
       if (bgImageRef.current) {
         const moveX = (e.clientX / window.innerWidth - 0.5) * -22;
         const moveY = (e.clientY / window.innerHeight - 0.5) * -16;
@@ -250,7 +251,7 @@ export default function MinecraftBackground() {
 
         if (p.position.y > 15) {
           p.position.y = -15;
-          p.position.x = (Math.random() - 0.5) * 30;
+          p.position.x = (Math.random() - 0.5) * 32;
         }
       });
 
@@ -271,36 +272,48 @@ export default function MinecraftBackground() {
 
   return (
     <div className="fixed inset-0 pointer-events-none z-0 overflow-hidden bg-[#070913]">
-      {/* 1. Cinematic Minecraft Characters Layer (Steve in Diamond Armor, Alex, and Enderman with Glowing Purple Eyes) */}
+      {/* 1. Natural Minecraft Sunlit Plains Background (Steve & Hopping Slimes) */}
       <div
         ref={bgImageRef}
         className="absolute inset-0 bg-cover bg-center transition-transform duration-300 ease-out pointer-events-none will-change-transform"
         style={{
-          backgroundImage: "url('/images/minecraft_characters_bg.jpg')",
-          backgroundPosition: 'center 25%',
-          opacity: 0.72,
-          filter: 'brightness(0.95) contrast(1.15)',
+          backgroundImage: "url('/images/minecraft_hero_plains.jpg')",
+          backgroundPosition: 'center 35%',
+          opacity: 0.88,
+          filter: 'brightness(1.05) contrast(1.12) saturate(1.18)',
         }}
       />
 
-      {/* 2. Atmospheric Bedrock Vignette & Dark Gradients (ensures foreground text and cards stay 100% crisp and readable) */}
+      {/* 2. Vibrant Red & Emerald Ambient Glow Orbs */}
       <div 
         className="absolute inset-0 pointer-events-none"
         style={{
-          background: 'linear-gradient(180deg, rgba(7, 9, 19, 0.45) 0%, rgba(11, 14, 20, 0.65) 50%, rgba(7, 9, 19, 0.90) 100%)'
-        }}
-      />
-      <div 
-        className="absolute inset-0 pointer-events-none"
-        style={{
-          background: 'radial-gradient(circle at 50% 45%, transparent 30%, rgba(11, 14, 20, 0.55) 75%, rgba(7, 9, 19, 0.95) 100%)'
+          background: `
+            radial-gradient(circle at 12% 75%, rgba(255, 42, 75, 0.22) 0%, transparent 55%),
+            radial-gradient(circle at 88% 30%, rgba(16, 185, 129, 0.25) 0%, transparent 55%),
+            radial-gradient(circle at 50% 12%, rgba(255, 235, 175, 0.12) 0%, transparent 60%)
+          `
         }}
       />
 
-      {/* 3. 3D WebGL Canvas (Floating 3D Voxel Ores & Nether/Ender Portal Particles) */}
+      {/* 3. Subtle Backdrop Vignette (ensures text, badges, and countdown HUD stay 100% crisp and readable) */}
+      <div 
+        className="absolute inset-0 pointer-events-none"
+        style={{
+          background: 'linear-gradient(180deg, rgba(7, 9, 19, 0.35) 0%, rgba(11, 14, 20, 0.50) 45%, rgba(7, 9, 19, 0.82) 100%)'
+        }}
+      />
+      <div 
+        className="absolute inset-0 pointer-events-none"
+        style={{
+          background: 'radial-gradient(circle at 50% 45%, transparent 35%, rgba(11, 14, 20, 0.45) 75%, rgba(7, 9, 19, 0.90) 100%)'
+        }}
+      />
+
+      {/* 4. 3D WebGL Canvas (Floating 3D Voxel Ores & Emerald Slime / Redstone Sparks) */}
       <canvas
         ref={canvasRef}
-        className="absolute inset-0 w-full h-full opacity-65 pointer-events-none"
+        className="absolute inset-0 w-full h-full opacity-75 pointer-events-none"
       />
     </div>
   );
