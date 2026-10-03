@@ -72,9 +72,9 @@ export default function Hero({ onOpenRegister }) {
             {eventSettings.edition} • Department of Data Science, Smt. CHM College
           </div>
 
-          <h1 className="text-3xl sm:text-5xl md:text-6xl lg:text-7xl font-black tracking-tight text-white leading-[1.1] break-words">
+          <h1 className="text-2xl sm:text-4xl md:text-5xl lg:text-6xl font-black tracking-tight text-white leading-[1.25] break-words font-mc">
             BUILD. CODE. <br />
-            <span className="text-transparent bg-clip-text bg-gradient-to-r from-emerald-400 via-teal-300 to-cyan-400 drop-shadow-[0_0_30px_rgba(16,185,129,0.55)] font-mc">
+            <span className="text-transparent bg-clip-text bg-gradient-to-r from-emerald-400 via-teal-300 to-cyan-400 drop-shadow-[0_0_30px_rgba(16,185,129,0.55)]">
               DOMINATE THE NEXUS.
             </span>
           </h1>

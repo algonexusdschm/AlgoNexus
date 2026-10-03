@@ -16,8 +16,8 @@ export default function PricingSection({ onSelectTier }) {
             <span>[EXPEDITION PASS TIERS]</span>
           </div>
 
-          <h2 className="text-3xl sm:text-5xl font-black text-white mb-3">
-            CHOOSE YOUR <span className="text-mc-diamond font-mc">EXPEDITION PASS</span>
+          <h2 className="text-2xl sm:text-4xl md:text-5xl font-black text-white mb-3 font-mc">
+            CHOOSE YOUR <span className="text-mc-diamond">EXPEDITION PASS</span>
           </h2>
           <p className="text-slate-400 text-xs sm:text-sm font-light">
             Secure your slot before registrations reach bedrock limits. Verified securely with Official UPI & GPay QR.

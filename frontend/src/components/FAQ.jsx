@@ -14,7 +14,7 @@ export default function FAQ() {
             <HelpCircle className="w-3.5 h-3.5" />
             <span>Got Questions?</span>
           </div>
-          <h2 className="text-3xl font-extrabold text-white">Frequently Asked Questions</h2>
+          <h2 className="text-2xl sm:text-3xl font-black text-white font-mc">Frequently Asked Questions</h2>
         </div>
 
         <div className="space-y-4">
