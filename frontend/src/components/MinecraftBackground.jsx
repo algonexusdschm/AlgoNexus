@@ -20,7 +20,7 @@ export default function MinecraftBackground() {
     renderer.setSize(window.innerWidth, window.innerHeight);
 
     const scene = new THREE.Scene();
-    scene.fog = new THREE.FogExp2(0x060912, 0.035);
+    scene.fog = new THREE.FogExp2(0x060a05, 0.030);
 
     const camera = new THREE.PerspectiveCamera(
       55,
@@ -30,24 +30,24 @@ export default function MinecraftBackground() {
     );
     camera.position.set(0, 0, 16);
 
-    // Dynamic Lighting for Doomsday Multiverse
-    const ambientLight = new THREE.AmbientLight(0x1a2236, 1.2);
+    // Ambient fill — warm ivory matching hall's ambient glow
+    const ambientLight = new THREE.AmbientLight(0x1c1a0e, 1.4);
     scene.add(ambientLight);
 
-    // Latverian Emerald Fortress Light (Right side)
-    const emeraldLight = new THREE.PointLight(0x10b981, 4.5, 45);
-    emeraldLight.position.set(12, 5, 8);
+    // Primary emerald rune glow (floor centre)
+    const emeraldLight = new THREE.PointLight(0x22c55e, 4.0, 50);
+    emeraldLight.position.set(0, -4, 10);
     scene.add(emeraldLight);
 
-    // Multiversal Incursion Rift Light (Upper left)
-    const cosmicRiftLight = new THREE.PointLight(0xa855f7, 4.0, 45);
-    cosmicRiftLight.position.set(-10, 8, 8);
-    scene.add(cosmicRiftLight);
+    // Left stained-glass warm gold beam
+    const goldBeamLeft = new THREE.PointLight(0xd97706, 3.5, 40);
+    goldBeamLeft.position.set(-10, 6, 8);
+    scene.add(goldBeamLeft);
 
-    // Golden Arcane Flare Light (Center rift)
-    const goldenFlareLight = new THREE.PointLight(0xf59e0b, 3.5, 35);
-    goldenFlareLight.position.set(-4, 6, 10);
-    scene.add(goldenFlareLight);
+    // Right stained-glass warm gold beam
+    const goldBeamRight = new THREE.PointLight(0xca8a04, 3.0, 38);
+    goldBeamRight.position.set(10, 6, 8);
+    scene.add(goldBeamRight);
 
     // ═══════════════════════════════════════════════════════════
     // 1. 3D FLOATING SHATTERED MULTIVERSAL CRYSTAL SHARDS (24 Shards)
@@ -134,26 +134,26 @@ export default function MinecraftBackground() {
     const colors = new Float32Array(particleCount * 3);
     const particleData = [];
 
-    const emeraldColor = new THREE.Color(0x10b981);
-    const goldColor = new THREE.Color(0xf59e0b);
-    const violetColor = new THREE.Color(0xa855f7);
-    const cyanColor = new THREE.Color(0x06b6d4);
+    const emeraldColor = new THREE.Color(0x22c55e);
+    const goldColor    = new THREE.Color(0xd97706);
+    const amberColor   = new THREE.Color(0xfbbf24);
+    const paleGold     = new THREE.Color(0xfde68a);
 
     for (let i = 0; i < particleCount; i++) {
-      // 50% emerald (from Latveria fortress), 50% gold/violet/cyan (from rift)
-      const isEmerald = i % 2 === 0;
+      // 55% emerald rune sparks (rising from floor), 45% gold/amber window motes
+      const isEmerald = i % 20 < 11;
       let x, y, z;
 
       if (isEmerald) {
-        // Latveria side (right)
-        x = 2 + Math.random() * 16;
-        y = -10 + Math.random() * 22;
-        z = -4 + Math.random() * 10;
+        // Concentrate rune sparks near center-floor, rising upward
+        x = (Math.random() - 0.5) * 18;
+        y = -12 + Math.random() * 20;
+        z = -2 + Math.random() * 10;
       } else {
-        // Rift side (left & center)
-        x = -18 + Math.random() * 22;
+        // Golden light motes drifting from the tall windows (flanks)
+        x = (Math.random() - 0.5) * 34;
         y = -4 + Math.random() * 18;
-        z = -6 + Math.random() * 12;
+        z = -6 + Math.random() * 10;
       }
 
       positions[i * 3] = x;
@@ -162,9 +162,9 @@ export default function MinecraftBackground() {
 
       let color;
       if (isEmerald) {
-        color = Math.random() > 0.4 ? emeraldColor : cyanColor;
+        color = Math.random() > 0.45 ? emeraldColor : amberColor;
       } else {
-        color = Math.random() > 0.4 ? goldColor : violetColor;
+        color = Math.random() > 0.5 ? goldColor : paleGold;
       }
 
       colors[i * 3] = color.r;
@@ -201,28 +201,30 @@ export default function MinecraftBackground() {
     // ═══════════════════════════════════════════════════════════
     // 3. 3D INCURSION RIFT ENERGY PULSE RINGS
     // ═══════════════════════════════════════════════════════════
+    // Arcane rune ring — warm gold (hovers above floor runes)
     const ringGeo1 = new THREE.TorusGeometry(3.5, 0.04, 16, 100);
     const ringMat1 = new THREE.MeshBasicMaterial({
-      color: 0xf59e0b,
+      color: 0xd97706,
       transparent: true,
-      opacity: 0.35,
+      opacity: 0.28,
       blending: THREE.AdditiveBlending,
     });
     const riftRing1 = new THREE.Mesh(ringGeo1, ringMat1);
-    riftRing1.position.set(-6, 6, 2);
-    riftRing1.rotation.set(0.4, 0.3, 0);
+    riftRing1.position.set(0, -3, 4);
+    riftRing1.rotation.set(1.2, 0.2, 0);
     scene.add(riftRing1);
 
-    const ringGeo2 = new THREE.TorusGeometry(5.2, 0.03, 16, 100);
+    // Outer rune ring — deep emerald (traces the outer rune circle)
+    const ringGeo2 = new THREE.TorusGeometry(5.5, 0.03, 16, 100);
     const ringMat2 = new THREE.MeshBasicMaterial({
-      color: 0x10b981,
+      color: 0x16a34a,
       transparent: true,
-      opacity: 0.25,
+      opacity: 0.22,
       blending: THREE.AdditiveBlending,
     });
     const riftRing2 = new THREE.Mesh(ringGeo2, ringMat2);
-    riftRing2.position.set(-6, 6, 1);
-    riftRing2.rotation.set(-0.3, 0.5, 0);
+    riftRing2.position.set(0, -3.5, 3);
+    riftRing2.rotation.set(1.2, -0.2, 0);
     scene.add(riftRing2);
 
     // ═══════════════════════════════════════════════════════════
@@ -329,49 +331,50 @@ export default function MinecraftBackground() {
   }, []);
 
   return (
-    <div className="fixed inset-0 pointer-events-none z-0 overflow-hidden bg-[#070913]">
-      {/* 1. Avengers Doomsday Multiverse Incursion Wallpaper */}
+    <div className="fixed inset-0 pointer-events-none z-0 overflow-hidden bg-[#080a07]">
+      {/* 1. Arcane Hall Wallpaper with interactive parallax */}
       <div
         ref={bgImageRef}
         className="absolute inset-0 bg-cover bg-center transition-transform duration-300 ease-out pointer-events-none will-change-transform"
         style={{
-          backgroundImage: "url('/images/doomsday_multiverse_rift.jpg'), url('https://vcswkusqdkyhyanytjlc.supabase.co/storage/v1/object/public/organizer-assets/wallpapers/doomsday_multiverse_rift.jpg')",
-          backgroundPosition: 'center 40%',
-          opacity: 0.94,
-          filter: 'brightness(1.04) contrast(1.15) saturate(1.15)',
+          backgroundImage: "url('/images/arcane_hall_bg.jpg')",
+          backgroundPosition: 'center 30%',
+          opacity: 0.92,
+          filter: 'brightness(0.96) contrast(1.08) saturate(1.10)',
         }}
       />
 
-      {/* 2. Latverian Emerald & Multiversal Incursion Glow Orbs */}
-      <div 
+      {/* 2. Subtle ambient glow orbs — echo the hall's gold windows & emerald runes */}
+      <div
         className="absolute inset-0 pointer-events-none"
         style={{
           background: `
-            radial-gradient(circle at 80% 35%, rgba(16, 185, 129, 0.28) 0%, transparent 50%),
-            radial-gradient(circle at 35% 25%, rgba(168, 85, 247, 0.20) 0%, transparent 45%),
-            radial-gradient(circle at 45% 30%, rgba(234, 179, 8, 0.16) 0%, transparent 35%)
+            radial-gradient(ellipse 70% 45% at 50% 72%, rgba(34, 197, 94, 0.18) 0%, transparent 55%),
+            radial-gradient(ellipse 55% 55% at 20% 40%, rgba(217, 119, 6, 0.14) 0%, transparent 50%),
+            radial-gradient(ellipse 55% 55% at 80% 40%, rgba(202, 138, 4, 0.14) 0%, transparent 50%)
           `
         }}
       />
 
-      {/* 3. Subtle Backdrop Vignette (keeps text and cards 100% crisp and readable) */}
-      <div 
+      {/* 3. Directional vignette — darkens top & bottom so navbar and footer text stays sharp */}
+      <div
         className="absolute inset-0 pointer-events-none"
         style={{
-          background: 'linear-gradient(180deg, rgba(7, 9, 19, 0.35) 0%, rgba(11, 14, 20, 0.45) 45%, rgba(7, 9, 19, 0.85) 100%)'
+          background: 'linear-gradient(180deg, rgba(4, 6, 4, 0.72) 0%, rgba(8, 10, 7, 0.20) 22%, rgba(8, 10, 7, 0.20) 72%, rgba(4, 6, 4, 0.82) 100%)'
         }}
       />
-      <div 
+      {/* Side vignette — subtly frames the hall's wide composition */}
+      <div
         className="absolute inset-0 pointer-events-none"
         style={{
-          background: 'radial-gradient(circle at 50% 45%, transparent 35%, rgba(11, 14, 20, 0.45) 75%, rgba(7, 9, 19, 0.90) 100%)'
+          background: 'radial-gradient(ellipse 80% 90% at 50% 42%, transparent 40%, rgba(4, 6, 4, 0.55) 80%, rgba(4, 6, 4, 0.80) 100%)'
         }}
       />
 
-      {/* 4. 3D WebGL Canvas (Multiversal Crystal Shards & Arcane Particles) */}
+      {/* 4. 3D WebGL Canvas — arcane crystal shards & gold-emerald particle motes */}
       <canvas
         ref={canvasRef}
-        className="absolute inset-0 w-full h-full opacity-90 pointer-events-none"
+        className="absolute inset-0 w-full h-full opacity-75 pointer-events-none"
       />
     </div>
   );
