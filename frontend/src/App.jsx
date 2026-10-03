@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import Navbar from './components/Navbar';
 import Hero from './components/Hero';
+import DoomsdayCharacters from './components/DoomsdayCharacters';
 import Announcement from './components/Announcement';
 import Gallery from './components/Gallery';
 import PricingSection from './components/PricingSection';
@@ -83,7 +84,7 @@ function MainEventApp() {
   // Public Event Website
   return (
     <div className="min-h-screen bg-[#070913] text-slate-100 flex flex-col relative selection:bg-cyan-500/30 overflow-x-hidden">
-      {/* 3D Minecraft Interactive Voxel World Background */}
+      {/* 3D Multiverse Incursion World Background */}
       <MinecraftBackground />
 
       {/* Top Navbar with Admin Portal Trigger */}
@@ -94,10 +95,13 @@ function MainEventApp() {
 
       {/* Main Content Sections */}
       <main className="flex-1 relative z-10">
-        {/* 1. Hero Section with Live Countdown & Highlights */}
+        {/* 1. Hero Section with Live Countdown, Highlights & Rotating Cosmic Sorcerer */}
         <Hero onOpenRegister={() => handleOpenRegister(pricingTiers[0])} />
 
-        {/* 2. Official Announcement Section for This Year's Event */}
+        {/* 2. Champions of the Doomsday Nexus Roster */}
+        <DoomsdayCharacters onSelectFaction={() => handleOpenRegister(pricingTiers[0])} />
+
+        {/* 3. Official Announcement Section for This Year's Event */}
         <Announcement onOpenRegister={() => handleOpenRegister(pricingTiers[0])} />
 
         {/* 3. Photo Gallery of Last Year's Event with Lightbox */}

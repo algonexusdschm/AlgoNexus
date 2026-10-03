@@ -163,3 +163,102 @@
 ::-webkit-scrollbar-thumb:hover {
   background: #00f0ff;
 }
+
+/* ═══════════════════════════════════════════════════════════
+   AVENGERS DOOMSDAY & SACRED GEOMETRY ROTATING MANDALAS
+   ═══════════════════════════════════════════════════════════ */
+
+@keyframes spinClockwise {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+@keyframes spinCounterClockwise {
+  from {
+    transform: rotate(360deg);
+  }
+  to {
+    transform: rotate(0deg);
+  }
+}
+
+@keyframes cosmicLevitate {
+  0%, 100% {
+    transform: translateY(0px) rotate(0deg);
+  }
+  50% {
+    transform: translateY(-10px) rotate(0.5deg);
+  }
+}
+
+@keyframes arcaneGlowPulse {
+  0%, 100% {
+    filter: drop-shadow(0 0 12px rgba(245, 158, 11, 0.75)) drop-shadow(0 0 25px rgba(234, 88, 12, 0.5));
+    opacity: 0.92;
+  }
+  50% {
+    filter: drop-shadow(0 0 22px rgba(251, 191, 36, 0.95)) drop-shadow(0 0 45px rgba(249, 115, 22, 0.75));
+    opacity: 1;
+  }
+}
+
+@keyframes emeraldAuraPulse {
+  0%, 100% {
+    filter: drop-shadow(0 0 15px rgba(16, 185, 129, 0.6)) drop-shadow(0 0 30px rgba(5, 150, 105, 0.35));
+  }
+  50% {
+    filter: drop-shadow(0 0 28px rgba(52, 211, 153, 0.85)) drop-shadow(0 0 50px rgba(16, 185, 129, 0.55));
+  }
+}
+
+.animate-spin-clockwise {
+  animation: spinClockwise 18s linear infinite;
+}
+
+.animate-spin-counter {
+  animation: spinCounterClockwise 14s linear infinite;
+}
+
+.animate-spin-fast {
+  animation: spinClockwise 7s linear infinite;
+}
+
+.animate-spin-fast-counter {
+  animation: spinCounterClockwise 8s linear infinite;
+}
+
+.animate-cosmic-levitate {
+  animation: cosmicLevitate 6s ease-in-out infinite;
+}
+
+.animate-arcane-pulse {
+  animation: arcaneGlowPulse 3s ease-in-out infinite;
+}
+
+.animate-emerald-pulse {
+  animation: emeraldAuraPulse 3.5s ease-in-out infinite;
+}
+
+/* Cinematic Doomsday Glass Card */
+.doomsday-glass-card {
+  background: linear-gradient(135deg, rgba(17, 24, 39, 0.85) 0%, rgba(10, 14, 23, 0.92) 100%);
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  backdrop-filter: blur(16px);
+  box-shadow: 
+    0 10px 30px -10px rgba(0, 0, 0, 0.8),
+    inset 0 1px 0 rgba(255, 255, 255, 0.15);
+  transition: all 0.35s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.doomsday-glass-card:hover {
+  border-color: rgba(16, 185, 129, 0.5);
+  box-shadow: 
+    0 20px 40px -15px rgba(16, 185, 129, 0.25),
+    0 0 25px rgba(16, 185, 129, 0.15),
+    inset 0 1px 0 rgba(52, 211, 153, 0.3);
+}
+

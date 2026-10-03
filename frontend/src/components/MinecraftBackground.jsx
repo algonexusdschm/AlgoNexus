@@ -20,8 +20,7 @@ export default function MinecraftBackground() {
     renderer.setSize(window.innerWidth, window.innerHeight);
 
     const scene = new THREE.Scene();
-    // Subtle atmospheric fog for depth
-    scene.fog = new THREE.FogExp2(0x0b0e14, 0.04);
+    scene.fog = new THREE.FogExp2(0x060912, 0.035);
 
     const camera = new THREE.PerspectiveCamera(
       55,
@@ -29,596 +28,309 @@ export default function MinecraftBackground() {
       0.1,
       100
     );
-    camera.position.set(0, 0, 15);
+    camera.position.set(0, 0, 16);
 
-    // Helpers to create procedural pixelated 16x16 Minecraft ore textures
-    function createOreTexture(baseHex, spotHex, glowHex) {
-      const c = document.createElement('canvas');
-      c.width = 16;
-      c.height = 16;
-      const ctx = c.getContext('2d');
-
-      // Base deepslate
-      ctx.fillStyle = baseHex;
-      ctx.fillRect(0, 0, 16, 16);
-
-      // Pixel noise
-      for (let x = 0; x < 16; x++) {
-        for (let y = 0; y < 16; y++) {
-          if (Math.random() > 0.65) {
-            ctx.fillStyle = Math.random() > 0.5 ? '#1a2230' : '#0f141f';
-            ctx.fillRect(x, y, 1, 1);
-          }
-        }
-      }
-
-      // Ore spots
-      ctx.fillStyle = spotHex;
-      const spots = [
-        [3, 4], [4, 4], [10, 3], [11, 4],
-        [7, 9], [8, 9], [8, 10], [3, 12], [12, 11]
-      ];
-      spots.forEach(([x, y]) => {
-        ctx.fillRect(x, y, 1, 1);
-        if (Math.random() > 0.5) {
-          ctx.fillStyle = glowHex;
-          ctx.fillRect(x + 1, y, 1, 1);
-          ctx.fillStyle = spotHex;
-        }
-      });
-
-      // Voxel bevel border
-      ctx.strokeStyle = 'rgba(255,255,255,0.12)';
-      ctx.strokeRect(0.5, 0.5, 15, 15);
-
-      const texture = new THREE.CanvasTexture(c);
-      texture.magFilter = THREE.NearestFilter;
-      texture.minFilter = THREE.NearestFilter;
-      return texture;
-    }
-
-    const diamondTex = createOreTexture('#161d2b', '#00f0ff', '#38bdf8');
-    const redstoneTex = createOreTexture('#161d2b', '#ff2a4b', '#ff7185');
-    const emeraldTex = createOreTexture('#161d2b', '#10b981', '#34d399');
-    const goldTex = createOreTexture('#161d2b', '#fbbf24', '#fef08a');
-    const deepslateTex = createOreTexture('#121722', '#2a3449', '#1e2638');
-
-    // Natural Sunlit Lights & Radiant Slime Green Glow
-    const ambientLight = new THREE.AmbientLight(0xffffff, 1.2);
+    // Dynamic Lighting for Doomsday Multiverse
+    const ambientLight = new THREE.AmbientLight(0x1a2236, 1.2);
     scene.add(ambientLight);
 
-    const sunLight = new THREE.DirectionalLight(0xfff7e6, 1.8);
-    sunLight.position.set(12, 28, 16);
-    scene.add(sunLight);
+    // Latverian Emerald Fortress Light (Right side)
+    const emeraldLight = new THREE.PointLight(0x10b981, 4.5, 45);
+    emeraldLight.position.set(12, 5, 8);
+    scene.add(emeraldLight);
 
-    const slimeGreenLight = new THREE.PointLight(0x52e043, 3.5, 40);
-    slimeGreenLight.position.set(0, -2, 10);
-    scene.add(slimeGreenLight);
+    // Multiversal Incursion Rift Light (Upper left)
+    const cosmicRiftLight = new THREE.PointLight(0xa855f7, 4.0, 45);
+    cosmicRiftLight.position.set(-10, 8, 8);
+    scene.add(cosmicRiftLight);
 
-    // Helpers to create authentic Minecraft Slime textures
-    function createSlimeFaceTexture() {
-      const c = document.createElement('canvas');
-      c.width = 64;
-      c.height = 64;
-      const ctx = c.getContext('2d');
+    // Golden Arcane Flare Light (Center rift)
+    const goldenFlareLight = new THREE.PointLight(0xf59e0b, 3.5, 35);
+    goldenFlareLight.position.set(-4, 6, 10);
+    scene.add(goldenFlareLight);
 
-      // Slime green base
-      ctx.fillStyle = '#44aa3b';
-      ctx.fillRect(0, 0, 64, 64);
-
-      // Pixel texture variation
-      for (let x = 0; x < 64; x += 8) {
-        for (let y = 0; y < 64; y += 8) {
-          if (Math.random() > 0.45) {
-            ctx.fillStyle = Math.random() > 0.5 ? '#53be48' : '#399632';
-            ctx.fillRect(x, y, 8, 8);
-          }
-        }
-      }
-
-      // Left & Right Eyes (Minecraft pixel slime eyes)
-      ctx.fillStyle = '#173612';
-      ctx.fillRect(12, 18, 14, 14);
-      ctx.fillRect(38, 18, 14, 14);
-
-      // Eye white highlights
-      ctx.fillStyle = '#ffffff';
-      ctx.fillRect(14, 20, 6, 6);
-      ctx.fillRect(40, 20, 6, 6);
-
-      // Cute Slime Mouth
-      ctx.fillStyle = '#173612';
-      ctx.fillRect(26, 38, 12, 6);
-
-      const texture = new THREE.CanvasTexture(c);
-      texture.magFilter = THREE.NearestFilter;
-      texture.minFilter = THREE.NearestFilter;
-      return texture;
-    }
-
-    function createSlimeBodyTexture() {
-      const c = document.createElement('canvas');
-      c.width = 32;
-      c.height = 32;
-      const ctx = c.getContext('2d');
-      ctx.fillStyle = '#48b73e';
-      ctx.fillRect(0, 0, 32, 32);
-      for (let x = 0; x < 32; x += 4) {
-        for (let y = 0; y < 32; y += 4) {
-          if (Math.random() > 0.5) {
-            ctx.fillStyle = Math.random() > 0.5 ? '#57c74b' : '#3fa336';
-            ctx.fillRect(x, y, 4, 4);
-          }
-        }
-      }
-      const texture = new THREE.CanvasTexture(c);
-      texture.magFilter = THREE.NearestFilter;
-      texture.minFilter = THREE.NearestFilter;
-      return texture;
-    }
-
-    // 1. Animated Hopping Minecraft Slimes System
-    const slimeFaceTex = createSlimeFaceTexture();
-    const slimeBodyTex = createSlimeBodyTexture();
-
-    const slimeGroup = new THREE.Group();
-    scene.add(slimeGroup);
-
-    // 6 playful Minecraft slimes (Big, Medium, and Baby slimes)
-    const slimeConfigs = [
-      { size: 1.5, startX: -9, startZ: -2.5, groundY: -5.6, jumpHeight: 3.0, hopSpeed: 2.3, dir: 1 },
-      { size: 1.1, startX: -3.5, startZ: -1.5, groundY: -5.3, jumpHeight: 2.4, hopSpeed: 2.7, dir: 1 },
-      { size: 0.65, startX: 2.5, startZ: -0.8, groundY: -5.0, jumpHeight: 1.8, hopSpeed: 3.3, dir: 1 },
-      { size: 1.35, startX: 9.5, startZ: -3.2, groundY: -5.7, jumpHeight: 2.7, hopSpeed: 2.5, dir: -1 },
-      { size: 0.85, startX: -6.5, startZ: -4.5, groundY: -6.0, jumpHeight: 2.1, hopSpeed: 2.9, dir: 1 },
-      { size: 0.55, startX: 4.5, startZ: -5.0, groundY: -6.2, jumpHeight: 1.6, hopSpeed: 3.5, dir: -1 }
+    // ═══════════════════════════════════════════════════════════
+    // 1. 3D FLOATING SHATTERED MULTIVERSAL CRYSTAL SHARDS (24 Shards)
+    // ═══════════════════════════════════════════════════════════
+    const shardGeometries = [
+      new THREE.OctahedronGeometry(1, 0),
+      new THREE.TetrahedronGeometry(1.2, 0),
+      new THREE.IcosahedronGeometry(0.9, 0),
     ];
 
-    const slimes = [];
-
-    slimeConfigs.forEach((cfg, idx) => {
-      const slime = new THREE.Group();
-
-      // Outer Translucent Gelatinous Box
-      const outerGeo = new THREE.BoxGeometry(cfg.size, cfg.size, cfg.size);
-      const outerMat = new THREE.MeshStandardMaterial({
-        color: 0x68e35a,
-        transparent: true,
-        opacity: 0.62,
-        roughness: 0.1,
-        metalness: 0.05
-      });
-      const outerMesh = new THREE.Mesh(outerGeo, outerMat);
-      slime.add(outerMesh);
-
-      // Outer bevel wire for authentic voxel block feel
-      const outerWire = new THREE.LineSegments(
-        new THREE.EdgesGeometry(outerGeo),
-        new THREE.LineBasicMaterial({ color: 0x8ef581, transparent: true, opacity: 0.45 })
-      );
-      slime.add(outerWire);
-
-      // Inner Core Box with Face on front
-      const innerSize = cfg.size * 0.58;
-      const innerGeo = new THREE.BoxGeometry(innerSize, innerSize, innerSize);
-      const innerBodyMat = new THREE.MeshStandardMaterial({ map: slimeBodyTex, roughness: 0.35 });
-      const innerFaceMat = new THREE.MeshStandardMaterial({ map: slimeFaceTex, roughness: 0.35 });
-      const innerMats = [
-        innerBodyMat, // +x
-        innerBodyMat, // -x
-        innerBodyMat, // +y
-        innerBodyMat, // -y
-        innerFaceMat, // +z (front)
-        innerBodyMat  // -z
-      ];
-      const innerMesh = new THREE.Mesh(innerGeo, innerMats);
-      innerMesh.position.z = cfg.size * 0.05;
-      slime.add(innerMesh);
-
-      // Ground Drop Shadow (squashes & stretches with hop)
-      const shadowGeo = new THREE.PlaneGeometry(cfg.size * 1.3, cfg.size * 1.3);
-      const shadowMat = new THREE.MeshBasicMaterial({
-        color: 0x072007,
-        transparent: true,
-        opacity: 0.4,
-        depthWrite: false
-      });
-      const shadow = new THREE.Mesh(shadowGeo, shadowMat);
-      shadow.rotation.x = -Math.PI / 2;
-      shadow.position.set(cfg.startX, cfg.groundY, cfg.startZ);
-      scene.add(shadow);
-
-      slime.position.set(cfg.startX, cfg.groundY + cfg.size * 0.5, cfg.startZ);
-
-      slimes.push({
-        group: slime,
-        outerMesh,
-        shadow,
-        cfg,
-        baseY: cfg.groundY + cfg.size * 0.5,
-        x: cfg.startX,
-        z: cfg.startZ,
-        hopOffset: idx * 1.15
-      });
-
-      slimeGroup.add(slime);
-    });
-
-    // Helpers to create Allay textures
-    function createAllayHeadTexture() {
-      const c = document.createElement('canvas');
-      c.width = 32;
-      c.height = 32;
-      const ctx = c.getContext('2d');
-      ctx.fillStyle = '#4cc7f5';
-      ctx.fillRect(0, 0, 32, 32);
-      for (let x = 0; x < 32; x += 4) {
-        for (let y = 0; y < 32; y += 4) {
-          if (Math.random() > 0.5) {
-            ctx.fillStyle = Math.random() > 0.5 ? '#65d5fc' : '#39b5e3';
-            ctx.fillRect(x, y, 4, 4);
-          }
-        }
-      }
-      // Eyes (deep navy with light cyan pixel shine)
-      ctx.fillStyle = '#0f2942';
-      ctx.fillRect(6, 12, 6, 8);
-      ctx.fillRect(20, 12, 6, 8);
-      ctx.fillStyle = '#c5f2ff';
-      ctx.fillRect(8, 14, 3, 4);
-      ctx.fillRect(22, 14, 3, 4);
-
-      const texture = new THREE.CanvasTexture(c);
-      texture.magFilter = THREE.NearestFilter;
-      texture.minFilter = THREE.NearestFilter;
-      return texture;
-    }
-
-    // Helpers to create Ghast texture
-    function createGhastTexture() {
-      const c = document.createElement('canvas');
-      c.width = 64;
-      c.height = 64;
-      const ctx = c.getContext('2d');
-      // Pale white/light grey ghostly base
-      ctx.fillStyle = '#f0f3f6';
-      ctx.fillRect(0, 0, 64, 64);
-      for (let x = 0; x < 64; x += 8) {
-        for (let y = 0; y < 64; y += 8) {
-          if (Math.random() > 0.45) {
-            ctx.fillStyle = Math.random() > 0.5 ? '#ffffff' : '#e0e6ed';
-            ctx.fillRect(x, y, 8, 8);
-          }
-        }
-      }
-      // Ghast Face: Closed/crying eyes & sad mouth
-      ctx.fillStyle = '#4a5568';
-      ctx.fillRect(12, 22, 12, 6);
-      ctx.fillRect(40, 22, 12, 6);
-      ctx.fillStyle = '#718096';
-      ctx.fillRect(16, 28, 4, 12);
-      ctx.fillRect(44, 28, 4, 12);
-      ctx.fillStyle = '#4a5568';
-      ctx.fillRect(26, 42, 12, 8);
-
-      const texture = new THREE.CanvasTexture(c);
-      texture.magFilter = THREE.NearestFilter;
-      texture.minFilter = THREE.NearestFilter;
-      return texture;
-    }
-
-    // 2. Floating Animated Allays Group
-    const allays = [];
-    const allayGroup = new THREE.Group();
-    scene.add(allayGroup);
-
-    const allayHeadTex = createAllayHeadTexture();
-
-    const allayConfigs = [
-      { startX: -7.5, startY: 2.4, startZ: 2, scale: 0.9, speed: 1.1, radiusX: 3.2, radiusY: 1.1 },
-      { startX: 6.8, startY: 3.5, startZ: 0.5, scale: 0.95, speed: 0.95, radiusX: 3.8, radiusY: 1.4 },
-      { startX: -1.2, startY: 4.5, startZ: -2.5, scale: 0.8, speed: 1.3, radiusX: 2.6, radiusY: 0.9 }
-    ];
-
-    allayConfigs.forEach((cfg, idx) => {
-      const allay = new THREE.Group();
-
-      // Head
-      const headGeo = new THREE.BoxGeometry(0.36 * cfg.scale, 0.36 * cfg.scale, 0.36 * cfg.scale);
-      const headMat = new THREE.MeshStandardMaterial({
-        map: allayHeadTex,
-        roughness: 0.3,
-        emissive: 0x38bdf8,
-        emissiveIntensity: 0.28
-      });
-      const headMesh = new THREE.Mesh(headGeo, headMat);
-      headMesh.position.y = 0.28 * cfg.scale;
-      allay.add(headMesh);
-
-      // Torso & Dress
-      const bodyGeo = new THREE.BoxGeometry(0.24 * cfg.scale, 0.38 * cfg.scale, 0.2 * cfg.scale);
-      const bodyMat = new THREE.MeshStandardMaterial({
-        color: 0x2baae2,
-        roughness: 0.4,
-        emissive: 0x0284c7,
-        emissiveIntensity: 0.3
-      });
-      const bodyMesh = new THREE.Mesh(bodyGeo, bodyMat);
-      bodyMesh.position.y = -0.05 * cfg.scale;
-      allay.add(bodyMesh);
-
-      // Translucent Fluttering Wings
-      const wingGeo = new THREE.PlaneGeometry(0.42 * cfg.scale, 0.28 * cfg.scale);
-      const wingMat = new THREE.MeshBasicMaterial({
-        color: 0xa5f3fc,
-        transparent: true,
-        opacity: 0.8,
-        side: THREE.DoubleSide
-      });
-
-      const wingL = new THREE.Mesh(wingGeo, wingMat);
-      wingL.position.set(-0.16 * cfg.scale, 0.05 * cfg.scale, -0.12 * cfg.scale);
-      allay.add(wingL);
-
-      const wingR = new THREE.Mesh(wingGeo, wingMat);
-      wingR.position.set(0.16 * cfg.scale, 0.05 * cfg.scale, -0.12 * cfg.scale);
-      allay.add(wingR);
-
-      // Held item (tiny sparkling emerald)
-      const itemGeo = new THREE.BoxGeometry(0.12 * cfg.scale, 0.12 * cfg.scale, 0.12 * cfg.scale);
-      const itemMat = new THREE.MeshStandardMaterial({
-        color: 0x34d399,
-        emissive: 0x10b981,
-        emissiveIntensity: 0.7
-      });
-      const itemMesh = new THREE.Mesh(itemGeo, itemMat);
-      itemMesh.position.set(0, -0.1 * cfg.scale, 0.16 * cfg.scale);
-      allay.add(itemMesh);
-
-      allay.position.set(cfg.startX, cfg.startY, cfg.startZ);
-
-      allays.push({
-        group: allay,
-        wingL,
-        wingR,
-        cfg,
-        timeOffset: idx * 2.2
-      });
-
-      allayGroup.add(allay);
-    });
-
-    // 3. One Majestic Floating Ghast in the High Sky
-    const ghastTex = createGhastTexture();
-    const ghastGroup = new THREE.Group();
-    scene.add(ghastGroup);
-
-    // Large Cubic Body
-    const ghastBodyGeo = new THREE.BoxGeometry(2.3, 2.3, 2.3);
-    const ghastBodyMat = new THREE.MeshStandardMaterial({
-      map: ghastTex,
-      roughness: 0.45,
+    const glassMaterial = new THREE.MeshPhysicalMaterial({
+      color: 0xc7d2fe,
+      transmission: 0.88,
+      opacity: 0.85,
       transparent: true,
-      opacity: 0.94
-    });
-    const ghastBody = new THREE.Mesh(ghastBodyGeo, ghastBodyMat);
-    ghastGroup.add(ghastBody);
-
-    // 9 Drooping Tentacles in 3x3 grid underneath the body
-    const tentacles = [];
-    const tentacleMat = new THREE.MeshStandardMaterial({
-      color: 0xe5e9f0,
-      roughness: 0.5,
-      transparent: true,
-      opacity: 0.9
+      roughness: 0.08,
+      metalness: 0.15,
+      clearcoat: 1.0,
+      clearcoatRoughness: 0.1,
+      ior: 1.52,
+      reflectivity: 0.9,
     });
 
-    for (let row = -1; row <= 1; row++) {
-      for (let col = -1; col <= 1; col++) {
-        const tentLength = 1.0 + (Math.abs(row) + Math.abs(col)) * 0.25;
-        const tentGeo = new THREE.BoxGeometry(0.18, tentLength, 0.18);
-        tentGeo.translate(0, -tentLength / 2, 0);
+    const shards = [];
+    const shardCount = 24;
 
-        const tentMesh = new THREE.Mesh(tentGeo, tentacleMat);
-        tentMesh.position.set(col * 0.65, -1.15, row * 0.65);
-        ghastGroup.add(tentMesh);
-        tentacles.push({ mesh: tentMesh, offset: (row + 1) * 3 + (col + 1) });
-      }
-    }
+    for (let i = 0; i < shardCount; i++) {
+      const geo = shardGeometries[i % shardGeometries.length];
+      const shard = new THREE.Mesh(geo, glassMaterial);
 
-    ghastGroup.position.set(-14, 5.2, -6);
+      // Distribute along the upper rift and across the sky
+      const isRiftCluster = i < 16;
+      const x = isRiftCluster ? (Math.random() - 0.7) * 22 : (Math.random() - 0.5) * 32;
+      const y = isRiftCluster ? 1 + Math.random() * 10 : (Math.random() - 0.3) * 16;
+      const z = -6 + Math.random() * 12;
 
-    // 4. Ambient Natural Plains Particles (Sparks & Spores)
-    const particleCount = 120;
-    const particleGeo = new THREE.BoxGeometry(0.12, 0.12, 0.12);
-    const particleGroup = new THREE.Group();
-    scene.add(particleGroup);
+      shard.position.set(x, y, z);
+      const scale = 0.35 + Math.random() * 0.75;
+      shard.scale.set(scale, scale * (0.8 + Math.random() * 1.5), scale * 0.5);
 
-    const particleColors = [0x52e043, 0x68e35a, 0x8ef581, 0x00f0ff, 0xfbbf24];
-    const particles = [];
-    for (let i = 0; i < particleCount; i++) {
-      const pColor = particleColors[Math.floor(Math.random() * particleColors.length)];
-      const pMesh = new THREE.Mesh(
-        particleGeo,
-        new THREE.MeshBasicMaterial({
-          color: pColor,
-          transparent: true,
-          opacity: 0.45 + Math.random() * 0.45
-        })
+      shard.rotation.set(
+        Math.random() * Math.PI,
+        Math.random() * Math.PI,
+        Math.random() * Math.PI
       );
 
-      pMesh.position.set(
-        (Math.random() - 0.5) * 32,
-        (Math.random() - 0.5) * 26,
-        -2 - Math.random() * 12
-      );
-
-      pMesh.userData = {
-        vy: 0.006 + Math.random() * 0.012,
-        vx: (Math.random() - 0.5) * 0.005,
-        rotSpeed: (Math.random() - 0.5) * 0.04
+      shard.userData = {
+        baseX: x,
+        baseY: y,
+        baseZ: z,
+        rotSpeedX: (Math.random() - 0.5) * 0.015,
+        rotSpeedY: (Math.random() - 0.5) * 0.02,
+        rotSpeedZ: (Math.random() - 0.5) * 0.01,
+        bobSpeed: 0.8 + Math.random() * 1.2,
+        bobAmp: 0.2 + Math.random() * 0.4,
+        phase: Math.random() * Math.PI * 2,
       };
 
-      particleGroup.add(pMesh);
-      particles.push(pMesh);
+      scene.add(shard);
+      shards.push(shard);
     }
 
-    // Mouse Parallax & Scroll Reactivity
+    // ═══════════════════════════════════════════════════════════
+    // 2. 3D SWIRLING ARCANE PARTICLES & COSMIC EMBERS (1,500)
+    // ═══════════════════════════════════════════════════════════
+    function createGlowParticleTexture() {
+      const c = document.createElement('canvas');
+      c.width = 64;
+      c.height = 64;
+      const ctx = c.getContext('2d');
+      const grad = ctx.createRadialGradient(32, 32, 0, 32, 32, 32);
+      grad.addColorStop(0, 'rgba(255, 255, 255, 1)');
+      grad.addColorStop(0.3, 'rgba(254, 240, 138, 0.85)');
+      grad.addColorStop(0.7, 'rgba(245, 158, 11, 0.4)');
+      grad.addColorStop(1, 'rgba(245, 158, 11, 0)');
+      ctx.fillStyle = grad;
+      ctx.fillRect(0, 0, 64, 64);
+      return new THREE.CanvasTexture(c);
+    }
+
+    const particleCount = 1400;
+    const particleGeo = new THREE.BufferGeometry();
+    const positions = new Float32Array(particleCount * 3);
+    const colors = new Float32Array(particleCount * 3);
+    const particleData = [];
+
+    const emeraldColor = new THREE.Color(0x10b981);
+    const goldColor = new THREE.Color(0xf59e0b);
+    const violetColor = new THREE.Color(0xa855f7);
+    const cyanColor = new THREE.Color(0x06b6d4);
+
+    for (let i = 0; i < particleCount; i++) {
+      // 50% emerald (from Latveria fortress), 50% gold/violet/cyan (from rift)
+      const isEmerald = i % 2 === 0;
+      let x, y, z;
+
+      if (isEmerald) {
+        // Latveria side (right)
+        x = 2 + Math.random() * 16;
+        y = -10 + Math.random() * 22;
+        z = -4 + Math.random() * 10;
+      } else {
+        // Rift side (left & center)
+        x = -18 + Math.random() * 22;
+        y = -4 + Math.random() * 18;
+        z = -6 + Math.random() * 12;
+      }
+
+      positions[i * 3] = x;
+      positions[i * 3 + 1] = y;
+      positions[i * 3 + 2] = z;
+
+      let color;
+      if (isEmerald) {
+        color = Math.random() > 0.4 ? emeraldColor : cyanColor;
+      } else {
+        color = Math.random() > 0.4 ? goldColor : violetColor;
+      }
+
+      colors[i * 3] = color.r;
+      colors[i * 3 + 1] = color.g;
+      colors[i * 3 + 2] = color.b;
+
+      particleData.push({
+        baseX: x,
+        baseY: y,
+        baseZ: z,
+        speedY: 0.015 + Math.random() * 0.025,
+        spiralSpeed: 0.8 + Math.random() * 1.5,
+        spiralRadius: 0.15 + Math.random() * 0.45,
+        phase: Math.random() * Math.PI * 2,
+      });
+    }
+
+    particleGeo.setAttribute('position', new THREE.BufferAttribute(positions, 3));
+    particleGeo.setAttribute('color', new THREE.BufferAttribute(colors, 3));
+
+    const particleMat = new THREE.PointsMaterial({
+      size: 0.28,
+      vertexColors: true,
+      map: createGlowParticleTexture(),
+      transparent: true,
+      opacity: 0.85,
+      blending: THREE.AdditiveBlending,
+      depthWrite: false,
+    });
+
+    const particles = new THREE.Points(particleGeo, particleMat);
+    scene.add(particles);
+
+    // ═══════════════════════════════════════════════════════════
+    // 3. 3D INCURSION RIFT ENERGY PULSE RINGS
+    // ═══════════════════════════════════════════════════════════
+    const ringGeo1 = new THREE.TorusGeometry(3.5, 0.04, 16, 100);
+    const ringMat1 = new THREE.MeshBasicMaterial({
+      color: 0xf59e0b,
+      transparent: true,
+      opacity: 0.35,
+      blending: THREE.AdditiveBlending,
+    });
+    const riftRing1 = new THREE.Mesh(ringGeo1, ringMat1);
+    riftRing1.position.set(-6, 6, 2);
+    riftRing1.rotation.set(0.4, 0.3, 0);
+    scene.add(riftRing1);
+
+    const ringGeo2 = new THREE.TorusGeometry(5.2, 0.03, 16, 100);
+    const ringMat2 = new THREE.MeshBasicMaterial({
+      color: 0x10b981,
+      transparent: true,
+      opacity: 0.25,
+      blending: THREE.AdditiveBlending,
+    });
+    const riftRing2 = new THREE.Mesh(ringGeo2, ringMat2);
+    riftRing2.position.set(-6, 6, 1);
+    riftRing2.rotation.set(-0.3, 0.5, 0);
+    scene.add(riftRing2);
+
+    // ═══════════════════════════════════════════════════════════
+    // INTERACTIVE MOUSE PARALLAX
+    // ═══════════════════════════════════════════════════════════
     let mouseX = 0;
     let mouseY = 0;
-    let targetCameraX = 0;
-    let targetCameraY = 0;
-    let scrollY = window.scrollY;
+    let targetX = 0;
+    let targetY = 0;
 
     const handleMouseMove = (e) => {
-      mouseX = (e.clientX / window.innerWidth) * 2 - 1;
-      mouseY = -(e.clientY / window.innerHeight) * 2 + 1;
-      targetCameraX = mouseX * 2.2;
-      targetCameraY = mouseY * 1.8;
-
-      if (bgImageRef.current) {
-        const moveX = (e.clientX / window.innerWidth - 0.5) * -22;
-        const moveY = (e.clientY / window.innerHeight - 0.5) * -16;
-        bgImageRef.current.style.transform = `translate3d(${moveX}px, ${moveY}px, 0) scale(1.06)`;
-      }
+      mouseX = (e.clientX / window.innerWidth - 0.5) * 2;
+      mouseY = (e.clientY / window.innerHeight - 0.5) * 2;
     };
-
-    const handleScroll = () => {
-      scrollY = window.scrollY;
-    };
-
     window.addEventListener('mousemove', handleMouseMove, { passive: true });
-    window.addEventListener('scroll', handleScroll, { passive: true });
 
-    // Window Resize
+    // Window Resize Handler
     const handleResize = () => {
+      if (!canvas) return;
       camera.aspect = window.innerWidth / window.innerHeight;
       camera.updateProjectionMatrix();
       renderer.setSize(window.innerWidth, window.innerHeight);
     };
     window.addEventListener('resize', handleResize);
 
-    // Animation Loop
-    let clock = new THREE.Clock();
-    let animationFrameId;
+    // ═══════════════════════════════════════════════════════════
+    // ANIMATION RENDER LOOP (60 FPS)
+    // ═══════════════════════════════════════════════════════════
+    const clock = new THREE.Clock();
+    let animId;
 
     const animate = () => {
-      animationFrameId = requestAnimationFrame(animate);
+      animId = requestAnimationFrame(animate);
       const elapsed = clock.getElapsedTime();
 
-      // Camera smoothly tracks cursor & page scroll position
-      const scrollOffset = scrollY * 0.008;
-      camera.position.x = THREE.MathUtils.lerp(camera.position.x, targetCameraX, 0.05);
-      camera.position.y = THREE.MathUtils.lerp(camera.position.y, targetCameraY - scrollOffset, 0.05);
+      // Smooth mouse lerp
+      targetX += (mouseX - targetX) * 0.05;
+      targetY += (mouseY - targetY) * 0.05;
 
-      // Animate 3D Minecraft Hopping Slimes
-      slimes.forEach(s => {
-        const cycle = (elapsed * s.cfg.hopSpeed + s.hopOffset) % (Math.PI * 2);
-        const isAirborne = cycle > 0.6 && cycle < 2.5;
+      // Parallax camera tilt
+      camera.position.x = targetX * 1.5;
+      camera.position.y = -targetY * 1.0;
+      camera.lookAt(0, 0, 0);
 
-        if (isAirborne) {
-          // Mid-air leaping arc
-          const jumpProgress = (cycle - 0.6) / 1.9; // 0 to 1
-          const jumpY = Math.sin(jumpProgress * Math.PI) * s.cfg.jumpHeight;
-          s.group.position.y = s.baseY + jumpY;
+      // Wallpaper 2.5D Parallax Shift
+      if (bgImageRef.current) {
+        bgImageRef.current.style.transform = `scale(1.06) translate(${targetX * -14}px, ${targetY * -10}px)`;
+      }
 
-          // Forward travel during leap
-          s.x += s.cfg.dir * 0.042;
-          if (s.x > 18) s.x = -18;
-          else if (s.x < -18) s.x = 18;
-          s.group.position.x = s.x;
+      // Rotate & Float Crystal Shards
+      shards.forEach((shard) => {
+        shard.rotation.x += shard.userData.rotSpeedX;
+        shard.rotation.y += shard.userData.rotSpeedY;
+        shard.rotation.z += shard.userData.rotSpeedZ;
 
-          // Stretch along Y axis while in the air (squash & stretch)
-          const stretch = Math.sin(jumpProgress * Math.PI);
-          s.group.scale.y = 1.0 + stretch * 0.32;
-          s.group.scale.x = 1.0 - stretch * 0.18;
-          s.group.scale.z = 1.0 - stretch * 0.18;
+        shard.position.y = shard.userData.baseY + Math.sin(elapsed * shard.userData.bobSpeed + shard.userData.phase) * shard.userData.bobAmp;
+      });
 
-          // Dynamic drop shadow shrinking and fading as slime jumps higher
-          s.shadow.position.x = s.x;
-          s.shadow.position.z = s.z;
-          const shadowScale = Math.max(0.3, 1.0 - (jumpY / (s.cfg.jumpHeight * 1.5)));
-          s.shadow.scale.set(shadowScale, shadowScale, 1);
-          s.shadow.material.opacity = 0.4 * shadowScale;
-        } else {
-          // Ground phase: squish down before leap and upon landing
-          s.group.position.y = s.baseY;
-          s.shadow.position.x = s.x;
-          s.shadow.position.z = s.z;
-
-          const squish = Math.sin(cycle * 2);
-          s.group.scale.y = 0.72 + squish * 0.22;
-          s.group.scale.x = 1.22 - squish * 0.18;
-          s.group.scale.z = 1.22 - squish * 0.18;
-
-          s.shadow.scale.set(1.15, 1.15, 1);
-          s.shadow.material.opacity = 0.42;
+      // Swirl & Ascend Arcane Particles
+      const posAttr = particleGeo.attributes.position;
+      for (let i = 0; i < particleCount; i++) {
+        const p = particleData[i];
+        let py = posAttr.getY(i) + p.speedY;
+        if (py > 15) {
+          py = -12;
         }
+        posAttr.setY(i, py);
 
-        // Face forward toward movement direction
-        s.group.rotation.y = s.cfg.dir > 0 ? 0.25 : -0.25;
-      });
+        // Helical spiral drift
+        const px = p.baseX + Math.sin(elapsed * p.spiralSpeed + p.phase) * p.spiralRadius;
+        const pz = p.baseZ + Math.cos(elapsed * p.spiralSpeed + p.phase) * p.spiralRadius;
+        posAttr.setX(i, px);
+        posAttr.setZ(i, pz);
+      }
+      posAttr.needsUpdate = true;
 
-      // Animate Allays (Fluttering wings, playful hovering & swooping in gentle curves)
-      allays.forEach(a => {
-        const t = elapsed * a.cfg.speed + a.timeOffset;
-        a.group.position.x = a.cfg.startX + Math.sin(t * 0.7) * a.cfg.radiusX;
-        a.group.position.y = a.cfg.startY + Math.sin(t * 1.5) * a.cfg.radiusY;
-        a.group.position.z = a.cfg.startZ + Math.cos(t * 0.6) * 1.2;
+      // Incursion Ring Ripples
+      riftRing1.rotation.z += 0.004;
+      riftRing1.scale.setScalar(1 + Math.sin(elapsed * 1.2) * 0.08);
 
-        // Flutter wings rapidly
-        const wingFlap = Math.sin(elapsed * 24 + a.timeOffset * 2) * 0.65;
-        a.wingL.rotation.y = wingFlap;
-        a.wingR.rotation.y = -wingFlap;
-
-        // Gentle bank into flight curve
-        a.group.rotation.z = -Math.cos(t * 0.7) * 0.15;
-        a.group.rotation.y = Math.cos(t * 0.7) * 0.45;
-      });
-
-      // Animate One Floating Ghast in the High Sky (Majestic drift + swaying tentacles)
-      const ghastX = ((elapsed * 0.5) % 44) - 22; // drifts smoothly from -22 to +22 across sky
-      ghastGroup.position.x = ghastX;
-      ghastGroup.position.y = 5.2 + Math.sin(elapsed * 0.65) * 0.45;
-      ghastGroup.position.z = -6.5;
-      ghastGroup.rotation.y = 0.15 + Math.sin(elapsed * 0.4) * 0.08;
-
-      tentacles.forEach(tent => {
-        tent.mesh.rotation.x = Math.sin(elapsed * 1.5 + tent.offset * 0.7) * 0.2;
-        tent.mesh.rotation.z = Math.cos(elapsed * 1.2 + tent.offset * 0.5) * 0.15;
-      });
-
-      // Drift gentle particles upwards
-      particles.forEach(p => {
-        p.position.y += p.userData.vy;
-        p.position.x += p.userData.vx;
-        p.rotation.x += p.userData.rotSpeed;
-        p.rotation.y += p.userData.rotSpeed;
-
-        if (p.position.y > 15) {
-          p.position.y = -15;
-          p.position.x = (Math.random() - 0.5) * 32;
-        }
-      });
+      riftRing2.rotation.z -= 0.003;
+      riftRing2.scale.setScalar(1 + Math.cos(elapsed * 1.0) * 0.06);
 
       renderer.render(scene, camera);
     };
 
     animate();
 
-    // Cleanup
     return () => {
-      cancelAnimationFrame(animationFrameId);
+      cancelAnimationFrame(animId);
       window.removeEventListener('mousemove', handleMouseMove);
-      window.removeEventListener('scroll', handleScroll);
       window.removeEventListener('resize', handleResize);
+
+      shardGeometries.forEach(g => g.dispose());
+      glassMaterial.dispose();
+      particleGeo.dispose();
+      particleMat.dispose();
+      ringGeo1.dispose();
+      ringMat1.dispose();
+      ringGeo2.dispose();
+      ringMat2.dispose();
       renderer.dispose();
     };
   }, []);
 
   return (
     <div className="fixed inset-0 pointer-events-none z-0 overflow-hidden bg-[#070913]">
-      {/* 1. Natural Minecraft Sunlit Plains Background (Steve & Slimes) */}
+      {/* 1. Avengers Doomsday Multiverse Incursion Wallpaper */}
       <div
         ref={bgImageRef}
         className="absolute inset-0 bg-cover bg-center transition-transform duration-300 ease-out pointer-events-none will-change-transform"
@@ -656,10 +368,10 @@ export default function MinecraftBackground() {
         }}
       />
 
-      {/* 4. 3D WebGL Canvas (Real 3D Animated Hopping Minecraft Slimes) */}
+      {/* 4. 3D WebGL Canvas (Multiversal Crystal Shards & Arcane Particles) */}
       <canvas
         ref={canvasRef}
-        className="absolute inset-0 w-full h-full opacity-85 pointer-events-none"
+        className="absolute inset-0 w-full h-full opacity-90 pointer-events-none"
       />
     </div>
   );
