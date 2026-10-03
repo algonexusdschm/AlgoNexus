@@ -9,36 +9,34 @@ export default function Navbar({ onOpenRegister, onOpenAdmin }) {
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex items-center justify-between h-20">
           
-          {/* Brand Logo with 3D Voxel Styling */}
+          {/* Brand Logo */}
           <a href="#" className="flex items-center gap-3 group">
-            <div className="w-11 h-11 bg-mc-deepslate border-2 border-mc-diamond p-1.5 shadow-voxel-btn group-hover:border-mc-redstone transition-colors flex items-center justify-center">
-              <div className="w-full h-full bg-[#181e2b] flex items-center justify-center">
-                <Box className="w-5 h-5 text-mc-diamond group-hover:rotate-12 transition-transform" />
-              </div>
+            <div className="w-10 h-10 bg-slate-900 border-2 border-emerald-500/50 p-1.5 shadow-[0_0_15px_rgba(16,185,129,0.2)] group-hover:border-emerald-400 group-hover:shadow-[0_0_20px_rgba(16,185,129,0.4)] transition-all flex items-center justify-center rounded-lg">
+              <Box className="w-5 h-5 text-emerald-400 group-hover:rotate-12 transition-transform" />
             </div>
             <div>
               <div className="flex items-center gap-2">
-                <span className="text-xl font-mc font-black tracking-wider text-white">
-                  ALGO<span className="text-mc-diamond">NEXUS</span>
+                <span className="text-2xl font-['Anton'] tracking-widest text-white uppercase">
+                  ALGO<span className="text-emerald-400 drop-shadow-[0_0_8px_rgba(52,211,153,0.5)]">NEXUS</span>
                 </span>
-                <span className="text-[10px] font-mc px-2 py-0.5 bg-mc-redstone/20 text-mc-redstone border border-mc-redstone/40">
+                <span className="text-[10px] font-['Orbitron'] px-2 py-0.5 bg-emerald-500/10 text-emerald-400 border border-emerald-500/30 rounded">
                   2026
                 </span>
               </div>
-              <p className="text-[10px] text-slate-400 tracking-widest uppercase font-mono">National Tech Conclave</p>
+              <p className="text-[10px] text-slate-400 tracking-[0.2em] uppercase font-['Orbitron']">National Tech Conclave</p>
             </div>
           </a>
 
           {/* Desktop Nav Links */}
-          <div className="hidden md:flex items-center space-x-7 text-xs font-semibold uppercase tracking-wider text-slate-300">
-            <a href="#characters" className="hover:text-amber-400 text-amber-300 flex items-center gap-1 transition-colors">
+          <div className="hidden md:flex items-center space-x-7 text-[11px] font-['Orbitron'] font-bold uppercase tracking-wider text-slate-300">
+            <a href="#characters" className="hover:text-amber-400 text-amber-300 flex items-center gap-1.5 transition-colors">
               <span className="w-1.5 h-1.5 rounded-full bg-amber-400 animate-pulse" />
               <span>Champions</span>
             </a>
-            <a href="#announcement" className="hover:text-mc-diamond transition-colors">Announcement</a>
-            <a href="#gallery" className="hover:text-mc-diamond transition-colors">Last Event Memories</a>
-            <a href="#passes" className="hover:text-mc-diamond transition-colors">Event Passes</a>
-            <a href="#faq" className="hover:text-mc-diamond transition-colors">FAQ</a>
+            <a href="#announcement" className="hover:text-emerald-400 transition-colors">Announcement</a>
+            <a href="#gallery" className="hover:text-emerald-400 transition-colors">Memories</a>
+            <a href="#passes" className="hover:text-emerald-400 transition-colors">Passes</a>
+            <a href="#faq" className="hover:text-emerald-400 transition-colors">FAQ</a>
           </div>
 
           {/* Action CTAs */}
