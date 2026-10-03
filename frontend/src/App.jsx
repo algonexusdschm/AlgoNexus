@@ -1,7 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import Navbar from './components/Navbar';
 import Hero from './components/Hero';
-import DoomsdayCharacters from './components/DoomsdayCharacters';
 import Announcement from './components/Announcement';
 import Gallery from './components/Gallery';
 import PricingSection from './components/PricingSection';
@@ -95,13 +94,10 @@ function MainEventApp() {
 
       {/* Main Content Sections */}
       <main className="flex-1 relative z-10">
-        {/* 1. Hero Section with Live Countdown, Highlights & Rotating Cosmic Sorcerer */}
+        {/* 1. Hero Section */}
         <Hero onOpenRegister={() => handleOpenRegister(pricingTiers[0])} />
 
-        {/* 2. Champions of the Doomsday Nexus Roster */}
-        <DoomsdayCharacters onSelectFaction={() => handleOpenRegister(pricingTiers[0])} />
-
-        {/* 3. Official Announcement Section for This Year's Event */}
+        {/* 2. Official Announcement Section for This Year's Event */}
         <Announcement onOpenRegister={() => handleOpenRegister(pricingTiers[0])} />
 
         {/* 3. Photo Gallery of Last Year's Event with Lightbox */}
