@@ -332,15 +332,15 @@ export default function MinecraftBackground() {
 
   return (
     <div className="fixed inset-0 pointer-events-none z-0 overflow-hidden bg-[#080a07]">
-      {/* 1. Arcane Hall Wallpaper with interactive parallax */}
+      {/* 1. Arcane Hall / Doomsday Legion Wallpaper with interactive parallax */}
       <div
         ref={bgImageRef}
         className="absolute inset-0 bg-cover bg-center transition-transform duration-300 ease-out pointer-events-none will-change-transform"
         style={{
-          backgroundImage: "url('/images/arcane_hall_bg.jpg')",
-          backgroundPosition: 'center 30%',
-          opacity: 0.92,
-          filter: 'brightness(0.96) contrast(1.08) saturate(1.10)',
+          backgroundImage: "url('/images/doomsday_legion_bg.jpg')",
+          backgroundPosition: 'center center',
+          opacity: 0.95,
+          filter: 'brightness(1.05) contrast(1.15) saturate(1.10)',
         }}
       />
 
