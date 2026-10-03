@@ -262,3 +262,14 @@
     inset 0 1px 0 rgba(52, 211, 153, 0.3);
 }
 
+/* Cinematic Monolithic Doomsday Title */
+.doomsday-title {
+  color: #07100b; /* Very dark slate-green for the silhouetted stone face */
+  -webkit-text-stroke: 1.5px rgba(252, 211, 77, 0.9); /* Brilliant gold back-light seeping through the edges */
+  text-shadow: 
+    0px 0px 12px rgba(252, 211, 77, 1), /* Intense inner glow */
+    0px 0px 25px rgba(245, 158, 11, 0.8), /* Mid-range amber glow */
+    0px 0px 50px rgba(217, 119, 6, 0.6), /* Wide orange glow */
+    0px 8px 15px rgba(0, 0, 0, 0.9); /* Drop shadow mapping to ground the letters */
+}
+

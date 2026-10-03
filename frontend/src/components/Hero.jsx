@@ -67,10 +67,12 @@ export default function Hero({ onOpenRegister }) {
             {eventSettings.edition} • Department of Data Science, Smt. CHM College
           </div>
 
-          <h1 className="text-4xl sm:text-6xl md:text-7xl font-black tracking-tight text-white leading-[1.1] break-words uppercase">
-            ALGONEXUS: <br />
-            <span className="text-transparent bg-clip-text bg-gradient-to-r from-emerald-300 via-amber-200 to-emerald-500 drop-shadow-[0_0_20px_rgba(16,185,129,0.2)]">
-              DOOMSDAY PROTOCOL
+          <h1 className="text-4xl sm:text-6xl md:text-[6rem] lg:text-[8rem] font-black tracking-tighter leading-[0.9] uppercase relative mb-4">
+            <span className="text-white drop-shadow-md text-3xl sm:text-4xl md:text-5xl block mb-2 tracking-wide font-bold">
+              ALGONEXUS:
+            </span>
+            <span className="doomsday-title block">
+              DOOMSDAY<br />PROTOCOL
             </span>
           </h1>
 

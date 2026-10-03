@@ -37,15 +37,16 @@ export default function Gallery() {
         {/* Section Header */}
         <div className="flex flex-col md:flex-row md:items-end justify-between mb-12 gap-6">
           <div>
-            <div className="inline-flex items-center gap-2 px-3 py-1 bg-mc-deepslate border border-mc-diamond/40 text-mc-diamond text-xs font-mc mb-3">
-              <Camera className="w-3.5 h-3.5 text-mc-diamond" />
-              <span>[LAST EVENT MEMORIES]</span>
+            <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-emerald-950/80 border border-emerald-500/30 text-emerald-400 text-xs font-mono backdrop-blur-md mb-6">
+              <Camera className="w-3.5 h-3.5 text-emerald-500" />
+              <span>[MULTIVERSE ARCHIVES]</span>
             </div>
-            <h2 className="text-2xl sm:text-4xl md:text-5xl font-black text-white font-mc">
-              PHOTO GALLERY OF <span className="text-mc-diamond">LAST EVENT MEMORIES</span>
+            <h2 className="text-3xl sm:text-5xl md:text-6xl font-black tracking-tighter uppercase mb-4">
+              <span className="text-white drop-shadow-md block mb-1 tracking-wide text-xl sm:text-2xl font-bold">PREVIOUS</span>
+              <span className="doomsday-title text-[2.5rem] sm:text-[3.5rem] md:text-[5rem] leading-[0.9] block">EXPEDITIONS</span>
             </h2>
-            <p className="text-slate-400 text-xs sm:text-sm mt-2 max-w-xl font-light">
-              Relive the high-voltage coding battles, late-night hackathon sprints, and victory celebrations from our last event memories.
+            <p className="text-slate-300 text-sm sm:text-base mt-2 max-w-xl font-light leading-relaxed">
+              Relive the high-voltage coding battles, late-night hackathon sprints, and victory celebrations from our previous multiverse incursions.
             </p>
           </div>
 

@@ -11,16 +11,17 @@ export default function PricingSection({ onSelectTier }) {
         
         {/* Section Header */}
         <div className="text-center max-w-3xl mx-auto mb-16">
-          <div className="inline-flex items-center gap-2 px-3 py-1 bg-mc-deepslate border border-mc-emerald/40 text-mc-emerald text-xs font-mc mb-3">
-            <Sparkles className="w-3.5 h-3.5 text-mc-emerald" />
-            <span>[EXPEDITION PASS TIERS]</span>
+          <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-emerald-950/80 border border-emerald-500/30 text-emerald-400 text-xs font-mono backdrop-blur-md mb-6">
+            <Sparkles className="w-3.5 h-3.5 text-emerald-500" />
+            <span>[EXPEDITION PROTOCOL TIERS]</span>
           </div>
 
-          <h2 className="text-2xl sm:text-4xl md:text-5xl font-black text-white mb-3 font-mc">
-            CHOOSE YOUR <span className="text-mc-diamond">EXPEDITION PASS</span>
+          <h2 className="text-3xl sm:text-5xl md:text-6xl font-black tracking-tighter uppercase mb-6">
+            <span className="text-white drop-shadow-md block mb-2 tracking-wide text-xl sm:text-2xl font-bold">SECURE YOUR</span>
+            <span className="doomsday-title text-[3rem] sm:text-[4rem] md:text-[5.5rem] leading-[0.9] block">EXPEDITION PASS</span>
           </h2>
-          <p className="text-slate-400 text-xs sm:text-sm font-light">
-            Secure your slot before registrations reach bedrock limits. Verified securely with Official UPI & GPay QR.
+          <p className="text-slate-300 text-base sm:text-lg font-light leading-relaxed">
+            Choose your clearance level for the hackathon. Verified securely via official UPI & digital encryption.
           </p>
         </div>
 
