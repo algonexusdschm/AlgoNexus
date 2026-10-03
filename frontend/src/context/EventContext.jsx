@@ -4,6 +4,12 @@ import { supabase, uploadImageToSupabase } from '../lib/supabaseClient';
 
 const EventContext = createContext();
 
+const ADMIN_API_KEY = import.meta.env.VITE_ADMIN_API_KEY || 'algonexus_admin_secret_key_2026';
+const getAdminHeaders = () => ({
+  'Content-Type': 'application/json',
+  'x-admin-token': ADMIN_API_KEY
+});
+
 const STORAGE_KEYS = {
   SETTINGS: 'algonexus_settings',
   PAYMENT_SETTINGS: 'algonexus_payment_settings',
@@ -331,6 +337,9 @@ export function EventProvider({ children }) {
         const mapped = data.map(r => ({
           id: r.id,
           ticketId: r.ticket_id,
+          amountPaid: Number(r.amount) || 299,
+          passType: r.tier_name || 'Solo Coder Pass',
+          paymentStatus: r.payment_status || 'PENDING_VERIFICATION',
           tier: { id: r.tier_id, name: r.tier_name, price: Number(r.amount) || 299 },
           attendee: {
             fullName: r.full_name,
@@ -542,7 +551,7 @@ export function EventProvider({ children }) {
     try {
       await fetch('/api/payment-settings', {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
+        headers: getAdminHeaders(),
         body: JSON.stringify(updated)
       });
     } catch (err) {}
@@ -664,7 +673,8 @@ export function EventProvider({ children }) {
         ticket_id: registrationToSave.ticketId,
         tier_id: registrationToSave.tier?.id || 'solo-coder',
         tier_name: registrationToSave.tier?.name || 'Solo Coder Pass',
-        amount: registrationToSave.tier?.price || 299,
+        amount: registrationToSave.amountPaid || registrationToSave.tier?.price || 299,
+        payment_status: registrationToSave.paymentStatus || 'PENDING_VERIFICATION',
         full_name: registrationToSave.attendee?.fullName || 'Student',
         email: registrationToSave.attendee?.email || '',
         phone: registrationToSave.attendee?.phone || '',
@@ -713,7 +723,9 @@ export function EventProvider({ children }) {
       return reg;
     });
     setRegistrations(updated);
-    localStorage.setItem(STORAGE_KEYS.REGISTRATIONS, JSON.stringify(updated));
+    try {
+      localStorage.setItem(STORAGE_KEYS.REGISTRATIONS, JSON.stringify(updated));
+    } catch (e) {}
 
     // Update in Supabase
     try {
@@ -724,8 +736,47 @@ export function EventProvider({ children }) {
     } catch (e) {}
 
     try {
-      await fetch(`/api/check-in/${ticketId}`, { method: 'POST' });
+      await fetch(`/api/check-in/${ticketId}`, { 
+        method: 'POST',
+        headers: getAdminHeaders()
+      });
     } catch (e) {}
+  };
+
+  // Verify & Approve Pending Registration Payment (Organizer Exclusive)
+  const verifyRegistrationPayment = async (ticketId) => {
+    const updated = registrations.map(reg => {
+      if (reg.ticketId.toUpperCase() === ticketId.toUpperCase()) {
+        return { ...reg, paymentStatus: 'PAID', verifiedAt: new Date().toISOString() };
+      }
+      return reg;
+    });
+    setRegistrations(updated);
+    try {
+      localStorage.setItem(STORAGE_KEYS.REGISTRATIONS, JSON.stringify(updated));
+    } catch (e) {}
+
+    // Update in Supabase
+    try {
+      await supabase
+        .from('registrations')
+        .update({ payment_status: 'PAID', verified_at: new Date().toISOString() })
+        .eq('ticket_id', ticketId);
+    } catch (e) {
+      console.warn('Supabase verifyRegistrationPayment error:', e);
+    }
+
+    // Update in backend
+    try {
+      await fetch(`/api/registrations/${ticketId}/verify`, {
+        method: 'PATCH',
+        headers: getAdminHeaders()
+      });
+    } catch (e) {}
+
+    // Broadcast change immediately to all tabs & screens
+    broadcastChange('REGISTRATIONS_UPDATED');
+    return true;
   };
 
   const loginAdmin = async (password) => {
@@ -974,6 +1025,7 @@ export function EventProvider({ children }) {
       updatePricingTiers,
       addRegistration,
       checkInAttendee,
+      verifyRegistrationPayment,
       loginAdmin,
       logoutAdmin,
       addTeamMember,

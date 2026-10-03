@@ -265,16 +265,20 @@ export default function RegistrationModal({
         isSimulated: true
       };
 
+      const isGatewayPaid = Boolean(additionalData.isGatewayPaid);
+      const calculatedPaymentStatus = isGatewayPaid ? 'PAID' : 'PENDING_VERIFICATION';
+
       let finalTicket = {
         ticketId: generatedTicketId,
         orderId: payload.razorpay_order_id,
         paymentId: payload.razorpay_payment_id,
-        paymentStatus: 'PAID',
+        paymentStatus: calculatedPaymentStatus,
         paymentMethod: method,
         utrNumber: payload.utrNumber,
         paymentScreenshot: payload.paymentScreenshot,
         bankName: payload.bankName,
-        verifiedAt: new Date().toISOString(),
+        verifiedAt: isGatewayPaid ? new Date().toISOString() : null,
+        submittedAt: new Date().toISOString(),
         amountPaid: selectedTier.price,
         passType: selectedTier.name,
         attendee: {

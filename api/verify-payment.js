@@ -1,8 +1,11 @@
 // Vercel Serverless Function: /api/verify-payment
-export default function handler(req, res) {
+const SUPABASE_URL = process.env.VITE_SUPABASE_URL || process.env.SUPABASE_URL || 'https://vcswkusqdkyhyanytjlc.supabase.co';
+const SUPABASE_ANON_KEY = process.env.VITE_SUPABASE_ANON_KEY || process.env.SUPABASE_ANON_KEY || 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InZjc3drdXNxZGt5aHlhbnl0amxjIiwicm9sZSI6ImFub24iLCJpYXQiOjE3OTA4NDg1NjEsImV4cCI6MjEwNjQyNDU2MX0.2u2J3D3ef9YnqScgX0QjlWW8-cjsI0NXyfVt-ZheoA4';
+
+export default async function handler(req, res) {
   res.setHeader('Access-Control-Allow-Origin', '*');
   res.setHeader('Access-Control-Allow-Methods', 'POST, OPTIONS');
-  res.setHeader('Access-Control-Allow-Headers', 'Content-Type');
+  res.setHeader('Access-Control-Allow-Headers', 'Content-Type, x-admin-token, Authorization');
 
   if (req.method === 'OPTIONS') {
     return res.status(200).end();
@@ -14,12 +17,17 @@ export default function handler(req, res) {
       const {
         razorpay_order_id,
         razorpay_payment_id,
+        razorpay_signature,
         registrationData,
         paymentMethod,
         utrNumber,
         paymentScreenshot,
-        bankName
+        bankName,
+        isSimulated
       } = body;
+
+      const isGatewayPaid = Boolean(razorpay_signature && !isSimulated);
+      const paymentStatus = isGatewayPaid ? 'PAID' : (body.paymentStatus || 'PENDING_VERIFICATION');
 
       const randomCode = Math.random().toString(36).substring(2, 7).toUpperCase();
       const ticketId = `ALGO26-${randomCode}`;
@@ -28,12 +36,13 @@ export default function handler(req, res) {
         ticketId,
         orderId: razorpay_order_id || `ORD_${Date.now()}`,
         paymentId: razorpay_payment_id || utrNumber || `PAY_${Date.now()}`,
-        paymentStatus: 'PAID',
+        paymentStatus,
         paymentMethod: paymentMethod || 'UPI_QR',
         utrNumber: utrNumber || '',
         paymentScreenshot: paymentScreenshot || '',
         bankName: bankName || '',
-        verifiedAt: new Date().toISOString(),
+        verifiedAt: paymentStatus === 'PAID' ? new Date().toISOString() : null,
+        submittedAt: new Date().toISOString(),
         amountPaid: registrationData?.amount || 299,
         passType: registrationData?.passType || 'General Pass',
         attendee: {
@@ -50,9 +59,47 @@ export default function handler(req, res) {
         checkedIn: false
       };
 
+      // Persist to Supabase Cloud PostgreSQL
+      try {
+        await fetch(`${SUPABASE_URL}/rest/v1/registrations`, {
+          method: 'POST',
+          headers: {
+            'apikey': SUPABASE_ANON_KEY,
+            'Authorization': `Bearer ${SUPABASE_ANON_KEY}`,
+            'Content-Type': 'application/json',
+            'Prefer': 'return=minimal'
+          },
+          body: JSON.stringify({
+            ticket_id: newRegistration.ticketId,
+            tier_id: registrationData?.tierId || 'solo-coder',
+            tier_name: newRegistration.passType,
+            amount: newRegistration.amountPaid,
+            payment_status: newRegistration.paymentStatus,
+            full_name: newRegistration.attendee.fullName,
+            email: newRegistration.attendee.email,
+            phone: newRegistration.attendee.phone,
+            college: newRegistration.attendee.college,
+            track: newRegistration.attendee.track,
+            team_name: newRegistration.attendee.teamName,
+            team_members: Array.isArray(newRegistration.attendee.teamMembers)
+              ? newRegistration.attendee.teamMembers.join(', ')
+              : String(newRegistration.attendee.teamMembers || ''),
+            payment_method: newRegistration.paymentMethod,
+            utr_number: newRegistration.utrNumber,
+            payment_screenshot: newRegistration.paymentScreenshot,
+            bank_name: newRegistration.bankName,
+            checked_in: false
+          })
+        });
+      } catch (cloudErr) {
+        console.warn('Could not persist registration to Supabase in api/verify-payment:', cloudErr);
+      }
+
       return res.status(200).json({
         success: true,
-        message: 'Registration and Payment confirmed!',
+        message: paymentStatus === 'PAID' 
+          ? 'Registration and Payment confirmed!' 
+          : 'Registration submitted! Payment reference queued for verification.',
         ticket: newRegistration
       });
     } catch (e) {

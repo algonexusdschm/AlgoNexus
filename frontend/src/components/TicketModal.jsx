@@ -1,21 +1,22 @@
 import React, { useEffect } from 'react';
-import { X, CheckCircle2, Printer, Box, ShieldCheck, Calendar, MapPin } from 'lucide-react';
+import { X, CheckCircle2, Clock, Printer, Box, ShieldCheck, Calendar, MapPin } from 'lucide-react';
 import { QRCodeSVG } from 'qrcode.react';
 import confetti from 'canvas-confetti';
 import { useEvent } from '../context/EventContext';
 
 export default function TicketModal({ ticket, isOpen, onClose }) {
   const { eventSettings } = useEvent();
+  const isPaid = ticket?.paymentStatus === 'PAID';
 
   useEffect(() => {
-    if (isOpen) {
+    if (isOpen && isPaid) {
       confetti({
         particleCount: 120,
         spread: 80,
         origin: { y: 0.6 }
       });
     }
-  }, [isOpen]);
+  }, [isOpen, isPaid]);
 
   if (!isOpen || !ticket) return null;
 
@@ -35,14 +36,24 @@ export default function TicketModal({ ticket, isOpen, onClose }) {
           <X className="w-5 h-5" />
         </button>
 
-        {/* Top Success Banner */}
-        <div className="bg-gradient-to-r from-emerald-700 via-teal-700 to-cyan-700 p-6 text-white text-center border-b-2 border-mc-border">
-          <div className="w-11 h-11 mx-auto bg-black/40 border border-white/20 flex items-center justify-center mb-2 shadow-voxel-sm">
-            <CheckCircle2 className="w-6 h-6 text-mc-emerald" />
+        {/* Top Status Banner */}
+        {isPaid ? (
+          <div className="bg-gradient-to-r from-emerald-700 via-teal-700 to-cyan-700 p-6 text-white text-center border-b-2 border-mc-border">
+            <div className="w-11 h-11 mx-auto bg-black/40 border border-white/20 flex items-center justify-center mb-2 shadow-voxel-sm">
+              <CheckCircle2 className="w-6 h-6 text-mc-emerald" />
+            </div>
+            <h3 className="text-xl font-mc font-black tracking-wider uppercase">EXPEDITION PASS CONFIRMED!</h3>
+            <p className="text-xs text-cyan-100 mt-1 font-mono">Payment verified. Your official gate pass has been forged.</p>
           </div>
-          <h3 className="text-xl font-mc font-black tracking-wider uppercase">EXPEDITION PASS CONFIRMED!</h3>
-          <p className="text-xs text-cyan-100 mt-1 font-mono">Payment verified. Your official gate pass has been forged.</p>
-        </div>
+        ) : (
+          <div className="bg-gradient-to-r from-amber-700 via-orange-700 to-yellow-800 p-6 text-white text-center border-b-2 border-mc-border">
+            <div className="w-11 h-11 mx-auto bg-black/40 border border-white/20 flex items-center justify-center mb-2 shadow-voxel-sm">
+              <Clock className="w-6 h-6 text-yellow-300" />
+            </div>
+            <h3 className="text-xl font-mc font-black tracking-wider uppercase">REGISTRATION SUBMITTED</h3>
+            <p className="text-xs text-yellow-100 mt-1 font-mono">Payment reference queued for organizer verification. Keep your Ticket ID safe!</p>
+          </div>
+        )}
 
         {/* The Digital Holographic 3D Minecraft Ticket Card */}
         <div id="printable-ticket" className="p-6 space-y-6">
@@ -64,8 +75,12 @@ export default function TicketModal({ ticket, isOpen, onClose }) {
               </div>
 
               <div className="text-right">
-                <span className="text-[9px] font-mc px-2 py-0.5 bg-mc-emerald/20 text-mc-emerald border border-mc-emerald/40">
-                  {ticket.paymentStatus || 'PAID'}
+                <span className={`text-[9px] font-mc px-2 py-0.5 border ${
+                  isPaid 
+                    ? 'bg-mc-emerald/20 text-mc-emerald border-mc-emerald/40' 
+                    : 'bg-amber-500/20 text-amber-300 border-amber-500/40'
+                }`}>
+                  {isPaid ? 'PAID & VERIFIED' : 'PENDING VERIFICATION'}
                 </span>
                 <div className="text-[10px] font-mono text-mc-diamond mt-1 font-bold">{ticket.ticketId}</div>
               </div>

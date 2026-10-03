@@ -21,6 +21,7 @@ export default function AdminPage({ onBackToWebsite }) {
     updatePaymentSettings, 
     updatePricingTiers, 
     checkInAttendee, 
+    verifyRegistrationPayment,
     loginAdmin, 
     logoutAdmin,
     addTeamMember,
@@ -329,37 +330,57 @@ export default function AdminPage({ onBackToWebsite }) {
     setTimeout(() => setScanMessage(null), 3000);
   };
 
-  // CSV Export
+  // Verify Payment Action
+  const handleVerifyAttendeePayment = async (ticketId) => {
+    if (!ticketId) return;
+    await verifyRegistrationPayment(ticketId);
+    setScanMessage({ success: true, text: `Payment Approved & Confirmed for ${ticketId.toUpperCase()}!` });
+    setTimeout(() => setScanMessage(null), 3500);
+  };
+
+  // CSV Export with Blob and formula sanitization
   const exportToCSV = () => {
     if (registrations.length === 0) {
       alert('No registrations available to export.');
       return;
     }
-    const headers = ['Ticket ID', 'Full Name', 'Email', 'Phone', 'College', 'Branch', 'Year', 'Pass Type', 'Track', 'Payment Method', 'UTR Number', 'Amount Paid', 'Checked In'];
+    const headers = ['Ticket ID', 'Full Name', 'Email', 'Phone', 'College', 'Branch', 'Year', 'Pass Type', 'Track', 'Payment Method', 'UTR Number', 'Payment Status', 'Amount Paid', 'Checked In'];
+    
+    const sanitize = (val) => {
+      let str = String(val ?? '');
+      if (/^[=\+\-@]/.test(str)) {
+        str = "'" + str;
+      }
+      return `"${str.replace(/"/g, '""')}"`;
+    };
+
     const rows = registrations.map(r => [
-      r.ticketId,
-      `"${r.attendee?.fullName || ''}"`,
-      `"${r.attendee?.email || ''}"`,
-      `"${r.attendee?.phone || ''}"`,
-      `"${r.attendee?.college || ''}"`,
-      `"${r.attendee?.branch || ''}"`,
-      `"${r.attendee?.year || ''}"`,
-      `"${r.passType || ''}"`,
-      `"${r.attendee?.track || ''}"`,
-      r.paymentMethod || 'UPI',
-      `"${r.utrNumber || r.paymentId || ''}"`,
+      sanitize(r.ticketId),
+      sanitize(r.attendee?.fullName || ''),
+      sanitize(r.attendee?.email || ''),
+      sanitize(r.attendee?.phone || ''),
+      sanitize(r.attendee?.college || ''),
+      sanitize(r.attendee?.branch || ''),
+      sanitize(r.attendee?.year || ''),
+      sanitize(r.passType || ''),
+      sanitize(r.attendee?.track || ''),
+      sanitize(r.paymentMethod || 'UPI'),
+      sanitize(r.utrNumber || r.paymentId || ''),
+      sanitize(r.paymentStatus || 'PENDING_VERIFICATION'),
       r.amountPaid || 0,
       r.checkedIn ? 'YES' : 'NO'
     ]);
 
-    const csvContent = 'data:text/csv;charset=utf-8,' + [headers.join(','), ...rows.map(e => e.join(','))].join('\n');
-    const encodedUri = encodeURI(csvContent);
+    const csvContent = [headers.join(','), ...rows.map(e => e.join(','))].join('\r\n');
+    const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
+    const url = URL.createObjectURL(blob);
     const link = document.createElement('a');
-    link.setAttribute('href', encodedUri);
+    link.href = url;
     link.setAttribute('download', `algonexus_registrations_${new Date().toISOString().slice(0, 10)}.csv`);
     document.body.appendChild(link);
     link.click();
     document.body.removeChild(link);
+    URL.revokeObjectURL(url);
   };
 
   // Metrics
@@ -1166,6 +1187,7 @@ export default function AdminPage({ onBackToWebsite }) {
                       <th className="p-3.5">Pass & Method</th>
                       <th className="p-3.5">Payment / UTR</th>
                       <th className="p-3.5">Receipt</th>
+                      <th className="p-3.5">Payment Status</th>
                       <th className="p-3.5">Gate Status</th>
                       <th className="p-3.5">Action</th>
                     </tr>
@@ -1173,7 +1195,7 @@ export default function AdminPage({ onBackToWebsite }) {
                   <tbody className="divide-y divide-slate-800/60">
                     {filteredRegistrations.length === 0 ? (
                       <tr>
-                        <td colSpan="8" className="p-8 text-center text-slate-500">
+                        <td colSpan="9" className="p-8 text-center text-slate-500">
                           No registrations found. New registrations from the website will appear here live!
                         </td>
                       </tr>
@@ -1219,6 +1241,19 @@ export default function AdminPage({ onBackToWebsite }) {
                             )}
                           </td>
                           <td className="p-3.5">
+                            {reg.paymentStatus === 'PAID' ? (
+                              <span className="px-2.5 py-0.5 rounded-full bg-emerald-500/20 text-emerald-300 text-[10px] font-bold border border-emerald-500/30 flex items-center gap-1 w-fit">
+                                <CheckCircle2 className="w-3 h-3" />
+                                <span>Verified</span>
+                              </span>
+                            ) : (
+                              <span className="px-2.5 py-0.5 rounded-full bg-amber-500/20 text-amber-300 text-[10px] font-bold border border-amber-500/30 flex items-center gap-1 w-fit">
+                                <AlertCircle className="w-3 h-3" />
+                                <span>Pending</span>
+                              </span>
+                            )}
+                          </td>
+                          <td className="p-3.5">
                             {reg.checkedIn ? (
                               <span className="px-2.5 py-0.5 rounded-full bg-emerald-500/20 text-emerald-400 text-[10px] font-bold">
                                 Checked In
@@ -1230,14 +1265,26 @@ export default function AdminPage({ onBackToWebsite }) {
                             )}
                           </td>
                           <td className="p-3.5">
-                            {!reg.checkedIn && (
-                              <button
-                                onClick={() => handleGateCheckIn(reg.ticketId)}
-                                className="px-3 py-1 rounded bg-cyan-600/30 text-cyan-300 hover:bg-cyan-600/60 border border-cyan-500/40 text-[10px] font-semibold"
-                              >
-                                Check In
-                              </button>
-                            )}
+                            <div className="flex items-center gap-1.5 flex-wrap">
+                              {reg.paymentStatus !== 'PAID' && (
+                                <button
+                                  onClick={() => handleVerifyAttendeePayment(reg.ticketId)}
+                                  className="px-2.5 py-1 rounded bg-emerald-600/30 text-emerald-300 hover:bg-emerald-600/60 border border-emerald-500/40 text-[10px] font-bold flex items-center gap-1 transition-all"
+                                  title="Approve and verify participant payment"
+                                >
+                                  <Check className="w-3 h-3" />
+                                  <span>Approve</span>
+                                </button>
+                              )}
+                              {!reg.checkedIn && (
+                                <button
+                                  onClick={() => handleGateCheckIn(reg.ticketId)}
+                                  className="px-3 py-1 rounded bg-cyan-600/30 text-cyan-300 hover:bg-cyan-600/60 border border-cyan-500/40 text-[10px] font-semibold transition-all"
+                                >
+                                  Check In
+                                </button>
+                              )}
+                            </div>
                           </td>
                         </tr>
                       ))

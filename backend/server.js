@@ -76,6 +76,16 @@ function saveSettings(settings) {
 const keyId = process.env.RAZORPAY_KEY_ID || '';
 const keySecret = process.env.RAZORPAY_KEY_SECRET || '';
 const isRealRazorpay = keyId && keySecret && !keyId.includes('placeholder') && !keySecret.includes('placeholder');
+const ADMIN_API_KEY = process.env.ADMIN_API_KEY || 'algonexus_admin_secret_key_2026';
+
+// Admin authentication middleware
+function requireAdmin(req, res, next) {
+  const token = req.headers['x-admin-token'] || req.headers['authorization']?.replace(/^Bearer\s+/i, '');
+  if (!token || token !== ADMIN_API_KEY) {
+    return res.status(401).json({ error: 'Unauthorized: Valid admin token required to perform this action' });
+  }
+  next();
+}
 
 let razorpayInstance = null;
 if (isRealRazorpay) {
@@ -109,7 +119,7 @@ app.get('/api/payment-settings', (req, res) => {
   res.json(settings);
 });
 
-app.post('/api/payment-settings', (req, res) => {
+app.post('/api/payment-settings', requireAdmin, (req, res) => {
   try {
     const { upiId, payeeName, qrCodeImage, instructions } = req.body;
     const current = readSettings();
@@ -208,6 +218,11 @@ app.post('/api/verify-payment', (req, res) => {
       }
     }
 
+    // Only real signed Razorpay transactions are marked PAID automatically.
+    // Manual UPI / Netbanking transfers are queued as PENDING_VERIFICATION until organizer approval.
+    const isVerifiedByGateway = Boolean(razorpayInstance && !isSimulated && razorpay_signature && isAuthentic);
+    const paymentStatus = isVerifiedByGateway ? 'PAID' : 'PENDING_VERIFICATION';
+
     // Generate unique Ticket ID
     const randomCode = Math.random().toString(36).substring(2, 7).toUpperCase();
     const ticketId = `ALGO26-${randomCode}`;
@@ -216,13 +231,14 @@ app.post('/api/verify-payment', (req, res) => {
       ticketId,
       orderId: razorpay_order_id || `ORD-${Date.now()}`,
       paymentId: razorpay_payment_id || utrNumber || `PAY-${Date.now()}`,
-      paymentStatus: 'PAID',
+      paymentStatus,
       paymentMethod: paymentMethod || 'UPI_QR',
       utrNumber: utrNumber || '',
       paymentScreenshot: paymentScreenshot || '',
       bankName: bankName || '',
       paymentMode: paymentMethod || 'DIRECT_PAYMENT',
-      verifiedAt: new Date().toISOString(),
+      verifiedAt: isVerifiedByGateway ? new Date().toISOString() : null,
+      submittedAt: new Date().toISOString(),
       amountPaid: registrationData.amount,
       passType: registrationData.passType,
       attendee: {
@@ -244,7 +260,9 @@ app.post('/api/verify-payment', (req, res) => {
 
     res.json({
       success: true,
-      message: 'Registration and Payment confirmed!',
+      message: isVerifiedByGateway 
+        ? 'Registration and Payment confirmed!' 
+        : 'Registration submitted! Payment reference queued for verification.',
       ticket: newRegistration
     });
   } catch (error) {
@@ -253,8 +271,8 @@ app.post('/api/verify-payment', (req, res) => {
   }
 });
 
-// 5. Admin - Get All Registrations
-app.get('/api/registrations', (req, res) => {
+// 5. Admin - Get All Registrations (Protected)
+app.get('/api/registrations', requireAdmin, (req, res) => {
   const registrations = readRegistrations();
   res.json({
     count: registrations.length,
@@ -262,8 +280,8 @@ app.get('/api/registrations', (req, res) => {
   });
 });
 
-// 6. Check-in Gate Scanner Verification
-app.get('/api/registrations/:ticketId', (req, res) => {
+// 6. Check-in Gate Scanner Verification (Protected)
+app.get('/api/registrations/:ticketId', requireAdmin, (req, res) => {
   const registrations = readRegistrations();
   const ticket = registrations.find(r => r.ticketId.toUpperCase() === req.params.ticketId.toUpperCase());
   if (!ticket) {
@@ -272,7 +290,26 @@ app.get('/api/registrations/:ticketId', (req, res) => {
   res.json(ticket);
 });
 
-app.post('/api/check-in/:ticketId', (req, res) => {
+// 7. Verify / Approve Pending Registration Payment (Protected)
+app.patch('/api/registrations/:ticketId/verify', requireAdmin, (req, res) => {
+  const registrations = readRegistrations();
+  const index = registrations.findIndex(r => r.ticketId.toUpperCase() === req.params.ticketId.toUpperCase());
+  if (index === -1) {
+    return res.status(404).json({ error: 'Ticket not found' });
+  }
+
+  registrations[index].paymentStatus = 'PAID';
+  registrations[index].verifiedAt = new Date().toISOString();
+  fs.writeFileSync(REGISTRATIONS_FILE, JSON.stringify(registrations, null, 2));
+
+  res.json({ 
+    success: true, 
+    message: `Payment verified and confirmed for ticket ${req.params.ticketId}!`, 
+    ticket: registrations[index] 
+  });
+});
+
+app.post('/api/check-in/:ticketId', requireAdmin, (req, res) => {
   const registrations = readRegistrations();
   const index = registrations.findIndex(r => r.ticketId.toUpperCase() === req.params.ticketId.toUpperCase());
   if (index === -1) {
