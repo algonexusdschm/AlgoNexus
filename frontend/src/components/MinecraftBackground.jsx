@@ -83,81 +83,174 @@ export default function MinecraftBackground() {
     const goldTex = createOreTexture('#161d2b', '#fbbf24', '#fef08a');
     const deepslateTex = createOreTexture('#121722', '#2a3449', '#1e2638');
 
-    // Natural Sunlit Lights & Vibrant Emerald / Redstone Glows
-    const ambientLight = new THREE.AmbientLight(0xffffff, 1.1);
+    // Natural Sunlit Lights & Radiant Slime Green Glow
+    const ambientLight = new THREE.AmbientLight(0xffffff, 1.2);
     scene.add(ambientLight);
 
-    const sunLight = new THREE.DirectionalLight(0xfff5dd, 1.6);
-    sunLight.position.set(12, 25, 18);
+    const sunLight = new THREE.DirectionalLight(0xfff7e6, 1.8);
+    sunLight.position.set(12, 28, 16);
     scene.add(sunLight);
 
-    const emeraldLight = new THREE.PointLight(0x10b981, 3.2, 35);
-    emeraldLight.position.set(10, 6, 8);
-    scene.add(emeraldLight);
+    const slimeGreenLight = new THREE.PointLight(0x52e043, 3.5, 40);
+    slimeGreenLight.position.set(0, -2, 10);
+    scene.add(slimeGreenLight);
 
-    const redstoneLight = new THREE.PointLight(0xff2a4b, 3.0, 35);
-    redstoneLight.position.set(-10, -4, 8);
-    scene.add(redstoneLight);
+    // Helpers to create authentic Minecraft Slime textures
+    function createSlimeFaceTexture() {
+      const c = document.createElement('canvas');
+      c.width = 64;
+      c.height = 64;
+      const ctx = c.getContext('2d');
 
-    // 1. Floating 3D Voxel Ore Blocks in Background
-    const blockCount = 28;
-    const blocks = [];
-    const blockGroup = new THREE.Group();
-    scene.add(blockGroup);
+      // Slime green base
+      ctx.fillStyle = '#44aa3b';
+      ctx.fillRect(0, 0, 64, 64);
 
-    const textures = [diamondTex, redstoneTex, emeraldTex, goldTex, deepslateTex];
-    const wireColors = [0x00f0ff, 0xff2a4b, 0x10b981, 0xfbbf24, 0x2e374d];
+      // Pixel texture variation
+      for (let x = 0; x < 64; x += 8) {
+        for (let y = 0; y < 64; y += 8) {
+          if (Math.random() > 0.45) {
+            ctx.fillStyle = Math.random() > 0.5 ? '#53be48' : '#399632';
+            ctx.fillRect(x, y, 8, 8);
+          }
+        }
+      }
 
-    for (let i = 0; i < blockCount; i++) {
-      const typeIdx = i % textures.length;
-      const size = 0.5 + Math.random() * 0.7; // Varied block sizes
-      const geo = new THREE.BoxGeometry(size, size, size);
-      const mat = new THREE.MeshStandardMaterial({
-        map: textures[typeIdx],
-        roughness: 0.35,
-        metalness: 0.2
-      });
+      // Left & Right Eyes (Minecraft pixel slime eyes)
+      ctx.fillStyle = '#173612';
+      ctx.fillRect(12, 18, 14, 14);
+      ctx.fillRect(38, 18, 14, 14);
 
-      const mesh = new THREE.Mesh(geo, mat);
-      
-      // Wireframe bevel
-      const wire = new THREE.LineSegments(
-        new THREE.EdgesGeometry(geo),
-        new THREE.LineBasicMaterial({
-          color: wireColors[typeIdx],
-          transparent: true,
-          opacity: 0.5
-        })
-      );
-      mesh.add(wire);
+      // Eye white highlights
+      ctx.fillStyle = '#ffffff';
+      ctx.fillRect(14, 20, 6, 6);
+      ctx.fillRect(40, 20, 6, 6);
 
-      // Spread widely across 3D space and screen depth
-      mesh.position.set(
-        (Math.random() - 0.5) * 36,
-        (Math.random() - 0.5) * 32,
-        -5 - Math.random() * 18
-      );
+      // Cute Slime Mouth
+      ctx.fillStyle = '#173612';
+      ctx.fillRect(26, 38, 12, 6);
 
-      mesh.userData = {
-        rotX: (Math.random() - 0.5) * 0.008,
-        rotY: (Math.random() - 0.5) * 0.012,
-        floatSpeed: 0.5 + Math.random() * 0.8,
-        floatAmplitude: 0.4 + Math.random() * 0.6,
-        initialY: mesh.position.y,
-        timeOffset: Math.random() * 100
-      };
-
-      blockGroup.add(mesh);
-      blocks.push(mesh);
+      const texture = new THREE.CanvasTexture(c);
+      texture.magFilter = THREE.NearestFilter;
+      texture.minFilter = THREE.NearestFilter;
+      return texture;
     }
 
-    // 2. Ambient Minecraft Natural Voxel Particles (Emerald Slime & Redstone Embers)
-    const particleCount = 150;
+    function createSlimeBodyTexture() {
+      const c = document.createElement('canvas');
+      c.width = 32;
+      c.height = 32;
+      const ctx = c.getContext('2d');
+      ctx.fillStyle = '#48b73e';
+      ctx.fillRect(0, 0, 32, 32);
+      for (let x = 0; x < 32; x += 4) {
+        for (let y = 0; y < 32; y += 4) {
+          if (Math.random() > 0.5) {
+            ctx.fillStyle = Math.random() > 0.5 ? '#57c74b' : '#3fa336';
+            ctx.fillRect(x, y, 4, 4);
+          }
+        }
+      }
+      const texture = new THREE.CanvasTexture(c);
+      texture.magFilter = THREE.NearestFilter;
+      texture.minFilter = THREE.NearestFilter;
+      return texture;
+    }
+
+    // 1. Animated Hopping Minecraft Slimes System
+    const slimeFaceTex = createSlimeFaceTexture();
+    const slimeBodyTex = createSlimeBodyTexture();
+
+    const slimeGroup = new THREE.Group();
+    scene.add(slimeGroup);
+
+    // 6 playful Minecraft slimes (Big, Medium, and Baby slimes)
+    const slimeConfigs = [
+      { size: 1.5, startX: -9, startZ: -2.5, groundY: -5.6, jumpHeight: 3.0, hopSpeed: 2.3, dir: 1 },
+      { size: 1.1, startX: -3.5, startZ: -1.5, groundY: -5.3, jumpHeight: 2.4, hopSpeed: 2.7, dir: 1 },
+      { size: 0.65, startX: 2.5, startZ: -0.8, groundY: -5.0, jumpHeight: 1.8, hopSpeed: 3.3, dir: 1 },
+      { size: 1.35, startX: 9.5, startZ: -3.2, groundY: -5.7, jumpHeight: 2.7, hopSpeed: 2.5, dir: -1 },
+      { size: 0.85, startX: -6.5, startZ: -4.5, groundY: -6.0, jumpHeight: 2.1, hopSpeed: 2.9, dir: 1 },
+      { size: 0.55, startX: 4.5, startZ: -5.0, groundY: -6.2, jumpHeight: 1.6, hopSpeed: 3.5, dir: -1 }
+    ];
+
+    const slimes = [];
+
+    slimeConfigs.forEach((cfg, idx) => {
+      const slime = new THREE.Group();
+
+      // Outer Translucent Gelatinous Box
+      const outerGeo = new THREE.BoxGeometry(cfg.size, cfg.size, cfg.size);
+      const outerMat = new THREE.MeshStandardMaterial({
+        color: 0x68e35a,
+        transparent: true,
+        opacity: 0.62,
+        roughness: 0.1,
+        metalness: 0.05
+      });
+      const outerMesh = new THREE.Mesh(outerGeo, outerMat);
+      slime.add(outerMesh);
+
+      // Outer bevel wire for authentic voxel block feel
+      const outerWire = new THREE.LineSegments(
+        new THREE.EdgesGeometry(outerGeo),
+        new THREE.LineBasicMaterial({ color: 0x8ef581, transparent: true, opacity: 0.45 })
+      );
+      slime.add(outerWire);
+
+      // Inner Core Box with Face on front
+      const innerSize = cfg.size * 0.58;
+      const innerGeo = new THREE.BoxGeometry(innerSize, innerSize, innerSize);
+      const innerBodyMat = new THREE.MeshStandardMaterial({ map: slimeBodyTex, roughness: 0.35 });
+      const innerFaceMat = new THREE.MeshStandardMaterial({ map: slimeFaceTex, roughness: 0.35 });
+      const innerMats = [
+        innerBodyMat, // +x
+        innerBodyMat, // -x
+        innerBodyMat, // +y
+        innerBodyMat, // -y
+        innerFaceMat, // +z (front)
+        innerBodyMat  // -z
+      ];
+      const innerMesh = new THREE.Mesh(innerGeo, innerMats);
+      innerMesh.position.z = cfg.size * 0.05;
+      slime.add(innerMesh);
+
+      // Ground Drop Shadow (squashes & stretches with hop)
+      const shadowGeo = new THREE.PlaneGeometry(cfg.size * 1.3, cfg.size * 1.3);
+      const shadowMat = new THREE.MeshBasicMaterial({
+        color: 0x072007,
+        transparent: true,
+        opacity: 0.4,
+        depthWrite: false
+      });
+      const shadow = new THREE.Mesh(shadowGeo, shadowMat);
+      shadow.rotation.x = -Math.PI / 2;
+      shadow.position.set(cfg.startX, cfg.groundY, cfg.startZ);
+      scene.add(shadow);
+
+      slime.position.set(cfg.startX, cfg.groundY + cfg.size * 0.5, cfg.startZ);
+
+      slimes.push({
+        group: slime,
+        outerMesh,
+        shadow,
+        cfg,
+        baseY: cfg.groundY + cfg.size * 0.5,
+        x: cfg.startX,
+        z: cfg.startZ,
+        hopOffset: idx * 1.15
+      });
+
+      slimeGroup.add(slime);
+    });
+
+    // 2. Ambient Natural Plains Particles (Sparks & Spores)
+    const particleCount = 120;
     const particleGeo = new THREE.BoxGeometry(0.12, 0.12, 0.12);
     const particleGroup = new THREE.Group();
     scene.add(particleGroup);
 
-    const particleColors = [0x10b981, 0x34d399, 0x4ade80, 0xff2a4b, 0xff4d6d, 0x00f0ff, 0xfbbf24];
+    const particleColors = [0x52e043, 0x68e35a, 0x8ef581, 0x00f0ff, 0xfbbf24];
     const particles = [];
     for (let i = 0; i < particleCount; i++) {
       const pColor = particleColors[Math.floor(Math.random() * particleColors.length)];
@@ -166,18 +259,18 @@ export default function MinecraftBackground() {
         new THREE.MeshBasicMaterial({
           color: pColor,
           transparent: true,
-          opacity: 0.5 + Math.random() * 0.5
+          opacity: 0.45 + Math.random() * 0.45
         })
       );
 
       pMesh.position.set(
         (Math.random() - 0.5) * 32,
-        (Math.random() - 0.5) * 28,
-        -2 - Math.random() * 14
+        (Math.random() - 0.5) * 26,
+        -2 - Math.random() * 12
       );
 
       pMesh.userData = {
-        vy: 0.007 + Math.random() * 0.014,
+        vy: 0.006 + Math.random() * 0.012,
         vx: (Math.random() - 0.5) * 0.005,
         rotSpeed: (Math.random() - 0.5) * 0.04
       };
@@ -196,10 +289,9 @@ export default function MinecraftBackground() {
     const handleMouseMove = (e) => {
       mouseX = (e.clientX / window.innerWidth) * 2 - 1;
       mouseY = -(e.clientY / window.innerHeight) * 2 + 1;
-      targetCameraX = mouseX * 2.5;
-      targetCameraY = mouseY * 2.0;
+      targetCameraX = mouseX * 2.2;
+      targetCameraY = mouseY * 1.8;
 
-      // Parallax effect on the natural Minecraft plains background
       if (bgImageRef.current) {
         const moveX = (e.clientX / window.innerWidth - 0.5) * -22;
         const moveY = (e.clientY / window.innerHeight - 0.5) * -16;
@@ -235,14 +327,55 @@ export default function MinecraftBackground() {
       camera.position.x = THREE.MathUtils.lerp(camera.position.x, targetCameraX, 0.05);
       camera.position.y = THREE.MathUtils.lerp(camera.position.y, targetCameraY - scrollOffset, 0.05);
 
-      // Rotate and float 3D Voxel Blocks
-      blocks.forEach(mesh => {
-        mesh.rotation.x += mesh.userData.rotX;
-        mesh.rotation.y += mesh.userData.rotY;
-        mesh.position.y = mesh.userData.initialY + Math.sin(elapsed * mesh.userData.floatSpeed + mesh.userData.timeOffset) * mesh.userData.floatAmplitude;
+      // Animate 3D Minecraft Hopping Slimes
+      slimes.forEach(s => {
+        const cycle = (elapsed * s.cfg.hopSpeed + s.hopOffset) % (Math.PI * 2);
+        const isAirborne = cycle > 0.6 && cycle < 2.5;
+
+        if (isAirborne) {
+          // Mid-air leaping arc
+          const jumpProgress = (cycle - 0.6) / 1.9; // 0 to 1
+          const jumpY = Math.sin(jumpProgress * Math.PI) * s.cfg.jumpHeight;
+          s.group.position.y = s.baseY + jumpY;
+
+          // Forward travel during leap
+          s.x += s.cfg.dir * 0.042;
+          if (s.x > 18) s.x = -18;
+          else if (s.x < -18) s.x = 18;
+          s.group.position.x = s.x;
+
+          // Stretch along Y axis while in the air (squash & stretch)
+          const stretch = Math.sin(jumpProgress * Math.PI);
+          s.group.scale.y = 1.0 + stretch * 0.32;
+          s.group.scale.x = 1.0 - stretch * 0.18;
+          s.group.scale.z = 1.0 - stretch * 0.18;
+
+          // Dynamic drop shadow shrinking and fading as slime jumps higher
+          s.shadow.position.x = s.x;
+          s.shadow.position.z = s.z;
+          const shadowScale = Math.max(0.3, 1.0 - (jumpY / (s.cfg.jumpHeight * 1.5)));
+          s.shadow.scale.set(shadowScale, shadowScale, 1);
+          s.shadow.material.opacity = 0.4 * shadowScale;
+        } else {
+          // Ground phase: squish down before leap and upon landing
+          s.group.position.y = s.baseY;
+          s.shadow.position.x = s.x;
+          s.shadow.position.z = s.z;
+
+          const squish = Math.sin(cycle * 2);
+          s.group.scale.y = 0.72 + squish * 0.22;
+          s.group.scale.x = 1.22 - squish * 0.18;
+          s.group.scale.z = 1.22 - squish * 0.18;
+
+          s.shadow.scale.set(1.15, 1.15, 1);
+          s.shadow.material.opacity = 0.42;
+        }
+
+        // Face forward toward movement direction
+        s.group.rotation.y = s.cfg.dir > 0 ? 0.25 : -0.25;
       });
 
-      // Drift voxel particles upwards
+      // Drift gentle particles upwards
       particles.forEach(p => {
         p.position.y += p.userData.vy;
         p.position.x += p.userData.vx;
@@ -272,48 +405,48 @@ export default function MinecraftBackground() {
 
   return (
     <div className="fixed inset-0 pointer-events-none z-0 overflow-hidden bg-[#070913]">
-      {/* 1. Natural Minecraft Sunlit Plains Background (Steve & Hopping Slimes) */}
+      {/* 1. Natural Minecraft Sunlit Plains Background (Steve & Slimes) */}
       <div
         ref={bgImageRef}
         className="absolute inset-0 bg-cover bg-center transition-transform duration-300 ease-out pointer-events-none will-change-transform"
         style={{
           backgroundImage: "url('https://vcswkusqdkyhyanytjlc.supabase.co/storage/v1/object/public/organizer-assets/wallpapers/minecraft_hero_plains.jpg')",
           backgroundPosition: 'center 35%',
-          opacity: 0.88,
-          filter: 'brightness(1.05) contrast(1.12) saturate(1.18)',
+          opacity: 0.90,
+          filter: 'brightness(1.06) contrast(1.12) saturate(1.18)',
         }}
       />
 
-      {/* 2. Vibrant Red & Emerald Ambient Glow Orbs */}
+      {/* 2. Vibrant Natural Sunlight & Emerald Glow Orbs */}
       <div 
         className="absolute inset-0 pointer-events-none"
         style={{
           background: `
-            radial-gradient(circle at 12% 75%, rgba(255, 42, 75, 0.22) 0%, transparent 55%),
-            radial-gradient(circle at 88% 30%, rgba(16, 185, 129, 0.25) 0%, transparent 55%),
-            radial-gradient(circle at 50% 12%, rgba(255, 235, 175, 0.12) 0%, transparent 60%)
+            radial-gradient(circle at 88% 30%, rgba(82, 224, 67, 0.22) 0%, transparent 55%),
+            radial-gradient(circle at 15% 40%, rgba(82, 224, 67, 0.16) 0%, transparent 50%),
+            radial-gradient(circle at 50% 12%, rgba(255, 240, 185, 0.16) 0%, transparent 60%)
           `
         }}
       />
 
-      {/* 3. Subtle Backdrop Vignette (ensures text, badges, and countdown HUD stay 100% crisp and readable) */}
+      {/* 3. Subtle Backdrop Vignette (keeps text and cards 100% crisp and readable) */}
       <div 
         className="absolute inset-0 pointer-events-none"
         style={{
-          background: 'linear-gradient(180deg, rgba(7, 9, 19, 0.35) 0%, rgba(11, 14, 20, 0.50) 45%, rgba(7, 9, 19, 0.82) 100%)'
+          background: 'linear-gradient(180deg, rgba(7, 9, 19, 0.28) 0%, rgba(11, 14, 20, 0.42) 45%, rgba(7, 9, 19, 0.78) 100%)'
         }}
       />
       <div 
         className="absolute inset-0 pointer-events-none"
         style={{
-          background: 'radial-gradient(circle at 50% 45%, transparent 35%, rgba(11, 14, 20, 0.45) 75%, rgba(7, 9, 19, 0.90) 100%)'
+          background: 'radial-gradient(circle at 50% 45%, transparent 40%, rgba(11, 14, 20, 0.40) 75%, rgba(7, 9, 19, 0.85) 100%)'
         }}
       />
 
-      {/* 4. 3D WebGL Canvas (Floating 3D Voxel Ores & Emerald Slime / Redstone Sparks) */}
+      {/* 4. 3D WebGL Canvas (Real 3D Animated Hopping Minecraft Slimes) */}
       <canvas
         ref={canvasRef}
-        className="absolute inset-0 w-full h-full opacity-75 pointer-events-none"
+        className="absolute inset-0 w-full h-full opacity-85 pointer-events-none"
       />
     </div>
   );

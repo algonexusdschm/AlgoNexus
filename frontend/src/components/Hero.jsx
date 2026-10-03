@@ -50,9 +50,9 @@ export default function Hero({ onOpenRegister }) {
             <span>LIVE REGISTRATIONS OPEN</span>
           </div>
 
-          <div className="inline-flex items-center gap-2 px-3.5 py-1.5 bg-rose-950/80 border-2 border-rose-500/80 text-rose-300 text-xs font-mc shadow-[0_0_15px_rgba(244,63,94,0.35)]">
-            <span className="w-2.5 h-2.5 bg-rose-500 rounded-none animate-pulse-redstone" />
-            <span>REDSTONE ENGINE: ONLINE</span>
+          <div className="inline-flex items-center gap-2 px-3.5 py-1.5 bg-lime-950/80 border-2 border-lime-400/80 text-lime-300 text-xs font-mc shadow-[0_0_15px_rgba(132,204,22,0.35)]">
+            <span className="w-2.5 h-2.5 bg-lime-400 rounded-none animate-bounce shadow-[0_0_8px_#a3e635]" />
+            <span>SLIME PLAINS ARENA: READY</span>
           </div>
 
           <div className="inline-flex items-center gap-2 px-3.5 py-1.5 bg-mc-deepslate/90 border-2 border-mc-border text-slate-200 text-xs font-medium shadow-voxel-sm">
