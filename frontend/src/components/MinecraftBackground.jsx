@@ -623,21 +623,21 @@ export default function MinecraftBackground() {
         ref={bgImageRef}
         className="absolute inset-0 bg-cover bg-center transition-transform duration-300 ease-out pointer-events-none will-change-transform"
         style={{
-          backgroundImage: "url('https://vcswkusqdkyhyanytjlc.supabase.co/storage/v1/object/public/organizer-assets/wallpapers/minecraft_hero_plains.jpg')",
-          backgroundPosition: 'center 35%',
-          opacity: 0.90,
-          filter: 'brightness(1.06) contrast(1.12) saturate(1.18)',
+          backgroundImage: "url('/images/doomsday_multiverse_rift.jpg'), url('https://vcswkusqdkyhyanytjlc.supabase.co/storage/v1/object/public/organizer-assets/wallpapers/doomsday_multiverse_rift.jpg')",
+          backgroundPosition: 'center 40%',
+          opacity: 0.94,
+          filter: 'brightness(1.04) contrast(1.15) saturate(1.15)',
         }}
       />
 
-      {/* 2. Vibrant Natural Sunlight & Emerald Glow Orbs */}
+      {/* 2. Latverian Emerald & Multiversal Incursion Glow Orbs */}
       <div 
         className="absolute inset-0 pointer-events-none"
         style={{
           background: `
-            radial-gradient(circle at 88% 30%, rgba(82, 224, 67, 0.22) 0%, transparent 55%),
-            radial-gradient(circle at 15% 40%, rgba(82, 224, 67, 0.16) 0%, transparent 50%),
-            radial-gradient(circle at 50% 12%, rgba(255, 240, 185, 0.16) 0%, transparent 60%)
+            radial-gradient(circle at 80% 35%, rgba(16, 185, 129, 0.28) 0%, transparent 50%),
+            radial-gradient(circle at 35% 25%, rgba(168, 85, 247, 0.20) 0%, transparent 45%),
+            radial-gradient(circle at 45% 30%, rgba(234, 179, 8, 0.16) 0%, transparent 35%)
           `
         }}
       />
@@ -646,13 +646,13 @@ export default function MinecraftBackground() {
       <div 
         className="absolute inset-0 pointer-events-none"
         style={{
-          background: 'linear-gradient(180deg, rgba(7, 9, 19, 0.28) 0%, rgba(11, 14, 20, 0.42) 45%, rgba(7, 9, 19, 0.78) 100%)'
+          background: 'linear-gradient(180deg, rgba(7, 9, 19, 0.35) 0%, rgba(11, 14, 20, 0.45) 45%, rgba(7, 9, 19, 0.85) 100%)'
         }}
       />
       <div 
         className="absolute inset-0 pointer-events-none"
         style={{
-          background: 'radial-gradient(circle at 50% 45%, transparent 40%, rgba(11, 14, 20, 0.40) 75%, rgba(7, 9, 19, 0.85) 100%)'
+          background: 'radial-gradient(circle at 50% 45%, transparent 35%, rgba(11, 14, 20, 0.45) 75%, rgba(7, 9, 19, 0.90) 100%)'
         }}
       />
 
