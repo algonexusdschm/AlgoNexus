@@ -244,7 +244,191 @@ export default function MinecraftBackground() {
       slimeGroup.add(slime);
     });
 
-    // 2. Ambient Natural Plains Particles (Sparks & Spores)
+    // Helpers to create Allay textures
+    function createAllayHeadTexture() {
+      const c = document.createElement('canvas');
+      c.width = 32;
+      c.height = 32;
+      const ctx = c.getContext('2d');
+      ctx.fillStyle = '#4cc7f5';
+      ctx.fillRect(0, 0, 32, 32);
+      for (let x = 0; x < 32; x += 4) {
+        for (let y = 0; y < 32; y += 4) {
+          if (Math.random() > 0.5) {
+            ctx.fillStyle = Math.random() > 0.5 ? '#65d5fc' : '#39b5e3';
+            ctx.fillRect(x, y, 4, 4);
+          }
+        }
+      }
+      // Eyes (deep navy with light cyan pixel shine)
+      ctx.fillStyle = '#0f2942';
+      ctx.fillRect(6, 12, 6, 8);
+      ctx.fillRect(20, 12, 6, 8);
+      ctx.fillStyle = '#c5f2ff';
+      ctx.fillRect(8, 14, 3, 4);
+      ctx.fillRect(22, 14, 3, 4);
+
+      const texture = new THREE.CanvasTexture(c);
+      texture.magFilter = THREE.NearestFilter;
+      texture.minFilter = THREE.NearestFilter;
+      return texture;
+    }
+
+    // Helpers to create Ghast texture
+    function createGhastTexture() {
+      const c = document.createElement('canvas');
+      c.width = 64;
+      c.height = 64;
+      const ctx = c.getContext('2d');
+      // Pale white/light grey ghostly base
+      ctx.fillStyle = '#f0f3f6';
+      ctx.fillRect(0, 0, 64, 64);
+      for (let x = 0; x < 64; x += 8) {
+        for (let y = 0; y < 64; y += 8) {
+          if (Math.random() > 0.45) {
+            ctx.fillStyle = Math.random() > 0.5 ? '#ffffff' : '#e0e6ed';
+            ctx.fillRect(x, y, 8, 8);
+          }
+        }
+      }
+      // Ghast Face: Closed/crying eyes & sad mouth
+      ctx.fillStyle = '#4a5568';
+      ctx.fillRect(12, 22, 12, 6);
+      ctx.fillRect(40, 22, 12, 6);
+      ctx.fillStyle = '#718096';
+      ctx.fillRect(16, 28, 4, 12);
+      ctx.fillRect(44, 28, 4, 12);
+      ctx.fillStyle = '#4a5568';
+      ctx.fillRect(26, 42, 12, 8);
+
+      const texture = new THREE.CanvasTexture(c);
+      texture.magFilter = THREE.NearestFilter;
+      texture.minFilter = THREE.NearestFilter;
+      return texture;
+    }
+
+    // 2. Floating Animated Allays Group
+    const allays = [];
+    const allayGroup = new THREE.Group();
+    scene.add(allayGroup);
+
+    const allayHeadTex = createAllayHeadTexture();
+
+    const allayConfigs = [
+      { startX: -7.5, startY: 2.4, startZ: 2, scale: 0.9, speed: 1.1, radiusX: 3.2, radiusY: 1.1 },
+      { startX: 6.8, startY: 3.5, startZ: 0.5, scale: 0.95, speed: 0.95, radiusX: 3.8, radiusY: 1.4 },
+      { startX: -1.2, startY: 4.5, startZ: -2.5, scale: 0.8, speed: 1.3, radiusX: 2.6, radiusY: 0.9 }
+    ];
+
+    allayConfigs.forEach((cfg, idx) => {
+      const allay = new THREE.Group();
+
+      // Head
+      const headGeo = new THREE.BoxGeometry(0.36 * cfg.scale, 0.36 * cfg.scale, 0.36 * cfg.scale);
+      const headMat = new THREE.MeshStandardMaterial({
+        map: allayHeadTex,
+        roughness: 0.3,
+        emissive: 0x38bdf8,
+        emissiveIntensity: 0.28
+      });
+      const headMesh = new THREE.Mesh(headGeo, headMat);
+      headMesh.position.y = 0.28 * cfg.scale;
+      allay.add(headMesh);
+
+      // Torso & Dress
+      const bodyGeo = new THREE.BoxGeometry(0.24 * cfg.scale, 0.38 * cfg.scale, 0.2 * cfg.scale);
+      const bodyMat = new THREE.MeshStandardMaterial({
+        color: 0x2baae2,
+        roughness: 0.4,
+        emissive: 0x0284c7,
+        emissiveIntensity: 0.3
+      });
+      const bodyMesh = new THREE.Mesh(bodyGeo, bodyMat);
+      bodyMesh.position.y = -0.05 * cfg.scale;
+      allay.add(bodyMesh);
+
+      // Translucent Fluttering Wings
+      const wingGeo = new THREE.PlaneGeometry(0.42 * cfg.scale, 0.28 * cfg.scale);
+      const wingMat = new THREE.MeshBasicMaterial({
+        color: 0xa5f3fc,
+        transparent: true,
+        opacity: 0.8,
+        side: THREE.DoubleSide
+      });
+
+      const wingL = new THREE.Mesh(wingGeo, wingMat);
+      wingL.position.set(-0.16 * cfg.scale, 0.05 * cfg.scale, -0.12 * cfg.scale);
+      allay.add(wingL);
+
+      const wingR = new THREE.Mesh(wingGeo, wingMat);
+      wingR.position.set(0.16 * cfg.scale, 0.05 * cfg.scale, -0.12 * cfg.scale);
+      allay.add(wingR);
+
+      // Held item (tiny sparkling emerald)
+      const itemGeo = new THREE.BoxGeometry(0.12 * cfg.scale, 0.12 * cfg.scale, 0.12 * cfg.scale);
+      const itemMat = new THREE.MeshStandardMaterial({
+        color: 0x34d399,
+        emissive: 0x10b981,
+        emissiveIntensity: 0.7
+      });
+      const itemMesh = new THREE.Mesh(itemGeo, itemMat);
+      itemMesh.position.set(0, -0.1 * cfg.scale, 0.16 * cfg.scale);
+      allay.add(itemMesh);
+
+      allay.position.set(cfg.startX, cfg.startY, cfg.startZ);
+
+      allays.push({
+        group: allay,
+        wingL,
+        wingR,
+        cfg,
+        timeOffset: idx * 2.2
+      });
+
+      allayGroup.add(allay);
+    });
+
+    // 3. One Majestic Floating Ghast in the High Sky
+    const ghastTex = createGhastTexture();
+    const ghastGroup = new THREE.Group();
+    scene.add(ghastGroup);
+
+    // Large Cubic Body
+    const ghastBodyGeo = new THREE.BoxGeometry(2.3, 2.3, 2.3);
+    const ghastBodyMat = new THREE.MeshStandardMaterial({
+      map: ghastTex,
+      roughness: 0.45,
+      transparent: true,
+      opacity: 0.94
+    });
+    const ghastBody = new THREE.Mesh(ghastBodyGeo, ghastBodyMat);
+    ghastGroup.add(ghastBody);
+
+    // 9 Drooping Tentacles in 3x3 grid underneath the body
+    const tentacles = [];
+    const tentacleMat = new THREE.MeshStandardMaterial({
+      color: 0xe5e9f0,
+      roughness: 0.5,
+      transparent: true,
+      opacity: 0.9
+    });
+
+    for (let row = -1; row <= 1; row++) {
+      for (let col = -1; col <= 1; col++) {
+        const tentLength = 1.0 + (Math.abs(row) + Math.abs(col)) * 0.25;
+        const tentGeo = new THREE.BoxGeometry(0.18, tentLength, 0.18);
+        tentGeo.translate(0, -tentLength / 2, 0);
+
+        const tentMesh = new THREE.Mesh(tentGeo, tentacleMat);
+        tentMesh.position.set(col * 0.65, -1.15, row * 0.65);
+        ghastGroup.add(tentMesh);
+        tentacles.push({ mesh: tentMesh, offset: (row + 1) * 3 + (col + 1) });
+      }
+    }
+
+    ghastGroup.position.set(-14, 5.2, -6);
+
+    // 4. Ambient Natural Plains Particles (Sparks & Spores)
     const particleCount = 120;
     const particleGeo = new THREE.BoxGeometry(0.12, 0.12, 0.12);
     const particleGroup = new THREE.Group();
@@ -373,6 +557,35 @@ export default function MinecraftBackground() {
 
         // Face forward toward movement direction
         s.group.rotation.y = s.cfg.dir > 0 ? 0.25 : -0.25;
+      });
+
+      // Animate Allays (Fluttering wings, playful hovering & swooping in gentle curves)
+      allays.forEach(a => {
+        const t = elapsed * a.cfg.speed + a.timeOffset;
+        a.group.position.x = a.cfg.startX + Math.sin(t * 0.7) * a.cfg.radiusX;
+        a.group.position.y = a.cfg.startY + Math.sin(t * 1.5) * a.cfg.radiusY;
+        a.group.position.z = a.cfg.startZ + Math.cos(t * 0.6) * 1.2;
+
+        // Flutter wings rapidly
+        const wingFlap = Math.sin(elapsed * 24 + a.timeOffset * 2) * 0.65;
+        a.wingL.rotation.y = wingFlap;
+        a.wingR.rotation.y = -wingFlap;
+
+        // Gentle bank into flight curve
+        a.group.rotation.z = -Math.cos(t * 0.7) * 0.15;
+        a.group.rotation.y = Math.cos(t * 0.7) * 0.45;
+      });
+
+      // Animate One Floating Ghast in the High Sky (Majestic drift + swaying tentacles)
+      const ghastX = ((elapsed * 0.5) % 44) - 22; // drifts smoothly from -22 to +22 across sky
+      ghastGroup.position.x = ghastX;
+      ghastGroup.position.y = 5.2 + Math.sin(elapsed * 0.65) * 0.45;
+      ghastGroup.position.z = -6.5;
+      ghastGroup.rotation.y = 0.15 + Math.sin(elapsed * 0.4) * 0.08;
+
+      tentacles.forEach(tent => {
+        tent.mesh.rotation.x = Math.sin(elapsed * 1.5 + tent.offset * 0.7) * 0.2;
+        tent.mesh.rotation.z = Math.cos(elapsed * 1.2 + tent.offset * 0.5) * 0.15;
       });
 
       // Drift gentle particles upwards
