@@ -1,5 +1,14 @@
 @import url('https://fonts.googleapis.com/css2?family=Anton&family=Orbitron:wght@700;900&display=swap');
 
+@font-face {
+  font-family: 'Avengeance';
+  src: url('/fonts/avengeance.woff2') format('woff2'),
+       url('/fonts/avengeance.ttf') format('truetype');
+  font-weight: 400 900;
+  font-style: normal;
+  font-display: swap;
+}
+
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
@@ -300,9 +309,9 @@
   font-weight: 900;
 }
 
-/* DOOMSDAY MONUMENT HERO STYLING (MATCHING IMAGE 1) */
+/* DOOMSDAY MONUMENT HERO STYLING (AVENGEANCE HEROIC AVENGER) */
 .doomsday-metal-word {
-  font-family: 'Bebas Neue', 'Orbitron', sans-serif;
+  font-family: 'Avengeance', 'Bebas Neue', 'Orbitron', sans-serif;
   font-weight: 900;
   text-transform: uppercase;
   font-style: italic;

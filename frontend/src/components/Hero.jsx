@@ -56,7 +56,7 @@ export default function Hero({ onOpenRegister }) {
 
           {/* Giant DOOMSDAY Title with Integrated Avengers 'A' & Green Laser Baseline */}
           <div className="relative inline-flex flex-col items-center justify-center py-1 sm:py-2 select-none">
-            <div className="font-bebas flex items-center justify-center leading-none text-6xl sm:text-8xl md:text-[7.5rem] lg:text-[8.5rem]">
+            <div className="font-avengeance flex items-center justify-center leading-none text-6xl sm:text-8xl md:text-[7.5rem] lg:text-[8.5rem]">
               <span className="doomsday-metal-word">DOOMSD</span>
               
               {/* Iconic Avengers 'A' Symbol */}
