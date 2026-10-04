@@ -49,14 +49,14 @@ export default function Hero({ onOpenRegister }) {
           <div className="absolute -inset-4 sm:-inset-10 bg-radial from-slate-950/80 via-slate-950/40 to-transparent -z-10 rounded-full blur-2xl pointer-events-none" />
 
           {/* Top Line: ALGO NEXUS 2027 */}
-          <div className="font-mono text-xs sm:text-sm tracking-[0.35em] sm:tracking-[0.45em] text-slate-300 uppercase flex items-center justify-center gap-2 drop-shadow-[0_2px_8px_rgba(0,0,0,0.95)]">
+          <div className="font-space font-medium text-xs sm:text-sm tracking-[0.35em] sm:tracking-[0.45em] text-slate-300 uppercase flex items-center justify-center gap-2.5 drop-shadow-[0_2px_8px_rgba(0,0,0,0.95)]">
             <span>ALGO NEXUS</span>
             <span className="text-emerald-400 font-bold">2027</span>
           </div>
 
           {/* Giant DOOMSDAY Title with Integrated Avengers 'A' & Green Laser Baseline */}
           <div className="relative inline-flex flex-col items-center justify-center py-1 sm:py-2 select-none">
-            <div className="flex items-center justify-center leading-none text-6xl sm:text-8xl md:text-[7.5rem] lg:text-[8.5rem]">
+            <div className="font-bebas flex items-center justify-center leading-none text-6xl sm:text-8xl md:text-[7.5rem] lg:text-[8.5rem]">
               <span className="doomsday-metal-word">DOOMS</span>
               
               {/* Iconic Avengers 'A' Symbol */}
@@ -119,12 +119,12 @@ export default function Hero({ onOpenRegister }) {
           </div>
 
           {/* Subtitle: 48-HOUR HACKATHON */}
-          <div className="font-mono text-base sm:text-xl md:text-2xl font-black text-white tracking-[0.35em] sm:tracking-[0.45em] uppercase pt-1 drop-shadow-[0_2px_8px_rgba(0,0,0,0.95)]">
+          <div className="font-orbitron text-base sm:text-xl md:text-2xl font-black text-white tracking-[0.3em] sm:tracking-[0.4em] uppercase pt-1 drop-shadow-[0_2px_8px_rgba(0,0,0,0.95)]">
             48-HOUR HACKATHON
           </div>
 
           {/* Tagline (Image 1) */}
-          <div className="font-mono text-xs sm:text-sm text-slate-300 tracking-[0.25em] sm:tracking-[0.3em] uppercase space-y-1 pt-2 drop-shadow-[0_2px_6px_rgba(0,0,0,0.95)]">
+          <div className="font-space text-xs sm:text-sm text-slate-300 tracking-[0.2em] sm:tracking-[0.25em] uppercase space-y-1 pt-2 drop-shadow-[0_2px_6px_rgba(0,0,0,0.95)]">
             <p className="font-semibold text-slate-200">BEFORE THE BREAKING POINT</p>
             <p className="text-slate-400 font-light text-[11px] sm:text-xs">REAL PROBLEMS. BOLD SOLUTIONS.</p>
           </div>
@@ -135,7 +135,7 @@ export default function Hero({ onOpenRegister }) {
               onClick={() => onOpenRegister()}
               className="btn-doomsday-cyber group relative px-10 sm:px-14 py-3 sm:py-3.5 flex items-center justify-center gap-2.5 cursor-pointer"
             >
-              <span className="font-mono text-xs sm:text-sm font-bold tracking-[0.25em] text-emerald-400 group-hover:text-emerald-300 uppercase flex items-center gap-2.5">
+              <span className="font-chakra text-xs sm:text-sm font-bold tracking-[0.25em] text-emerald-400 group-hover:text-emerald-300 uppercase flex items-center gap-2.5">
                 <span>REGISTER NOW</span>
                 <span className="text-base group-hover:translate-x-1.5 transition-transform duration-200">→</span>
               </span>

@@ -36,7 +36,11 @@ export default {
       fontFamily: {
         sans: ['Plus Jakarta Sans', 'Inter', 'sans-serif'],
         minecraft: ['Silkscreen', 'monospace'],
-        mono: ['Fira Code', 'monospace']
+        mono: ['Fira Code', 'monospace'],
+        bebas: ['"Bebas Neue"', 'sans-serif'],
+        orbitron: ['"Orbitron"', 'sans-serif'],
+        chakra: ['"Chakra Petch"', 'sans-serif'],
+        space: ['"Space Grotesk"', 'sans-serif'],
       },
       boxShadow: {
         'voxel-sm': 'inset 1px 1px 0px rgba(255,255,255,0.25), inset -1px -1px 0px rgba(0,0,0,0.6), 0 3px 0 #000',
