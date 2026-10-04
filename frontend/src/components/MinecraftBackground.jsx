@@ -232,13 +232,13 @@ export default function MinecraftBackground() {
       const cx = size / 2;
       const cy = size / 2;
 
-      ctx.shadowColor = '#059669';
-      ctx.shadowBlur = 12;
+      ctx.shadowColor = '#fbbf24';
+      ctx.shadowBlur = 16;
 
-      // 1. Overlapping squares (8-Pointed Star of Sorcery)
+      // 1. Overlapping squares (8-Pointed Star of Sorcery - Radiant Gold)
       const starRadius = size * 0.32;
-      ctx.strokeStyle = '#34d399';
-      ctx.lineWidth = 2.8;
+      ctx.strokeStyle = '#fde047';
+      ctx.lineWidth = 3.2;
       for (let offset = 0; offset < 2; offset++) {
         const baseAngle = (offset * Math.PI) / 4;
         ctx.beginPath();
@@ -253,10 +253,10 @@ export default function MinecraftBackground() {
         ctx.stroke();
       }
 
-      // 2. Interlocking Equilateral Triangles (Hexagram)
+      // 2. Interlocking Equilateral Triangles (Hexagram - Warm Amber Gold)
       const hexRadius = size * 0.28;
-      ctx.strokeStyle = '#d97706';
-      ctx.lineWidth = 2.0;
+      ctx.strokeStyle = '#fbbf24';
+      ctx.lineWidth = 2.6;
       for (let tri = 0; tri < 2; tri++) {
         const startAngle = tri * Math.PI;
         ctx.beginPath();
@@ -272,8 +272,8 @@ export default function MinecraftBackground() {
       }
 
       // 3. Radial Spoke Beams to 8 star vertices
-      ctx.strokeStyle = '#10b981';
-      ctx.lineWidth = 1.4;
+      ctx.strokeStyle = '#f59e0b';
+      ctx.lineWidth = 1.6;
       for (let i = 0; i < 8; i++) {
         const a = (i * Math.PI) / 4;
         ctx.beginPath();
@@ -283,18 +283,18 @@ export default function MinecraftBackground() {
       }
 
       // 4. Bounding circle around the star
-      ctx.strokeStyle = '#f59e0b';
-      ctx.lineWidth = 2;
+      ctx.strokeStyle = '#fde047';
+      ctx.lineWidth = 2.4;
       ctx.beginPath();
       ctx.arc(cx, cy, starRadius, 0, Math.PI * 2);
       ctx.stroke();
 
       // 5. Glowing Nodes on Star Vertices
-      ctx.fillStyle = '#6ee7b7';
+      ctx.fillStyle = '#fef08a';
       for (let i = 0; i < 8; i++) {
         const a = (i * Math.PI) / 4;
         ctx.beginPath();
-        ctx.arc(cx + Math.cos(a) * starRadius, cy + Math.sin(a) * starRadius, 6, 0, Math.PI * 2);
+        ctx.arc(cx + Math.cos(a) * starRadius, cy + Math.sin(a) * starRadius, 7, 0, Math.PI * 2);
         ctx.fill();
       }
 
@@ -408,10 +408,32 @@ export default function MinecraftBackground() {
         ctx.restore();
       }
 
-      // Hexagram
+      // Hexagram (Radiant Golden Star)
       const hexR = size * 0.30;
-      ctx.strokeStyle = '#d97706';
-      ctx.lineWidth = 2.5;
+
+      // 1. Golden Star Bloom Glow
+      ctx.shadowColor = '#fbbf24';
+      ctx.shadowBlur = 22;
+
+      // 2. Translucent Golden Wash Inside Star Facets
+      ctx.fillStyle = 'rgba(251, 191, 36, 0.14)';
+      for (let tri = 0; tri < 2; tri++) {
+        const startA = tri * Math.PI;
+        ctx.beginPath();
+        for (let i = 0; i < 3; i++) {
+          const a = startA + (i * 2 * Math.PI) / 3;
+          const x = cx + Math.cos(a) * hexR;
+          const y = cy + Math.sin(a) * hexR;
+          if (i === 0) ctx.moveTo(x, y);
+          else ctx.lineTo(x, y);
+        }
+        ctx.closePath();
+        ctx.fill();
+      }
+
+      // 3. Radiant Metallic Gold Star Outline
+      ctx.strokeStyle = '#fde047';
+      ctx.lineWidth = 3.8;
       for (let tri = 0; tri < 2; tri++) {
         const startA = tri * Math.PI;
         ctx.beginPath();
@@ -426,16 +448,36 @@ export default function MinecraftBackground() {
         ctx.stroke();
       }
 
-      // Inner Core Ring & Radiant Node
-      ctx.strokeStyle = '#6ee7b7';
-      ctx.lineWidth = 2;
+      // 4. Luminous Golden Vertex Jewels (6 star tips)
+      for (let tri = 0; tri < 2; tri++) {
+        const startA = tri * Math.PI;
+        for (let i = 0; i < 3; i++) {
+          const a = startA + (i * 2 * Math.PI) / 3;
+          const x = cx + Math.cos(a) * hexR;
+          const y = cy + Math.sin(a) * hexR;
+          
+          ctx.fillStyle = '#f59e0b';
+          ctx.beginPath();
+          ctx.arc(x, y, 7.5, 0, Math.PI * 2);
+          ctx.fill();
+
+          ctx.fillStyle = '#fffbeb';
+          ctx.beginPath();
+          ctx.arc(x, y, 4, 0, Math.PI * 2);
+          ctx.fill();
+        }
+      }
+
+      // 5. Inner Core Ring & Radiant Node (Gleaming Gold)
+      ctx.strokeStyle = '#fbbf24';
+      ctx.lineWidth = 2.4;
       ctx.beginPath();
       ctx.arc(cx, cy, size * 0.16, 0, Math.PI * 2);
       ctx.stroke();
 
-      ctx.fillStyle = '#fbbf24';
+      ctx.fillStyle = '#fef08a';
       ctx.beginPath();
-      ctx.arc(cx, cy, 9, 0, Math.PI * 2);
+      ctx.arc(cx, cy, 10, 0, Math.PI * 2);
       ctx.fill();
 
       const tex = new THREE.CanvasTexture(c);
@@ -497,7 +539,7 @@ export default function MinecraftBackground() {
     const sealMatLeft = new THREE.MeshBasicMaterial({
       map: sealTex,
       transparent: true,
-      opacity: 0.42,
+      opacity: 0.65,
       blending: THREE.AdditiveBlending,
       depthWrite: false,
       side: THREE.DoubleSide
@@ -510,7 +552,7 @@ export default function MinecraftBackground() {
     const sealMatRight = new THREE.MeshBasicMaterial({
       map: sealTex,
       transparent: true,
-      opacity: 0.40,
+      opacity: 0.62,
       blending: THREE.AdditiveBlending,
       depthWrite: false,
       side: THREE.DoubleSide
@@ -647,12 +689,12 @@ export default function MinecraftBackground() {
       leftSealMesh.rotation.z -= 0.0022;
       leftSealMesh.position.y = 3.2 + Math.sin(elapsed * 1.1) * 0.22;
       leftSealMesh.rotation.y = 0.42 + targetX * 0.12;
-      sealMatLeft.opacity = 0.40 + Math.sin(elapsed * 1.4) * 0.08;
+      sealMatLeft.opacity = 0.65 + Math.sin(elapsed * 1.4) * 0.12;
 
       rightSealMesh.rotation.z += 0.0026;
       rightSealMesh.position.y = 2.6 + Math.cos(elapsed * 0.95) * 0.20;
       rightSealMesh.rotation.y = -0.40 + targetX * 0.12;
-      sealMatRight.opacity = 0.38 + Math.cos(elapsed * 1.3) * 0.08;
+      sealMatRight.opacity = 0.62 + Math.cos(elapsed * 1.3) * 0.12;
 
       renderer.render(scene, camera);
     };
