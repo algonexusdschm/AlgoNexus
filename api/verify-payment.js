@@ -38,7 +38,7 @@ export default async function handler(req, res) {
         paymentId: razorpay_payment_id || utrNumber || `PAY_${Date.now()}`,
         paymentStatus,
         paymentMethod: paymentMethod || 'UPI_QR',
-        utrNumber: utrNumber || '',
+        utrNumber: utrNumber || (paymentScreenshot ? `SCREENSHOT-${ticketId}` : `UTR-PENDING-${Date.now().toString().slice(-6)}`),
         paymentScreenshot: paymentScreenshot || '',
         bankName: bankName || '',
         verifiedAt: paymentStatus === 'PAID' ? new Date().toISOString() : null,
@@ -59,10 +59,14 @@ export default async function handler(req, res) {
         checkedIn: false
       };
 
-      // Persist to Supabase Cloud PostgreSQL
+      // Persist to Supabase Cloud PostgreSQL with 4s timeout protection
       try {
+        const controller = new AbortController();
+        const timeoutId = setTimeout(() => controller.abort(), 4000);
+
         await fetch(`${SUPABASE_URL}/rest/v1/registrations`, {
           method: 'POST',
+          signal: controller.signal,
           headers: {
             'apikey': SUPABASE_ANON_KEY,
             'Authorization': `Bearer ${SUPABASE_ANON_KEY}`,
@@ -91,8 +95,9 @@ export default async function handler(req, res) {
             checked_in: false
           })
         });
+        clearTimeout(timeoutId);
       } catch (cloudErr) {
-        console.warn('Could not persist registration to Supabase in api/verify-payment:', cloudErr);
+        console.warn('Could not persist registration to Supabase in api/verify-payment:', cloudErr.message || cloudErr);
       }
 
       return res.status(200).json({

@@ -40,16 +40,24 @@ export async function uploadImageToSupabase(fileOrDataUrl, bucketName = 'organiz
     }
 
     const fileName = `${folder}/${Date.now()}-${Math.random().toString(36).substring(2, 8)}.${extension}`;
-    const { data, error } = await supabase.storage
+    
+    // Set 4s timeout to avoid hanging if network is unstable
+    const uploadPromise = supabase.storage
       .from(bucketName)
       .upload(fileName, fileToUpload, {
         cacheControl: '3600',
         upsert: true
       });
+    
+    const timeoutPromise = new Promise((_, reject) => 
+      setTimeout(() => reject(new Error('Storage upload timeout')), 4000)
+    );
+
+    const { data, error } = await Promise.race([uploadPromise, timeoutPromise]);
 
     if (error) {
       console.warn(`Supabase Storage upload to "${bucketName}" returned error:`, error.message);
-      // Fallback: return the original base64/data URL so image is never lost
+      // Fallback: return the original compressed data URL so image is never lost
       return typeof fileOrDataUrl === 'string' ? fileOrDataUrl : '';
     }
 

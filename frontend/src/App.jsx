@@ -20,8 +20,32 @@ function MainEventApp() {
     return (path === '/admin' || hash === '#admin') ? 'admin' : 'event';
   });
 
-  const [isRegisterOpen, setIsRegisterOpen] = useState(false);
-  const [selectedTier, setSelectedTier] = useState(pricingTiers[0]);
+  const [isRegisterOpen, setIsRegisterOpen] = useState(() => {
+    try {
+      const saved = localStorage.getItem('algonexus_checkout_session');
+      if (saved) {
+        const parsed = JSON.parse(saved);
+        if (parsed.timestamp && Date.now() - parsed.timestamp < 12 * 60 * 60 * 1000) {
+          return true;
+        }
+      }
+    } catch {}
+    return false;
+  });
+
+  const [selectedTier, setSelectedTier] = useState(() => {
+    try {
+      const saved = localStorage.getItem('algonexus_checkout_session');
+      if (saved) {
+        const parsed = JSON.parse(saved);
+        if (parsed.tierId && pricingTiers && pricingTiers.length > 0) {
+          const match = pricingTiers.find(t => t.id === parsed.tierId);
+          if (match) return match;
+        }
+      }
+    } catch {}
+    return pricingTiers[0];
+  });
   const [issuedTicket, setIssuedTicket] = useState(null);
   const [isTicketOpen, setIsTicketOpen] = useState(false);
 

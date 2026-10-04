@@ -7,6 +7,9 @@ import {
 import { QRCodeSVG } from 'qrcode.react';
 import { EVENT_TRACKS } from '../data/eventData';
 import { useEvent } from '../context/EventContext';
+import { uploadImageToSupabase } from '../lib/supabaseClient';
+
+const SESSION_KEY = 'algonexus_checkout_session';
 
 export default function RegistrationModal({
   isOpen,
@@ -18,7 +21,68 @@ export default function RegistrationModal({
   const [selectedTier, setSelectedTier] = useState(initialTier || pricingTiers[0]);
   const [step, setStep] = useState(1); // 1: Attendee Info, 2: UPI Payment
   const [loading, setLoading] = useState(false);
+  const [uploadingImage, setUploadingImage] = useState(false);
   const [errorMessage, setErrorMessage] = useState('');
+
+  // Payment Verification fields
+  const [utrNumber, setUtrNumber] = useState('');
+  const [screenshotPreview, setScreenshotPreview] = useState('');
+  const [screenshotUrl, setScreenshotUrl] = useState('');
+
+  // Form State
+  const [formData, setFormData] = useState({
+    fullName: '',
+    email: '',
+    phone: '',
+    college: '',
+    branch: 'Computer Science & Engineering',
+    year: '3rd Year',
+    github: '',
+    track: EVENT_TRACKS[0]?.name || 'AI & Neural Frontiers',
+    teamName: '',
+    member2: '',
+    member3: '',
+    member4: ''
+  });
+
+  // Save active checkout session to localStorage
+  const saveSession = (currentStep, form, tier) => {
+    try {
+      localStorage.setItem(SESSION_KEY, JSON.stringify({
+        step: currentStep,
+        formData: form,
+        tierId: tier?.id,
+        timestamp: Date.now()
+      }));
+    } catch (e) {
+      // Ignore private mode storage restrictions
+    }
+  };
+
+  // Clear checkout session from localStorage
+  const clearSession = () => {
+    try {
+      localStorage.removeItem(SESSION_KEY);
+    } catch (e) {}
+  };
+
+  // Restore saved session on mount if user switched apps or refreshed
+  useEffect(() => {
+    try {
+      const saved = localStorage.getItem(SESSION_KEY);
+      if (saved) {
+        const parsed = JSON.parse(saved);
+        if (parsed.timestamp && Date.now() - parsed.timestamp < 12 * 60 * 60 * 1000) {
+          if (parsed.formData) setFormData(parsed.formData);
+          if (parsed.tierId && pricingTiers && pricingTiers.length > 0) {
+            const match = pricingTiers.find(t => t.id === parsed.tierId);
+            if (match) setSelectedTier(match);
+          }
+          if (parsed.step === 2) setStep(2);
+        }
+      }
+    } catch (e) {}
+  }, [pricingTiers]);
 
   // Always sync selected tier if parent passes a new initialTier
   useEffect(() => {
@@ -47,30 +111,50 @@ export default function RegistrationModal({
   // Copy indicator states
   const [copiedUpi, setCopiedUpi] = useState(false);
 
-  // Payment Verification fields
-  const [utrNumber, setUtrNumber] = useState('');
-  const [screenshotPreview, setScreenshotPreview] = useState('');
+  // Client-side image compressor: scales down high-res phone screenshots to max 1200px / ~100KB
+  const compressImage = (file, maxWidth = 1200, maxHeight = 1200, quality = 0.8) => {
+    return new Promise((resolve) => {
+      const reader = new FileReader();
+      reader.readAsDataURL(file);
+      reader.onload = (e) => {
+        const img = new Image();
+        img.src = e.target.result;
+        img.onload = () => {
+          let width = img.width;
+          let height = img.height;
 
-  // Form State
-  const [formData, setFormData] = useState({
-    fullName: '',
-    email: '',
-    phone: '',
-    college: '',
-    branch: 'Computer Science & Engineering',
-    year: '3rd Year',
-    github: '',
-    track: EVENT_TRACKS[0]?.name || 'AI & Neural Frontiers',
-    teamName: '',
-    member2: '',
-    member3: '',
-    member4: ''
-  });
+          if (width > height) {
+            if (width > maxWidth) {
+              height = Math.round((height * maxWidth) / width);
+              width = maxWidth;
+            }
+          } else {
+            if (height > maxHeight) {
+              width = Math.round((width * maxHeight) / height);
+              height = maxHeight;
+            }
+          }
+
+          const canvas = document.createElement('canvas');
+          canvas.width = width;
+          canvas.height = height;
+          const ctx = canvas.getContext('2d');
+          ctx.drawImage(img, 0, 0, width, height);
+          const compressed = canvas.toDataURL('image/jpeg', quality);
+          resolve(compressed);
+        };
+        img.onerror = () => resolve(e.target.result);
+      };
+      reader.onerror = () => resolve('');
+    });
+  };
 
   if (!isOpen) return null;
 
   const handleChange = (e) => {
-    setFormData({ ...formData, [e.target.name]: e.target.value });
+    const updated = { ...formData, [e.target.name]: e.target.value };
+    setFormData(updated);
+    saveSession(step, updated, selectedTier);
     if (errorMessage) setErrorMessage('');
   };
 
@@ -181,25 +265,47 @@ export default function RegistrationModal({
     }
   };
 
-  // Handle Screenshot Upload with size and type check
-  const handleScreenshotChange = (e) => {
+  // Handle Screenshot Upload with automatic canvas compression & Supabase Storage upload
+  const handleScreenshotChange = async (e) => {
     const file = e.target.files[0];
     if (file) {
       if (!file.type.startsWith('image/')) {
         setErrorMessage('Uploaded file must be an image (PNG, JPG, or WEBP)');
         return;
       }
-      if (file.size > 5 * 1024 * 1024) {
-        setErrorMessage('Screenshot size must be under 5MB');
-        return;
+      setUploadingImage(true);
+      setErrorMessage('');
+      try {
+        // Compress high-res smartphone screenshots down to ~100KB (max 1200px width/height, 80% JPEG)
+        const compressedBase64 = await compressImage(file, 1200, 1200, 0.78);
+        setScreenshotPreview(compressedBase64);
+
+        // Upload to Supabase Storage bucket in the background
+        const cdnUrl = await uploadImageToSupabase(compressedBase64, 'organizer-assets', 'payment-receipts');
+        if (cdnUrl && cdnUrl.startsWith('http')) {
+          setScreenshotUrl(cdnUrl);
+        }
+      } catch (err) {
+        console.warn('Screenshot upload note:', err);
+      } finally {
+        setUploadingImage(false);
       }
-      const reader = new FileReader();
-      reader.onloadend = () => {
-        setScreenshotPreview(reader.result);
-        setErrorMessage('');
-      };
-      reader.readAsDataURL(file);
     }
+  };
+
+  // Safe launcher for UPI apps that does NOT cause the browser tab to unload/refresh
+  const handleLaunchUpi = (e, url) => {
+    if (e && e.preventDefault) e.preventDefault();
+    saveSession(2, formData, selectedTier);
+
+    // Open via hidden target="_blank" anchor so mobile browser stays active
+    const link = document.createElement('a');
+    link.href = url;
+    link.target = '_blank';
+    link.rel = 'noopener noreferrer';
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
   };
 
   // UPI details matching the official uploaded QR code (8010086323@fam)
@@ -244,9 +350,11 @@ export default function RegistrationModal({
         ...(formData.member4.trim() ? [{ role: 'Member 4', name: formData.member4.trim() }] : [])
       ] : [];
 
+      const finalScreenshot = screenshotUrl || additionalData.screenshot || screenshotPreview;
+
       const payload = {
         razorpay_order_id: `ORD_${Date.now()}`,
-        razorpay_payment_id: additionalData.utr || `PAY_${Date.now()}`,
+        razorpay_payment_id: additionalData.utr || (finalScreenshot ? `SCREENSHOT-${generatedTicketId}` : `PAY_${Date.now()}`),
         registrationData: {
           ...formData,
           fullName: formData.fullName.trim(),
@@ -259,9 +367,9 @@ export default function RegistrationModal({
           passType: selectedTier.name
         },
         paymentMethod: method,
-        utrNumber: additionalData.utr || utrNumber.trim(),
-        paymentScreenshot: additionalData.screenshot || screenshotPreview,
-        bankName: additionalData.bank || selectedBank,
+        utrNumber: additionalData.utr || utrNumber.trim() || (finalScreenshot ? `SCREENSHOT-${generatedTicketId}` : `UTR-PENDING-${Date.now().toString().slice(-6)}`),
+        paymentScreenshot: finalScreenshot,
+        bankName: additionalData.bank || 'UPI_TRANSFER',
         isSimulated: true
       };
 
@@ -288,14 +396,22 @@ export default function RegistrationModal({
       };
 
       try {
+        const controller = new AbortController();
+        const timeoutId = setTimeout(() => controller.abort(), 6000);
+
         const res = await fetch('/api/verify-payment', {
           method: 'POST',
+          signal: controller.signal,
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify(payload)
         });
-        const data = await res.json();
-        if (res.ok && data.success && data.ticket) {
-          finalTicket = data.ticket;
+        clearTimeout(timeoutId);
+
+        if (res.ok) {
+          const data = await res.json();
+          if (data && data.success && data.ticket) {
+            finalTicket = data.ticket;
+          }
         }
       } catch (e) {
         console.warn('Backend sync note: persisted to local state:', e);
@@ -303,6 +419,9 @@ export default function RegistrationModal({
 
       // Add to shared event context (persists in localStorage & admin console)
       addRegistration(finalTicket);
+
+      // Clear the saved active checkout session
+      clearSession();
 
       setLoading(false);
       onPaymentSuccess(finalTicket);
@@ -313,27 +432,29 @@ export default function RegistrationModal({
     }
   };
 
-  // Handle UPI Verification Submission
+  // Handle UPI Verification Submission (Flexible: UTR, Screenshot, or Both!)
   const handleUpiSubmit = (e) => {
     e.preventDefault();
     const cleanUtr = utrNumber.trim();
-    if (!cleanUtr) {
-      setErrorMessage('Please enter the 12-digit UPI UTR / Transaction Reference ID from your GPay / PhonePe payment receipt');
+    const hasScreenshot = Boolean(screenshotPreview || screenshotUrl);
+
+    if (!cleanUtr && !hasScreenshot) {
+      setErrorMessage('Please either enter the 12-digit UPI UTR number OR attach your payment screenshot to verify');
       return;
     }
-    if (cleanUtr.length < 8) {
-      setErrorMessage('UPI UTR / Transaction ID must be at least 8 to 12 digits');
-      return;
-    }
-    completePayment('UPI_QR', { utr: cleanUtr, screenshot: screenshotPreview });
+
+    const finalUtr = cleanUtr || `IMG-VERIFY-${Date.now().toString().slice(-6)}`;
+    completePayment('UPI_QR', { 
+      utr: finalUtr, 
+      screenshot: screenshotUrl || screenshotPreview 
+    });
   };
 
-  // Handle Net Banking Submit
   // Auto-fill test simulation helper
   const handleAutoFillUpi = () => {
     const randomUtr = Math.floor(100000000000 + Math.random() * 900000000000).toString();
     setUtrNumber(randomUtr);
-    completePayment('UPI_QR', { utr: randomUtr, screenshot: screenshotPreview });
+    completePayment('UPI_QR', { utr: randomUtr, screenshot: screenshotUrl || screenshotPreview });
   };
 
   return (
@@ -644,10 +765,11 @@ export default function RegistrationModal({
                         <span className="text-xs font-mono font-bold text-emerald-600">₹{selectedTier.price}</span>
                       </div>
 
-                      {/* Interactive QR Code: Tapping directly opens UPI app on mobile */}
-                      <a
-                        href={upiIntentUrl}
-                        className="block relative p-2 bg-slate-50 rounded-xl border border-slate-200 my-1 group hover:border-cyan-500 transition-all text-center"
+                      {/* Interactive QR Code: Tapping directly opens UPI app on mobile without refreshing */}
+                      <button
+                        type="button"
+                        onClick={(e) => handleLaunchUpi(e, upiIntentUrl)}
+                        className="block relative p-2 bg-slate-50 rounded-xl border border-slate-200 my-1 group hover:border-cyan-500 transition-all text-center w-full"
                         title="Tap to pay directly in UPI App"
                       >
                         {settings.qrCodeImage ? (
@@ -668,7 +790,7 @@ export default function RegistrationModal({
                           <Smartphone className="w-3 h-3" />
                           <span>Tap QR to Pay in App</span>
                         </span>
-                      </a>
+                      </button>
 
                       {/* Save QR to Photos Button for Mobile Users scanning from gallery */}
                       <button
@@ -707,49 +829,53 @@ export default function RegistrationModal({
                       <div>
                         <label className="block text-[10px] font-semibold text-slate-400 uppercase tracking-wider mb-1.5 flex items-center justify-between">
                           <span>Pay with Downloaded UPI App:</span>
-                          <span className="text-[9px] text-cyan-400 font-mono">1-Tap Redirect</span>
+                          <span className="text-[9px] text-cyan-400 font-mono">Safe 1-Tap Redirect</span>
                         </label>
                         <div className="grid grid-cols-2 gap-2">
-                          <a
-                            href={gpayIntentUrl}
+                          <button
+                            type="button"
+                            onClick={(e) => handleLaunchUpi(e, gpayIntentUrl)}
                             className="py-2.5 px-3 rounded-xl bg-slate-900 hover:bg-slate-800 border border-slate-700 hover:border-cyan-500 text-xs font-bold text-slate-200 flex items-center justify-center gap-1.5 transition-all shadow-sm"
                             title="Open Google Pay"
                           >
                             <span className="text-cyan-400 font-black">G</span>
                             <span>Google Pay</span>
-                          </a>
+                          </button>
 
-                          <a
-                            href={phonepeIntentUrl}
+                          <button
+                            type="button"
+                            onClick={(e) => handleLaunchUpi(e, phonepeIntentUrl)}
                             className="py-2.5 px-3 rounded-xl bg-slate-900 hover:bg-slate-800 border border-slate-700 hover:border-purple-500 text-xs font-bold text-slate-200 flex items-center justify-center gap-1.5 transition-all shadow-sm"
                             title="Open PhonePe"
                           >
                             <span className="text-purple-400 font-black">₹</span>
                             <span>PhonePe</span>
-                          </a>
+                          </button>
 
-                          <a
-                            href={paytmIntentUrl}
+                          <button
+                            type="button"
+                            onClick={(e) => handleLaunchUpi(e, paytmIntentUrl)}
                             className="py-2.5 px-3 rounded-xl bg-slate-900 hover:bg-slate-800 border border-slate-700 hover:border-sky-500 text-xs font-bold text-slate-200 flex items-center justify-center gap-1.5 transition-all shadow-sm"
                             title="Open Paytm"
                           >
                             <span className="text-sky-400 font-black">P</span>
                             <span>Paytm</span>
-                          </a>
+                          </button>
 
-                          <a
-                            href={upiIntentUrl}
+                          <button
+                            type="button"
+                            onClick={(e) => handleLaunchUpi(e, upiIntentUrl)}
                             className="py-2.5 px-3 rounded-xl bg-gradient-to-r from-cyan-600/20 to-indigo-600/20 hover:from-cyan-600/30 hover:to-indigo-600/30 border border-cyan-500/40 text-xs font-bold text-cyan-200 flex items-center justify-center gap-1.5 transition-all shadow-sm"
                             title="Open in Any Installed UPI App"
                           >
                             <Smartphone className="w-3.5 h-3.5 text-cyan-400" />
                             <span>Any UPI App</span>
-                          </a>
+                          </button>
                         </div>
                       </div>
 
                       <div className="p-2.5 rounded-xl bg-cyan-950/40 border border-cyan-800/40 text-[11px] text-slate-300 leading-snug">
-                        💡 <strong>How to Pay on Mobile:</strong> Tap any app button above to pay directly, or save the QR to scan from your gallery. Enter your <strong>12-digit UTR number</strong> below after payment.
+                        💡 <strong>How to Pay on Mobile:</strong> Tap any app button above to pay directly, or save the QR to scan from your gallery. When returning from your UPI app, your session is saved!
                       </div>
                     </div>
 
@@ -759,8 +885,9 @@ export default function RegistrationModal({
                   <form onSubmit={handleUpiSubmit} className="pt-4 border-t border-slate-800 space-y-4">
                     <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                       <div>
-                        <label className="block text-xs font-semibold text-slate-300 mb-1">
-                          12-Digit UPI UTR / Transaction ID *
+                        <label className="block text-xs font-semibold text-slate-300 mb-1 flex items-center justify-between">
+                          <span>12-Digit UPI UTR / Transaction ID</span>
+                          <span className="text-[10px] text-slate-400 font-normal">Optional if screenshot attached</span>
                         </label>
                         <input
                           type="text"
@@ -773,25 +900,41 @@ export default function RegistrationModal({
                           maxLength={22}
                           className="w-full px-3 py-2 rounded-xl bg-slate-900 border border-slate-700 text-white font-mono text-sm placeholder-slate-500 focus:outline-none focus:border-cyan-400"
                         />
-                        <span className="text-[10px] text-slate-500 block mt-1">Found in your GPay / PhonePe receipt</span>
+                        <span className="text-[10px] text-slate-500 block mt-1">Found in your GPay / PhonePe receipt details</span>
                       </div>
 
                       <div>
-                        <label className="block text-xs font-semibold text-slate-300 mb-1">
-                          Upload Payment Screenshot (Optional)
+                        <label className="block text-xs font-semibold text-slate-300 mb-1 flex items-center justify-between">
+                          <span>Attach Payment Screenshot</span>
+                          <span className="text-[10px] text-cyan-400 font-normal">Auto-compressed</span>
                         </label>
                         <label className="flex items-center gap-2 px-3 py-2 rounded-xl bg-slate-900 border border-slate-700 text-slate-300 text-xs cursor-pointer hover:border-cyan-400 transition-colors">
-                          <Upload className="w-4 h-4 text-cyan-400 shrink-0" />
-                          <span className="truncate">{screenshotPreview ? 'Screenshot Attached ✓' : 'Attach Screenshot'}</span>
+                          {uploadingImage ? (
+                            <Loader2 className="w-4 h-4 text-cyan-400 animate-spin shrink-0" />
+                          ) : (
+                            <Upload className="w-4 h-4 text-cyan-400 shrink-0" />
+                          )}
+                          <span className="truncate">
+                            {uploadingImage 
+                              ? 'Compressing & securing image...' 
+                              : (screenshotPreview ? 'Screenshot Attached ✓' : 'Upload Receipt Photo / Screenshot')}
+                          </span>
                           <input
                             type="file"
                             accept="image/*"
                             onChange={handleScreenshotChange}
+                            disabled={uploadingImage}
                             className="hidden"
                           />
                         </label>
-                        {screenshotPreview && (
-                          <span className="text-[10px] text-emerald-400 block mt-1">Ready for verification</span>
+                        {screenshotPreview ? (
+                          <span className="text-[10px] text-emerald-400 block mt-1">
+                            ✓ Screenshot attached successfully! You can submit now.
+                          </span>
+                        ) : (
+                          <span className="text-[10px] text-slate-500 block mt-1">
+                            Scanned on phone? Send screenshot to laptop and upload here.
+                          </span>
                         )}
                       </div>
                     </div>
