@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, lazy, Suspense } from 'react';
 import Navbar from './components/Navbar';
 import Hero from './components/Hero';
 import Announcement from './components/Announcement';
@@ -6,11 +6,13 @@ import Gallery from './components/Gallery';
 import PricingSection from './components/PricingSection';
 import FAQ from './components/FAQ';
 import Footer from './components/Footer';
-import RegistrationModal from './components/RegistrationModal';
-import TicketModal from './components/TicketModal';
-import AdminPage from './components/AdminPage';
 import MinecraftBackground from './components/MinecraftBackground';
 import { EventProvider, useEvent } from './context/EventContext';
+
+// Lazy-loaded heavy modules for optimal initial load speed
+const RegistrationModal = lazy(() => import('./components/RegistrationModal'));
+const TicketModal = lazy(() => import('./components/TicketModal'));
+const AdminPage = lazy(() => import('./components/AdminPage'));
 
 function MainEventApp() {
   const { pricingTiers } = useEvent();
@@ -98,7 +100,9 @@ function MainEventApp() {
       <div className="min-h-screen bg-[#070913] text-slate-100 flex flex-col relative selection:bg-cyan-500/30 overflow-x-hidden">
         <MinecraftBackground />
         <div className="relative z-10 flex-1 flex flex-col">
-          <AdminPage onBackToWebsite={navigateToEvent} />
+          <Suspense fallback={<div className="min-h-screen flex items-center justify-center text-emerald-400 font-chakra text-sm tracking-widest animate-pulse">CONNECTING TO GATE CONSOLE...</div>}>
+            <AdminPage onBackToWebsite={navigateToEvent} />
+          </Suspense>
         </div>
       </div>
     );
@@ -140,23 +144,25 @@ function MainEventApp() {
         onOpenAdmin={navigateToAdmin}
       />
 
-      {/* Interactive Modals */}
-      {isRegisterOpen && (
-        <RegistrationModal
-          isOpen={isRegisterOpen}
-          initialTier={selectedTier}
-          onClose={() => setIsRegisterOpen(false)}
-          onPaymentSuccess={handlePaymentSuccess}
-        />
-      )}
+      {/* Interactive Modals (Lazy Loaded on Demand) */}
+      <Suspense fallback={null}>
+        {isRegisterOpen && (
+          <RegistrationModal
+            isOpen={isRegisterOpen}
+            initialTier={selectedTier}
+            onClose={() => setIsRegisterOpen(false)}
+            onPaymentSuccess={handlePaymentSuccess}
+          />
+        )}
 
-      {isTicketOpen && issuedTicket && (
-        <TicketModal
-          ticket={issuedTicket}
-          isOpen={isTicketOpen}
-          onClose={() => setIsTicketOpen(false)}
-        />
-      )}
+        {isTicketOpen && issuedTicket && (
+          <TicketModal
+            ticket={issuedTicket}
+            isOpen={isTicketOpen}
+            onClose={() => setIsTicketOpen(false)}
+          />
+        )}
+      </Suspense>
     </div>
   );
 }

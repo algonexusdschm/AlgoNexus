@@ -12,5 +12,17 @@ export default defineConfig({
         changeOrigin: true
       }
     }
+  },
+  build: {
+    chunkSizeWarningLimit: 850,
+    rollupOptions: {
+      output: {
+        manualChunks: {
+          'three-vendor': ['three'],
+          'react-vendor': ['react', 'react-dom'],
+          'lucide-vendor': ['lucide-react']
+        }
+      }
+    }
   }
 })

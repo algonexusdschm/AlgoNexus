@@ -9,14 +9,16 @@ export default function MinecraftBackground() {
     const canvas = canvasRef.current;
     if (!canvas) return;
 
-    // Renderer & Scene Setup
+    const isMobile = window.innerWidth < 768;
+
+    // Renderer & Scene Setup (Adaptive Mobile & Power Tuning)
     const renderer = new THREE.WebGLRenderer({
       canvas,
       alpha: true,
-      antialias: true,
+      antialias: !isMobile,
       powerPreference: 'high-performance'
     });
-    renderer.setPixelRatio(Math.min(window.devicePixelRatio, 1.5));
+    renderer.setPixelRatio(Math.min(window.devicePixelRatio, isMobile ? 1.0 : 1.5));
     renderer.setSize(window.innerWidth, window.innerHeight);
 
     const scene = new THREE.Scene();
@@ -67,7 +69,7 @@ export default function MinecraftBackground() {
       return new THREE.CanvasTexture(c);
     }
 
-    const particleCount = 1400;
+    const particleCount = isMobile ? 550 : 1200;
     const particleGeo = new THREE.BufferGeometry();
     const positions = new Float32Array(particleCount * 3);
     const colors = new Float32Array(particleCount * 3);
@@ -601,22 +603,47 @@ export default function MinecraftBackground() {
     };
     window.addEventListener('mousemove', handleMouseMove, { passive: true });
 
-    // Window Resize Handler
+    // Window Resize Handler (Debounced for performance)
+    let resizeTimer;
     const handleResize = () => {
       if (!canvas) return;
-      camera.aspect = window.innerWidth / window.innerHeight;
-      camera.updateProjectionMatrix();
-      renderer.setSize(window.innerWidth, window.innerHeight);
+      clearTimeout(resizeTimer);
+      resizeTimer = setTimeout(() => {
+        camera.aspect = window.innerWidth / window.innerHeight;
+        camera.updateProjectionMatrix();
+        renderer.setSize(window.innerWidth, window.innerHeight);
+      }, 100);
     };
     window.addEventListener('resize', handleResize);
 
+    // Tab Visibility Throttler (0% GPU/CPU drain when backgrounded)
+    let isTabVisible = !document.hidden;
+    const handleVisibility = () => {
+      isTabVisible = !document.hidden;
+      if (isTabVisible) {
+        clock.start();
+        animate();
+      } else {
+        cancelAnimationFrame(animId);
+      }
+    };
+    document.addEventListener('visibilitychange', handleVisibility);
+
+    // WebGL Context Guard
+    const handleContextLost = (e) => {
+      e.preventDefault();
+      cancelAnimationFrame(animId);
+    };
+    canvas.addEventListener('webglcontextlost', handleContextLost, false);
+
     // ═══════════════════════════════════════════════════════════
-    // ANIMATION RENDER LOOP (60 FPS)
+    // ANIMATION RENDER LOOP (60 FPS OPTIMIZED)
     // ═══════════════════════════════════════════════════════════
     const clock = new THREE.Clock();
     let animId;
 
     const animate = () => {
+      if (!isTabVisible) return;
       animId = requestAnimationFrame(animate);
       const elapsed = clock.getElapsedTime();
 
@@ -703,8 +730,11 @@ export default function MinecraftBackground() {
 
     return () => {
       cancelAnimationFrame(animId);
+      clearTimeout(resizeTimer);
       window.removeEventListener('mousemove', handleMouseMove);
       window.removeEventListener('resize', handleResize);
+      document.removeEventListener('visibilitychange', handleVisibility);
+      canvas.removeEventListener('webglcontextlost', handleContextLost);
 
       particleGeo.dispose();
       particleMat.dispose();
