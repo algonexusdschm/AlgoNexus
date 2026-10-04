@@ -965,27 +965,27 @@ export default function MinecraftBackground() {
   }, []);
 
   return (
-    <div className="fixed inset-0 pointer-events-none z-0 overflow-hidden bg-[#080a07]">
-      {/* 1. Arcane Hall Wallpaper with interactive parallax */}
+    <div className="fixed inset-0 pointer-events-none z-0 overflow-hidden bg-[#050805]">
+      {/* 1. Doomsday Ruined Monument Wallpaper with interactive parallax */}
       <div
         ref={bgImageRef}
         className="absolute inset-0 bg-cover bg-center transition-transform duration-300 ease-out pointer-events-none will-change-transform"
         style={{
-          backgroundImage: "url('/images/arcane_hall_bg.jpg')",
-          backgroundPosition: 'center 30%',
-          opacity: 0.92,
-          filter: 'brightness(0.96) contrast(1.08) saturate(1.10)',
+          backgroundImage: "url('/images/doomsday_hero_bg.jpg')",
+          backgroundPosition: 'center center',
+          opacity: 0.96,
+          filter: 'brightness(1.02) contrast(1.10) saturate(1.15)',
         }}
       />
 
-      {/* 2. Subtle ambient glow orbs — echo the hall's gold windows & emerald runes */}
+      {/* 2. Subtle ambient glow orbs — echo the glowing green Latverian energy */}
       <div
         className="absolute inset-0 pointer-events-none"
         style={{
           background: `
-            radial-gradient(ellipse 70% 45% at 50% 72%, rgba(34, 197, 94, 0.18) 0%, transparent 55%),
-            radial-gradient(ellipse 55% 55% at 20% 40%, rgba(217, 119, 6, 0.14) 0%, transparent 50%),
-            radial-gradient(ellipse 55% 55% at 80% 40%, rgba(202, 138, 4, 0.14) 0%, transparent 50%)
+            radial-gradient(ellipse 70% 50% at 50% 55%, rgba(34, 197, 94, 0.22) 0%, transparent 65%),
+            radial-gradient(ellipse 55% 55% at 20% 40%, rgba(16, 185, 129, 0.12) 0%, transparent 50%),
+            radial-gradient(ellipse 55% 55% at 80% 40%, rgba(16, 185, 129, 0.12) 0%, transparent 50%)
           `
         }}
       />
