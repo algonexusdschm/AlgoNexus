@@ -932,28 +932,39 @@ export default function MinecraftBackground() {
       sealMatRight.opacity = 0.38 + Math.cos(elapsed * 1.3) * 0.08;
 
       // ═══════════════════════════════════════════════════════════
-      // 3. FLOATING SORCERER CHARACTER & ROTATING HAND RUNES
+      // 3. FULL-SCREEN SOARING SORCERER & ROTATING HAND RUNES
       // ═══════════════════════════════════════════════════════════
-      // Smooth levitating hover & bob
-      const charBob = Math.sin(elapsed * 1.2) * 0.22;
-      characterGroup.position.y = 1.6 + charBob;
-      characterGroup.position.x = targetX * 0.8;
-      characterGroup.rotation.z = Math.sin(elapsed * 0.8) * 0.03;
-      characterGroup.rotation.y = targetX * 0.08;
+      // Broad Lissajous flight path across the full viewport + mouse attractor
+      const flightX = Math.sin(elapsed * 0.35) * 8.5 + Math.cos(elapsed * 0.18) * 3.2 + targetX * 5.5;
+      const flightY = Math.cos(elapsed * 0.28) * 3.8 + Math.sin(elapsed * 0.58) * 1.4 - targetY * 3.2 + 0.6;
+      const flightZ = Math.sin(elapsed * 0.22) * 2.2 + 0.5;
 
-      // Pulse aura
-      auraMat.opacity = 0.50 + Math.sin(elapsed * 1.6) * 0.15;
-      auraMesh.rotation.z += 0.002;
+      // Smooth flight inertia (glides gracefully across full screen)
+      const prevX = characterGroup.position.x;
+      characterGroup.position.x += (flightX - characterGroup.position.x) * 0.035;
+      characterGroup.position.y += (flightY - characterGroup.position.y) * 0.035;
+      characterGroup.position.z += (flightZ - characterGroup.position.z) * 0.035;
+
+      // Dynamic banking into flight curves (leans into turns)
+      const dx = characterGroup.position.x - prevX;
+      characterGroup.rotation.z = -dx * 2.2 + Math.sin(elapsed * 0.8) * 0.03;
+      characterGroup.rotation.y = dx * 1.8 + targetX * 0.14;
+      characterGroup.rotation.x = Math.sin(elapsed * 0.5) * 0.04;
+
+      // Pulse aura with motion
+      auraMat.opacity = 0.55 + Math.sin(elapsed * 2.0) * 0.16;
+      auraMesh.scale.setScalar(1 + Math.sin(elapsed * 1.5) * 0.08);
+      auraMesh.rotation.z += 0.003;
 
       // Right Hand Runes (Clockwise outer, counter-clockwise inner)
-      rightHandRuneOuter.rotation.z += 0.014;
-      rightHandRuneInner.rotation.z -= 0.020;
-      handRuneMat1.opacity = 0.70 + Math.sin(elapsed * 2.8) * 0.15;
+      rightHandRuneOuter.rotation.z += 0.016;
+      rightHandRuneInner.rotation.z -= 0.022;
+      handRuneMat1.opacity = 0.72 + Math.sin(elapsed * 2.8) * 0.15;
 
       // Left Hand Runes (Counter-clockwise outer, clockwise inner)
-      leftHandRuneOuter.rotation.z -= 0.012;
-      leftHandRuneInner.rotation.z += 0.018;
-      handRuneMat3.opacity = 0.65 + Math.cos(elapsed * 2.5) * 0.15;
+      leftHandRuneOuter.rotation.z -= 0.014;
+      leftHandRuneInner.rotation.z += 0.020;
+      handRuneMat3.opacity = 0.68 + Math.cos(elapsed * 2.5) * 0.15;
 
       // ═══════════════════════════════════════════════════════════
       // 4. FLOATING ELDRITCH GLYPHS / RUNE LETTERS
