@@ -971,8 +971,8 @@ export default function MinecraftBackground() {
         ref={bgImageRef}
         className="absolute inset-0 bg-cover bg-center transition-transform duration-300 ease-out pointer-events-none will-change-transform"
         style={{
-          backgroundImage: "url('/images/doomsday_hero_bg.jpg')",
-          backgroundPosition: 'center center',
+          backgroundImage: "url('/images/doomsday_hero_bg.png')",
+          backgroundPosition: 'center 40%',
           opacity: 0.96,
           filter: 'brightness(1.02) contrast(1.10) saturate(1.15)',
         }}
