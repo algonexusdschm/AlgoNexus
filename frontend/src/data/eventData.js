@@ -2,7 +2,7 @@
 
 export const EVENT_DETAILS = {
   name: "AlgoNexus 2026",
-  tagline: "Architecting the Future of Code & Intelligence",
+  tagline: "48 Hours. One Problem. Unlimited Possibilities.",
   edition: "4th National Edition",
   dates: "To Be Announced Soon",
   datesAnnounced: false,
@@ -14,8 +14,8 @@ export const EVENT_DETAILS = {
   email: "algonexusdschm@gmail.com",
   phone: "+91 80100 86323",
   organizers: "Department of Data Science, Smt. Chandibai Himathmal Mansukhani College",
-  prizePool: "₹2,50,000+",
-  participantsExpected: "2,000+ Hackers & Coders",
+  prizePool: "₹1,00,000",
+  participantsExpected: "300+ Hackers (Open For All)",
   collegesExpected: "80+ Universities Across India"
 };
 

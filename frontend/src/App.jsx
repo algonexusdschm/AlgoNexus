@@ -1,6 +1,7 @@
 import React, { useState, useEffect, lazy, Suspense } from 'react';
 import Navbar from './components/Navbar';
 import Hero from './components/Hero';
+import SurvivalProtocol from './components/SurvivalProtocol';
 import Announcement from './components/Announcement';
 import Gallery from './components/Gallery';
 import PricingSection from './components/PricingSection';
@@ -125,7 +126,10 @@ function MainEventApp() {
         {/* 1. Hero Section */}
         <Hero onOpenRegister={() => handleOpenRegister(pricingTiers[0])} />
 
-        {/* 2. Official Announcement Section for This Year's Event */}
+        {/* 2. The Survival Protocol (Structure, Judging, AI Policy, Open For All Eligibility) */}
+        <SurvivalProtocol onOpenRegister={() => handleOpenRegister(pricingTiers[0])} />
+
+        {/* 3. Official Announcement Section for This Year's Event */}
         <Announcement onOpenRegister={() => handleOpenRegister(pricingTiers[0])} />
 
         {/* 3. Photo Gallery of Last Year's Event with Lightbox */}

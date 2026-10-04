@@ -48,10 +48,10 @@ export default function Hero({ onOpenRegister }) {
           {/* Subtle radial shadow to ensure maximum sharpness over the monument */}
           <div className="absolute -inset-4 sm:-inset-10 bg-radial from-slate-950/80 via-slate-950/40 to-transparent -z-10 rounded-full blur-2xl pointer-events-none" />
 
-          {/* Top Line: ALGO NEXUS 2027 */}
+          {/* Top Line: ALGO NEXUS 2026 */}
           <div className="font-space font-medium text-xs sm:text-sm tracking-[0.35em] sm:tracking-[0.45em] text-slate-300 uppercase flex items-center justify-center gap-2.5 drop-shadow-[0_2px_8px_rgba(0,0,0,0.95)]">
             <span>ALGO NEXUS</span>
-            <span className="text-emerald-400 font-bold">2027</span>
+            <span className="text-emerald-400 font-bold">2026</span>
           </div>
 
           {/* Giant DOOMSDAY Title with Integrated Avengers 'A' & Green Laser Baseline */}
@@ -220,8 +220,8 @@ export default function Hero({ onOpenRegister }) {
                 <Users className="w-5 h-5" />
               </div>
               <div className="text-left">
-                <div className="text-xl font-bold text-white font-mono">500+</div>
-                <div className="text-[11px] text-slate-400 font-light uppercase tracking-wider">Expected Participants</div>
+                <div className="text-xl font-bold text-white font-mono">OPEN FOR ALL</div>
+                <div className="text-[11px] text-slate-400 font-light uppercase tracking-wider">All Branches & Years</div>
               </div>
             </div>
           </div>
