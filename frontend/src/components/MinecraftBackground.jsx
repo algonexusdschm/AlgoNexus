@@ -199,10 +199,390 @@ export default function MinecraftBackground() {
     scene.add(particles);
 
     // ═══════════════════════════════════════════════════════════
-    // 3. 3D INCURSION RIFT ENERGY PULSE RINGS
+    // 3. PROCEDURAL ELDRITCH RUNES & SACRED GEOMETRY (3D ROTATING)
     // ═══════════════════════════════════════════════════════════
-    // Arcane rune ring — warm gold (hovers above floor runes)
-    const ringGeo1 = new THREE.TorusGeometry(3.5, 0.04, 16, 100);
+    // Procedural texture for the outer runic ring with Elder Futhark & ciphers
+    function createRunicRingTexture() {
+      const size = 1024;
+      const c = document.createElement('canvas');
+      c.width = size;
+      c.height = size;
+      const ctx = c.getContext('2d');
+      const cx = size / 2;
+      const cy = size / 2;
+
+      ctx.shadowColor = '#10b981';
+      ctx.shadowBlur = 14;
+
+      // 1. Concentric boundary circles
+      ctx.strokeStyle = '#34d399';
+      ctx.lineWidth = 4;
+      ctx.beginPath();
+      ctx.arc(cx, cy, size * 0.46, 0, Math.PI * 2);
+      ctx.stroke();
+
+      ctx.strokeStyle = '#10b981';
+      ctx.lineWidth = 2.2;
+      ctx.beginPath();
+      ctx.arc(cx, cy, size * 0.44, 0, Math.PI * 2);
+      ctx.stroke();
+
+      ctx.strokeStyle = '#10b981';
+      ctx.lineWidth = 2.5;
+      ctx.beginPath();
+      ctx.arc(cx, cy, size * 0.36, 0, Math.PI * 2);
+      ctx.stroke();
+
+      // 2. Outer Celestial Degree Ticks (72 ticks)
+      for (let i = 0; i < 72; i++) {
+        const angle = (i / 72) * Math.PI * 2;
+        const isMajor = i % 6 === 0;
+        const r1 = size * 0.46;
+        const r2 = isMajor ? size * 0.42 : size * 0.445;
+        ctx.strokeStyle = isMajor ? '#fbbf24' : '#10b981';
+        ctx.lineWidth = isMajor ? 2.5 : 1.2;
+        ctx.beginPath();
+        ctx.moveTo(cx + Math.cos(angle) * r1, cy + Math.sin(angle) * r1);
+        ctx.lineTo(cx + Math.cos(angle) * r2, cy + Math.sin(angle) * r2);
+        ctx.stroke();
+      }
+
+      // 3. Elder Futhark & Arcane Glyphs along circumference (28 runes)
+      const RUNES = [
+        '᚛', 'ᚠ', 'ᚢ', 'ᚦ', 'ᚨ', 'ᚱ', 'ᚲ', 'ᚷ',
+        'ᚹ', 'ᚺ', 'ᚾ', 'ᛁ', 'ᛃ', 'ᛈ', 'ᛇ', 'ᛉ',
+        'ᛊ', 'ᛏ', 'ᛒ', 'ᛖ', 'ᛗ', 'ᛚ', 'ᛜ', 'ᛞ',
+        'ᛟ', '✦', '✧', '⛤'
+      ];
+      ctx.font = `bold ${Math.round(size * 0.045)}px "Segoe UI Symbol", "Apple Symbols", sans-serif`;
+      ctx.textAlign = 'center';
+      ctx.textBaseline = 'middle';
+      ctx.fillStyle = '#6ee7b7';
+
+      const runeRadius = size * 0.40;
+      for (let i = 0; i < RUNES.length; i++) {
+        const angle = (i / RUNES.length) * Math.PI * 2;
+        ctx.save();
+        ctx.translate(cx, cy);
+        ctx.rotate(angle + Math.PI / 2);
+        ctx.fillText(RUNES[i], 0, -runeRadius);
+        ctx.restore();
+      }
+
+      // 4. Inner Dotted Orbit
+      ctx.setLineDash([5, 9]);
+      ctx.strokeStyle = '#fbbf24';
+      ctx.lineWidth = 2;
+      ctx.beginPath();
+      ctx.arc(cx, cy, size * 0.34, 0, Math.PI * 2);
+      ctx.stroke();
+      ctx.setLineDash([]);
+
+      const tex = new THREE.CanvasTexture(c);
+      tex.minFilter = THREE.LinearMipmapLinearFilter;
+      return tex;
+    }
+
+    // Procedural texture for sacred geometry (8-pointed Latverian star & hexagram)
+    function createSacredGeoTexture() {
+      const size = 1024;
+      const c = document.createElement('canvas');
+      c.width = size;
+      c.height = size;
+      const ctx = c.getContext('2d');
+      const cx = size / 2;
+      const cy = size / 2;
+
+      ctx.shadowColor = '#059669';
+      ctx.shadowBlur = 12;
+
+      // 1. Overlapping squares (8-Pointed Star of Sorcery)
+      const starRadius = size * 0.32;
+      ctx.strokeStyle = '#34d399';
+      ctx.lineWidth = 2.8;
+      for (let offset = 0; offset < 2; offset++) {
+        const baseAngle = (offset * Math.PI) / 4;
+        ctx.beginPath();
+        for (let i = 0; i < 4; i++) {
+          const a = baseAngle + (i * Math.PI) / 2;
+          const x = cx + Math.cos(a) * starRadius;
+          const y = cy + Math.sin(a) * starRadius;
+          if (i === 0) ctx.moveTo(x, y);
+          else ctx.lineTo(x, y);
+        }
+        ctx.closePath();
+        ctx.stroke();
+      }
+
+      // 2. Interlocking Equilateral Triangles (Hexagram)
+      const hexRadius = size * 0.28;
+      ctx.strokeStyle = '#d97706';
+      ctx.lineWidth = 2.0;
+      for (let tri = 0; tri < 2; tri++) {
+        const startAngle = tri * Math.PI;
+        ctx.beginPath();
+        for (let i = 0; i < 3; i++) {
+          const a = startAngle + (i * 2 * Math.PI) / 3;
+          const x = cx + Math.cos(a) * hexRadius;
+          const y = cy + Math.sin(a) * hexRadius;
+          if (i === 0) ctx.moveTo(x, y);
+          else ctx.lineTo(x, y);
+        }
+        ctx.closePath();
+        ctx.stroke();
+      }
+
+      // 3. Radial Spoke Beams to 8 star vertices
+      ctx.strokeStyle = '#10b981';
+      ctx.lineWidth = 1.4;
+      for (let i = 0; i < 8; i++) {
+        const a = (i * Math.PI) / 4;
+        ctx.beginPath();
+        ctx.moveTo(cx, cy);
+        ctx.lineTo(cx + Math.cos(a) * starRadius, cy + Math.sin(a) * starRadius);
+        ctx.stroke();
+      }
+
+      // 4. Bounding circle around the star
+      ctx.strokeStyle = '#f59e0b';
+      ctx.lineWidth = 2;
+      ctx.beginPath();
+      ctx.arc(cx, cy, starRadius, 0, Math.PI * 2);
+      ctx.stroke();
+
+      // 5. Glowing Nodes on Star Vertices
+      ctx.fillStyle = '#6ee7b7';
+      for (let i = 0; i < 8; i++) {
+        const a = (i * Math.PI) / 4;
+        ctx.beginPath();
+        ctx.arc(cx + Math.cos(a) * starRadius, cy + Math.sin(a) * starRadius, 6, 0, Math.PI * 2);
+        ctx.fill();
+      }
+
+      const tex = new THREE.CanvasTexture(c);
+      tex.minFilter = THREE.LinearMipmapLinearFilter;
+      return tex;
+    }
+
+    // Procedural texture for the inner core sigil (Diamond Eye / Nexus Crest)
+    function createInnerCoreTexture() {
+      const size = 1024;
+      const c = document.createElement('canvas');
+      c.width = size;
+      c.height = size;
+      const ctx = c.getContext('2d');
+      const cx = size / 2;
+      const cy = size / 2;
+
+      ctx.shadowColor = '#10b981';
+      ctx.shadowBlur = 18;
+
+      // 1. Center Radiant Core
+      const grad = ctx.createRadialGradient(cx, cy, 0, cx, cy, size * 0.16);
+      grad.addColorStop(0, 'rgba(255, 255, 255, 0.95)');
+      grad.addColorStop(0.28, 'rgba(110, 231, 183, 0.75)');
+      grad.addColorStop(0.65, 'rgba(16, 185, 129, 0.35)');
+      grad.addColorStop(1, 'rgba(16, 185, 129, 0)');
+      ctx.fillStyle = grad;
+      ctx.fillRect(0, 0, size, size);
+
+      // 2. Inner Ring with 12 Celestial Hash Marks
+      ctx.strokeStyle = '#34d399';
+      ctx.lineWidth = 3;
+      ctx.beginPath();
+      ctx.arc(cx, cy, size * 0.15, 0, Math.PI * 2);
+      ctx.stroke();
+
+      ctx.strokeStyle = '#fbbf24';
+      ctx.lineWidth = 2;
+      for (let i = 0; i < 12; i++) {
+        const a = (i / 12) * Math.PI * 2;
+        const r1 = size * 0.15;
+        const r2 = size * 0.11;
+        ctx.beginPath();
+        ctx.moveTo(cx + Math.cos(a) * r1, cy + Math.sin(a) * r1);
+        ctx.lineTo(cx + Math.cos(a) * r2, cy + Math.sin(a) * r2);
+        ctx.stroke();
+      }
+
+      // 3. Central Mystic Diamond
+      ctx.strokeStyle = '#ecfdf5';
+      ctx.lineWidth = 3.5;
+      ctx.beginPath();
+      ctx.moveTo(cx, cy - size * 0.08);
+      ctx.lineTo(cx + size * 0.06, cy);
+      ctx.lineTo(cx, cy + size * 0.08);
+      ctx.lineTo(cx - size * 0.06, cy);
+      ctx.closePath();
+      ctx.stroke();
+
+      ctx.fillStyle = '#fef08a';
+      ctx.beginPath();
+      ctx.arc(cx, cy, 7, 0, Math.PI * 2);
+      ctx.fill();
+
+      const tex = new THREE.CanvasTexture(c);
+      tex.minFilter = THREE.LinearMipmapLinearFilter;
+      return tex;
+    }
+
+    // Procedural texture for floating orbital seals (flanking shields)
+    function createFloatingSealTexture() {
+      const size = 1024;
+      const c = document.createElement('canvas');
+      c.width = size;
+      c.height = size;
+      const ctx = c.getContext('2d');
+      const cx = size / 2;
+      const cy = size / 2;
+
+      ctx.shadowColor = '#10b981';
+      ctx.shadowBlur = 14;
+
+      // Outer rings
+      ctx.strokeStyle = '#34d399';
+      ctx.lineWidth = 3.5;
+      ctx.beginPath();
+      ctx.arc(cx, cy, size * 0.44, 0, Math.PI * 2);
+      ctx.stroke();
+
+      ctx.strokeStyle = '#10b981';
+      ctx.lineWidth = 1.8;
+      ctx.beginPath();
+      ctx.arc(cx, cy, size * 0.38, 0, Math.PI * 2);
+      ctx.stroke();
+
+      // Glyphs
+      const SEAL_RUNES = ['ᚦ', 'ᚨ', 'ᚱ', 'ᚲ', 'ᚷ', 'ᚹ', 'ᚺ', 'ᛃ', 'ᛈ', 'ᛉ', 'ᛊ', 'ᛏ', 'ᛒ', 'ᛖ', 'ᛗ', 'ᛟ'];
+      ctx.font = `bold ${Math.round(size * 0.048)}px "Segoe UI Symbol", sans-serif`;
+      ctx.textAlign = 'center';
+      ctx.textBaseline = 'middle';
+      ctx.fillStyle = '#a7f3d0';
+
+      const rRune = size * 0.41;
+      for (let i = 0; i < SEAL_RUNES.length; i++) {
+        const a = (i / SEAL_RUNES.length) * Math.PI * 2;
+        ctx.save();
+        ctx.translate(cx, cy);
+        ctx.rotate(a + Math.PI / 2);
+        ctx.fillText(SEAL_RUNES[i], 0, -rRune);
+        ctx.restore();
+      }
+
+      // Hexagram
+      const hexR = size * 0.30;
+      ctx.strokeStyle = '#d97706';
+      ctx.lineWidth = 2.5;
+      for (let tri = 0; tri < 2; tri++) {
+        const startA = tri * Math.PI;
+        ctx.beginPath();
+        for (let i = 0; i < 3; i++) {
+          const a = startA + (i * 2 * Math.PI) / 3;
+          const x = cx + Math.cos(a) * hexR;
+          const y = cy + Math.sin(a) * hexR;
+          if (i === 0) ctx.moveTo(x, y);
+          else ctx.lineTo(x, y);
+        }
+        ctx.closePath();
+        ctx.stroke();
+      }
+
+      // Inner Core Ring & Radiant Node
+      ctx.strokeStyle = '#6ee7b7';
+      ctx.lineWidth = 2;
+      ctx.beginPath();
+      ctx.arc(cx, cy, size * 0.16, 0, Math.PI * 2);
+      ctx.stroke();
+
+      ctx.fillStyle = '#fbbf24';
+      ctx.beginPath();
+      ctx.arc(cx, cy, 9, 0, Math.PI * 2);
+      ctx.fill();
+
+      const tex = new THREE.CanvasTexture(c);
+      tex.minFilter = THREE.LinearMipmapLinearFilter;
+      return tex;
+    }
+
+    // --- INSTANTIATE 3D RUNES ---
+    // A. Floor Central Great Seal (3 Concentric Counter-Rotating Planes)
+    const floorRuneGeo = new THREE.PlaneGeometry(13.5, 13.5);
+
+    const runeOuterTex = createRunicRingTexture();
+    const runeGeoTex = createSacredGeoTexture();
+    const runeCoreTex = createInnerCoreTexture();
+    const sealTex = createFloatingSealTexture();
+
+    const runeOuterMat = new THREE.MeshBasicMaterial({
+      map: runeOuterTex,
+      transparent: true,
+      opacity: 0.55,
+      blending: THREE.AdditiveBlending,
+      depthWrite: false,
+      side: THREE.DoubleSide
+    });
+    const runeOuterMesh = new THREE.Mesh(floorRuneGeo, runeOuterMat);
+    runeOuterMesh.position.set(0, -3.7, 4.0);
+    runeOuterMesh.rotation.set(1.24, 0, 0);
+    scene.add(runeOuterMesh);
+
+    const runeGeoMat = new THREE.MeshBasicMaterial({
+      map: runeGeoTex,
+      transparent: true,
+      opacity: 0.50,
+      blending: THREE.AdditiveBlending,
+      depthWrite: false,
+      side: THREE.DoubleSide
+    });
+    const runeGeoMesh = new THREE.Mesh(floorRuneGeo, runeGeoMat);
+    runeGeoMesh.position.set(0, -3.68, 4.02);
+    runeGeoMesh.rotation.set(1.24, 0, 0);
+    scene.add(runeGeoMesh);
+
+    const runeCoreMat = new THREE.MeshBasicMaterial({
+      map: runeCoreTex,
+      transparent: true,
+      opacity: 0.65,
+      blending: THREE.AdditiveBlending,
+      depthWrite: false,
+      side: THREE.DoubleSide
+    });
+    const runeCoreMesh = new THREE.Mesh(floorRuneGeo, runeCoreMat);
+    runeCoreMesh.position.set(0, -3.66, 4.04);
+    runeCoreMesh.rotation.set(1.24, 0, 0);
+    scene.add(runeCoreMesh);
+
+    // B. Flanking Floating Eldritch Seals (Mid-air mystical wards)
+    const floatingSealGeo = new THREE.PlaneGeometry(5.2, 5.2);
+
+    const sealMatLeft = new THREE.MeshBasicMaterial({
+      map: sealTex,
+      transparent: true,
+      opacity: 0.42,
+      blending: THREE.AdditiveBlending,
+      depthWrite: false,
+      side: THREE.DoubleSide
+    });
+    const leftSealMesh = new THREE.Mesh(floatingSealGeo, sealMatLeft);
+    leftSealMesh.position.set(-8.8, 3.2, 1.2);
+    leftSealMesh.rotation.set(0.18, 0.42, 0);
+    scene.add(leftSealMesh);
+
+    const sealMatRight = new THREE.MeshBasicMaterial({
+      map: sealTex,
+      transparent: true,
+      opacity: 0.40,
+      blending: THREE.AdditiveBlending,
+      depthWrite: false,
+      side: THREE.DoubleSide
+    });
+    const rightSealMesh = new THREE.Mesh(floatingSealGeo, sealMatRight);
+    rightSealMesh.position.set(9.0, 2.6, 0.8);
+    rightSealMesh.rotation.set(-0.16, -0.40, 0);
+    scene.add(rightSealMesh);
+
+    // C. Energy Containment Rings (Harmonized Torus boundary rings)
+    const ringGeo1 = new THREE.TorusGeometry(3.6, 0.04, 16, 100);
     const ringMat1 = new THREE.MeshBasicMaterial({
       color: 0xd97706,
       transparent: true,
@@ -210,21 +590,20 @@ export default function MinecraftBackground() {
       blending: THREE.AdditiveBlending,
     });
     const riftRing1 = new THREE.Mesh(ringGeo1, ringMat1);
-    riftRing1.position.set(0, -3, 4);
-    riftRing1.rotation.set(1.2, 0.2, 0);
+    riftRing1.position.set(0, -3.6, 4.0);
+    riftRing1.rotation.set(1.24, 0.05, 0);
     scene.add(riftRing1);
 
-    // Outer rune ring — deep emerald (traces the outer rune circle)
-    const ringGeo2 = new THREE.TorusGeometry(5.5, 0.03, 16, 100);
+    const ringGeo2 = new THREE.TorusGeometry(5.8, 0.035, 16, 100);
     const ringMat2 = new THREE.MeshBasicMaterial({
       color: 0x16a34a,
       transparent: true,
-      opacity: 0.22,
+      opacity: 0.24,
       blending: THREE.AdditiveBlending,
     });
     const riftRing2 = new THREE.Mesh(ringGeo2, ringMat2);
-    riftRing2.position.set(0, -3.5, 3);
-    riftRing2.rotation.set(1.2, -0.2, 0);
+    riftRing2.position.set(0, -3.75, 3.9);
+    riftRing2.rotation.set(1.24, -0.05, 0);
     scene.add(riftRing2);
 
     // ═══════════════════════════════════════════════════════════
@@ -308,6 +687,43 @@ export default function MinecraftBackground() {
       riftRing2.rotation.z -= 0.003;
       riftRing2.scale.setScalar(1 + Math.cos(elapsed * 1.0) * 0.06);
 
+      // ═══════════════════════════════════════════════════════════
+      // ROTATE & PULSE 3D ELDRITCH RUNES
+      // ═══════════════════════════════════════════════════════════
+      // 1. Central Great Seal Multi-Layer Counter-Rotation
+      runeOuterMesh.rotation.z += 0.0024;
+      runeGeoMesh.rotation.z -= 0.0034;
+      runeCoreMesh.rotation.z += 0.0055;
+
+      // Gentle vertical breathing hover
+      const runeBob = Math.sin(elapsed * 0.8) * 0.06;
+      runeOuterMesh.position.y = -3.7 + runeBob;
+      runeGeoMesh.position.y = -3.68 + runeBob;
+      runeCoreMesh.position.y = -3.66 + runeBob;
+      riftRing1.position.y = -3.6 + runeBob;
+      riftRing2.position.y = -3.75 + runeBob;
+
+      // Luminescent breathing pulses
+      runeOuterMat.opacity = 0.52 + Math.sin(elapsed * 1.5) * 0.10;
+      runeGeoMat.opacity = 0.48 + Math.cos(elapsed * 1.9) * 0.08;
+      runeCoreMat.opacity = 0.62 + Math.sin(elapsed * 2.3) * 0.12;
+
+      // Mouse parallax yaw response
+      runeOuterMesh.rotation.y = targetX * 0.06;
+      runeGeoMesh.rotation.y = targetX * 0.06;
+      runeCoreMesh.rotation.y = targetX * 0.06;
+
+      // 2. Flanking Floating Eldritch Orbital Seals
+      leftSealMesh.rotation.z -= 0.0022;
+      leftSealMesh.position.y = 3.2 + Math.sin(elapsed * 1.1) * 0.22;
+      leftSealMesh.rotation.y = 0.42 + targetX * 0.12;
+      sealMatLeft.opacity = 0.40 + Math.sin(elapsed * 1.4) * 0.08;
+
+      rightSealMesh.rotation.z += 0.0026;
+      rightSealMesh.position.y = 2.6 + Math.cos(elapsed * 0.95) * 0.20;
+      rightSealMesh.rotation.y = -0.40 + targetX * 0.12;
+      sealMatRight.opacity = 0.38 + Math.cos(elapsed * 1.3) * 0.08;
+
       renderer.render(scene, camera);
     };
 
@@ -326,6 +742,19 @@ export default function MinecraftBackground() {
       ringMat1.dispose();
       ringGeo2.dispose();
       ringMat2.dispose();
+
+      floorRuneGeo.dispose();
+      floatingSealGeo.dispose();
+      runeOuterMat.dispose();
+      runeGeoMat.dispose();
+      runeCoreMat.dispose();
+      sealMatLeft.dispose();
+      sealMatRight.dispose();
+      runeOuterTex.dispose();
+      runeGeoTex.dispose();
+      runeCoreTex.dispose();
+      sealTex.dispose();
+
       renderer.dispose();
     };
   }, []);
