@@ -35,7 +35,7 @@ export default function Hero({ onOpenRegister }) {
   }, [eventSettings.targetDate]);
 
   return (
-    <section className="relative pt-16 pb-14 md:pt-20 md:pb-20 overflow-hidden bg-transparent border-b border-white/10">
+    <section className="relative min-h-screen flex flex-col justify-center items-center pt-24 pb-16 md:pt-28 md:pb-20 overflow-hidden bg-transparent">
       
       {/* Subtle Ambient Backlight (Matching the Arcane Hall) */}
       <div className="absolute top-1/4 left-1/4 w-[40rem] h-[40rem] bg-amber-500/5 blur-[120px] -z-10 pointer-events-none rounded-full" />
@@ -240,6 +240,9 @@ export default function Hero({ onOpenRegister }) {
         </div>
 
       </div>
+
+      {/* Atmospheric bottom fade into consecutive sections */}
+      <div className="absolute bottom-0 left-0 right-0 h-28 bg-gradient-to-t from-[#070913] to-transparent pointer-events-none" />
     </section>
   );
 }

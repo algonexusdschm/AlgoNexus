@@ -5,30 +5,30 @@ export default function Navbar({ onOpenRegister, onOpenAdmin }) {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
 
   return (
-    <nav className="fixed top-0 left-0 right-0 z-50 bg-[#0b0e14]/90 backdrop-blur-xl border-b-2 border-mc-border">
+    <nav className="fixed top-0 left-0 right-0 z-50 bg-slate-950/40 backdrop-blur-md border-b border-emerald-500/20 shadow-[0_4px_24px_rgba(0,0,0,0.6)] transition-all">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex items-center justify-between h-20">
           
           {/* Brand Logo */}
           <a href="#" className="flex items-center gap-3 group">
-            <div className="w-10 h-10 bg-slate-900 border-2 border-emerald-500/50 p-1.5 shadow-[0_0_15px_rgba(16,185,129,0.2)] group-hover:border-emerald-400 group-hover:shadow-[0_0_20px_rgba(16,185,129,0.4)] transition-all flex items-center justify-center rounded-lg">
+            <div className="w-10 h-10 bg-slate-900/80 border-2 border-emerald-500/50 p-1.5 shadow-[0_0_15px_rgba(16,185,129,0.25)] group-hover:border-emerald-400 group-hover:shadow-[0_0_20px_rgba(16,185,129,0.5)] transition-all flex items-center justify-center rounded-lg">
               <Box className="w-5 h-5 text-emerald-400 group-hover:rotate-12 transition-transform" />
             </div>
             <div>
               <div className="flex items-center gap-2">
-                <span className="text-2xl font-['Anton'] tracking-widest text-white uppercase">
+                <span className="text-2xl font-bebas tracking-widest text-white uppercase">
                   ALGO<span className="text-emerald-400 drop-shadow-[0_0_8px_rgba(52,211,153,0.5)]">NEXUS</span>
                 </span>
-                <span className="text-[10px] font-['Orbitron'] px-2 py-0.5 bg-emerald-500/10 text-emerald-400 border border-emerald-500/30 rounded">
-                  2026
+                <span className="text-[10px] font-space font-bold px-2 py-0.5 bg-emerald-500/10 text-emerald-400 border border-emerald-500/30 rounded">
+                  2027
                 </span>
               </div>
-              <p className="text-[10px] text-slate-400 tracking-[0.2em] uppercase font-['Orbitron']">National Tech Conclave</p>
+              <p className="text-[10px] text-slate-400 tracking-[0.2em] uppercase font-space">National Tech Conclave</p>
             </div>
           </a>
 
           {/* Desktop Nav Links */}
-          <div className="hidden md:flex items-center space-x-7 text-[11px] font-['Orbitron'] font-bold uppercase tracking-wider text-slate-300">
+          <div className="hidden md:flex items-center space-x-7 text-[11px] font-space font-semibold uppercase tracking-wider text-slate-300">
             <a href="#characters" className="hover:text-amber-400 text-amber-300 flex items-center gap-1.5 transition-colors">
               <span className="w-1.5 h-1.5 rounded-full bg-amber-400 animate-pulse" />
               <span>Champions</span>
@@ -43,16 +43,16 @@ export default function Navbar({ onOpenRegister, onOpenAdmin }) {
           <div className="hidden md:flex items-center gap-3">
             <button
               onClick={onOpenAdmin}
-              className="px-3.5 py-2 btn-voxel-dark text-xs flex items-center gap-1.5"
+              className="px-4 py-2 rounded-lg bg-slate-900/70 hover:bg-slate-800/90 border border-slate-700/70 hover:border-slate-500 text-slate-300 font-chakra text-xs flex items-center gap-1.5 transition-all shadow-sm"
               title="Organizers & Gate Console"
             >
-              <LayoutDashboard className="w-3.5 h-3.5 text-mc-diamond" />
+              <LayoutDashboard className="w-3.5 h-3.5 text-cyan-400" />
               <span>Admin Console</span>
             </button>
 
             <button
               onClick={() => onOpenRegister()}
-              className="px-5 py-2.5 btn-voxel-diamond text-xs flex items-center gap-2"
+              className="px-5 py-2 rounded-lg bg-emerald-500/20 hover:bg-emerald-500/30 border border-emerald-500/60 hover:border-emerald-400 text-emerald-300 font-chakra font-bold text-xs flex items-center gap-2 shadow-[0_0_15px_rgba(16,185,129,0.25)] hover:shadow-[0_0_20px_rgba(16,185,129,0.45)] transition-all"
             >
               <Ticket className="w-4 h-4" />
               <span>Register Now</span>

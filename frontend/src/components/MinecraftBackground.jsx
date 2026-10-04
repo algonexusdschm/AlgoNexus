@@ -589,7 +589,7 @@ export default function MinecraftBackground() {
 
       // Wallpaper 2.5D Parallax Shift
       if (bgImageRef.current) {
-        bgImageRef.current.style.transform = `scale(1.06) translate(${targetX * -14}px, ${targetY * -10}px)`;
+        bgImageRef.current.style.transform = `scale(1.08) translate(${targetX * -14}px, ${targetY * -10}px)`;
       }
 
       // Swirl & Ascend Arcane Particles
@@ -692,12 +692,13 @@ export default function MinecraftBackground() {
       {/* 1. Doomsday Ruined Monument Wallpaper with interactive parallax */}
       <div
         ref={bgImageRef}
-        className="absolute inset-0 bg-cover bg-center transition-transform duration-300 ease-out pointer-events-none will-change-transform"
+        className="absolute -inset-4 sm:-inset-8 bg-cover bg-no-repeat transition-transform duration-300 ease-out pointer-events-none will-change-transform"
         style={{
           backgroundImage: "url('/images/doomsday_hero_bg.png')",
-          backgroundPosition: 'center 40%',
-          opacity: 0.96,
-          filter: 'brightness(1.02) contrast(1.10) saturate(1.15)',
+          backgroundPosition: 'center 42%',
+          backgroundSize: 'cover',
+          opacity: 0.98,
+          filter: 'brightness(1.05) contrast(1.10) saturate(1.15)',
         }}
       />
 
@@ -713,18 +714,18 @@ export default function MinecraftBackground() {
         }}
       />
 
-      {/* 3. Directional vignette — darkens top & bottom so navbar and footer text stays sharp */}
+      {/* 3. Directional vignette — transparent at top so monument bleeds to top edge */}
       <div
         className="absolute inset-0 pointer-events-none"
         style={{
-          background: 'linear-gradient(180deg, rgba(4, 6, 4, 0.72) 0%, rgba(8, 10, 7, 0.20) 22%, rgba(8, 10, 7, 0.20) 72%, rgba(4, 6, 4, 0.82) 100%)'
+          background: 'linear-gradient(180deg, rgba(4, 6, 4, 0.15) 0%, rgba(8, 10, 7, 0.05) 25%, rgba(8, 10, 7, 0.25) 75%, rgba(7, 9, 19, 0.95) 100%)'
         }}
       />
-      {/* Side vignette — subtly frames the hall's wide composition */}
+      {/* Side vignette — subtly frames the monument's wide composition */}
       <div
         className="absolute inset-0 pointer-events-none"
         style={{
-          background: 'radial-gradient(ellipse 80% 90% at 50% 42%, transparent 40%, rgba(4, 6, 4, 0.55) 80%, rgba(4, 6, 4, 0.80) 100%)'
+          background: 'radial-gradient(ellipse 85% 90% at 50% 42%, transparent 45%, rgba(4, 6, 4, 0.45) 85%, rgba(4, 6, 4, 0.75) 100%)'
         }}
       />
 
