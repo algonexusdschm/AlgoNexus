@@ -50,68 +50,7 @@ export default function MinecraftBackground() {
     scene.add(goldBeamRight);
 
     // ═══════════════════════════════════════════════════════════
-    // 1. 3D FLOATING SHATTERED MULTIVERSAL CRYSTAL SHARDS (24 Shards)
-    // ═══════════════════════════════════════════════════════════
-    const shardGeometries = [
-      new THREE.OctahedronGeometry(1, 0),
-      new THREE.TetrahedronGeometry(1.2, 0),
-      new THREE.IcosahedronGeometry(0.9, 0),
-    ];
-
-    const glassMaterial = new THREE.MeshPhysicalMaterial({
-      color: 0xc7d2fe,
-      transmission: 0.88,
-      opacity: 0.85,
-      transparent: true,
-      roughness: 0.08,
-      metalness: 0.15,
-      clearcoat: 1.0,
-      clearcoatRoughness: 0.1,
-      ior: 1.52,
-      reflectivity: 0.9,
-    });
-
-    const shards = [];
-    const shardCount = 24;
-
-    for (let i = 0; i < shardCount; i++) {
-      const geo = shardGeometries[i % shardGeometries.length];
-      const shard = new THREE.Mesh(geo, glassMaterial);
-
-      // Distribute along the upper rift and across the sky
-      const isRiftCluster = i < 16;
-      const x = isRiftCluster ? (Math.random() - 0.7) * 22 : (Math.random() - 0.5) * 32;
-      const y = isRiftCluster ? 1 + Math.random() * 10 : (Math.random() - 0.3) * 16;
-      const z = -6 + Math.random() * 12;
-
-      shard.position.set(x, y, z);
-      const scale = 0.35 + Math.random() * 0.75;
-      shard.scale.set(scale, scale * (0.8 + Math.random() * 1.5), scale * 0.5);
-
-      shard.rotation.set(
-        Math.random() * Math.PI,
-        Math.random() * Math.PI,
-        Math.random() * Math.PI
-      );
-
-      shard.userData = {
-        baseX: x,
-        baseY: y,
-        baseZ: z,
-        rotSpeedX: (Math.random() - 0.5) * 0.015,
-        rotSpeedY: (Math.random() - 0.5) * 0.02,
-        rotSpeedZ: (Math.random() - 0.5) * 0.01,
-        bobSpeed: 0.8 + Math.random() * 1.2,
-        bobAmp: 0.2 + Math.random() * 0.4,
-        phase: Math.random() * Math.PI * 2,
-      };
-
-      scene.add(shard);
-      shards.push(shard);
-    }
-
-    // ═══════════════════════════════════════════════════════════
-    // 2. 3D SWIRLING ARCANE PARTICLES & COSMIC EMBERS (1,500)
+    // 1. 3D SWIRLING ARCANE PARTICLES & COSMIC EMBERS (1,500)
     // ═══════════════════════════════════════════════════════════
     function createGlowParticleTexture() {
       const c = document.createElement('canvas');
@@ -610,10 +549,10 @@ export default function MinecraftBackground() {
     // 4. FLOATING SORCERER CHARACTER & ROTATING HAND RUNES
     // ═══════════════════════════════════════════════════════════
     const characterGroup = new THREE.Group();
-    characterGroup.position.set(0, 1.6, 1.0);
+    characterGroup.position.set(0, 1.4, 0.4);
     scene.add(characterGroup);
 
-    // Sorcerer Texture with Soft Radial Feathering
+    // Sorcerer Texture with Soft Radial Feathering & High Contrast
     const sorcererCanvas = document.createElement('canvas');
     sorcererCanvas.width = 1024;
     sorcererCanvas.height = 1024;
@@ -624,14 +563,17 @@ export default function MinecraftBackground() {
     sorcererImg.src = '/images/floating_sorcerer.jpg';
     sorcererImg.onload = () => {
       const sCtx = sorcererCanvas.getContext('2d');
+      // Boost contrast and vibrancy to make the character bold and prominent behind text
+      sCtx.filter = 'contrast(1.28) saturate(1.35) brightness(1.12)';
       sCtx.drawImage(sorcererImg, 0, 0, 1024, 1024);
+      sCtx.filter = 'none';
 
-      // Soft elliptical feather mask to blend character smoothly into space
+      // Soft elliptical feather mask to blend character smoothly into space while keeping the core 100% solid
       sCtx.globalCompositeOperation = 'destination-in';
-      const maskGrad = sCtx.createRadialGradient(512, 512, 260, 512, 512, 490);
+      const maskGrad = sCtx.createRadialGradient(512, 512, 280, 512, 512, 505);
       maskGrad.addColorStop(0, 'rgba(0,0,0,1)');
-      maskGrad.addColorStop(0.65, 'rgba(0,0,0,0.92)');
-      maskGrad.addColorStop(0.88, 'rgba(0,0,0,0.35)');
+      maskGrad.addColorStop(0.72, 'rgba(0,0,0,1)');
+      maskGrad.addColorStop(0.92, 'rgba(0,0,0,0.5)');
       maskGrad.addColorStop(1, 'rgba(0,0,0,0)');
       sCtx.fillStyle = maskGrad;
       sCtx.fillRect(0, 0, 1024, 1024);
@@ -639,11 +581,11 @@ export default function MinecraftBackground() {
       sorcererTex.needsUpdate = true;
     };
 
-    const characterGeo = new THREE.PlaneGeometry(8.4, 8.4);
+    const characterGeo = new THREE.PlaneGeometry(8.8, 8.8);
     const characterMat = new THREE.MeshBasicMaterial({
       map: sorcererTex,
       transparent: true,
-      opacity: 0.85,
+      opacity: 1.0, // Bold and vibrant
       depthWrite: false,
       side: THREE.DoubleSide
     });
@@ -860,15 +802,6 @@ export default function MinecraftBackground() {
         bgImageRef.current.style.transform = `scale(1.06) translate(${targetX * -14}px, ${targetY * -10}px)`;
       }
 
-      // Rotate & Float Crystal Shards
-      shards.forEach((shard) => {
-        shard.rotation.x += shard.userData.rotSpeedX;
-        shard.rotation.y += shard.userData.rotSpeedY;
-        shard.rotation.z += shard.userData.rotSpeedZ;
-
-        shard.position.y = shard.userData.baseY + Math.sin(elapsed * shard.userData.bobSpeed + shard.userData.phase) * shard.userData.bobAmp;
-      });
-
       // Swirl & Ascend Arcane Particles
       const posAttr = particleGeo.attributes.position;
       for (let i = 0; i < particleCount; i++) {
@@ -932,39 +865,31 @@ export default function MinecraftBackground() {
       sealMatRight.opacity = 0.38 + Math.cos(elapsed * 1.3) * 0.08;
 
       // ═══════════════════════════════════════════════════════════
-      // 3. FULL-SCREEN SOARING SORCERER & ROTATING HAND RUNES
+      // 3. CENTERED MAJESTIC LEVITATING SORCERER & ROTATING RUNES
       // ═══════════════════════════════════════════════════════════
-      // Broad Lissajous flight path across the full viewport + mouse attractor
-      const flightX = Math.sin(elapsed * 0.35) * 8.5 + Math.cos(elapsed * 0.18) * 3.2 + targetX * 5.5;
-      const flightY = Math.cos(elapsed * 0.28) * 3.8 + Math.sin(elapsed * 0.58) * 1.4 - targetY * 3.2 + 0.6;
-      const flightZ = Math.sin(elapsed * 0.22) * 2.2 + 0.5;
-
-      // Smooth flight inertia (glides gracefully across full screen)
-      const prevX = characterGroup.position.x;
-      characterGroup.position.x += (flightX - characterGroup.position.x) * 0.035;
-      characterGroup.position.y += (flightY - characterGroup.position.y) * 0.035;
-      characterGroup.position.z += (flightZ - characterGroup.position.z) * 0.035;
-
-      // Dynamic banking into flight curves (leans into turns)
-      const dx = characterGroup.position.x - prevX;
-      characterGroup.rotation.z = -dx * 2.2 + Math.sin(elapsed * 0.8) * 0.03;
-      characterGroup.rotation.y = dx * 1.8 + targetX * 0.14;
-      characterGroup.rotation.x = Math.sin(elapsed * 0.5) * 0.04;
+      // Centered levitation & gentle breathing hover in the middle
+      const charBob = Math.sin(elapsed * 1.1) * 0.22;
+      characterGroup.position.x = targetX * 1.2;
+      characterGroup.position.y = 1.4 + charBob;
+      characterGroup.position.z = 0.4;
+      characterGroup.rotation.y = targetX * 0.12;
+      characterGroup.rotation.z = Math.sin(elapsed * 0.8) * 0.025;
+      characterGroup.rotation.x = Math.sin(elapsed * 0.6) * 0.02;
 
       // Pulse aura with motion
-      auraMat.opacity = 0.55 + Math.sin(elapsed * 2.0) * 0.16;
-      auraMesh.scale.setScalar(1 + Math.sin(elapsed * 1.5) * 0.08);
-      auraMesh.rotation.z += 0.003;
+      auraMat.opacity = 0.58 + Math.sin(elapsed * 1.8) * 0.18;
+      auraMesh.scale.setScalar(1 + Math.sin(elapsed * 1.4) * 0.07);
+      auraMesh.rotation.z += 0.0025;
 
       // Right Hand Runes (Clockwise outer, counter-clockwise inner)
-      rightHandRuneOuter.rotation.z += 0.016;
+      rightHandRuneOuter.rotation.z += 0.015;
       rightHandRuneInner.rotation.z -= 0.022;
-      handRuneMat1.opacity = 0.72 + Math.sin(elapsed * 2.8) * 0.15;
+      handRuneMat1.opacity = 0.76 + Math.sin(elapsed * 2.8) * 0.15;
 
       // Left Hand Runes (Counter-clockwise outer, clockwise inner)
-      leftHandRuneOuter.rotation.z -= 0.014;
-      leftHandRuneInner.rotation.z += 0.020;
-      handRuneMat3.opacity = 0.68 + Math.cos(elapsed * 2.5) * 0.15;
+      leftHandRuneOuter.rotation.z -= 0.012;
+      leftHandRuneInner.rotation.z += 0.018;
+      handRuneMat3.opacity = 0.72 + Math.cos(elapsed * 2.5) * 0.15;
 
       // ═══════════════════════════════════════════════════════════
       // 4. FLOATING ELDRITCH GLYPHS / RUNE LETTERS

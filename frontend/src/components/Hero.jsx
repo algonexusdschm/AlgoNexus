@@ -62,26 +62,31 @@ export default function Hero({ onOpenRegister }) {
         </div>
 
         {/* Hero Main Content */}
-        <div className="text-center space-y-6 md:space-y-8">
-          <div className="inline-block px-4 py-1.5 rounded-lg bg-slate-800/50 border border-white/10 text-slate-300 font-mono text-xs tracking-wider backdrop-blur-sm">
+        <div className="relative text-center space-y-6 md:space-y-8">
+          {/* Subtle radial shadow behind hero content to ensure 100% text clarity over the bold character */}
+          <div className="absolute -inset-4 sm:-inset-10 bg-radial from-slate-950/80 via-slate-950/40 to-transparent -z-10 rounded-full blur-2xl pointer-events-none" />
+
+          <div className="inline-block px-4 py-1.5 rounded-lg bg-slate-900/80 border border-emerald-500/30 text-emerald-300 font-mono text-xs tracking-wider backdrop-blur-md shadow-lg">
             {eventSettings.edition} • Department of Data Science, Smt. CHM College
           </div>
 
-          <h1 className="text-5xl sm:text-7xl md:text-[6rem] leading-none text-center flex flex-col items-center mb-6">
-            <span className="avengers-chrome block pb-2">ALGONEXUS</span>
-            <span className="doomsday-neon block text-2xl sm:text-4xl md:text-5xl mt-2 relative z-10">DOOMSDAY PROTOCOL</span>
+          <h1 className="text-5xl sm:text-7xl md:text-[6.2rem] leading-none text-center flex flex-col items-center mb-6 drop-shadow-[0_6px_28px_rgba(0,0,0,0.95)]">
+            <span className="avengers-chrome block pb-2 drop-shadow-[0_2px_10px_rgba(0,0,0,0.9)]">ALGONEXUS</span>
+            <span className="doomsday-neon block text-2xl sm:text-4xl md:text-5xl mt-2 relative z-10 drop-shadow-[0_0_20px_rgba(34,197,94,0.6)]">DOOMSDAY PROTOCOL</span>
           </h1>
 
-          <p className="text-base sm:text-lg md:text-xl text-slate-300 max-w-3xl mx-auto leading-relaxed font-light">
-            Welcome to <strong className="font-bold text-white tracking-wide">{eventSettings.name}</strong>, the premier collegiate multiverse hackathon. 
-            As cosmic rifts shatter reality, forge breakthrough algorithms and command high-level computation to save the timeline.
-          </p>
+          <div className="max-w-3xl mx-auto px-4 sm:px-6 py-3.5 rounded-2xl bg-slate-950/65 border border-white/10 backdrop-blur-md shadow-[0_8px_32px_rgba(0,0,0,0.7)]">
+            <p className="text-base sm:text-lg md:text-xl text-slate-100 leading-relaxed font-normal drop-shadow-[0_1px_6px_rgba(0,0,0,0.9)]">
+              Welcome to <strong className="font-bold text-emerald-400 tracking-wide">{eventSettings.name}</strong>, the premier collegiate multiverse hackathon. 
+              As cosmic rifts shatter reality, forge breakthrough algorithms and command high-level computation to save the timeline.
+            </p>
+          </div>
 
           {/* Action Buttons */}
           <div className="flex flex-col sm:flex-row items-center justify-center gap-4 pt-4">
             <button
               onClick={() => onOpenRegister()}
-              className="w-full sm:w-auto px-8 py-4 rounded-xl font-bold uppercase tracking-wider text-sm bg-gradient-to-r from-emerald-500 to-emerald-700 text-white flex items-center justify-center gap-2.5 shadow-[0_0_20px_rgba(16,185,129,0.3)] hover:shadow-[0_0_30px_rgba(16,185,129,0.5)] hover:scale-[1.02] active:scale-[0.98] transition-all"
+              className="w-full sm:w-auto px-8 py-4 rounded-xl font-bold uppercase tracking-wider text-sm bg-gradient-to-r from-emerald-500 to-emerald-700 text-white flex items-center justify-center gap-2.5 shadow-[0_0_24px_rgba(16,185,129,0.4)] hover:shadow-[0_0_36px_rgba(16,185,129,0.6)] hover:scale-[1.02] active:scale-[0.98] transition-all"
             >
               <span>REGISTER NOW</span>
               <ArrowRight className="w-4 h-4 stroke-[3]" />
@@ -89,7 +94,7 @@ export default function Hero({ onOpenRegister }) {
 
             <a
               href="#passes"
-              className="w-full sm:w-auto px-8 py-4 rounded-xl font-bold uppercase tracking-wider text-sm bg-slate-900/80 hover:bg-slate-800/90 text-amber-300 border border-amber-500/30 flex items-center justify-center gap-2 backdrop-blur-md transition-all hover:scale-[1.02] active:scale-[0.98]"
+              className="w-full sm:w-auto px-8 py-4 rounded-xl font-bold uppercase tracking-wider text-sm bg-slate-900/90 hover:bg-slate-800 text-amber-300 border border-amber-500/40 flex items-center justify-center gap-2 backdrop-blur-md shadow-[0_4px_20px_rgba(0,0,0,0.5)] transition-all hover:scale-[1.02] active:scale-[0.98]"
             >
               <Sparkles className="w-4 h-4 text-amber-400" />
               <span>VIEW EVENT PASSES</span>
