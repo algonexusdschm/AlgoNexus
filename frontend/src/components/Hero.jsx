@@ -43,63 +43,105 @@ export default function Hero({ onOpenRegister }) {
 
       <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
         
-        {/* Top Badges — Single clean line positioned upward to keep Doctor Doom's face clearly visible */}
-        <div className="flex flex-nowrap items-center justify-center gap-2 sm:gap-3 mb-6 md:mb-8 overflow-x-auto no-scrollbar py-1">
-          <div className="shrink-0 inline-flex items-center gap-1.5 sm:gap-2 px-3 py-1 sm:px-3.5 sm:py-1.5 rounded-full bg-emerald-950/90 border border-emerald-500/40 text-emerald-400 text-[11px] sm:text-xs font-mono backdrop-blur-md shadow-md">
-            <span className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse shadow-[0_0_8px_#10b981]" />
-            <span>MULTIVERSE INCURSION: ACTIVE</span>
-          </div>
-
-          <div className="shrink-0 inline-flex items-center gap-1.5 sm:gap-2 px-3 py-1 sm:px-3.5 sm:py-1.5 rounded-full bg-slate-900/90 border border-white/20 text-slate-200 text-[11px] sm:text-xs font-mono backdrop-blur-md shadow-md">
-            <Calendar className="w-3 h-3 sm:w-3.5 sm:h-3.5 text-amber-400" />
-            <span>{eventSettings.datesAnnounced ? eventSettings.dates : 'Dates To Be Announced Soon'}</span>
-          </div>
-
-          <div className="shrink-0 inline-flex items-center gap-1.5 sm:gap-2 px-3 py-1 sm:px-3.5 sm:py-1.5 rounded-full bg-slate-900/90 border border-white/20 text-slate-200 text-[11px] sm:text-xs font-mono backdrop-blur-md shadow-md">
-            <MapPin className="w-3 h-3 sm:w-3.5 sm:h-3.5 text-emerald-400" />
-            <span>Latverian Citadel • {eventSettings.venue || 'CHM College'}</span>
-          </div>
-        </div>
-
-        {/* Hero Main Content */}
-        <div className="relative text-center space-y-6 md:space-y-8">
-          {/* Subtle radial shadow behind hero content to ensure 100% text clarity over the bold character */}
+        {/* Hero Main Content (Matching Image 1: DOOMSDAY Hackathon) */}
+        <div className="relative text-center space-y-3 sm:space-y-4 pt-4 md:pt-8">
+          {/* Subtle radial shadow to ensure maximum sharpness over the monument */}
           <div className="absolute -inset-4 sm:-inset-10 bg-radial from-slate-950/80 via-slate-950/40 to-transparent -z-10 rounded-full blur-2xl pointer-events-none" />
 
-          <div className="inline-block px-4 py-1.5 rounded-lg bg-slate-900/80 border border-emerald-500/30 text-emerald-300 font-mono text-xs tracking-wider backdrop-blur-md shadow-lg">
-            {eventSettings.edition} • Department of Data Science, Smt. CHM College
+          {/* Top Line: ALGO NEXUS 2027 */}
+          <div className="font-mono text-xs sm:text-sm tracking-[0.35em] sm:tracking-[0.45em] text-slate-300 uppercase flex items-center justify-center gap-2 drop-shadow-[0_2px_8px_rgba(0,0,0,0.95)]">
+            <span>ALGO NEXUS</span>
+            <span className="text-emerald-400 font-bold">2027</span>
           </div>
 
-          <h1 className="text-5xl sm:text-7xl md:text-[6.2rem] leading-none text-center flex flex-col items-center mb-6 drop-shadow-[0_6px_28px_rgba(0,0,0,0.95)]">
-            <span className="avengers-chrome block pb-2 drop-shadow-[0_2px_10px_rgba(0,0,0,0.9)]">ALGONEXUS</span>
-            <span className="doomsday-neon block text-2xl sm:text-4xl md:text-5xl mt-2 relative z-10 drop-shadow-[0_0_20px_rgba(34,197,94,0.6)]">DOOMSDAY PROTOCOL</span>
-          </h1>
+          {/* Giant DOOMSDAY Title with Integrated Avengers 'A' & Green Laser Baseline */}
+          <div className="relative inline-flex flex-col items-center justify-center py-1 sm:py-2 select-none">
+            <div className="flex items-center justify-center leading-none text-6xl sm:text-8xl md:text-[7.5rem] lg:text-[8.5rem]">
+              <span className="doomsday-metal-word">DOOMS</span>
+              
+              {/* Iconic Avengers 'A' Symbol */}
+              <span className="relative inline-block mx-0.5 sm:mx-1 top-[-0.04em] shrink-0">
+                <svg
+                  viewBox="0 0 100 100"
+                  className="w-[0.92em] h-[0.92em] inline-block align-middle overflow-visible drop-shadow-[0_6px_16px_rgba(0,0,0,0.95)] drop-shadow-[0_0_20px_rgba(34,197,94,0.65)]"
+                >
+                  <defs>
+                    <linearGradient id="avengersMetalGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+                      <stop offset="0%" stopColor="#ffffff" />
+                      <stop offset="25%" stopColor="#e2e8f0" />
+                      <stop offset="45%" stopColor="#94a3b8" />
+                      <stop offset="52%" stopColor="#334155" />
+                      <stop offset="68%" stopColor="#64748b" />
+                      <stop offset="88%" stopColor="#cbd5e1" />
+                      <stop offset="100%" stopColor="#4ade80" />
+                    </linearGradient>
+                  </defs>
+                  {/* Outer Circular Ring */}
+                  <circle
+                    cx="50"
+                    cy="50"
+                    r="38"
+                    fill="none"
+                    stroke="url(#avengersMetalGrad)"
+                    strokeWidth="8.5"
+                    strokeLinecap="round"
+                  />
+                  {/* Main 'A' Diagonal Legs */}
+                  <path
+                    d="M 27 83 L 50 16 L 73 83"
+                    fill="none"
+                    stroke="url(#avengersMetalGrad)"
+                    strokeWidth="10"
+                    strokeLinecap="square"
+                    strokeLinejoin="miter"
+                  />
+                  {/* Arrow Crossbar pointing right */}
+                  <path
+                    d="M 28 58 L 84 58 L 70 45 M 84 58 L 70 71"
+                    fill="none"
+                    stroke="url(#avengersMetalGrad)"
+                    strokeWidth="8.5"
+                    strokeLinecap="square"
+                    strokeLinejoin="miter"
+                  />
+                </svg>
+              </span>
 
-          <div className="max-w-3xl mx-auto px-4 sm:px-6 py-3.5 rounded-2xl bg-slate-950/65 border border-white/10 backdrop-blur-md shadow-[0_8px_32px_rgba(0,0,0,0.7)]">
-            <p className="text-base sm:text-lg md:text-xl text-slate-100 leading-relaxed font-normal drop-shadow-[0_1px_6px_rgba(0,0,0,0.9)]">
-              Welcome to <strong className="font-bold text-emerald-400 tracking-wide">{eventSettings.name}</strong>, the premier collegiate multiverse hackathon. 
-              As cosmic rifts shatter reality, forge breakthrough algorithms and command high-level computation to save the timeline.
-            </p>
+              <span className="doomsday-metal-word">Y</span>
+            </div>
+
+            {/* Radiant Emerald Laser Baseline with central flare (Image 1) */}
+            <div className="relative w-full max-w-2xl h-[3px] mt-2 sm:mt-3 flex items-center justify-center">
+              <div className="w-full h-full bg-gradient-to-r from-transparent via-[#22c55e] to-transparent shadow-[0_0_12px_#22c55e]" />
+              <div className="absolute w-12 sm:w-16 h-2 bg-[#4ade80] rounded-full blur-[2px] shadow-[0_0_18px_#22c55e]" />
+              <div className="absolute w-2 h-2 bg-white rounded-full shadow-[0_0_10px_#ffffff]" />
+            </div>
           </div>
 
-          {/* Action Buttons */}
-          <div className="flex flex-col sm:flex-row items-center justify-center gap-4 pt-4">
+          {/* Subtitle: 48-HOUR HACKATHON */}
+          <div className="font-mono text-base sm:text-xl md:text-2xl font-black text-white tracking-[0.35em] sm:tracking-[0.45em] uppercase pt-1 drop-shadow-[0_2px_8px_rgba(0,0,0,0.95)]">
+            48-HOUR HACKATHON
+          </div>
+
+          {/* Tagline (Image 1) */}
+          <div className="font-mono text-xs sm:text-sm text-slate-300 tracking-[0.25em] sm:tracking-[0.3em] uppercase space-y-1 pt-2 drop-shadow-[0_2px_6px_rgba(0,0,0,0.95)]">
+            <p className="font-semibold text-slate-200">BEFORE THE BREAKING POINT</p>
+            <p className="text-slate-400 font-light text-[11px] sm:text-xs">REAL PROBLEMS. BOLD SOLUTIONS.</p>
+          </div>
+
+          {/* Tactical Chamfered Register Button (Image 1) */}
+          <div className="flex items-center justify-center pt-5 sm:pt-6">
             <button
               onClick={() => onOpenRegister()}
-              className="w-full sm:w-auto px-8 py-4 rounded-xl font-bold uppercase tracking-wider text-sm bg-gradient-to-r from-emerald-500 to-emerald-700 text-white flex items-center justify-center gap-2.5 shadow-[0_0_24px_rgba(16,185,129,0.4)] hover:shadow-[0_0_36px_rgba(16,185,129,0.6)] hover:scale-[1.02] active:scale-[0.98] transition-all"
+              className="btn-doomsday-cyber group relative px-10 sm:px-14 py-3 sm:py-3.5 flex items-center justify-center gap-2.5 cursor-pointer"
             >
-              <span>REGISTER NOW</span>
-              <ArrowRight className="w-4 h-4 stroke-[3]" />
+              <span className="font-mono text-xs sm:text-sm font-bold tracking-[0.25em] text-emerald-400 group-hover:text-emerald-300 uppercase flex items-center gap-2.5">
+                <span>REGISTER NOW</span>
+                <span className="text-base group-hover:translate-x-1.5 transition-transform duration-200">→</span>
+              </span>
             </button>
-
-            <a
-              href="#passes"
-              className="w-full sm:w-auto px-8 py-4 rounded-xl font-bold uppercase tracking-wider text-sm bg-slate-900/90 hover:bg-slate-800 text-amber-300 border border-amber-500/40 flex items-center justify-center gap-2 backdrop-blur-md shadow-[0_4px_20px_rgba(0,0,0,0.5)] transition-all hover:scale-[1.02] active:scale-[0.98]"
-            >
-              <Sparkles className="w-4 h-4 text-amber-400" />
-              <span>VIEW EVENT PASSES</span>
-            </a>
           </div>
+        </div>
 
           {/* Live Countdown HUD */}
           <div className="pt-8 max-w-2xl mx-auto w-full">
@@ -145,7 +187,6 @@ export default function Hero({ onOpenRegister }) {
               </div>
             )}
           </div>
-        </div>
 
         {/* Bottom Tactical Metric HUD */}
         <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mt-16 max-w-5xl mx-auto">
