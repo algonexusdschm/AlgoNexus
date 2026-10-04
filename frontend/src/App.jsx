@@ -1,7 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import Navbar from './components/Navbar';
 import Hero from './components/Hero';
-import HackathonTracks from './components/HackathonTracks';
 import Announcement from './components/Announcement';
 import Gallery from './components/Gallery';
 import PricingSection from './components/PricingSection';
@@ -122,10 +121,7 @@ function MainEventApp() {
         {/* 1. Hero Section */}
         <Hero onOpenRegister={() => handleOpenRegister(pricingTiers[0])} />
 
-        {/* 2. Hackathon Arenas & Champions of Doomsday (Movie Characters) */}
-        <HackathonTracks onOpenRegister={() => handleOpenRegister(pricingTiers[0])} />
-
-        {/* 3. Official Announcement Section for This Year's Event */}
+        {/* 2. Official Announcement Section for This Year's Event */}
         <Announcement onOpenRegister={() => handleOpenRegister(pricingTiers[0])} />
 
         {/* 3. Photo Gallery of Last Year's Event with Lightbox */}

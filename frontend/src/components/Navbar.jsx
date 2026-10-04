@@ -29,10 +29,6 @@ export default function Navbar({ onOpenRegister, onOpenAdmin }) {
 
           {/* Desktop Nav Links */}
           <div className="hidden md:flex items-center space-x-7 text-[11px] font-space font-semibold uppercase tracking-wider text-slate-300">
-            <a href="#characters" className="hover:text-amber-400 text-amber-300 flex items-center gap-1.5 transition-colors">
-              <span className="w-1.5 h-1.5 rounded-full bg-amber-400 animate-pulse" />
-              <span>Champions</span>
-            </a>
             <a href="#announcement" className="hover:text-emerald-400 transition-colors">Announcement</a>
             <a href="#gallery" className="hover:text-emerald-400 transition-colors">Memories</a>
             <a href="#passes" className="hover:text-emerald-400 transition-colors">Passes</a>
@@ -74,13 +70,6 @@ export default function Navbar({ onOpenRegister, onOpenAdmin }) {
       {/* Mobile Drawer */}
       {mobileMenuOpen && (
         <div className="md:hidden bg-[#0b0e14] border-b-2 border-mc-border px-4 pt-3 pb-6 space-y-3 font-semibold text-xs uppercase tracking-wider">
-          <a
-            href="#characters"
-            onClick={() => setMobileMenuOpen(false)}
-            className="block px-3 py-2 text-amber-300 hover:text-amber-200"
-          >
-            ⚡ Champions of Doomsday
-          </a>
           <a
             href="#announcement"
             onClick={() => setMobileMenuOpen(false)}
