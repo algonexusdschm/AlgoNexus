@@ -36,9 +36,8 @@ export default {
       fontFamily: {
         sans: ['Plus Jakarta Sans', 'Inter', 'sans-serif'],
         minecraft: ['Silkscreen', 'monospace'],
-        mono: ['"Fira Code"', 'monospace'],
+        mono: ['Fira Code', 'monospace'],
         bebas: ['"Bebas Neue"', 'sans-serif'],
-        avengeance: ['"Avengeance"', '"Bebas Neue"', 'sans-serif'],
         orbitron: ['"Orbitron"', 'sans-serif'],
         chakra: ['"Chakra Petch"', 'sans-serif'],
         space: ['"Space Grotesk"', 'sans-serif'],
