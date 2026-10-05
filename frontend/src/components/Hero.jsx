@@ -78,7 +78,7 @@ export default function Hero({ onOpenRegister }) {
 
           {/* Giant DOOMSDAY Title with Integrated Avengers 'A' & Green Laser Baseline */}
           <div className="relative inline-flex flex-col items-center justify-center py-1 sm:py-2 select-none">
-            <div className="font-bebas flex items-center justify-center leading-none text-6xl sm:text-8xl md:text-[7.5rem] lg:text-[8.5rem]">
+            <div className="font-doomzday flex items-center justify-center leading-none text-6xl sm:text-8xl md:text-[7.5rem] lg:text-[8.5rem]">
               <span className="doomsday-metal-word">DOOMSD</span>
               
               {/* Iconic Avengers 'A' Symbol */}
@@ -140,15 +140,15 @@ export default function Hero({ onOpenRegister }) {
             </div>
           </div>
 
-          {/* Subtitle: 48-HOUR HACKATHON */}
-          <div className="font-orbitron text-base sm:text-xl md:text-2xl font-black text-white tracking-[0.3em] sm:tracking-[0.4em] uppercase pt-1 drop-shadow-[0_2px_8px_rgba(0,0,0,0.95)]">
+          {/* Subtitle: 48-HOUR HACKATHON (Wide Geometric Sans-Serif / Eurostile / Syncopate) */}
+          <div className="font-syncopate text-sm sm:text-lg md:text-xl font-bold text-white tracking-[0.35em] sm:tracking-[0.45em] uppercase pt-1 drop-shadow-[0_2px_8px_rgba(0,0,0,0.95)]">
             48-HOUR HACKATHON
           </div>
 
-          {/* Tagline (Image 1) */}
-          <div className="font-space text-xs sm:text-sm text-slate-200 tracking-[0.2em] sm:tracking-[0.25em] uppercase space-y-1 pt-2 drop-shadow-[0_2px_8px_rgba(0,0,0,1)]">
-            <p className="font-bold text-white tracking-[0.25em]">BEFORE THE BREAKING POINT</p>
-            <p className="text-cyan-300 font-semibold text-[11px] sm:text-xs tracking-[0.22em] drop-shadow-[0_0_8px_rgba(6,182,212,0.5)]">REAL PROBLEMS. BOLD SOLUTIONS.</p>
+          {/* Tagline: Wide Geometric Sans-Serif */}
+          <div className="font-syncopate text-xs sm:text-sm text-slate-200 tracking-[0.25em] sm:tracking-[0.35em] uppercase space-y-1.5 pt-2 drop-shadow-[0_2px_8px_rgba(0,0,0,1)]">
+            <p className="font-bold text-white tracking-[0.3em]">BEFORE THE BREAKING POINT</p>
+            <p className="text-cyan-300 font-bold text-[10px] sm:text-xs tracking-[0.28em] drop-shadow-[0_0_8px_rgba(6,182,212,0.6)]">REAL PROBLEMS. BOLD SOLUTIONS.</p>
           </div>
 
           {/* Organised by Data Decoders */}

@@ -29,8 +29,8 @@ export default function Navbar({ onOpenRegister, onOpenAdmin }) {
             </div>
           </a>
 
-          {/* Desktop Nav Links */}
-          <div className="hidden md:flex items-center space-x-7 text-[11px] font-space font-semibold uppercase tracking-wider text-slate-300">
+          {/* Desktop Nav Links (Clean, Wide Geometric Sans-Serif / Eurostile / Syncopate) */}
+          <div className="hidden md:flex items-center space-x-6 text-[10px] font-syncopate font-bold uppercase tracking-[0.2em] text-slate-300">
             <a href="#protocol" className="hover:text-emerald-400 text-emerald-300 transition-colors flex items-center gap-1.5">
               <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse" />
               <span>Protocol</span>
