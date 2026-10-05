@@ -49,26 +49,31 @@ export default function Hero({ onOpenRegister }) {
           <div className="absolute -inset-4 sm:-inset-10 bg-radial from-slate-950/80 via-slate-950/40 to-transparent -z-10 rounded-full blur-2xl pointer-events-none" />
 
           {/* Institutional Presentation Header: Smt. CHM College & Dept of Data Science Presents */}
-          <div className="space-y-1 sm:space-y-1.5 select-none drop-shadow-[0_2px_12px_rgba(0,0,0,0.95)]">
-            <div className="font-space text-xs sm:text-sm md:text-base tracking-[0.25em] sm:tracking-[0.35em] text-slate-200 uppercase font-bold">
+          <div className="inline-flex flex-col items-center justify-center px-6 sm:px-10 py-3.5 rounded-2xl bg-slate-950/85 border border-emerald-500/30 backdrop-blur-md shadow-[0_12px_40px_rgba(0,0,0,0.9)] max-w-3xl mx-auto space-y-1.5 select-none">
+            {/* College Name: Ultra-crisp Pure White with high-contrast shadow */}
+            <div className="font-space text-xs sm:text-sm md:text-base tracking-[0.22em] sm:tracking-[0.3em] text-white uppercase font-extrabold drop-shadow-[0_2px_8px_rgba(0,0,0,1)]">
               SMT. CHANDIBAI HIMATHMAL MANSUKHANI COLLEGE (CHM)
             </div>
-            <div className="font-space text-[11px] sm:text-xs md:text-sm tracking-[0.2em] sm:tracking-[0.28em] text-emerald-400 uppercase font-semibold">
+
+            {/* Department: High-Voltage Electric Cyan for 100% visibility against green backdrop */}
+            <div className="font-space text-xs sm:text-sm md:text-[15px] tracking-[0.2em] sm:tracking-[0.25em] text-cyan-300 uppercase font-bold drop-shadow-[0_0_12px_rgba(6,182,212,0.7)]">
               DEPARTMENT OF DATA SCIENCE
             </div>
-            <div className="flex items-center justify-center gap-3 pt-0.5">
-              <span className="w-8 sm:w-14 h-[1px] bg-gradient-to-r from-transparent to-emerald-400/70" />
-              <span className="font-chakra text-[10px] sm:text-xs tracking-[0.4em] text-slate-300 uppercase font-bold">
+
+            {/* Presents Divider: Radiant Amber Gold */}
+            <div className="flex items-center justify-center gap-3 pt-0.5 w-full">
+              <span className="w-10 sm:w-16 h-[1.5px] bg-gradient-to-r from-transparent via-amber-400 to-amber-400/20" />
+              <span className="font-chakra text-[10px] sm:text-xs tracking-[0.45em] text-amber-300 uppercase font-black drop-shadow-[0_0_10px_rgba(245,158,11,0.8)]">
                 PRESENTS
               </span>
-              <span className="w-8 sm:w-14 h-[1px] bg-gradient-to-l from-transparent to-emerald-400/70" />
+              <span className="w-10 sm:w-16 h-[1.5px] bg-gradient-to-l from-transparent via-amber-400 to-amber-400/20" />
             </div>
           </div>
 
           {/* Top Line: ALGO NEXUS 2026 */}
-          <div className="font-space font-medium text-xs sm:text-sm tracking-[0.35em] sm:tracking-[0.45em] text-slate-300 uppercase flex items-center justify-center gap-2.5 drop-shadow-[0_2px_8px_rgba(0,0,0,0.95)]">
-            <span>ALGO NEXUS</span>
-            <span className="text-emerald-400 font-bold">2026</span>
+          <div className="font-space font-bold text-xs sm:text-sm tracking-[0.35em] sm:tracking-[0.45em] text-slate-100 uppercase flex items-center justify-center gap-2.5 drop-shadow-[0_2px_12px_rgba(0,0,0,1)] pt-1">
+            <span className="text-white">ALGO NEXUS</span>
+            <span className="text-emerald-400 font-extrabold drop-shadow-[0_0_12px_rgba(52,211,153,0.8)]">2026</span>
           </div>
 
           {/* Giant DOOMSDAY Title with Integrated Avengers 'A' & Green Laser Baseline */}
@@ -141,18 +146,18 @@ export default function Hero({ onOpenRegister }) {
           </div>
 
           {/* Tagline (Image 1) */}
-          <div className="font-space text-xs sm:text-sm text-slate-300 tracking-[0.2em] sm:tracking-[0.25em] uppercase space-y-1 pt-2 drop-shadow-[0_2px_6px_rgba(0,0,0,0.95)]">
-            <p className="font-semibold text-slate-200">BEFORE THE BREAKING POINT</p>
-            <p className="text-slate-400 font-light text-[11px] sm:text-xs">REAL PROBLEMS. BOLD SOLUTIONS.</p>
+          <div className="font-space text-xs sm:text-sm text-slate-200 tracking-[0.2em] sm:tracking-[0.25em] uppercase space-y-1 pt-2 drop-shadow-[0_2px_8px_rgba(0,0,0,1)]">
+            <p className="font-bold text-white tracking-[0.25em]">BEFORE THE BREAKING POINT</p>
+            <p className="text-cyan-300 font-semibold text-[11px] sm:text-xs tracking-[0.22em] drop-shadow-[0_0_8px_rgba(6,182,212,0.5)]">REAL PROBLEMS. BOLD SOLUTIONS.</p>
           </div>
 
           {/* Organised by Data Decoders */}
           <div className="pt-2 sm:pt-3 flex items-center justify-center">
-            <div className="inline-flex items-center gap-2 px-5 py-1.5 rounded-full bg-slate-950/80 border border-emerald-500/40 backdrop-blur-md shadow-[0_0_20px_rgba(16,185,129,0.25)]">
-              <span className="text-[10px] sm:text-xs font-space tracking-[0.25em] text-slate-300 uppercase">
+            <div className="inline-flex items-center gap-2.5 px-6 py-2 rounded-full bg-slate-950/90 border border-cyan-500/50 backdrop-blur-md shadow-[0_0_25px_rgba(6,182,212,0.3)]">
+              <span className="text-[10px] sm:text-xs font-space tracking-[0.25em] text-slate-200 uppercase font-medium">
                 ORGANISED BY
               </span>
-              <span className="text-xs sm:text-sm font-chakra font-black tracking-[0.2em] text-emerald-400 uppercase drop-shadow-[0_0_10px_rgba(52,211,153,0.6)]">
+              <span className="text-xs sm:text-sm font-chakra font-black tracking-[0.22em] text-cyan-300 uppercase drop-shadow-[0_0_12px_rgba(34,211,238,0.9)]">
                 DATA DECODERS
               </span>
             </div>
