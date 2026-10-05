@@ -26,7 +26,7 @@ const DEFAULT_HEAD_PASSCODE = 'head2026';
 const DEFAULT_TEAM_MEMBERS = [
   {
     id: 'head-001',
-    name: 'Department of Data Science - Event Head',
+    name: 'Club Data Decoder / Department of Data Science - Event Head',
     email: 'algonexusdschm@gmail.com',
     role: 'Event Head / Lead Organizer',
     passcode: 'head2026',
@@ -61,13 +61,13 @@ const DEFAULT_TEAM_MEMBERS = [
 
 const DEFAULT_PAYMENT_SETTINGS = {
   upiId: '8010086323@fam',
-  payeeName: 'Department of Data Science, Smt. Chandibai Himathmal Mansukhani College',
+  payeeName: 'Club Data Decoder, Department of Data Science, Smt. Chandibai Himathmal Mansukhani College',
   qrCodeImage: 'https://vcswkusqdkyhyanytjlc.supabase.co/storage/v1/object/public/organizer-assets/qr-codes/1790917868549-hyt2j0.png',
   bankDetails: {
     bankName: 'Smt. Chandibai Himathmal Mansukhani College Account',
     accountNumber: '41829019283',
     ifscCode: 'SBIN0001234',
-    accountHolder: 'Department of Data Science - AlgoNexus 2026',
+    accountHolder: 'Club Data Decoder / Department of Data Science - AlgoNexus 2026',
     accountType: 'Current Account',
     branch: 'CHM College Campus Branch'
   },

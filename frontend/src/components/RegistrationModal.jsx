@@ -104,7 +104,7 @@ export default function RegistrationModal({
   // Payment settings from context with safe fallback (synced with official FamPay QR)
   const settings = paymentSettings || {
     upiId: '8010086323@fam',
-    payeeName: 'Department of Data Science, Smt. Chandibai Himathmal Mansukhani College',
+    payeeName: 'Club Data Decoder, Department of Data Science, Smt. Chandibai Himathmal Mansukhani College',
     qrCodeImage: 'https://vcswkusqdkyhyanytjlc.supabase.co/storage/v1/object/public/organizer-assets/qr-codes/1790917868549-hyt2j0.png'
   };
 
@@ -310,7 +310,7 @@ export default function RegistrationModal({
 
   // UPI details matching the official uploaded QR code (8010086323@fam)
   const activeUpiId = (settings.upiId || '8010086323@fam').trim();
-  const activePayeeName = (settings.payeeName || 'Department of Data Science, Smt. Chandibai Himathmal Mansukhani College').trim();
+  const activePayeeName = (settings.payeeName || 'Club Data Decoder, Department of Data Science, Smt. Chandibai Himathmal Mansukhani College').trim();
   const passPrice = selectedTier?.price || 299;
   const payerName = (formData.fullName.trim() || 'Pass');
 

@@ -46,13 +46,13 @@ export default function AdminPage({ onBackToWebsite }) {
   // Payment & Bank Form State
   const [paymentForm, setPaymentForm] = useState({
     upiId: paymentSettings.upiId || '8010086323@fam',
-    payeeName: paymentSettings.payeeName || 'Department of Data Science, Smt. Chandibai Himathmal Mansukhani College',
+    payeeName: paymentSettings.payeeName || 'Club Data Decoder, Department of Data Science, Smt. Chandibai Himathmal Mansukhani College',
     qrCodeImage: paymentSettings.qrCodeImage || '',
     bankDetails: {
       bankName: paymentSettings.bankDetails?.bankName || 'Smt. Chandibai Himathmal Mansukhani College Account',
       accountNumber: paymentSettings.bankDetails?.accountNumber || '41829019283',
       ifscCode: paymentSettings.bankDetails?.ifscCode || 'SBIN0001234',
-      accountHolder: paymentSettings.bankDetails?.accountHolder || 'Department of Data Science - AlgoNexus 2026',
+      accountHolder: paymentSettings.bankDetails?.accountHolder || 'Club Data Decoder / Department of Data Science - AlgoNexus 2026',
       accountType: paymentSettings.bankDetails?.accountType || 'Current Account',
       branch: paymentSettings.bankDetails?.branch || 'CHM College Campus Branch'
     },
@@ -83,13 +83,13 @@ export default function AdminPage({ onBackToWebsite }) {
     if (paymentSettings) {
       setPaymentForm({
         upiId: paymentSettings.upiId || '8010086323@fam',
-        payeeName: paymentSettings.payeeName || 'Department of Data Science, Smt. Chandibai Himathmal Mansukhani College',
+        payeeName: paymentSettings.payeeName || 'Club Data Decoder, Department of Data Science, Smt. Chandibai Himathmal Mansukhani College',
         qrCodeImage: paymentSettings.qrCodeImage || '',
         bankDetails: {
           bankName: paymentSettings.bankDetails?.bankName || 'Smt. Chandibai Himathmal Mansukhani College Account',
           accountNumber: paymentSettings.bankDetails?.accountNumber || '41829019283',
           ifscCode: paymentSettings.bankDetails?.ifscCode || 'SBIN0001234',
-          accountHolder: paymentSettings.bankDetails?.accountHolder || 'Department of Data Science - AlgoNexus 2026',
+          accountHolder: paymentSettings.bankDetails?.accountHolder || 'Club Data Decoder / Department of Data Science - AlgoNexus 2026',
           accountType: paymentSettings.bankDetails?.accountType || 'Current Account',
           branch: paymentSettings.bankDetails?.branch || 'CHM College Campus Branch'
         },

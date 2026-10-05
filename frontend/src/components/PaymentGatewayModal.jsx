@@ -15,7 +15,7 @@ export default function PaymentGatewayModal({
   const [activeTab, setActiveTab] = useState('upi'); // 'upi', 'netbanking', 'card', 'razorpay'
   const settings = paymentSettings || {
     upiId: '8010086323@fam',
-    payeeName: 'Department of Data Science, Smt. Chandibai Himathmal Mansukhani College',
+    payeeName: 'Club Data Decoder, Department of Data Science, Smt. Chandibai Himathmal Mansukhani College',
     qrCodeImage: 'https://vcswkusqdkyhyanytjlc.supabase.co/storage/v1/object/public/organizer-assets/qr-codes/1790917868549-hyt2j0.png',
     instructions: 'Scan using any UPI App (Google Pay, PhonePe, Paytm, BHIM). Enter 12-digit UTR and attach screenshot.'
   };

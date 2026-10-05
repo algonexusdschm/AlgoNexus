@@ -11,9 +11,10 @@ export const EVENT_DETAILS = {
   location: "Smt. Chandibai Himathmal Mansukhani College, Ulhasnagar, Maharashtra",
   college: "Smt. Chandibai Himathmal Mansukhani College",
   department: "Department of Data Science",
+  club: "Club Data Decoder",
   email: "algonexusdschm@gmail.com",
   phone: "+91 80100 86323",
-  organizers: "Department of Data Science, Smt. Chandibai Himathmal Mansukhani College",
+  organizers: "Club Data Decoder, Department of Data Science, Smt. Chandibai Himathmal Mansukhani College",
   prizePool: "₹1,00,000",
   participantsExpected: "300+ Hackers (Open For All)",
   collegesExpected: "80+ Universities Across India"
@@ -189,6 +190,6 @@ export const FAQ_LIST = [
   },
   {
     q: "Where is the venue and how do I contact the organizing committee?",
-    a: "AlgoNexus 2026 is hosted on-campus at Smt. Chandibai Himathmal Mansukhani College, organized by the Department of Data Science. For queries, sponsorships, or urgent support, reach out via email at algonexusdschm@gmail.com or mobile at +91 80100 86323."
+    a: "AlgoNexus 2026 is hosted on-campus at Smt. Chandibai Himathmal Mansukhani College, organized by the Department of Data Science under Club Data Decoder. For queries, sponsorships, or urgent support, reach out via email at algonexusdschm@gmail.com or mobile at +91 80100 86323."
   }
 ];

@@ -70,7 +70,7 @@ export default function TicketModal({ ticket, isOpen, onClose }) {
                   <div className="text-xs font-mc font-bold text-white tracking-wider">
                     ALGO<span className="text-mc-diamond">NEXUS</span> 2026
                   </div>
-                  <div className="text-[10px] text-mc-diamond font-mono font-medium">DEPT OF DATA SCIENCE • SMT. CHM COLLEGE</div>
+                  <div className="text-[10px] text-mc-diamond font-mono font-medium">CLUB DATA DECODER • DEPT OF DATA SCIENCE • SMT. CHM COLLEGE</div>
                 </div>
               </div>
 

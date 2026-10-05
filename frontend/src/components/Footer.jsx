@@ -22,7 +22,7 @@ export default function Footer({ onOpenRegister, onOpenAdmin }) {
               </span>
             </div>
             <p className="text-xs text-slate-400 leading-relaxed font-light">
-              India's premier university technology conclave and hackathon. Built block-by-block to forge the next generation of engineers, algorithm architects, and founders.
+              Organized under <strong className="text-emerald-400 font-semibold">Club Data Decoder</strong> by the <strong className="text-slate-200">Department of Data Science</strong> at Smt. Chandibai Himathmal Mansukhani College. Built to forge the next generation of algorithmic pioneers and software architects.
             </p>
             <div className="flex items-center gap-2 pt-1 font-mono">
               <span className="px-2 py-0.5 bg-mc-deepslate border border-mc-border text-[10px] text-mc-redstone">
@@ -53,10 +53,14 @@ export default function Footer({ onOpenRegister, onOpenAdmin }) {
               [ORGANIZING GUILD]
             </h4>
             <div className="space-y-2 text-xs">
+              <div className="inline-block px-2.5 py-1 rounded bg-emerald-500/10 border border-emerald-500/30 mb-1">
+                <span className="font-bold text-emerald-400 text-[11px] font-space tracking-wider uppercase">Club Data Decoder</span>
+              </div>
               <p className="font-semibold text-slate-200">Department of Data Science</p>
-              <p className="text-slate-400 flex items-start gap-2 pt-1 font-light">
+              <p className="text-slate-300 font-medium">{eventSettings.venue || "Smt. Chandibai Himathmal Mansukhani College"}</p>
+              <p className="text-slate-400 flex items-start gap-2 pt-0.5 font-light">
                 <MapPin className="w-4 h-4 text-mc-diamond shrink-0 mt-0.5" />
-                <span>{eventSettings.venue || "Smt. Chandibai Himathmal Mansukhani College"}</span>
+                <span>Ulhasnagar, Maharashtra</span>
               </p>
               <p className="text-slate-400 flex items-center gap-2 font-mono">
                 <Mail className="w-4 h-4 text-mc-diamond shrink-0" />

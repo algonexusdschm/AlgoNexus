@@ -16,6 +16,15 @@ export default function Announcement({ onOpenRegister }) {
             <span>[OFFICIAL EVENT ANNOUNCEMENT]</span>
           </div>
 
+          <div className="mb-3 space-y-1">
+            <div className="text-xs sm:text-sm font-chakra tracking-[0.2em] uppercase text-slate-300 font-semibold">
+              Smt. Chandibai Himathmal Mansukhani College
+            </div>
+            <div className="text-xs sm:text-sm font-space text-emerald-400 tracking-wider uppercase font-medium">
+              Department of Data Science <span className="text-slate-500">•</span> Organized under <span className="text-white underline decoration-emerald-500/60 font-bold">Club Data Decoder</span>
+            </div>
+          </div>
+
           <h2 className="text-4xl sm:text-5xl md:text-6xl font-black uppercase text-center flex flex-col items-center mb-5">
             <span className="font-bebas tracking-wide block text-slate-400">ANNOUNCING</span>
             <span className="font-bebas tracking-wider text-white text-4xl sm:text-6xl md:text-7xl mt-1 text-transparent bg-clip-text bg-gradient-to-r from-emerald-400 via-teal-300 to-cyan-400">

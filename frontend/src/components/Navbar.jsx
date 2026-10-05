@@ -23,7 +23,9 @@ export default function Navbar({ onOpenRegister, onOpenAdmin }) {
                   2026
                 </span>
               </div>
-              <p className="text-[10px] text-slate-400 tracking-[0.2em] uppercase font-space">National Tech Conclave</p>
+              <p className="text-[10px] text-slate-300 tracking-wider uppercase font-space">
+                <span className="text-emerald-400 font-semibold">Club Data Decoder</span> • Dept. of Data Science • CHM College
+              </p>
             </div>
           </a>
 

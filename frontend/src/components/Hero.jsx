@@ -48,6 +48,21 @@ export default function Hero({ onOpenRegister }) {
           {/* Subtle radial shadow to ensure maximum sharpness over the monument */}
           <div className="absolute -inset-4 sm:-inset-10 bg-radial from-slate-950/80 via-slate-950/40 to-transparent -z-10 rounded-full blur-2xl pointer-events-none" />
 
+          {/* Institutional Organizer Banner: College • Department • Club Data Decoder */}
+          <div className="inline-flex flex-col items-center justify-center gap-1.5 px-4 sm:px-6 py-2 rounded-xl bg-slate-950/75 border border-emerald-500/30 backdrop-blur-md shadow-[0_0_25px_rgba(16,185,129,0.15)] mb-1 sm:mb-2">
+            <span className="text-[10px] sm:text-xs font-chakra tracking-[0.2em] sm:tracking-[0.25em] text-slate-200 uppercase font-semibold text-center">
+              Smt. Chandibai Himathmal Mansukhani College
+            </span>
+            <div className="flex items-center flex-wrap justify-center gap-2 text-[10px] sm:text-xs font-space text-slate-300">
+              <span className="text-slate-300 font-medium">Department of Data Science</span>
+              <span className="text-emerald-500 font-bold">•</span>
+              <span className="text-emerald-300 font-medium">Organized under</span>
+              <span className="px-2.5 py-0.5 rounded bg-emerald-500/20 border border-emerald-500/40 text-emerald-300 font-bold tracking-wider font-chakra text-[11px] sm:text-xs shadow-[0_0_10px_rgba(16,185,129,0.25)]">
+                CLUB DATA DECODER
+              </span>
+            </div>
+          </div>
+
           {/* Top Line: ALGO NEXUS 2026 */}
           <div className="font-space font-medium text-xs sm:text-sm tracking-[0.35em] sm:tracking-[0.45em] text-slate-300 uppercase flex items-center justify-center gap-2.5 drop-shadow-[0_2px_8px_rgba(0,0,0,0.95)]">
             <span>ALGO NEXUS</span>
