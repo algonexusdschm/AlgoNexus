@@ -48,18 +48,20 @@ export default function Hero({ onOpenRegister }) {
           {/* Subtle radial shadow to ensure maximum sharpness over the monument */}
           <div className="absolute -inset-4 sm:-inset-10 bg-radial from-slate-950/80 via-slate-950/40 to-transparent -z-10 rounded-full blur-2xl pointer-events-none" />
 
-          {/* Institutional Organizer Banner: College • Department • Club Data Decoder */}
-          <div className="inline-flex flex-col items-center justify-center gap-1.5 px-4 sm:px-6 py-2 rounded-xl bg-slate-950/75 border border-emerald-500/30 backdrop-blur-md shadow-[0_0_25px_rgba(16,185,129,0.15)] mb-1 sm:mb-2">
-            <span className="text-[10px] sm:text-xs font-chakra tracking-[0.2em] sm:tracking-[0.25em] text-slate-200 uppercase font-semibold text-center">
-              Smt. Chandibai Himathmal Mansukhani College
-            </span>
-            <div className="flex items-center flex-wrap justify-center gap-2 text-[10px] sm:text-xs font-space text-slate-300">
-              <span className="text-slate-300 font-medium">Department of Data Science</span>
-              <span className="text-emerald-500 font-bold">•</span>
-              <span className="text-emerald-300 font-medium">Organized under</span>
-              <span className="px-2.5 py-0.5 rounded bg-emerald-500/20 border border-emerald-500/40 text-emerald-300 font-bold tracking-wider font-chakra text-[11px] sm:text-xs shadow-[0_0_10px_rgba(16,185,129,0.25)]">
-                CLUB DATA DECODER
+          {/* Institutional Presentation Header: Smt. CHM College & Dept of Data Science Presents */}
+          <div className="space-y-1 sm:space-y-1.5 select-none drop-shadow-[0_2px_12px_rgba(0,0,0,0.95)]">
+            <div className="font-space text-xs sm:text-sm md:text-base tracking-[0.25em] sm:tracking-[0.35em] text-slate-200 uppercase font-bold">
+              SMT. CHANDIBAI HIMATHMAL MANSUKHANI COLLEGE (CHM)
+            </div>
+            <div className="font-space text-[11px] sm:text-xs md:text-sm tracking-[0.2em] sm:tracking-[0.28em] text-emerald-400 uppercase font-semibold">
+              DEPARTMENT OF DATA SCIENCE
+            </div>
+            <div className="flex items-center justify-center gap-3 pt-0.5">
+              <span className="w-8 sm:w-14 h-[1px] bg-gradient-to-r from-transparent to-emerald-400/70" />
+              <span className="font-chakra text-[10px] sm:text-xs tracking-[0.4em] text-slate-300 uppercase font-bold">
+                PRESENTS
               </span>
+              <span className="w-8 sm:w-14 h-[1px] bg-gradient-to-l from-transparent to-emerald-400/70" />
             </div>
           </div>
 
@@ -144,8 +146,20 @@ export default function Hero({ onOpenRegister }) {
             <p className="text-slate-400 font-light text-[11px] sm:text-xs">REAL PROBLEMS. BOLD SOLUTIONS.</p>
           </div>
 
+          {/* Organised by Data Decoders */}
+          <div className="pt-2 sm:pt-3 flex items-center justify-center">
+            <div className="inline-flex items-center gap-2 px-5 py-1.5 rounded-full bg-slate-950/80 border border-emerald-500/40 backdrop-blur-md shadow-[0_0_20px_rgba(16,185,129,0.25)]">
+              <span className="text-[10px] sm:text-xs font-space tracking-[0.25em] text-slate-300 uppercase">
+                ORGANISED BY
+              </span>
+              <span className="text-xs sm:text-sm font-chakra font-black tracking-[0.2em] text-emerald-400 uppercase drop-shadow-[0_0_10px_rgba(52,211,153,0.6)]">
+                DATA DECODERS
+              </span>
+            </div>
+          </div>
+
           {/* Tactical Chamfered Register Button (Image 1) */}
-          <div className="flex items-center justify-center pt-5 sm:pt-6">
+          <div className="flex items-center justify-center pt-4 sm:pt-5">
             <button
               onClick={() => onOpenRegister()}
               className="btn-doomsday-cyber group relative px-10 sm:px-14 py-3 sm:py-3.5 flex items-center justify-center gap-2.5 cursor-pointer"
