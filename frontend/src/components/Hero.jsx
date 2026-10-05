@@ -76,68 +76,14 @@ export default function Hero({ onOpenRegister }) {
             <span className="text-emerald-400 font-extrabold drop-shadow-[0_0_12px_rgba(52,211,153,0.8)]">2026</span>
           </div>
 
-          {/* Giant DOOMSDAY Title with Integrated Avengers 'A' & Green Laser Baseline */}
-          <div className="relative inline-flex flex-col items-center justify-center py-1 sm:py-2 select-none">
-            <div className="font-doomzday flex items-center justify-center leading-none text-6xl sm:text-8xl md:text-[7.5rem] lg:text-[8.5rem]">
-              <span className="doomsday-metal-word">DOOMSD</span>
-              
-              {/* Iconic Avengers 'A' Symbol */}
-              <span className="relative inline-block mx-0.5 sm:mx-1 top-[-0.04em] shrink-0">
-                <svg
-                  viewBox="0 0 100 100"
-                  className="w-[0.92em] h-[0.92em] inline-block align-middle overflow-visible drop-shadow-[0_6px_16px_rgba(0,0,0,0.95)] drop-shadow-[0_0_20px_rgba(34,197,94,0.65)]"
-                >
-                  <defs>
-                    <linearGradient id="avengersMetalGrad" x1="0%" y1="0%" x2="100%" y2="100%">
-                      <stop offset="0%" stopColor="#ffffff" />
-                      <stop offset="25%" stopColor="#e2e8f0" />
-                      <stop offset="45%" stopColor="#94a3b8" />
-                      <stop offset="52%" stopColor="#334155" />
-                      <stop offset="68%" stopColor="#64748b" />
-                      <stop offset="88%" stopColor="#cbd5e1" />
-                      <stop offset="100%" stopColor="#4ade80" />
-                    </linearGradient>
-                  </defs>
-                  {/* Outer Circular Ring */}
-                  <circle
-                    cx="50"
-                    cy="50"
-                    r="38"
-                    fill="none"
-                    stroke="url(#avengersMetalGrad)"
-                    strokeWidth="8.5"
-                    strokeLinecap="round"
-                  />
-                  {/* Main 'A' Diagonal Legs */}
-                  <path
-                    d="M 27 83 L 50 16 L 73 83"
-                    fill="none"
-                    stroke="url(#avengersMetalGrad)"
-                    strokeWidth="10"
-                    strokeLinecap="square"
-                    strokeLinejoin="miter"
-                  />
-                  {/* Arrow Crossbar pointing right */}
-                  <path
-                    d="M 28 58 L 84 58 L 70 45 M 84 58 L 70 71"
-                    fill="none"
-                    stroke="url(#avengersMetalGrad)"
-                    strokeWidth="8.5"
-                    strokeLinecap="square"
-                    strokeLinejoin="miter"
-                  />
-                </svg>
-              </span>
-
-              <span className="doomsday-metal-word">Y</span>
-            </div>
-
-            {/* Radiant Emerald Laser Baseline with central flare (Image 1) */}
-            <div className="relative w-full max-w-2xl h-[3px] mt-2 sm:mt-3 flex items-center justify-center">
-              <div className="w-full h-full bg-gradient-to-r from-transparent via-[#22c55e] to-transparent shadow-[0_0_12px_#22c55e]" />
-              <div className="absolute w-12 sm:w-16 h-2 bg-[#4ade80] rounded-full blur-[2px] shadow-[0_0_18px_#22c55e]" />
-              <div className="absolute w-2 h-2 bg-white rounded-full shadow-[0_0_10px_#ffffff]" />
-            </div>
+          {/* Authentic 3D Chiseled DOOMSDAY Monument with Integrated Avengers 'A' & Emerald Laser Line */}
+          <div className="relative flex flex-col items-center justify-center py-1 sm:py-2 select-none w-full max-w-4xl mx-auto">
+            <img
+              src="/images/doomsday_title_monument.png"
+              alt="DOOMSDAY"
+              className="w-full max-w-2xl sm:max-w-3xl md:max-w-4xl h-auto object-contain drop-shadow-[0_12px_40px_rgba(0,0,0,0.95)] drop-shadow-[0_0_35px_rgba(34,197,94,0.45)] pointer-events-none select-none transition-transform duration-300 hover:scale-[1.01]"
+              loading="eager"
+            />
           </div>
 
           {/* Subtitle: 48-HOUR HACKATHON (Wide Geometric Sans-Serif / Eurostile / Syncopate) */}
