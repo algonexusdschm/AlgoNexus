@@ -76,9 +76,9 @@ export default function Hero({ onOpenRegister }) {
             <span className="text-emerald-400 font-extrabold drop-shadow-[0_0_12px_rgba(52,211,153,0.8)]">2026</span>
           </div>
 
-          {/* Monumental DOOMSDAY Title (Authentic Avengers Avengeance Font) */}
+          {/* Monumental DOOMSDAY Title (Bebas Neue with Orbitron secondary fallback) */}
           <div className="relative flex flex-col items-center justify-center py-2 sm:py-3 select-none w-full max-w-5xl mx-auto">
-            <h1 className="font-avengers text-6xl sm:text-8xl md:text-9xl lg:text-[9.5rem] xl:text-[11rem] tracking-[0.05em] sm:tracking-[0.08em] md:tracking-[0.12em] leading-[0.9] uppercase text-center text-transparent bg-clip-text bg-gradient-to-b from-white via-slate-100 via-45% to-slate-400 drop-shadow-[0_12px_35px_rgba(0,0,0,0.95)] drop-shadow-[0_0_40px_rgba(34,197,94,0.45)] transition-transform duration-300 hover:scale-[1.01]">
+            <h1 className="font-bebas text-6xl sm:text-8xl md:text-9xl lg:text-[10rem] xl:text-[11.5rem] tracking-[0.08em] sm:tracking-[0.12em] md:tracking-[0.16em] leading-[0.88] uppercase text-center text-transparent bg-clip-text bg-gradient-to-b from-white via-slate-100 via-45% to-slate-400 drop-shadow-[0_12px_35px_rgba(0,0,0,0.95)] drop-shadow-[0_0_40px_rgba(34,197,94,0.4)] transition-transform duration-300 hover:scale-[1.01]">
               DOOMSDAY
             </h1>
 
