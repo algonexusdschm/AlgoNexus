@@ -1,6 +1,15 @@
 @import url('https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Orbitron:wght@700;800;900&family=Syncopate:wght@400;700&display=swap');
 
 @font-face {
+  font-family: 'Avengeance';
+  src: url('/fonts/avengeance.woff2') format('woff2'),
+       url('/fonts/avengeance.ttf') format('truetype');
+  font-weight: 400 900;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
   font-family: 'Doomzday';
   src: url('/fonts/doomzday.woff') format('woff'),
        url('/fonts/doomzday.ttf') format('truetype');
