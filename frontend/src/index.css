@@ -318,32 +318,39 @@
   font-weight: 900;
 }
 
-/* DOOMSDAY MONUMENT HERO STYLING (HEAVY CHISELED SCI-FI / DOOMZDAY DISPLAY) */
-.doomsday-metal-word {
-  font-family: 'Doomzday', 'Orbitron', 'Chakra Petch', sans-serif;
+/* DOOMSDAY MONUMENT (BEBAS NEUE - 3D METALLIC CHISELED BEVEL GRADIENT WITH SKEWX(-5DEG) & GREEN LASER) */
+.doomsday-bebas-chiseled {
+  font-family: 'Bebas Neue', 'Orbitron', sans-serif;
   font-weight: 900;
   text-transform: uppercase;
-  font-style: italic;
+  letter-spacing: 0.11em;
+  line-height: 0.88;
+  display: inline-block;
+  transform: skewX(-5deg);
+  /* 3D Metallic Chiseled Bevel Gradient with Horizon Crease */
   background: linear-gradient(
     180deg,
     #ffffff 0%,
-    #f8fafc 15%,
-    #e2e8f0 28%,
-    #94a3b8 42%,
-    #334155 49%,
-    #0f172a 51%,
-    #475569 60%,
-    #cbd5e1 80%,
-    #e2e8f0 90%,
-    #4ade80 100%
+    #f8fafc 18%,
+    #e2e8f0 36%,
+    #cbd5e1 46%,
+    #64748b 49%,
+    #1e293b 50%,
+    #475569 52%,
+    #cbd5e1 68%,
+    #94a3b8 82%,
+    #334155 94%,
+    #10b981 100%
   );
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
-  filter: drop-shadow(0 6px 10px rgba(0, 0, 0, 0.98)) drop-shadow(0 0 25px rgba(34, 197, 94, 0.5));
   -webkit-text-stroke: 1.5px rgba(255, 255, 255, 0.45);
-  letter-spacing: 0.05em;
-  transform: scaleY(1.08) skewX(-5deg);
-  display: inline-block;
+  filter: 
+    drop-shadow(0 2px 0 rgba(255, 255, 255, 0.4))
+    drop-shadow(0 4px 0 rgba(71, 85, 105, 0.85))
+    drop-shadow(0 7px 0 rgba(15, 23, 42, 0.95))
+    drop-shadow(0 14px 28px rgba(0, 0, 0, 0.98))
+    drop-shadow(0 0 40px rgba(34, 197, 94, 0.45));
 }
 
 .btn-doomsday-cyber {

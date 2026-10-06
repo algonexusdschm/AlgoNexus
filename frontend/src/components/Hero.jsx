@@ -76,14 +76,23 @@ export default function Hero({ onOpenRegister }) {
             <span className="text-emerald-400 font-extrabold drop-shadow-[0_0_12px_rgba(52,211,153,0.8)]">2026</span>
           </div>
 
-          {/* Authentic 3D Chiseled DOOMSDAY Monument with Integrated Avengers 'A' & Emerald Laser Line */}
-          <div className="relative flex flex-col items-center justify-center py-1 sm:py-2 select-none w-full max-w-4xl mx-auto">
-            <img
-              src="/images/doomsday_title_monument.png"
-              alt="DOOMSDAY"
-              className="w-full max-w-2xl sm:max-w-3xl md:max-w-4xl h-auto object-contain drop-shadow-[0_12px_40px_rgba(0,0,0,0.95)] drop-shadow-[0_0_35px_rgba(34,197,94,0.45)] pointer-events-none select-none transition-transform duration-300 hover:scale-[1.01]"
-              loading="eager"
-            />
+          {/* Main Title (DOOMSDAY): Bebas Neue, Ultra-bold condensed, 3D metallic chiseled bevel gradient, skewX(-5deg), and green laser flare baseline */}
+          <div className="relative flex flex-col items-center justify-center py-2 sm:py-3 select-none w-full max-w-5xl mx-auto">
+            <h1 className="doomsday-bebas-chiseled text-6xl sm:text-8xl md:text-9xl lg:text-[10rem] xl:text-[11.5rem] tracking-[0.07em] sm:tracking-[0.11em] md:tracking-[0.15em] leading-[0.88] transition-transform duration-300 hover:scale-[1.01]">
+              DOOMSDAY
+            </h1>
+
+            {/* Green Laser Flare Baseline */}
+            <div className="relative w-full max-w-xl sm:max-w-2xl md:max-w-3xl flex items-center justify-center mt-3 sm:mt-4 select-none">
+              {/* Wide ambient laser blur */}
+              <div className="absolute inset-x-0 h-[10px] bg-gradient-to-r from-transparent via-emerald-400/60 to-transparent blur-[6px]" />
+              {/* Sharp laser line */}
+              <div className="w-full h-[2px] sm:h-[2.5px] bg-gradient-to-r from-transparent via-emerald-300 via-50% to-transparent shadow-[0_0_16px_rgba(52,211,153,1),0_0_30px_rgba(16,185,129,0.7)]" />
+              {/* Central intense laser flare lens node */}
+              <div className="absolute w-3 h-3 sm:w-3.5 sm:h-3.5 rotate-45 bg-white border border-emerald-300 shadow-[0_0_15px_rgba(255,255,255,1),0_0_25px_rgba(52,211,153,1),0_0_45px_rgba(16,185,129,0.9)]" />
+              {/* Horizontal lens flare streak */}
+              <div className="absolute w-24 sm:w-36 h-[1px] bg-white blur-[0.5px] shadow-[0_0_10px_rgba(255,255,255,0.9)]" />
+            </div>
           </div>
 
           {/* Subtitle: 48-HOUR HACKATHON (Wide Geometric Sans-Serif / Eurostile / Syncopate) */}
