@@ -76,18 +76,14 @@ export default function Hero({ onOpenRegister }) {
             <span className="text-emerald-400 font-extrabold drop-shadow-[0_0_12px_rgba(52,211,153,0.8)]">2026</span>
           </div>
 
-          {/* Monumental DOOMSDAY Title (Bebas Neue with Orbitron secondary fallback) */}
-          <div className="relative flex flex-col items-center justify-center py-2 sm:py-3 select-none w-full max-w-5xl mx-auto">
-            <h1 className="font-bebas text-6xl sm:text-8xl md:text-9xl lg:text-[10rem] xl:text-[11.5rem] tracking-[0.08em] sm:tracking-[0.12em] md:tracking-[0.16em] leading-[0.88] uppercase text-center text-transparent bg-clip-text bg-gradient-to-b from-white via-slate-100 via-45% to-slate-400 drop-shadow-[0_12px_35px_rgba(0,0,0,0.95)] drop-shadow-[0_0_40px_rgba(34,197,94,0.4)] transition-transform duration-300 hover:scale-[1.01]">
-              DOOMSDAY
-            </h1>
-
-            {/* Glowing Emerald Laser Baseline */}
-            <div className="relative w-full max-w-xl sm:max-w-2xl md:max-w-3xl flex items-center justify-center mt-2 sm:mt-3">
-              <div className="absolute inset-x-0 h-[8px] bg-gradient-to-r from-transparent via-emerald-400/50 to-transparent blur-[4px]" />
-              <div className="w-full h-[2px] sm:h-[2.5px] bg-gradient-to-r from-transparent via-emerald-300 via-50% to-transparent shadow-[0_0_15px_rgba(52,211,153,1)]" />
-              <div className="absolute w-2 h-2 rotate-45 bg-emerald-300 shadow-[0_0_10px_rgba(52,211,153,1)]" />
-            </div>
+          {/* Authentic 3D Chiseled DOOMSDAY Monument with Integrated Avengers 'A' & Emerald Laser Line */}
+          <div className="relative flex flex-col items-center justify-center py-1 sm:py-2 select-none w-full max-w-4xl mx-auto">
+            <img
+              src="/images/doomsday_title_monument.png"
+              alt="DOOMSDAY"
+              className="w-full max-w-2xl sm:max-w-3xl md:max-w-4xl h-auto object-contain drop-shadow-[0_12px_40px_rgba(0,0,0,0.95)] drop-shadow-[0_0_35px_rgba(34,197,94,0.45)] pointer-events-none select-none transition-transform duration-300 hover:scale-[1.01]"
+              loading="eager"
+            />
           </div>
 
           {/* Subtitle: 48-HOUR HACKATHON (Wide Geometric Sans-Serif / Eurostile / Syncopate) */}
