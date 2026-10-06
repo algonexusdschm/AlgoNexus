@@ -353,6 +353,39 @@
     drop-shadow(0 0 40px rgba(34, 197, 94, 0.45));
 }
 
+/* Iconic Avengers 'A' in DOOMSDAY */
+.doomsday-avengers-a {
+  font-family: 'Avengeance', sans-serif !important;
+  font-weight: 900;
+  text-transform: uppercase;
+  line-height: 0.88;
+  display: inline-block;
+  transform: skewX(-5deg);
+  background: linear-gradient(
+    180deg,
+    #ffffff 0%,
+    #f8fafc 18%,
+    #e2e8f0 36%,
+    #cbd5e1 46%,
+    #64748b 49%,
+    #1e293b 50%,
+    #475569 52%,
+    #cbd5e1 68%,
+    #94a3b8 82%,
+    #334155 94%,
+    #10b981 100%
+  );
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  -webkit-text-stroke: 1.5px rgba(255, 255, 255, 0.45);
+  filter: 
+    drop-shadow(0 2px 0 rgba(255, 255, 255, 0.4))
+    drop-shadow(0 4px 0 rgba(71, 85, 105, 0.85))
+    drop-shadow(0 7px 0 rgba(15, 23, 42, 0.95))
+    drop-shadow(0 14px 28px rgba(0, 0, 0, 0.98))
+    drop-shadow(0 0 40px rgba(34, 197, 94, 0.45));
+}
+
 .btn-doomsday-cyber {
   clip-path: polygon(12px 0, calc(100% - 12px) 0, 100% 12px, 100% calc(100% - 12px), calc(100% - 12px) 100%, 12px 100%, 0 calc(100% - 12px), 0 12px);
   background: rgba(4, 16, 8, 0.88);

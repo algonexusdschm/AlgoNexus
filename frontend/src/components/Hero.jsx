@@ -78,8 +78,10 @@ export default function Hero({ onOpenRegister }) {
 
           {/* Main Title (DOOMSDAY): Bebas Neue, Ultra-bold condensed, 3D metallic chiseled bevel gradient, skewX(-5deg), and green laser flare baseline */}
           <div className="relative flex flex-col items-center justify-center py-2 sm:py-3 select-none w-full max-w-5xl mx-auto">
-            <h1 className="doomsday-bebas-chiseled text-6xl sm:text-8xl md:text-9xl lg:text-[10rem] xl:text-[11.5rem] tracking-[0.07em] sm:tracking-[0.11em] md:tracking-[0.15em] leading-[0.88] transition-transform duration-300 hover:scale-[1.01]">
-              DOOMSDAY
+            <h1 className="flex items-center justify-center leading-[0.88] text-6xl sm:text-8xl md:text-9xl lg:text-[10rem] xl:text-[11.5rem] transition-transform duration-300 hover:scale-[1.01]">
+              <span className="doomsday-bebas-chiseled">DOOMSD</span>
+              <span className="doomsday-avengers-a mx-[0.015em]">A</span>
+              <span className="doomsday-bebas-chiseled">Y</span>
             </h1>
 
             {/* Green Laser Flare Baseline */}
