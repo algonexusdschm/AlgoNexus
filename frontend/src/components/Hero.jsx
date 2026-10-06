@@ -77,11 +77,15 @@ export default function Hero({ onOpenRegister }) {
           </div>
 
           {/* Authentic 3D Chiseled DOOMSDAY Monument with Integrated Avengers 'A' & Emerald Laser Line */}
-          <div className="relative flex flex-col items-center justify-center py-1 sm:py-2 select-none w-full max-w-4xl mx-auto">
+          <div className="relative flex flex-col items-center justify-center py-2 sm:py-3 select-none w-full max-w-4xl mx-auto group">
+            {/* Ambient emerald & void lighting backplate for flawless contrast against the background */}
+            <div className="absolute inset-0 max-w-3xl mx-auto bg-radial from-emerald-500/20 via-black/70 to-transparent blur-3xl -z-10 pointer-events-none" />
+            <div className="absolute inset-x-4 sm:inset-x-12 inset-y-1 bg-black/60 rounded-full blur-2xl -z-10 pointer-events-none" />
+
             <img
-              src="/images/doomsday_title_monument.png"
+              src="/images/doomsday_title_chiseled.png"
               alt="DOOMSDAY"
-              className="w-full max-w-2xl sm:max-w-3xl md:max-w-4xl h-auto object-contain drop-shadow-[0_12px_40px_rgba(0,0,0,0.95)] drop-shadow-[0_0_35px_rgba(34,197,94,0.45)] pointer-events-none select-none transition-transform duration-300 hover:scale-[1.01]"
+              className="w-full max-w-xl sm:max-w-2xl md:max-w-3xl lg:max-w-4xl h-auto object-contain drop-shadow-[0_16px_45px_rgba(0,0,0,0.95)] drop-shadow-[0_0_40px_rgba(45,255,79,0.38)] pointer-events-none select-none transition-transform duration-300 hover:scale-[1.01]"
               loading="eager"
             />
           </div>
