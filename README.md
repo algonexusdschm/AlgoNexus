@@ -1,4 +1,4 @@
-# ⚡ AlgoNexus 2026 — College Tech Fest Website & Organizer Admin Console
+# ⚡ TechAstra 2026 — College Tech Fest Website & Organizer Admin Console
 
 > A national-level college technical conclave & hackathon web portal with **Dedicated Organizer Admin Console (`/admin`)**, **Custom GPay/PhonePe QR & Bank Account Management**, **Multi-Tier Registrations**, **Payment Verification (UPI, Net Banking, Cards, Razorpay)**, **Digital QR Gate Passes**, and **1-Click Vercel Deployment**.
 
@@ -37,7 +37,7 @@
   2. 🏦 **Net Banking & Direct Bank Transfer**: Displays the organizer's official College Bank details (Bank Name, Account Number with Copy button, IFSC Code with Copy button, Account Holder, Branch), plus IMPS/NEFT UTR reference input and receipt upload.
   3. 💳 **Cards**: Card payment form supporting Visa, MasterCard, and RuPay.
   4. ⚡ **Razorpay Popup**: Direct link if live Razorpay keys are configured.
-- **Holographic Digital E-Ticket**: Instant pass generation with unique Ticket ID (`ALGO26-XXXXX`), scannable QR code, and print button.
+- **Holographic Digital E-Ticket**: Instant pass generation with unique Ticket ID (`TECH26-XXXXX`), scannable QR code, and print button.
 
 ---
 

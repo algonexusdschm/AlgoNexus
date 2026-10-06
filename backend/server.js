@@ -32,7 +32,7 @@ if (!fs.existsSync(REGISTRATIONS_FILE)) {
 // Default payment settings
 const defaultSettings = {
   upiId: 'algonexus.fest@oksbi',
-  payeeName: 'AlgoNexus 2026 Organizing Committee',
+  payeeName: 'TechAstra 2026 Organizing Committee',
   qrCodeImage: '', // Custom uploaded GPay / PhonePe QR code (data URL or relative path)
   instructions: 'Scan using any UPI App (Google Pay, PhonePe, Paytm, BHIM, Cred). Enter the 12-digit UTR / Transaction ID and attach screenshot to verify.'
 };
@@ -102,7 +102,7 @@ if (isRealRazorpay) {
 
 // 1. Health check & Config Endpoint
 app.get('/api/health', (req, res) => {
-  res.json({ status: 'ok', event: 'AlgoNexus 2026 API', timestamp: new Date().toISOString() });
+  res.json({ status: 'ok', event: 'TechAstra 2026 API', timestamp: new Date().toISOString() });
 });
 
 app.get('/api/config', (req, res) => {
@@ -153,7 +153,7 @@ app.post('/api/create-order', async (req, res) => {
         currency: 'INR',
         receipt: receiptId,
         notes: {
-          event: 'AlgoNexus 2026',
+          event: 'TechAstra 2026',
           passType: passType || 'General',
           attendeeName: attendeeName || 'Participant',
           email: email || ''
@@ -225,7 +225,7 @@ app.post('/api/verify-payment', (req, res) => {
 
     // Generate unique Ticket ID
     const randomCode = Math.random().toString(36).substring(2, 7).toUpperCase();
-    const ticketId = `ALGO26-${randomCode}`;
+    const ticketId = `TECH26-${randomCode}`;
 
     const newRegistration = {
       ticketId,
@@ -339,6 +339,6 @@ if (fs.existsSync(frontendDist)) {
 }
 
 app.listen(PORT, () => {
-  console.log(`🚀 AlgoNexus Server running at http://localhost:${PORT}`);
+  console.log(`🚀 TechAstra Server running at http://localhost:${PORT}`);
   console.log(`📡 API Endpoints ready with UPI, QR, NetBanking, and Razorpay.`);
 });

@@ -315,19 +315,19 @@ export default function RegistrationModal({
   const payerName = (formData.fullName.trim() || 'Pass');
 
   // Generic UPI deep link (matches exact QR payment format)
-  const upiIntentUrl = `upi://pay?pa=${encodeURIComponent(activeUpiId)}&pn=${encodeURIComponent(activePayeeName)}&am=${passPrice}&cu=INR&tn=AlgoNexus-${encodeURIComponent(payerName)}`;
+  const upiIntentUrl = `upi://pay?pa=${encodeURIComponent(activeUpiId)}&pn=${encodeURIComponent(activePayeeName)}&am=${passPrice}&cu=INR&tn=TechAstra-${encodeURIComponent(payerName)}`;
   
   // Specific UPI App Schemes (Mobile direct deep links)
-  const gpayIntentUrl = `tez://upi/pay?pa=${encodeURIComponent(activeUpiId)}&pn=${encodeURIComponent(activePayeeName)}&am=${passPrice}&cu=INR&tn=AlgoNexus-${encodeURIComponent(payerName)}`;
-  const phonepeIntentUrl = `phonepe://pay?pa=${encodeURIComponent(activeUpiId)}&pn=${encodeURIComponent(activePayeeName)}&am=${passPrice}&cu=INR&tn=AlgoNexus-${encodeURIComponent(payerName)}`;
-  const paytmIntentUrl = `paytmmp://pay?pa=${encodeURIComponent(activeUpiId)}&pn=${encodeURIComponent(activePayeeName)}&am=${passPrice}&cu=INR&tn=AlgoNexus-${encodeURIComponent(payerName)}`;
+  const gpayIntentUrl = `tez://upi/pay?pa=${encodeURIComponent(activeUpiId)}&pn=${encodeURIComponent(activePayeeName)}&am=${passPrice}&cu=INR&tn=TechAstra-${encodeURIComponent(payerName)}`;
+  const phonepeIntentUrl = `phonepe://pay?pa=${encodeURIComponent(activeUpiId)}&pn=${encodeURIComponent(activePayeeName)}&am=${passPrice}&cu=INR&tn=TechAstra-${encodeURIComponent(payerName)}`;
+  const paytmIntentUrl = `paytmmp://pay?pa=${encodeURIComponent(activeUpiId)}&pn=${encodeURIComponent(activePayeeName)}&am=${passPrice}&cu=INR&tn=TechAstra-${encodeURIComponent(payerName)}`;
 
   // Download / Save QR code image helper for mobile scan-from-gallery
   const handleDownloadQr = () => {
     const qrSrc = settings.qrCodeImage || 'https://vcswkusqdkyhyanytjlc.supabase.co/storage/v1/object/public/organizer-assets/qr-codes/1790917868549-hyt2j0.png';
     const link = document.createElement('a');
     link.href = qrSrc;
-    link.download = 'AlgoNexus_Payment_QR.png';
+    link.download = 'TechAstra_Payment_QR.png';
     link.target = '_blank';
     document.body.appendChild(link);
     link.click();
@@ -340,7 +340,7 @@ export default function RegistrationModal({
     setErrorMessage('');
 
     try {
-      const generatedTicketId = `ALGO26-${Math.random().toString(36).substring(2, 7).toUpperCase()}`;
+      const generatedTicketId = `TECH26-${Math.random().toString(36).substring(2, 7).toUpperCase()}`;
 
       // Assemble structured team members list for squad pass
       const teamMembers = selectedTier.type === 'team' ? [
@@ -469,7 +469,7 @@ export default function RegistrationModal({
             </div>
             <div>
               <h3 className="text-base font-mc font-bold text-white tracking-wide">
-                ALGO<span className="text-mc-diamond">NEXUS</span> REGISTRATION
+                TECH<span className="text-mc-diamond">ASTRA</span> REGISTRATION
               </h3>
               <p className="text-[11px] text-slate-400 font-mono">
                 {step === 1 ? 'Phase 1: Attendee Details & Preferences' : 'Phase 2: Payment & Pass Verification'}

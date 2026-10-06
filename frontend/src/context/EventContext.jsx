@@ -67,7 +67,7 @@ const DEFAULT_PAYMENT_SETTINGS = {
     bankName: 'Smt. Chandibai Himathmal Mansukhani College Account',
     accountNumber: '41829019283',
     ifscCode: 'SBIN0001234',
-    accountHolder: 'Club Data Decoder / Department of Data Science - AlgoNexus 2026',
+    accountHolder: 'Club Data Decoder / Department of Data Science - TechAstra 2026',
     accountType: 'Current Account',
     branch: 'CHM College Campus Branch'
   },

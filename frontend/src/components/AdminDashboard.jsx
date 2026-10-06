@@ -141,7 +141,7 @@ export default function AdminDashboard({ isOpen, onClose }) {
     const encodedUri = encodeURI(csvContent);
     const link = document.createElement('a');
     link.setAttribute('href', encodedUri);
-    link.setAttribute('download', `algonexus_registrations_${new Date().toISOString().slice(0, 10)}.csv`);
+    link.setAttribute('download', `techastra_registrations_${new Date().toISOString().slice(0, 10)}.csv`);
     document.body.appendChild(link);
     link.click();
     document.body.removeChild(link);
@@ -172,7 +172,7 @@ export default function AdminDashboard({ isOpen, onClose }) {
               <Users className="w-5 h-5" />
             </div>
             <div>
-              <h3 className="text-xl font-bold text-white">AlgoNexus Organizer & Gate Portal</h3>
+              <h3 className="text-xl font-bold text-white">TechAstra Organizer & Gate Portal</h3>
               <p className="text-xs text-slate-400">Live registrations, UTR verification, GPay QR upload & gate desk</p>
             </div>
           </div>
@@ -255,7 +255,7 @@ export default function AdminDashboard({ isOpen, onClose }) {
               </div>
               <input
                 type="text"
-                placeholder="Enter or scan Ticket ID (e.g. ALGO26-XXXX)"
+                placeholder="Enter or scan Ticket ID (e.g. TECH26-XXXX)"
                 value={manualTicketInput}
                 onChange={(e) => setManualTicketInput(e.target.value)}
                 className="flex-1 px-3 py-1.5 rounded-lg bg-slate-950 border border-slate-700 text-white text-xs font-mono"
@@ -512,7 +512,7 @@ export default function AdminDashboard({ isOpen, onClose }) {
                     type="text"
                     value={settings.payeeName}
                     onChange={(e) => setSettings({ ...settings, payeeName: e.target.value })}
-                    placeholder="e.g. AlgoNexus 2026 Organizing Committee"
+                    placeholder="e.g. TechAstra 2026 Organizing Committee"
                     required
                     className="w-full px-3.5 py-2.5 rounded-xl bg-slate-900 border border-slate-700 text-white text-sm focus:outline-none focus:border-cyan-400"
                   />

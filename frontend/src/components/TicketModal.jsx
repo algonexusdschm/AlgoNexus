@@ -68,7 +68,7 @@ export default function TicketModal({ ticket, isOpen, onClose }) {
                 </div>
                 <div>
                   <div className="text-xs font-mc font-bold text-white tracking-wider">
-                    ALGO<span className="text-mc-diamond">NEXUS</span> 2026
+                    TECH<span className="text-mc-diamond">ASTRA</span> 2026
                   </div>
                   <div className="text-[10px] text-mc-diamond font-mono font-medium">CLUB DATA DECODER • DEPT OF DATA SCIENCE • SMT. CHM COLLEGE</div>
                 </div>
@@ -135,7 +135,7 @@ export default function TicketModal({ ticket, isOpen, onClose }) {
 
               <div className="p-2 bg-white border-2 border-mc-diamond shadow-md">
                 <QRCodeSVG
-                  value={`https://algonexus.college/verify/${ticket.ticketId}`}
+                  value={`https://techastra.college/verify/${ticket.ticketId}`}
                   size={76}
                   level="H"
                   includeMargin={false}

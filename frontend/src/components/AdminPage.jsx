@@ -52,7 +52,7 @@ export default function AdminPage({ onBackToWebsite }) {
       bankName: paymentSettings.bankDetails?.bankName || 'Smt. Chandibai Himathmal Mansukhani College Account',
       accountNumber: paymentSettings.bankDetails?.accountNumber || '41829019283',
       ifscCode: paymentSettings.bankDetails?.ifscCode || 'SBIN0001234',
-      accountHolder: paymentSettings.bankDetails?.accountHolder || 'Club Data Decoder / Department of Data Science - AlgoNexus 2026',
+      accountHolder: paymentSettings.bankDetails?.accountHolder || 'Club Data Decoder / Department of Data Science - TechAstra 2026',
       accountType: paymentSettings.bankDetails?.accountType || 'Current Account',
       branch: paymentSettings.bankDetails?.branch || 'CHM College Campus Branch'
     },
@@ -61,7 +61,7 @@ export default function AdminPage({ onBackToWebsite }) {
 
   // Event & Announcement Form State
   const [eventForm, setEventForm] = useState({
-    name: eventSettings.name || 'AlgoNexus 2026',
+    name: eventSettings.name || 'TechAstra 2026',
     tagline: eventSettings.tagline || 'Architecting the Future of Code & Intelligence',
     dates: eventSettings.dates || 'To Be Announced Soon',
     datesAnnounced: eventSettings.datesAnnounced ?? false,
@@ -89,7 +89,7 @@ export default function AdminPage({ onBackToWebsite }) {
           bankName: paymentSettings.bankDetails?.bankName || 'Smt. Chandibai Himathmal Mansukhani College Account',
           accountNumber: paymentSettings.bankDetails?.accountNumber || '41829019283',
           ifscCode: paymentSettings.bankDetails?.ifscCode || 'SBIN0001234',
-          accountHolder: paymentSettings.bankDetails?.accountHolder || 'Club Data Decoder / Department of Data Science - AlgoNexus 2026',
+          accountHolder: paymentSettings.bankDetails?.accountHolder || 'Club Data Decoder / Department of Data Science - TechAstra 2026',
           accountType: paymentSettings.bankDetails?.accountType || 'Current Account',
           branch: paymentSettings.bankDetails?.branch || 'CHM College Campus Branch'
         },
@@ -102,7 +102,7 @@ export default function AdminPage({ onBackToWebsite }) {
     if (eventSettings) {
       setEventForm(prev => ({
         ...prev,
-        name: eventSettings.name || 'AlgoNexus 2026',
+        name: eventSettings.name || 'TechAstra 2026',
         tagline: eventSettings.tagline || 'Architecting the Future of Code & Intelligence',
         dates: eventSettings.dates || 'To Be Announced Soon',
         datesAnnounced: eventSettings.datesAnnounced ?? false,
@@ -376,7 +376,7 @@ export default function AdminPage({ onBackToWebsite }) {
     const url = URL.createObjectURL(blob);
     const link = document.createElement('a');
     link.href = url;
-    link.setAttribute('download', `algonexus_registrations_${new Date().toISOString().slice(0, 10)}.csv`);
+    link.setAttribute('download', `techastra_registrations_${new Date().toISOString().slice(0, 10)}.csv`);
     document.body.appendChild(link);
     link.click();
     document.body.removeChild(link);
@@ -409,7 +409,7 @@ export default function AdminPage({ onBackToWebsite }) {
                 <Lock className="w-6 h-6 text-cyan-400" />
               </div>
             </div>
-            <h2 className="text-2xl font-black text-white">AlgoNexus Admin Console</h2>
+            <h2 className="text-2xl font-black text-white">TechAstra Admin Console</h2>
             <p className="text-xs text-slate-400 mt-1">
               Event Organizers & Bank Details Configuration Portal
             </p>
@@ -500,7 +500,7 @@ export default function AdminPage({ onBackToWebsite }) {
           <div>
             <div className="flex items-center gap-2">
               <h1 className="text-base font-extrabold text-white tracking-wide">
-                ALGO<span className="text-cyan-400">NEXUS</span> ADMIN
+                TECH<span className="text-cyan-400">ASTRA</span> ADMIN
               </h1>
               <span className="text-[10px] font-mono px-2 py-0.5 rounded-full bg-emerald-500/20 text-emerald-400 font-bold border border-emerald-500/30">
                 LIVE SYNCED
@@ -746,7 +746,7 @@ export default function AdminPage({ onBackToWebsite }) {
                       type="text"
                       value={paymentForm.payeeName}
                       onChange={(e) => setPaymentForm({ ...paymentForm, payeeName: e.target.value })}
-                      placeholder="e.g. AlgoNexus 2026 Organizing Committee"
+                      placeholder="e.g. TechAstra 2026 Organizing Committee"
                       required
                       className="w-full px-3.5 py-2.5 rounded-xl bg-slate-900 border border-slate-700 text-white text-sm focus:outline-none focus:border-cyan-400"
                     />
@@ -816,7 +816,7 @@ export default function AdminPage({ onBackToWebsite }) {
                           ...paymentForm,
                           bankDetails: { ...paymentForm.bankDetails, accountHolder: e.target.value }
                         })}
-                        placeholder="e.g. AlgoNexus Student Council"
+                        placeholder="e.g. TechAstra Student Council"
                         required
                         className="w-full px-3.5 py-2 rounded-xl bg-slate-950 border border-slate-800 text-white text-xs focus:outline-none focus:border-cyan-400"
                       />
@@ -1130,7 +1130,7 @@ export default function AdminPage({ onBackToWebsite }) {
               </div>
               <input
                 type="text"
-                placeholder="Enter or scan Ticket ID (e.g. ALGO26-XXXX)"
+                placeholder="Enter or scan Ticket ID (e.g. TECH26-XXXX)"
                 value={manualTicketInput}
                 onChange={(e) => setManualTicketInput(e.target.value)}
                 className="flex-1 px-3.5 py-2 rounded-xl bg-slate-900 border border-slate-700 text-white text-xs font-mono"

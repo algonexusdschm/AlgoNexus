@@ -30,7 +30,7 @@ export default async function handler(req, res) {
       const paymentStatus = isGatewayPaid ? 'PAID' : (body.paymentStatus || 'PENDING_VERIFICATION');
 
       const randomCode = Math.random().toString(36).substring(2, 7).toUpperCase();
-      const ticketId = `ALGO26-${randomCode}`;
+      const ticketId = `TECH26-${randomCode}`;
 
       const newRegistration = {
         ticketId,

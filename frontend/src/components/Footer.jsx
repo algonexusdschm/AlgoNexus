@@ -18,7 +18,7 @@ export default function Footer({ onOpenRegister, onOpenAdmin }) {
                 <Box className="w-5 h-5 text-mc-diamond" />
               </div>
               <span className="text-lg font-mc font-black text-white">
-                ALGO<span className="text-mc-diamond">NEXUS</span>
+                TECH<span className="text-mc-diamond">ASTRA</span>
               </span>
             </div>
             <p className="text-xs text-slate-400 leading-relaxed font-light">
@@ -94,7 +94,7 @@ export default function Footer({ onOpenRegister, onOpenAdmin }) {
         {/* Bottom Bar */}
         <div className="pt-8 border-t border-mc-border flex flex-col sm:flex-row items-center justify-between text-xs text-slate-500 gap-4 font-mono">
           <div>
-            © 2026 AlgoNexus. All rights reserved. 3D Voxel Engine powered by React, Three.js & Tailwind.
+            © 2026 TechAstra. All rights reserved. 3D Voxel Engine powered by React, Three.js & Tailwind.
           </div>
           <div className="flex items-center gap-1 text-slate-400">
             <span>Crafted for collegiate innovation & coding dominance</span>

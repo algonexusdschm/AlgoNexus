@@ -17,7 +17,7 @@ export default function Navbar({ onOpenRegister, onOpenAdmin }) {
             <div>
               <div className="flex items-center gap-2">
                 <span className="text-2xl font-bebas tracking-widest text-white uppercase">
-                  ALGO<span className="text-emerald-400 drop-shadow-[0_0_8px_rgba(52,211,153,0.5)]">NEXUS</span>
+                  TECH<span className="text-emerald-400 drop-shadow-[0_0_8px_rgba(52,211,153,0.5)]">ASTRA</span>
                 </span>
                 <span className="text-[10px] font-space font-bold px-2 py-0.5 bg-emerald-500/10 text-emerald-400 border border-emerald-500/30 rounded">
                   2026

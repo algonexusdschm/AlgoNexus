@@ -28,7 +28,7 @@ export default function Announcement({ onOpenRegister }) {
           <h2 className="text-4xl sm:text-5xl md:text-6xl font-black uppercase text-center flex flex-col items-center mb-5">
             <span className="font-bebas tracking-wide block text-slate-400">ANNOUNCING</span>
             <span className="font-bebas tracking-wider text-white text-4xl sm:text-6xl md:text-7xl mt-1 text-transparent bg-clip-text bg-gradient-to-r from-emerald-400 via-teal-300 to-cyan-400">
-              ALGO NEXUS 2026
+              TECH ASTRA 2026
             </span>
           </h2>
           <p className="text-slate-300 text-sm sm:text-base font-light font-space max-w-2xl mx-auto leading-relaxed">
@@ -54,7 +54,7 @@ export default function Announcement({ onOpenRegister }) {
               </h3>
 
               <p className="text-slate-300 leading-relaxed text-sm sm:text-base font-light">
-                Whether you build autonomous neural agents, architect high-throughput distributed microservices, solve complex algorithmic graphs, or harden zero-day cybersecurity defenses — AlgoNexus 2026 is your forge.
+                Whether you build autonomous neural agents, architect high-throughput distributed microservices, solve complex algorithmic graphs, or harden zero-day cybersecurity defenses — TechAstra 2026 is your forge.
               </p>
 
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 pt-2 text-xs">

@@ -70,9 +70,9 @@ export default function Hero({ onOpenRegister }) {
             </div>
           </div>
 
-          {/* Top Line: ALGO NEXUS 2026 */}
+          {/* Top Line: TECH ASTRA 2026 */}
           <div className="font-space font-bold text-xs sm:text-sm tracking-[0.35em] sm:tracking-[0.45em] text-slate-100 uppercase flex items-center justify-center gap-2.5 drop-shadow-[0_2px_12px_rgba(0,0,0,1)] pt-1">
-            <span className="text-white">ALGO NEXUS</span>
+            <span className="text-white">TECH ASTRA</span>
             <span className="text-emerald-400 font-extrabold drop-shadow-[0_0_12px_rgba(52,211,153,0.8)]">2026</span>
           </div>
 

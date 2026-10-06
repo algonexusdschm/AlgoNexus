@@ -56,7 +56,7 @@ export default function PaymentGatewayModal({
   };
 
   // UPI Intent URL
-  const upiIntentUrl = `upi://pay?pa=${encodeURIComponent(settings.upiId)}&pn=${encodeURIComponent(settings.payeeName)}&am=${amount}&cu=INR&tn=AlgoNexus-${encodeURIComponent(registrationData.fullName || 'Pass')}`;
+  const upiIntentUrl = `upi://pay?pa=${encodeURIComponent(settings.upiId)}&pn=${encodeURIComponent(settings.payeeName)}&am=${amount}&cu=INR&tn=TechAstra-${encodeURIComponent(registrationData.fullName || 'Pass')}`;
 
   // Complete Payment Verification
   const completePayment = async (method, additionalData = {}) => {
@@ -94,7 +94,7 @@ export default function PaymentGatewayModal({
 
       if (res.ok && data.success) {
         const ticketResult = data.ticket || {
-          ticketId: `ALGO26-${Math.random().toString(36).substring(2, 7).toUpperCase()}`,
+          ticketId: `TECH26-${Math.random().toString(36).substring(2, 7).toUpperCase()}`,
           orderId: payload.razorpay_order_id,
           paymentId: payload.razorpay_payment_id,
           paymentStatus,
@@ -469,7 +469,7 @@ export default function PaymentGatewayModal({
               <div className="p-4 rounded-xl bg-slate-900 border border-slate-800">
                 <div className="flex items-center justify-between text-xs mb-1">
                   <span className="text-slate-400">Transaction Fee:</span>
-                  <span className="text-emerald-400 font-semibold">₹0 (Waived for AlgoNexus)</span>
+                  <span className="text-emerald-400 font-semibold">₹0 (Waived for TechAstra)</span>
                 </div>
                 <div className="flex items-center justify-between text-xs">
                   <span className="text-slate-400">Total Payable:</span>
@@ -511,7 +511,7 @@ export default function PaymentGatewayModal({
             <ShieldCheck className="w-3.5 h-3.5 text-emerald-400" />
             <span>256-Bit SSL Secured</span>
           </div>
-          <span>AlgoNexus Official Payment Gateway</span>
+          <span>TechAstra Official Payment Gateway</span>
         </div>
 
       </div>

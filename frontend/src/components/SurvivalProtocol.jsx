@@ -112,7 +112,7 @@ export default function SurvivalProtocol({ onOpenRegister }) {
         <div className="text-center max-w-3xl mx-auto mb-16 sm:mb-20">
           <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-emerald-500/10 border border-emerald-500/30 text-emerald-400 text-xs font-chakra tracking-[0.2em] uppercase mb-4 shadow-[0_0_12px_rgba(16,185,129,0.2)]">
             <Radio className="w-3.5 h-3.5 animate-pulse" />
-            <span>OPERATIONAL BLUEPRINT • ALGO NEXUS 2026</span>
+            <span>OPERATIONAL BLUEPRINT • TECH ASTRA 2026</span>
           </div>
 
           <h2 className="text-4xl sm:text-5xl md:text-6xl font-black uppercase tracking-tight text-white mb-4">
@@ -122,7 +122,7 @@ export default function SurvivalProtocol({ onOpenRegister }) {
             </span>
           </h2>
           <p className="text-slate-400 text-sm sm:text-base font-light max-w-2xl mx-auto font-space">
-            Two days of intense problem-solving, development, collaboration, and innovation under the unified banner of AlgoNexus 2026.
+            Two days of intense problem-solving, development, collaboration, and innovation under the unified banner of TechAstra 2026.
           </p>
         </div>
 

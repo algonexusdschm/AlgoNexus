@@ -1,7 +1,7 @@
-// Data store for AlgoNexus College Tech Fest
+// Data store for TechAstra College Tech Fest
 
 export const EVENT_DETAILS = {
-  name: "AlgoNexus 2026",
+  name: "TechAstra 2026",
   tagline: "48 Hours. One Problem. Unlimited Possibilities.",
   edition: "4th National Edition",
   dates: "To Be Announced Soon",
@@ -23,7 +23,7 @@ export const EVENT_DETAILS = {
 export const PAST_YEAR_GALLERY = [
   {
     id: 1,
-    title: "AlgoNexus Organizing Committee & Student Council",
+    title: "TechAstra Organizing Committee & Student Council",
     category: "Organizers & Council",
     year: "Last Event",
     caption: "The entire student organizing committee and faculty mentors gathered in the tech lab after the triumph of our last event.",
@@ -44,16 +44,16 @@ export const PAST_YEAR_GALLERY = [
     title: "Faculty Mentors & Department Coordinators",
     category: "Faculty & Mentors",
     year: "Last Event",
-    caption: "Guiding faculty members and student heads whose steadfast mentorship and encouragement powered AlgoNexus.",
+    caption: "Guiding faculty members and student heads whose steadfast mentorship and encouragement powered TechAstra.",
     image: "/images/gallery/gallery_faculty_mentors.jpg",
     tags: ["FacultyMentors", "DepartmentHeads", "Guidance"]
   },
   {
     id: 4,
-    title: "AlgoNexus Department Inauguration & Felicitations",
+    title: "TechAstra Department Inauguration & Felicitations",
     category: "Celebrations & Faculty",
     year: "Last Event",
-    caption: "Faculty coordinators, professors, and organizing student committee members celebrating the grand launch and felicitations of AlgoNexus.",
+    caption: "Faculty coordinators, professors, and organizing student committee members celebrating the grand launch and felicitations of TechAstra.",
     image: "/images/gallery/gallery_department_celebration.jpg",
     tags: ["Inauguration", "DepartmentCelebration", "FacultyAndStudents", "LastEventMemories"]
   },
@@ -62,7 +62,7 @@ export const PAST_YEAR_GALLERY = [
     title: "Stage Ceremonies & Faculty Dignitaries",
     category: "Stage & Ceremonies",
     year: "Last Event",
-    caption: "Honorable faculty members, department heads, and anchor leads gracing the grand inauguration stage of AlgoNexus.",
+    caption: "Honorable faculty members, department heads, and anchor leads gracing the grand inauguration stage of TechAstra.",
     image: "/images/gallery/gallery_stage_dignitaries.jpg",
     tags: ["Inauguration", "Dignitaries", "DepartmentHeads", "StageEvent"]
   },
@@ -173,7 +173,7 @@ export const REGISTRATION_TIERS = [
 
 export const FAQ_LIST = [
   {
-    q: "Who is eligible to participate in AlgoNexus 2026?",
+    q: "Who is eligible to participate in TechAstra 2026?",
     a: "Any undergraduate or postgraduate student currently enrolled in any recognized college/university across India is welcome to participate! Valid College ID is mandatory at the gate."
   },
   {
@@ -190,6 +190,6 @@ export const FAQ_LIST = [
   },
   {
     q: "Where is the venue and how do I contact the organizing committee?",
-    a: "AlgoNexus 2026 is hosted on-campus at Smt. Chandibai Himathmal Mansukhani College, organized by the Department of Data Science under Club Data Decoder. For queries, sponsorships, or urgent support, reach out via email at algonexusdschm@gmail.com or mobile at +91 80100 86323."
+    a: "TechAstra 2026 is hosted on-campus at Smt. Chandibai Himathmal Mansukhani College, organized by the Department of Data Science under Club Data Decoder. For queries, sponsorships, or urgent support, reach out via email at algonexusdschm@gmail.com or mobile at +91 80100 86323."
   }
 ];
