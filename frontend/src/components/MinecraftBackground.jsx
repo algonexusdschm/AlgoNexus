@@ -761,13 +761,25 @@ export default function MinecraftBackground() {
 
   return (
     <div className="fixed inset-0 pointer-events-none z-0 overflow-hidden bg-[#050805]">
-      {/* 1. Doomsday Ruined Monument Wallpaper with interactive parallax */}
+      {/* 1. Doomsday Ruined Monument Wallpaper (Responsive: 16:9 on Desktop, 9:16 on Mobile) */}
+      {/* Desktop (Landscape) Background */}
       <div
         ref={bgImageRef}
-        className="absolute -inset-4 sm:-inset-8 bg-cover bg-no-repeat transition-transform duration-300 ease-out pointer-events-none will-change-transform"
+        className="hidden md:block absolute -inset-4 sm:-inset-8 bg-cover bg-no-repeat transition-transform duration-300 ease-out pointer-events-none will-change-transform"
         style={{
           backgroundImage: "url('/images/doomsday_hero_bg.png')",
           backgroundPosition: 'center 42%',
+          backgroundSize: 'cover',
+          opacity: 0.98,
+          filter: 'brightness(1.05) contrast(1.10) saturate(1.15)',
+        }}
+      />
+      {/* Mobile (Vertical 9:16) Background */}
+      <div
+        className="block md:hidden absolute -inset-2 bg-cover bg-no-repeat pointer-events-none"
+        style={{
+          backgroundImage: "url('/images/doomsday_hero_bg_mobile.jpg')",
+          backgroundPosition: 'center 30%',
           backgroundSize: 'cover',
           opacity: 0.98,
           filter: 'brightness(1.05) contrast(1.10) saturate(1.15)',
@@ -793,9 +805,9 @@ export default function MinecraftBackground() {
           background: 'linear-gradient(180deg, rgba(4, 6, 4, 0.15) 0%, rgba(8, 10, 7, 0.05) 25%, rgba(8, 10, 7, 0.25) 75%, rgba(7, 9, 19, 0.95) 100%)'
         }}
       />
-      {/* Side vignette — subtly frames the monument's wide composition */}
+      {/* Side vignette — subtly frames the monument on desktop */}
       <div
-        className="absolute inset-0 pointer-events-none"
+        className="hidden md:block absolute inset-0 pointer-events-none"
         style={{
           background: 'radial-gradient(ellipse 85% 90% at 50% 42%, transparent 45%, rgba(4, 6, 4, 0.45) 85%, rgba(4, 6, 4, 0.75) 100%)'
         }}
