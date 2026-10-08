@@ -4,6 +4,7 @@ import * as THREE from 'three';
 export default function MinecraftBackground() {
   const canvasRef = useRef(null);
   const bgImageRef = useRef(null);
+  const bgMobileRef = useRef(null);
 
   useEffect(() => {
     const canvas = canvasRef.current;
@@ -603,6 +604,24 @@ export default function MinecraftBackground() {
     };
     window.addEventListener('mousemove', handleMouseMove, { passive: true });
 
+    // Touch Parallax for Mobile
+    const handleTouchMove = (e) => {
+      if (e.touches && e.touches[0]) {
+        mouseX = (e.touches[0].clientX / window.innerWidth - 0.5) * 1.5;
+        mouseY = (e.touches[0].clientY / window.innerHeight - 0.5) * 1.5;
+      }
+    };
+    window.addEventListener('touchmove', handleTouchMove, { passive: true });
+
+    // Smooth Scroll Tracking for Parallax Slide
+    let targetScrollY = typeof window !== 'undefined' ? (window.scrollY || window.pageYOffset || 0) : 0;
+    let currentScrollY = targetScrollY;
+
+    const handleScroll = () => {
+      targetScrollY = window.scrollY || window.pageYOffset || 0;
+    };
+    window.addEventListener('scroll', handleScroll, { passive: true });
+
     // Window Resize Handler (Debounced for performance)
     let resizeTimer;
     const handleResize = () => {
@@ -651,14 +670,24 @@ export default function MinecraftBackground() {
       targetX += (mouseX - targetX) * 0.05;
       targetY += (mouseY - targetY) * 0.05;
 
-      // Parallax camera tilt
+      // Smooth scroll lerp (Silky 60fps/120fps physics slide)
+      currentScrollY += (targetScrollY - currentScrollY) * 0.08;
+
+      // Parallax camera tilt & vertical scroll glide
       camera.position.x = targetX * 1.5;
-      camera.position.y = -targetY * 1.0;
+      camera.position.y = -targetY * 1.0 - (currentScrollY * 0.002);
       camera.lookAt(0, 0, 0);
 
-      // Wallpaper 2.5D Parallax Shift
+      // Desktop Wallpaper: 2.5D Interactive Parallax + Silky Scroll Slide
       if (bgImageRef.current) {
-        bgImageRef.current.style.transform = `scale(1.08) translate(${targetX * -14}px, ${targetY * -10}px)`;
+        const desktopScrollSlide = currentScrollY * -0.16;
+        bgImageRef.current.style.transform = `scale(1.10) translate3d(${targetX * -14}px, ${targetY * -10 + desktopScrollSlide}px, 0)`;
+      }
+
+      // Mobile Wallpaper: Silky Smooth 60FPS Vertical Parallax Slide
+      if (bgMobileRef.current) {
+        const mobileScrollSlide = currentScrollY * -0.22;
+        bgMobileRef.current.style.transform = `scale(1.08) translate3d(${targetX * -6}px, ${mobileScrollSlide}px, 0)`;
       }
 
       // Swirl & Ascend Arcane Particles
@@ -732,6 +761,8 @@ export default function MinecraftBackground() {
       cancelAnimationFrame(animId);
       clearTimeout(resizeTimer);
       window.removeEventListener('mousemove', handleMouseMove);
+      window.removeEventListener('touchmove', handleTouchMove);
+      window.removeEventListener('scroll', handleScroll);
       window.removeEventListener('resize', handleResize);
       document.removeEventListener('visibilitychange', handleVisibility);
       canvas.removeEventListener('webglcontextlost', handleContextLost);
@@ -761,11 +792,11 @@ export default function MinecraftBackground() {
 
   return (
     <div className="fixed inset-0 pointer-events-none z-0 overflow-hidden bg-[#050805]">
-      {/* 1. Doomsday Ruined Monument Wallpaper (Responsive: 16:9 on Desktop, 9:16 on Mobile) */}
+      {/* 1. Doomsday Ruined Monument Wallpaper (Responsive: 16:9 on Desktop, 9:16 on Mobile with 60FPS Parallax Slide) */}
       {/* Desktop (Landscape) Background */}
       <div
         ref={bgImageRef}
-        className="hidden md:block absolute -inset-4 sm:-inset-8 bg-cover bg-no-repeat transition-transform duration-300 ease-out pointer-events-none will-change-transform"
+        className="hidden md:block absolute -top-16 -bottom-64 -left-8 -right-8 bg-cover bg-no-repeat pointer-events-none will-change-transform"
         style={{
           backgroundImage: "url('/images/doomsday_hero_bg.png')",
           backgroundPosition: 'center 42%',
@@ -776,10 +807,11 @@ export default function MinecraftBackground() {
       />
       {/* Mobile (Vertical 9:16) Background */}
       <div
-        className="block md:hidden absolute -inset-2 bg-cover bg-no-repeat pointer-events-none"
+        ref={bgMobileRef}
+        className="block md:hidden absolute -top-12 -bottom-64 -left-4 -right-4 bg-cover bg-no-repeat pointer-events-none will-change-transform"
         style={{
           backgroundImage: "url('/images/doomsday_hero_bg_mobile.jpg')",
-          backgroundPosition: 'center 30%',
+          backgroundPosition: 'center 26%',
           backgroundSize: 'cover',
           opacity: 0.98,
           filter: 'brightness(1.05) contrast(1.10) saturate(1.15)',
