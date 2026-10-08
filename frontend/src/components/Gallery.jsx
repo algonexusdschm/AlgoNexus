@@ -50,16 +50,16 @@ export default function Gallery() {
             </p>
           </div>
 
-          {/* Filter Chips with 3D Voxel Button Styling */}
+          {/* Filter Chips with Doomsday Cyber Button Styling */}
           <div className="flex flex-wrap gap-2">
             {categories.map((cat) => (
               <button
                 key={cat}
                 onClick={() => setSelectedCategory(cat)}
-                className={`px-3.5 py-2 text-xs uppercase tracking-wider transition-all ${
+                className={`px-4 py-2 text-xs font-chakra font-bold uppercase tracking-wider rounded-lg transition-all ${
                   selectedCategory === cat
-                    ? 'btn-voxel-diamond'
-                    : 'btn-voxel-dark'
+                    ? 'bg-emerald-500 text-slate-950 shadow-[0_0_15px_rgba(16,185,129,0.5)] border border-emerald-400'
+                    : 'bg-slate-900/80 text-slate-300 hover:text-white border border-slate-700/80 hover:border-slate-500'
                 }`}
               >
                 {cat}
@@ -68,13 +68,13 @@ export default function Gallery() {
           </div>
         </div>
 
-        {/* Photos Grid with 3D Voxel Frames */}
+        {/* Photos Grid with Doomsday Cyber Frames */}
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
           {filteredPhotos.map((photo, index) => (
             <div
               key={photo.id}
               onClick={() => setActivePhotoIndex(index)}
-              className="group relative voxel-box rounded-xl overflow-hidden cursor-pointer"
+              className="group relative rounded-xl overflow-hidden cursor-pointer bg-slate-900/80 border border-slate-800 hover:border-emerald-500/50 hover:shadow-[0_0_20px_rgba(16,185,129,0.25)] transition-all"
             >
               {/* Image Container with Aspect Ratio */}
               <div className="relative aspect-[4/3] w-full overflow-hidden bg-slate-950">
@@ -88,25 +88,25 @@ export default function Gallery() {
 
                 {/* Top Badges */}
                 <div className="absolute top-3 left-3 right-3 flex items-center justify-between">
-                  <span className="text-[10px] font-mc font-bold px-2 py-0.5 bg-black/80 text-mc-diamond border border-mc-diamond/40 shadow-voxel-sm">
+                  <span className="text-[10px] font-chakra font-bold px-2.5 py-0.5 rounded bg-black/80 text-emerald-400 border border-emerald-500/40 shadow-sm">
                     {photo.category}
                   </span>
-                  <span className="text-[10px] font-mono px-2 py-0.5 bg-black/80 text-slate-300 border border-mc-border">
+                  <span className="text-[10px] font-mono px-2 py-0.5 rounded bg-black/80 text-slate-300 border border-slate-700">
                     {photo.year}
                   </span>
                 </div>
 
                 {/* Zoom Icon overlay */}
                 <div className="absolute inset-0 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity">
-                  <div className="w-12 h-12 bg-mc-diamond text-slate-950 flex items-center justify-center shadow-diamond-glow transform group-hover:scale-110 transition-transform border-2 border-black">
+                  <div className="w-12 h-12 rounded-full bg-emerald-500/20 backdrop-blur-md border border-emerald-500/60 flex items-center justify-center text-emerald-300 shadow-[0_0_20px_rgba(16,185,129,0.5)] transform group-hover:scale-110 transition-transform">
                     <ZoomIn className="w-6 h-6" />
                   </div>
                 </div>
               </div>
 
               {/* Text Meta Content */}
-              <div className="p-4 bg-[#121722]">
-                <h3 className="text-sm font-bold text-white group-hover:text-mc-diamond transition-colors line-clamp-1">
+              <div className="p-4 bg-slate-900/90 border-t border-slate-800">
+                <h3 className="text-sm font-chakra font-bold text-white group-hover:text-emerald-300 transition-colors line-clamp-1">
                   {photo.title}
                 </h3>
                 <p className="text-xs text-slate-400 mt-1 line-clamp-2 leading-relaxed font-light">
@@ -132,7 +132,7 @@ export default function Gallery() {
             {/* Close Button */}
             <button
               onClick={() => setActivePhotoIndex(null)}
-              className="absolute top-6 right-6 p-2 bg-mc-deepslate border-2 border-mc-border text-slate-300 hover:text-white transition-all z-10"
+              className="absolute top-6 right-6 p-2 rounded-lg bg-slate-900/90 border border-slate-700 text-slate-300 hover:text-white transition-all z-10"
             >
               <X className="w-6 h-6" />
             </button>
@@ -143,7 +143,7 @@ export default function Gallery() {
                 e.stopPropagation();
                 setActivePhotoIndex((prev) => (prev - 1 + filteredPhotos.length) % filteredPhotos.length);
               }}
-              className="absolute left-4 sm:left-8 p-3 btn-voxel-dark text-white z-10"
+              className="absolute left-4 sm:left-8 p-3 rounded-full bg-slate-900/90 border border-slate-700 hover:border-emerald-400 text-white z-10 transition-all shadow-lg"
             >
               <ChevronLeft className="w-6 h-6" />
             </button>
@@ -154,13 +154,13 @@ export default function Gallery() {
                 e.stopPropagation();
                 setActivePhotoIndex((prev) => (prev + 1) % filteredPhotos.length);
               }}
-              className="absolute right-4 sm:right-8 p-3 btn-voxel-dark text-white z-10"
+              className="absolute right-4 sm:right-8 p-3 rounded-full bg-slate-900/90 border border-slate-700 hover:border-emerald-400 text-white z-10 transition-all shadow-lg"
             >
               <ChevronRight className="w-6 h-6" />
             </button>
 
             {/* Lightbox Content Container */}
-            <div className="max-w-4xl w-full voxel-box rounded-2xl overflow-hidden shadow-2xl flex flex-col">
+            <div className="max-w-4xl w-full bg-slate-950 border border-emerald-500/30 rounded-2xl overflow-hidden shadow-2xl flex flex-col">
               <div className="relative aspect-[16/10] w-full bg-black max-h-[65vh]">
                 <img
                   src={activePhoto.image}
@@ -169,10 +169,10 @@ export default function Gallery() {
                 />
               </div>
 
-              <div className="p-6 bg-[#121722] border-t-2 border-mc-border">
+              <div className="p-6 bg-slate-900 border-t border-slate-800">
                 <div className="flex items-center justify-between gap-4 mb-2">
                   <div className="flex items-center gap-2">
-                    <span className="text-xs px-2.5 py-0.5 bg-mc-diamond/20 text-mc-diamond font-mc border border-mc-diamond/40">
+                    <span className="text-xs px-2.5 py-0.5 rounded bg-emerald-500/20 text-emerald-300 font-chakra font-bold border border-emerald-500/40">
                       {activePhoto.category}
                     </span>
                     <span className="text-xs text-slate-400 font-mono">Edition {activePhoto.year}</span>

@@ -65,9 +65,9 @@ export default function Navbar({ onOpenRegister, onOpenAdmin }) {
           <div className="md:hidden flex items-center gap-2">
             <button
               onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
-              className="p-2 bg-mc-deepslate border-2 border-mc-border text-slate-300 hover:text-white"
+              className="p-2.5 rounded-lg bg-slate-900 border border-slate-700 text-slate-300 hover:text-white"
             >
-              {mobileMenuOpen ? <X className="w-6 h-6" /> : <Menu className="w-6 h-6" />}
+              {mobileMenuOpen ? <X className="w-5 h-5" /> : <Menu className="w-5 h-5" />}
             </button>
           </div>
         </div>
@@ -75,7 +75,7 @@ export default function Navbar({ onOpenRegister, onOpenAdmin }) {
 
       {/* Mobile Drawer */}
       {mobileMenuOpen && (
-        <div className="md:hidden bg-[#0b0e14] border-b-2 border-mc-border px-4 pt-3 pb-6 space-y-3 font-semibold text-xs uppercase tracking-wider">
+        <div className="md:hidden bg-slate-950/95 backdrop-blur-xl border-b border-emerald-500/20 px-4 pt-3 pb-6 space-y-3 font-chakra font-semibold text-xs uppercase tracking-wider">
           <a
             href="#protocol"
             onClick={() => setMobileMenuOpen(false)}
@@ -86,39 +86,39 @@ export default function Navbar({ onOpenRegister, onOpenAdmin }) {
           <a
             href="#announcement"
             onClick={() => setMobileMenuOpen(false)}
-            className="block px-3 py-2 text-slate-300 hover:text-mc-diamond"
+            className="block px-3 py-2 text-slate-300 hover:text-emerald-400"
           >
             Announcement (2026)
           </a>
           <a
             href="#gallery"
             onClick={() => setMobileMenuOpen(false)}
-            className="block px-3 py-2 text-slate-300 hover:text-mc-diamond"
+            className="block px-3 py-2 text-slate-300 hover:text-emerald-400"
           >
             Last Event Memories
           </a>
           <a
             href="#passes"
             onClick={() => setMobileMenuOpen(false)}
-            className="block px-3 py-2 text-slate-300 hover:text-mc-diamond"
+            className="block px-3 py-2 text-slate-300 hover:text-emerald-400"
           >
-            Event Passes
+            Doomsday Passes
           </a>
           <a
             href="#faq"
             onClick={() => setMobileMenuOpen(false)}
-            className="block px-3 py-2 text-slate-300 hover:text-mc-diamond"
+            className="block px-3 py-2 text-slate-300 hover:text-emerald-400"
           >
             FAQ
           </a>
 
-          <div className="pt-3 border-t border-mc-border flex flex-col gap-2">
+          <div className="pt-3 border-t border-slate-800 flex flex-col gap-2">
             <button
               onClick={() => {
                 setMobileMenuOpen(false);
                 onOpenRegister();
               }}
-              className="w-full py-3 btn-voxel-diamond text-xs flex items-center justify-center gap-2"
+              className="w-full py-3 rounded-xl bg-gradient-to-r from-emerald-500 to-emerald-400 text-slate-950 font-bold text-xs flex items-center justify-center gap-2 shadow-[0_0_15px_rgba(16,185,129,0.4)]"
             >
               <Ticket className="w-4 h-4" /> Claim Event Pass
             </button>
@@ -127,9 +127,9 @@ export default function Navbar({ onOpenRegister, onOpenAdmin }) {
                 setMobileMenuOpen(false);
                 onOpenAdmin();
               }}
-              className="w-full py-2.5 btn-voxel-dark text-xs flex items-center justify-center gap-2"
+              className="w-full py-2.5 rounded-xl bg-slate-900 border border-slate-700 text-slate-200 text-xs flex items-center justify-center gap-2"
             >
-              <LayoutDashboard className="w-4 h-4 text-mc-diamond" /> Organizer Admin Console
+              <LayoutDashboard className="w-4 h-4 text-emerald-400" /> Organizer Admin Console
             </button>
           </div>
         </div>

@@ -38,39 +38,39 @@ export default function TicketModal({ ticket, isOpen, onClose }) {
 
         {/* Top Status Banner */}
         {isPaid ? (
-          <div className="bg-gradient-to-r from-emerald-700 via-teal-700 to-cyan-700 p-6 text-white text-center border-b-2 border-mc-border">
-            <div className="w-11 h-11 mx-auto bg-black/40 border border-white/20 flex items-center justify-center mb-2 shadow-voxel-sm">
-              <CheckCircle2 className="w-6 h-6 text-mc-emerald" />
+          <div className="bg-gradient-to-r from-emerald-800 via-teal-800 to-cyan-800 p-6 text-white text-center border-b border-emerald-500/30">
+            <div className="w-11 h-11 mx-auto rounded-lg bg-black/40 border border-emerald-400/40 flex items-center justify-center mb-2 shadow-sm">
+              <CheckCircle2 className="w-6 h-6 text-emerald-400" />
             </div>
-            <h3 className="text-xl font-mc font-black tracking-wider uppercase">EXPEDITION PASS CONFIRMED!</h3>
+            <h3 className="text-xl font-chakra font-black tracking-wider uppercase">DOOMSDAY PASS CONFIRMED!</h3>
             <p className="text-xs text-cyan-100 mt-1 font-mono">Payment verified. Your official gate pass has been forged.</p>
           </div>
         ) : (
-          <div className="bg-gradient-to-r from-amber-700 via-orange-700 to-yellow-800 p-6 text-white text-center border-b-2 border-mc-border">
-            <div className="w-11 h-11 mx-auto bg-black/40 border border-white/20 flex items-center justify-center mb-2 shadow-voxel-sm">
+          <div className="bg-gradient-to-r from-amber-800 via-orange-800 to-yellow-900 p-6 text-white text-center border-b border-amber-500/30">
+            <div className="w-11 h-11 mx-auto rounded-lg bg-black/40 border border-amber-400/40 flex items-center justify-center mb-2 shadow-sm">
               <Clock className="w-6 h-6 text-yellow-300" />
             </div>
-            <h3 className="text-xl font-mc font-black tracking-wider uppercase">REGISTRATION SUBMITTED</h3>
+            <h3 className="text-xl font-chakra font-black tracking-wider uppercase">REGISTRATION SUBMITTED</h3>
             <p className="text-xs text-yellow-100 mt-1 font-mono">Payment reference queued for organizer verification. Keep your Ticket ID safe!</p>
           </div>
         )}
 
-        {/* The Digital Holographic 3D Minecraft Ticket Card */}
+        {/* The Digital Holographic Doomsday Ticket Card */}
         <div id="printable-ticket" className="p-6 space-y-6">
           
-          <div className="relative voxel-box p-6 rounded-xl overflow-hidden border-2 border-mc-diamond/50">
+          <div className="relative p-6 rounded-xl overflow-hidden bg-slate-900/90 border border-emerald-500/40 shadow-[0_0_25px_rgba(16,185,129,0.2)]">
             
             {/* Header */}
-            <div className="flex items-center justify-between border-b border-mc-border pb-3 mb-4">
+            <div className="flex items-center justify-between border-b border-slate-800 pb-3 mb-4">
               <div className="flex items-center gap-2.5">
-                <div className="w-8 h-8 bg-mc-deepslate border border-mc-diamond flex items-center justify-center">
-                  <Box className="w-4 h-4 text-mc-diamond" />
+                <div className="w-8 h-8 rounded bg-slate-950 border border-emerald-500/50 flex items-center justify-center">
+                  <Box className="w-4 h-4 text-emerald-400" />
                 </div>
                 <div>
-                  <div className="text-xs font-mc font-bold text-white tracking-wider">
-                    TECH<span className="text-mc-diamond">ASTRA</span> 2026
+                  <div className="text-xs font-chakra font-bold text-white tracking-wider">
+                    TECH<span className="text-emerald-400">ASTRA</span> 2026
                   </div>
-                  <div className="text-[10px] text-mc-diamond font-mono font-medium">CLUB DATA DECODER • DEPT OF DATA SCIENCE • SMT. CHM COLLEGE</div>
+                  <div className="text-[10px] text-cyan-300 font-mono font-medium">CLUB DATA DECODER • DEPT OF DATA SCIENCE • SMT. CHM COLLEGE</div>
                 </div>
               </div>
 
@@ -149,14 +149,14 @@ export default function TicketModal({ ticket, isOpen, onClose }) {
           <div className="flex items-center gap-3">
             <button
               onClick={handlePrint}
-              className="flex-1 py-3 btn-voxel-diamond text-xs uppercase flex items-center justify-center gap-2"
+              className="flex-1 py-3 rounded-xl bg-gradient-to-r from-emerald-500 to-emerald-400 text-slate-950 font-bold text-xs uppercase flex items-center justify-center gap-2 shadow-[0_0_15px_rgba(16,185,129,0.4)] hover:brightness-110 transition-all"
             >
               <Printer className="w-4 h-4" />
               <span>[PRINT / SAVE PASS]</span>
             </button>
             <button
               onClick={onClose}
-              className="px-6 py-3 btn-voxel-dark text-xs uppercase"
+              className="px-6 py-3 rounded-xl bg-slate-800 border border-slate-700 hover:border-slate-500 text-slate-200 text-xs uppercase transition-all"
             >
               DONE
             </button>

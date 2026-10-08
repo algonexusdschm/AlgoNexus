@@ -1327,7 +1327,7 @@ export default function AdminPage({ onBackToWebsite }) {
                 <div className="flex items-center gap-2.5 w-full sm:w-auto">
                   <button
                     onClick={() => setIsAddMemberModalOpen(true)}
-                    className="flex-1 sm:flex-none px-4 py-2.5 rounded-xl btn-voxel-emerald text-xs flex items-center justify-center gap-2 shadow-lg shadow-emerald-950 font-bold"
+                    className="flex-1 sm:flex-none px-4 py-2.5 rounded-xl bg-gradient-to-r from-emerald-500 to-emerald-400 text-slate-950 text-xs flex items-center justify-center gap-2 shadow-[0_0_15px_rgba(16,185,129,0.35)] font-bold hover:brightness-110 transition-all"
                   >
                     <UserPlus className="w-4 h-4" />
                     <span>+ Add Committee Member</span>
@@ -1703,7 +1703,7 @@ export default function AdminPage({ onBackToWebsite }) {
                 </button>
                 <button
                   type="submit"
-                  className="px-5 py-2.5 rounded-xl btn-voxel-emerald text-xs font-bold shadow-lg shadow-emerald-950 flex items-center gap-1.5"
+                  className="px-5 py-2.5 rounded-xl bg-gradient-to-r from-emerald-500 to-emerald-400 text-slate-950 text-xs font-bold shadow-[0_0_15px_rgba(16,185,129,0.35)] flex items-center gap-1.5 hover:brightness-110 transition-all"
                 >
                   <UserPlus className="w-4 h-4" />
                   <span>Create Member & Grant Access</span>

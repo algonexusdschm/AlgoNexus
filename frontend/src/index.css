@@ -34,136 +34,116 @@
   }
 }
 
-/* 3D Minecraft & Voxel Utility Classes */
+/* Tactical Doomsday Cyber Utility Classes */
 
-/* Clean Bedrock Background without distracting grid lines */
-.voxel-grid {
+.voxel-grid, .doomsday-grid {
   background-color: transparent;
 }
 
-/* Isometric 3D Voxel Box */
-.voxel-box {
-  background: linear-gradient(135deg, #181e2b 0%, #121722 100%);
-  border: 2px solid #2e374d;
+/* Doomsday Tactical Cyber Boxes & Cards */
+.voxel-box, .doomsday-box {
+  background: linear-gradient(135deg, rgba(16, 24, 38, 0.85) 0%, rgba(9, 14, 23, 0.92) 100%);
+  border: 1px solid rgba(16, 185, 129, 0.25);
   box-shadow: 
-    inset 2px 2px 0px rgba(255, 255, 255, 0.12),
-    inset -2px -2px 0px rgba(0, 0, 0, 0.6),
-    0px 8px 0px #080a0f,
-    0px 12px 20px rgba(0, 0, 0, 0.6);
+    0px 8px 24px rgba(0, 0, 0, 0.6),
+    inset 0 1px 0 rgba(255, 255, 255, 0.08);
+  backdrop-filter: blur(12px);
   transition: all 0.25s cubic-bezier(0.2, 0, 0, 1);
 }
 
-.voxel-box:hover {
-  border-color: #00f0ff;
-  transform: translateY(-3px);
+.voxel-box:hover, .doomsday-box:hover {
+  border-color: rgba(16, 185, 129, 0.55);
+  transform: translateY(-2px);
   box-shadow: 
-    inset 2px 2px 0px rgba(0, 240, 255, 0.3),
-    inset -2px -2px 0px rgba(0, 0, 0, 0.7),
-    0px 11px 0px #080a0f,
-    0px 16px 28px rgba(0, 240, 255, 0.15);
+    0px 12px 32px rgba(0, 0, 0, 0.7),
+    0px 0px 20px rgba(16, 185, 129, 0.25);
 }
 
-/* 3D Tactile Minecraft Buttons */
+/* Tactical Doomsday Cyber Buttons */
 .btn-voxel-diamond {
-  background: linear-gradient(180deg, #22d3ee 0%, #0891b2 100%);
-  border: 2px solid #000;
-  box-shadow: 
-    inset 2px 2px 0px rgba(255, 255, 255, 0.5),
-    inset -2px -2px 0px rgba(0, 0, 0, 0.4),
-    0px 4px 0px #000;
-  color: #000;
-  font-family: 'Orbitron', sans-serif;
+  background: linear-gradient(135deg, #06b6d4 0%, #0891b2 100%);
+  border: 1px solid rgba(34, 211, 238, 0.6);
+  box-shadow: 0 0 15px rgba(6, 182, 212, 0.4);
+  color: #030712;
+  font-family: 'Chakra Petch', sans-serif;
   font-weight: 700;
-  transition: transform 0.1s ease, box-shadow 0.1s ease;
+  border-radius: 0.5rem;
+  transition: all 0.2s ease;
 }
 
 .btn-voxel-diamond:hover {
-  background: linear-gradient(180deg, #38bdf8 0%, #06b6d4 100%);
-  filter: brightness(1.08);
+  filter: brightness(1.12);
+  box-shadow: 0 0 25px rgba(6, 182, 212, 0.6);
 }
 
 .btn-voxel-diamond:active {
-  transform: translateY(3px);
-  box-shadow: 
-    inset 2px 2px 0px rgba(255, 255, 255, 0.3),
-    inset -2px -2px 0px rgba(0, 0, 0, 0.6),
-    0px 1px 0px #000;
+  transform: translateY(1px);
 }
 
 .btn-voxel-emerald {
-  background: linear-gradient(180deg, #34d399 0%, #059669 100%);
-  border: 2px solid #000;
-  box-shadow: 
-    inset 2px 2px 0px rgba(255, 255, 255, 0.5),
-    inset -2px -2px 0px rgba(0, 0, 0, 0.4),
-    0px 4px 0px #000;
-  color: #000;
-  font-family: 'Orbitron', sans-serif;
+  background: linear-gradient(135deg, #10b981 0%, #059669 100%);
+  border: 1px solid rgba(52, 211, 153, 0.6);
+  box-shadow: 0 0 15px rgba(16, 185, 129, 0.4);
+  color: #030712;
+  font-family: 'Chakra Petch', sans-serif;
   font-weight: 700;
-  transition: transform 0.1s ease, box-shadow 0.1s ease;
+  border-radius: 0.5rem;
+  transition: all 0.2s ease;
 }
 
 .btn-voxel-emerald:hover {
-  background: linear-gradient(180deg, #4ade80 0%, #10b981 100%);
+  filter: brightness(1.12);
+  box-shadow: 0 0 25px rgba(16, 185, 129, 0.6);
 }
 
 .btn-voxel-emerald:active {
-  transform: translateY(3px);
-  box-shadow: 
-    inset 2px 2px 0px rgba(255, 255, 255, 0.3),
-    inset -2px -2px 0px rgba(0, 0, 0, 0.6),
-    0px 1px 0px #000;
+  transform: translateY(1px);
 }
 
 .btn-voxel-redstone {
-  background: linear-gradient(180deg, #fb7185 0%, #e11d48 100%);
-  border: 2px solid #000;
-  box-shadow: 
-    inset 2px 2px 0px rgba(255, 255, 255, 0.5),
-    inset -2px -2px 0px rgba(0, 0, 0, 0.5),
-    0px 4px 0px #000;
+  background: linear-gradient(135deg, #f43f5e 0%, #e11d48 100%);
+  border: 1px solid rgba(251, 113, 133, 0.6);
+  box-shadow: 0 0 15px rgba(244, 63, 94, 0.4);
   color: #fff;
-  font-family: 'Orbitron', sans-serif;
+  font-family: 'Chakra Petch', sans-serif;
   font-weight: 700;
-  transition: transform 0.1s ease, box-shadow 0.1s ease;
+  border-radius: 0.5rem;
+  transition: all 0.2s ease;
 }
 
 .btn-voxel-redstone:hover {
-  background: linear-gradient(180deg, #f43f5e 0%, #be123c 100%);
+  filter: brightness(1.12);
+  box-shadow: 0 0 25px rgba(244, 63, 94, 0.6);
 }
 
 .btn-voxel-redstone:active {
-  transform: translateY(3px);
-  box-shadow: 0px 1px 0px #000;
+  transform: translateY(1px);
 }
 
 .btn-voxel-dark {
-  background: linear-gradient(180deg, #222938 0%, #141923 100%);
-  border: 2px solid #000;
-  box-shadow: 
-    inset 2px 2px 0px rgba(255, 255, 255, 0.2),
-    inset -2px -2px 0px rgba(0, 0, 0, 0.5),
-    0px 4px 0px #000;
+  background: rgba(15, 23, 42, 0.85);
+  border: 1px solid rgba(51, 65, 85, 0.8);
   color: #e2e8f0;
-  font-family: 'Orbitron', sans-serif;
-  transition: transform 0.1s ease, box-shadow 0.1s ease;
+  font-family: 'Chakra Petch', sans-serif;
+  border-radius: 0.5rem;
+  transition: all 0.2s ease;
 }
 
 .btn-voxel-dark:hover {
-  border-color: #00f0ff;
-  color: #00f0ff;
+  border-color: rgba(16, 185, 129, 0.6);
+  color: #34d399;
+  box-shadow: 0 0 15px rgba(16, 185, 129, 0.25);
 }
 
 .btn-voxel-dark:active {
-  transform: translateY(3px);
-  box-shadow: 0px 1px 0px #000;
+  transform: translateY(1px);
 }
 
-/* Redstone Glowing Wire Line */
-.redstone-wire {
-  height: 3px;
-  background: linear-gradient(90deg, #ff2a4b, #ff7185, #ff2a4b);
-  box-shadow: 0 0 10px #ff2a4b, 0 0 4px #ff2a4b;
+/* Doomsday Neon Energy Conduit */
+.redstone-wire, .doomsday-conduit {
+  height: 2px;
+  background: linear-gradient(90deg, transparent, #22c55e, #86efac, #22c55e, transparent);
+  box-shadow: 0 0 12px rgba(34, 197, 94, 0.8), 0 0 4px #22c55e;
 }
 
 /* Pixel Font Heading Helper */
@@ -172,7 +152,7 @@
   letter-spacing: 0.05em;
 }
 
-/* Custom Scrollbar in Voxel Dark */
+/* Custom Scrollbar in Doomsday Dark */
 ::-webkit-scrollbar {
   width: 10px;
 }

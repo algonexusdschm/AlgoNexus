@@ -459,17 +459,17 @@ export default function RegistrationModal({
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/85 backdrop-blur-md p-4 overflow-y-auto">
-      <div className="relative w-full max-w-2xl bg-[#0b0e14] border-2 border-mc-diamond rounded-2xl shadow-diamond-glow overflow-hidden my-6 flex flex-col max-h-[92vh]">
+      <div className="relative w-full max-w-2xl bg-slate-950 border border-emerald-500/30 rounded-2xl shadow-[0_0_35px_rgba(16,185,129,0.2)] overflow-hidden my-6 flex flex-col max-h-[92vh]">
         
         {/* Modal Header */}
-        <div className="p-5 bg-mc-deepslate border-b-2 border-mc-border flex items-center justify-between shrink-0">
+        <div className="p-5 bg-slate-900 border-b border-slate-800 flex items-center justify-between shrink-0">
           <div className="flex items-center gap-3">
-            <div className="w-10 h-10 bg-mc-card border border-mc-diamond flex items-center justify-center shadow-voxel-sm">
-              <Ticket className="w-5 h-5 text-mc-diamond" />
+            <div className="w-10 h-10 rounded-lg bg-slate-950 border border-emerald-500/40 flex items-center justify-center shadow-sm">
+              <Ticket className="w-5 h-5 text-emerald-400" />
             </div>
             <div>
-              <h3 className="text-base font-mc font-bold text-white tracking-wide">
-                TECH<span className="text-mc-diamond">ASTRA</span> REGISTRATION
+              <h3 className="text-base font-chakra font-bold text-white tracking-wide">
+                TECH<span className="text-emerald-400">ASTRA</span> REGISTRATION
               </h3>
               <p className="text-[11px] text-slate-400 font-mono">
                 {step === 1 ? 'Phase 1: Attendee Details & Preferences' : 'Phase 2: Payment & Pass Verification'}
@@ -480,13 +480,13 @@ export default function RegistrationModal({
           <div className="flex items-center gap-3">
             {step === 2 && (
               <div className="text-right hidden sm:block font-mono">
-                <span className="text-[10px] text-slate-400 uppercase tracking-wider block font-mc">PAYABLE</span>
-                <span className="text-xl font-black text-mc-diamond font-mc">₹{selectedTier.price}</span>
+                <span className="text-[10px] text-slate-400 uppercase tracking-wider block font-chakra">PAYABLE</span>
+                <span className="text-xl font-chakra font-black text-emerald-400">₹{selectedTier.price}</span>
               </div>
             )}
             <button
               onClick={onClose}
-              className="p-2 bg-mc-card border border-mc-border text-slate-400 hover:text-white transition-all rounded"
+              className="p-2 rounded-lg bg-slate-800 border border-slate-700 text-slate-400 hover:text-white transition-all"
               title="Close"
             >
               <X className="w-5 h-5" />
@@ -496,7 +496,7 @@ export default function RegistrationModal({
 
         {/* Error Alert */}
         {errorMessage && (
-          <div className="mx-6 mt-4 p-3 bg-mc-redstone/10 border border-mc-redstone/40 text-mc-redstone text-xs flex items-center gap-2 shrink-0 font-mono rounded">
+          <div className="mx-6 mt-4 p-3 bg-rose-500/10 border border-rose-500/40 text-rose-400 text-xs flex items-center gap-2 shrink-0 font-mono rounded-lg">
             <AlertCircle className="w-4 h-4 shrink-0" />
             <span>{errorMessage}</span>
           </div>
@@ -521,14 +521,14 @@ export default function RegistrationModal({
                         setSelectedTier(tier);
                         if (errorMessage) setErrorMessage('');
                       }}
-                      className={`p-3 text-left border rounded transition-all ${
+                      className={`p-3 text-left border rounded-xl transition-all ${
                         selectedTier.id === tier.id
-                          ? 'bg-mc-diamond/10 border-mc-diamond text-white shadow-voxel-sm'
-                          : 'bg-mc-deepslate border-mc-border text-slate-400 hover:border-slate-600'
+                          ? 'bg-emerald-500/15 border-emerald-400 text-white shadow-[0_0_15px_rgba(16,185,129,0.3)]'
+                          : 'bg-slate-900 border-slate-800 text-slate-400 hover:border-slate-700'
                       }`}
                     >
-                      <div className="text-xs font-bold text-white font-mc">{tier.name}</div>
-                      <div className="text-sm font-black text-mc-diamond font-mc mt-1">₹{tier.price}</div>
+                      <div className="text-xs font-bold text-white font-chakra">{tier.name}</div>
+                      <div className="text-sm font-black text-emerald-400 font-chakra mt-1">₹{tier.price}</div>
                     </button>
                   ))}
                 </div>
