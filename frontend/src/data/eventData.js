@@ -62,16 +62,16 @@ export const PAST_YEAR_GALLERY = [
     title: "Stage Ceremonies & Faculty Dignitaries",
     category: "Stage & Ceremonies",
     year: "Last Event",
-    caption: "Honorable faculty members, department heads, and anchor leads gracing the grand inauguration stage of TechAstra.",
+    caption: "Honorable faculty coordinators, department mentors, and anchor student leads gathered during TechAstra ceremonies.",
     image: "/images/gallery/gallery_stage_dignitaries.jpg",
     tags: ["Inauguration", "Dignitaries", "DepartmentHeads", "StageEvent"]
   },
   {
     id: 6,
-    title: "Grand Valedictory & Traditional Celebration",
+    title: "Grand Valedictory & Fest Celebrations",
     category: "Celebrations",
     year: "Last Event",
-    caption: "Student council heads and faculty coordinators in festive attire celebrating the triumphant culmination of the fest.",
+    caption: "Student council leads, organizing committee members, and coordinators celebrating the triumphant culmination of the fest.",
     image: "/images/gallery/gallery_cultural_celebration.jpg",
     tags: ["Valedictory", "StudentCouncil", "Celebration", "FestiveMoments"]
   }
