@@ -356,34 +356,45 @@ export default function RegistrationModal({
     }
   };
 
-  // Safe launcher for UPI apps that does NOT cause the browser tab to unload/refresh
-  const handleLaunchUpi = (e, url) => {
-    if (e && e.preventDefault) e.preventDefault();
-    saveSession(2, formData, selectedTier);
-
-    // Open via hidden target="_blank" anchor so mobile browser stays active
-    const link = document.createElement('a');
-    link.href = url;
-    link.target = '_blank';
-    link.rel = 'noopener noreferrer';
-    document.body.appendChild(link);
-    link.click();
-    document.body.removeChild(link);
-  };
-
   // UPI details matching the official uploaded QR code (8010086323@fam)
   const activeUpiId = (settings.upiId || '8010086323@fam').trim();
-  const activePayeeName = (settings.payeeName || 'Club Data Decoder, Department of Data Science, Smt. Chandibai Himathmal Mansukhani College').trim();
+  const displayPayeeName = (settings.payeeName || 'Club Data Decoder, Department of Data Science, Smt. Chandibai Himathmal Mansukhani College').trim();
   const passPrice = selectedTier?.price || 299;
-  const payerName = (formData.fullName.trim() || 'Pass');
 
-  // Generic UPI deep link (matches exact QR payment format with amount locked!)
-  const upiIntentUrl = `upi://pay?pa=${encodeURIComponent(activeUpiId)}&pn=${encodeURIComponent(activePayeeName)}&am=${passPrice}&cu=INR&tn=TechAstra-${encodeURIComponent(payerName)}`;
-  
-  // Specific UPI App Schemes (Mobile direct deep links)
-  const gpayIntentUrl = `tez://upi/pay?pa=${encodeURIComponent(activeUpiId)}&pn=${encodeURIComponent(activePayeeName)}&am=${passPrice}&cu=INR&tn=TechAstra-${encodeURIComponent(payerName)}`;
-  const phonepeIntentUrl = `phonepe://pay?pa=${encodeURIComponent(activeUpiId)}&pn=${encodeURIComponent(activePayeeName)}&am=${passPrice}&cu=INR&tn=TechAstra-${encodeURIComponent(payerName)}`;
-  const paytmIntentUrl = `paytmmp://pay?pa=${encodeURIComponent(activeUpiId)}&pn=${encodeURIComponent(activePayeeName)}&am=${passPrice}&cu=INR&tn=TechAstra-${encodeURIComponent(payerName)}`;
+  // NPCI Specification compliant: max 50 characters, simple clean alphanumeric without punctuation
+  const cleanPayeeName = 'TechAstra 2026';
+  const cleanNote = 'TechAstra2026';
+
+  // Base UPI Parameters conforming strictly to NPCI format
+  const upiParams = `pa=${encodeURIComponent(activeUpiId)}&pn=${encodeURIComponent(cleanPayeeName)}&am=${passPrice}&cu=INR&tn=${encodeURIComponent(cleanNote)}`;
+
+  // 1. Universal NPCI UPI protocol (triggers OS app sheet on mobile with GPay, PhonePe, Paytm, Cred, BHIM)
+  const universalUpiUrl = `upi://pay?${upiParams}`;
+
+  // 2. Android Direct Package Intent Schemes (triggers installed app directly without opening blank tabs)
+  const isAndroid = typeof navigator !== 'undefined' && /android/i.test(navigator.userAgent || '');
+  const gpayIntentUrl = isAndroid 
+    ? `intent://pay?${upiParams}#Intent;scheme=upi;package=com.google.android.apps.nbu.paisa.user;end` 
+    : universalUpiUrl;
+  const phonepeIntentUrl = isAndroid 
+    ? `intent://pay?${upiParams}#Intent;scheme=upi;package=com.phonepe.app;end` 
+    : universalUpiUrl;
+  const paytmIntentUrl = isAndroid 
+    ? `intent://pay?${upiParams}#Intent;scheme=upi;package=net.one97.paytm;end` 
+    : universalUpiUrl;
+
+  // Safe launcher that triggers UPI app directly WITHOUT page unload or blank new tabs
+  const handleLaunchUpi = (e, url) => {
+    if (e) {
+      if (e.preventDefault) e.preventDefault();
+      if (e.stopPropagation) e.stopPropagation();
+    }
+    saveSession(2, formData, selectedTier);
+
+    // On mobile, window.location.href to custom scheme hands off directly to OS
+    // without creating a blank window and without unloading/reloading the current webpage!
+    window.location.href = url;
+  };
 
   // Download / Save QR code image helper for mobile scan-from-gallery
   const handleDownloadQr = () => {
@@ -858,7 +869,7 @@ export default function RegistrationModal({
                   </div>
                   <div>
                     <div className="text-xs font-bold text-white flex items-center gap-1.5">
-                      <span>{activePayeeName}</span>
+                      <span>{displayPayeeName}</span>
                       <span className="text-[9px] px-1.5 py-0.2 rounded bg-emerald-500/20 text-emerald-300 border border-emerald-500/40 font-mono font-bold">
                         VERIFIED ORGANIZER
                       </span>
@@ -868,6 +879,21 @@ export default function RegistrationModal({
                     </div>
                   </div>
                 </div>
+              </div>
+
+              {/* Primary Mobile Direct UPI Pay Banner (Prominent 1-Tap Launcher for Mobile) */}
+              <div className="block sm:hidden">
+                <button
+                  type="button"
+                  onClick={(e) => handleLaunchUpi(e, universalUpiUrl)}
+                  className="w-full py-3.5 px-4 rounded-xl bg-gradient-to-r from-emerald-500 via-teal-500 to-cyan-500 hover:from-emerald-400 hover:to-cyan-400 text-slate-950 font-chakra font-black text-sm flex items-center justify-center gap-2 shadow-[0_0_25px_rgba(16,185,129,0.45)] active:scale-95 transition-all"
+                >
+                  <Smartphone className="w-5 h-5 text-slate-950 shrink-0" />
+                  <span>PAY ₹{passPrice} VIA ANY UPI APP (GPAY/PHONEPE)</span>
+                </button>
+                <span className="block text-[10px] text-center text-emerald-400/90 mt-1.5 font-mono">
+                  ⚡ 1-Tap: Directly opens your installed payment app without page refresh!
+                </span>
               </div>
 
               {/* Central Payment Matrix: QR Code & Mobile Launchers */}
@@ -913,7 +939,7 @@ export default function RegistrationModal({
 
                     {qrMode === 'dynamic' ? (
                       <QRCodeSVG
-                        value={upiIntentUrl}
+                        value={universalUpiUrl}
                         size={170}
                         level="H"
                         includeMargin={false}
@@ -1030,8 +1056,8 @@ export default function RegistrationModal({
                       {/* Any UPI App */}
                       <button
                         type="button"
-                        onClick={(e) => handleLaunchUpi(e, upiIntentUrl)}
-                        className="py-2.5 px-3 rounded-xl bg-gradient-to-r from-emerald-950/60 to-teal-950/60 hover:from-emerald-900/60 hover:to-teal-900/60 border border-emerald-500/40 text-xs font-bold text-emerald-200 flex items-center justify-center gap-2 transition-all shadow-sm"
+                        onClick={(e) => handleLaunchUpi(e, universalUpiUrl)}
+                        className="py-2.5 px-3 rounded-xl bg-gradient-to-r from-emerald-950/60 to-teal-950/60 hover:from-emerald-900/60 hover:to-teal-900/60 border border-emerald-500/40 text-xs font-bold text-emerald-200 flex items-center justify-center gap-2 transition-all shadow-sm active:scale-95"
                       >
                         <Smartphone className="w-4 h-4 text-emerald-400" />
                         <span>Any UPI App</span>
@@ -1307,7 +1333,7 @@ export default function RegistrationModal({
             <div className="p-4 bg-white rounded-2xl mx-auto inline-block shadow-inner">
               {qrMode === 'dynamic' ? (
                 <QRCodeSVG
-                  value={upiIntentUrl}
+                  value={universalUpiUrl}
                   size={240}
                   level="H"
                   includeMargin={false}
