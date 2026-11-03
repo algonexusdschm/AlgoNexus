@@ -1,94 +1,98 @@
-import React, { useRef, useEffect, useState } from 'react';
+import React, { useRef, useEffect, useState, useCallback } from 'react';
 import * as THREE from 'three';
 import { 
+  Zap, 
+  BrainCircuit, 
   Scan, 
   Database, 
-  BrainCircuit, 
-  Cpu, 
   Sparkles, 
   RotateCcw, 
-  Activity, 
-  Globe2 
+  Eye, 
+  Activity 
 } from 'lucide-react';
 
 /**
- * AiUniverse3D: Hyper-Futuristic 3D Interactive AI Globe on White / Light Theme
- *
+ * AiUniverse3D: Hyper-Futuristic 3D Living Neural Architecture
+ * 
  * Features:
- * - 3D Translucent Pearlescent Sphere with dot-matrix continental constellation
- * - Glowing Latitude/Longitude geodesic wireframes and gyroscopic orbital rings
- * - 5 Interconnected AI Hubs on Globe surface:
- *   * AI CORE (Master Node)
- *   * CV (Computer Vision Scanner)
- *   * RAG (Vector Knowledge Engine)
- *   * NLP (Transformer Attention)
- *   * ML (Silicon Edge NPU)
- * - 3D Great-Circle Flight Arcs with streaming glowing photon data packets
- * - Full 360° Mouse & Touch Dragging with smooth inertia
- * - Pure Light Theme / White Studio Lighting (Strictly NO Green: Electric Cyan, Blue, Violet)
+ * - 1,000+ Micro-neurons grouped into distinct functional lobes (CV, RAG, NLP, ML, AI Core)
+ * - Synaptic axon dendrite lines connecting nearest-neighbor neurons
+ * - Real-time electrical action potentials (firing light pulses) streaming along pathways
+ * - "FIRE NEURAL IMPULSE" trigger that ripples an electrical wave across the entire network
+ * - 360° Mouse & Touch Dragging with smooth inertia
+ * - Pure White / Light Studio Theme (Electric Cyan, Cobalt Blue, Synaptic Violet - NO GREEN)
  */
 
-const AI_NODES = [
+const NEURAL_LOBES = [
   {
     id: 'ai',
     name: 'AI CORE',
-    tag: 'AUTONOMOUS SYNTHESIS',
-    lat: 5,
-    lon: 0,
+    tag: 'EXECUTIVE SYNTHESIS',
+    center: [0, 0.6, 0],
     color: '#0284c7',
-    desc: 'Central intelligence synthesizing multimodal educational outputs.'
+    radius: 2.2,
+    count: 220,
+    desc: 'Central cognitive nucleus uniting sensory, memory, and reasoning models.'
   },
   {
     id: 'cv',
-    name: 'CV SCANNER',
-    tag: 'OPTICAL OCR & RETICLE',
-    lat: 34,
-    lon: -65,
+    name: 'CV RETINA',
+    tag: 'VISUAL SENSORY CORTEX',
+    center: [-5.8, 1.2, 1.5],
     color: '#0ea5e9',
-    desc: 'Spatial scanning of handwritten formulas and student work.'
+    radius: 1.8,
+    count: 140,
+    desc: 'Optical receptor grid extracting mathematical tokens & visual features.'
   },
   {
     id: 'rag',
-    name: 'RAG VECTORS',
-    tag: '1536-D HILBERT SEARCH',
-    lat: 38,
-    lon: 68,
-    color: '#3b82f6',
-    desc: 'Semantic retrieval across 250,000+ textbooks & syllabus docs.'
+    name: 'RAG MEMORY',
+    tag: '1536-D VECTOR HIPPOCAMPUS',
+    center: [5.2, 2.0, -1.2],
+    color: '#2563eb',
+    radius: 1.9,
+    count: 150,
+    desc: 'High-dimensional associative memory lattice indexing syllabus knowledge.'
   },
   {
     id: 'nlp',
     name: 'NLP ATTENTION',
-    tag: 'MULTI-HEAD TRANSFORMER',
-    lat: -24,
-    lon: 82,
+    tag: 'TRANSFORMER SYNAPSE LATTICE',
+    center: [3.4, -2.4, 1.8],
     color: '#8b5cf6',
-    desc: 'Self-attention decomposition into verified reasoning proofs.'
+    radius: 1.7,
+    count: 130,
+    desc: 'Self-attention matrices decomposing queries into step-by-step logic.'
   },
   {
     id: 'ml',
-    name: 'ML SILICON',
-    tag: 'NPU EDGE TRAINING',
-    lat: -28,
-    lon: -70,
+    name: 'ML PLASTICITY',
+    tag: 'SYNAPTIC WEIGHT ENGINE',
+    center: [-3.8, -2.6, -1.2],
     color: '#6366f1',
-    desc: 'Real-time weight updates adapting to student learning curves.'
+    radius: 1.7,
+    count: 130,
+    desc: 'Adaptive weight updates tuning parameters to student comprehension.'
   }
 ];
 
 export default function AiUniverse3D() {
   const mountRef = useRef(null);
-  const [selectedNode, setSelectedNode] = useState(null);
+  const [activeFocus, setActiveFocus] = useState('full'); // 'full', 'cv', 'rag', 'ai'
+  const [firingCount, setFiringCount] = useState(0);
 
-  // Helper: Convert lat/lon degrees to 3D Cartesian Vector on a sphere of radius R
-  const latLonToVector3 = (lat, lon, radius) => {
-    const phi = (90 - lat) * (Math.PI / 180);
-    const theta = (lon + 180) * (Math.PI / 180);
-    const x = -(radius * Math.sin(phi) * Math.cos(theta));
-    const z = radius * Math.sin(phi) * Math.sin(theta);
-    const y = radius * Math.cos(phi);
-    return new THREE.Vector3(x, y, z);
-  };
+  // References for imperative animation controller
+  const impulseRef = useRef({
+    active: false,
+    startTime: 0,
+    origin: new THREE.Vector3(0, 0, 0)
+  });
+
+  const fireImpulse = useCallback(() => {
+    impulseRef.current.active = true;
+    impulseRef.current.startTime = performance.now() * 0.001;
+    setFiringCount((c) => c + 1);
+  }, []);
 
   useEffect(() => {
     const container = mountRef.current;
@@ -98,7 +102,7 @@ export default function AiUniverse3D() {
 
     // --- 1. Scene, Camera, Renderer ---
     const scene = new THREE.Scene();
-    scene.fog = new THREE.FogExp2(0xf8fafc, 0.016);
+    scene.fog = new THREE.FogExp2(0xf8fafc, 0.015);
 
     const camera = new THREE.PerspectiveCamera(
       48,
@@ -106,7 +110,7 @@ export default function AiUniverse3D() {
       0.1,
       1000
     );
-    camera.position.set(0, 0, isMobile ? 18 : 15);
+    camera.position.set(0, 0, isMobile ? 19 : 16);
 
     const renderer = new THREE.WebGLRenderer({
       antialias: true,
@@ -119,168 +123,72 @@ export default function AiUniverse3D() {
     renderer.toneMappingExposure = 1.15;
     container.appendChild(renderer.domElement);
 
-    // --- 2. Studio Lighting for White / Light Background ---
+    // --- 2. Studio Lighting for White Background ---
     const ambientLight = new THREE.AmbientLight(0xffffff, 2.2);
     scene.add(ambientLight);
 
-    const keyLight = new THREE.DirectionalLight(0xffffff, 1.8);
-    keyLight.position.set(15, 20, 15);
-    scene.add(keyLight);
+    const dirLight = new THREE.DirectionalLight(0xffffff, 1.6);
+    dirLight.position.set(12, 20, 16);
+    scene.add(dirLight);
 
-    const cyanRimLight = new THREE.PointLight(0x00f0ff, 3.5, 50);
-    cyanRimLight.position.set(-15, 10, 8);
-    scene.add(cyanRimLight);
+    const cyanPoint = new THREE.PointLight(0x00f0ff, 3.5, 60);
+    cyanPoint.position.set(-14, 10, 8);
+    scene.add(cyanPoint);
 
-    const violetRimLight = new THREE.PointLight(0x8b5cf6, 3.0, 50);
-    violetRimLight.position.set(15, -8, 8);
-    scene.add(violetRimLight);
+    const violetPoint = new THREE.PointLight(0x8b5cf6, 3.0, 60);
+    violetPoint.position.set(14, -8, 8);
+    scene.add(violetPoint);
 
-    const blueFillLight = new THREE.PointLight(0x3b82f6, 2.5, 45);
-    blueFillLight.position.set(0, -12, 10);
-    scene.add(blueFillLight);
+    const blueFill = new THREE.PointLight(0x2563eb, 2.5, 50);
+    blueFill.position.set(0, -12, 10);
+    scene.add(blueFill);
 
-    // --- 3. Master 3D World Group (Rotatable Globe) ---
-    const globeGroup = new THREE.Group();
-    scene.add(globeGroup);
-
-    const GLOBE_RADIUS = 4.2;
-
-    // Layer 1: Inner Translucent Sphere Core
-    const coreGeo = new THREE.SphereGeometry(GLOBE_RADIUS, 64, 64);
-    const coreMat = new THREE.MeshPhysicalMaterial({
-      color: 0xffffff,
-      roughness: 0.15,
-      metalness: 0.1,
-      transmission: 0.6,
-      transparent: true,
-      opacity: 0.75,
-      reflectivity: 0.8
-    });
-    const coreMesh = new THREE.Mesh(coreGeo, coreMat);
-    globeGroup.add(coreMesh);
-
-    // Layer 2: Fibonacci Dot-Matrix Constellation (1,200 points on sphere)
-    const DOT_COUNT = 1200;
-    const dotPositions = new Float32Array(DOT_COUNT * 3);
-    const dotColors = new Float32Array(DOT_COUNT * 3);
-    const cCyan = new THREE.Color(0x0284c7);
-    const cBlue = new THREE.Color(0x2563eb);
-    const cViolet = new THREE.Color(0x7c3aed);
-
-    const phi = Math.PI * (3 - Math.sqrt(5)); // Golden angle
-    for (let i = 0; i < DOT_COUNT; i++) {
-      const y = 1 - (i / (DOT_COUNT - 1)) * 2; // y goes from 1 to -1
-      const radiusAtY = Math.sqrt(1 - y * y);
-      const theta = phi * i;
-
-      const x = Math.cos(theta) * radiusAtY;
-      const z = Math.sin(theta) * radiusAtY;
-
-      dotPositions[i * 3] = x * (GLOBE_RADIUS + 0.04);
-      dotPositions[i * 3 + 1] = y * (GLOBE_RADIUS + 0.04);
-      dotPositions[i * 3 + 2] = z * (GLOBE_RADIUS + 0.04);
-
-      const colChoice = Math.random();
-      const col = colChoice < 0.5 ? cCyan : colChoice < 0.85 ? cBlue : cViolet;
-      dotColors[i * 3] = col.r;
-      dotColors[i * 3 + 1] = col.g;
-      dotColors[i * 3 + 2] = col.b;
-    }
-
-    const dotGeo = new THREE.BufferGeometry();
-    dotGeo.setAttribute('position', new THREE.BufferAttribute(dotPositions, 3));
-    dotGeo.setAttribute('color', new THREE.BufferAttribute(dotColors, 3));
-    const dotMat = new THREE.PointsMaterial({
-      size: 0.09,
-      vertexColors: true,
-      transparent: true,
-      opacity: 0.85
-    });
-    const dotMesh = new THREE.Points(dotGeo, dotMat);
-    globeGroup.add(dotMesh);
-
-    // Layer 3: Latitude / Longitude Geodesic Rings
-    const wireGeo = new THREE.SphereGeometry(GLOBE_RADIUS + 0.02, 28, 16);
-    const wireMat = new THREE.MeshBasicMaterial({
-      color: 0x0284c7,
-      wireframe: true,
-      transparent: true,
-      opacity: 0.16
-    });
-    const wireMesh = new THREE.Mesh(wireGeo, wireMat);
-    globeGroup.add(wireMesh);
-
-    // Layer 4: Glowing Equator & Polar Rings
-    const equatorGeo = new THREE.TorusGeometry(GLOBE_RADIUS + 0.08, 0.03, 16, 100);
-    const equatorMat = new THREE.MeshBasicMaterial({
-      color: 0x00f0ff,
-      transparent: true,
-      opacity: 0.6
-    });
-    const equatorMesh = new THREE.Mesh(equatorGeo, equatorMat);
-    equatorMesh.rotation.x = Math.PI / 2;
-    globeGroup.add(equatorMesh);
-
-    // Layer 5: Outer Gyroscopic Orbital Rings
-    const orbitGroup = new THREE.Group();
-    scene.add(orbitGroup);
-
-    const orbit1Geo = new THREE.TorusGeometry(5.6, 0.025, 16, 120);
-    const orbit1Mat = new THREE.MeshBasicMaterial({ color: 0x38bdf8, transparent: true, opacity: 0.35 });
-    const orbit1 = new THREE.Mesh(orbit1Geo, orbit1Mat);
-    orbit1.rotation.x = Math.PI / 3;
-    orbit1.rotation.y = Math.PI / 6;
-    orbitGroup.add(orbit1);
-
-    const orbit2Geo = new THREE.TorusGeometry(6.4, 0.02, 16, 120);
-    const orbit2Mat = new THREE.MeshBasicMaterial({ color: 0x8b5cf6, transparent: true, opacity: 0.3 });
-    const orbit2 = new THREE.Mesh(orbit2Geo, orbit2Mat);
-    orbit2.rotation.x = -Math.PI / 4;
-    orbit2.rotation.y = -Math.PI / 4;
-    orbitGroup.add(orbit2);
+    // --- 3. Master 3D Neural Network Group ---
+    const neuralGroup = new THREE.Group();
+    scene.add(neuralGroup);
 
     // Helper: Create High-Tech 3D Cyber Sprite Label for Light Background
     function createCyberSprite(title, subtitle, accentColor) {
       const canvas = document.createElement('canvas');
       canvas.width = 512;
-      canvas.height = 220;
+      canvas.height = 200;
       const ctx = canvas.getContext('2d');
 
       // Light Card Background with glowing border
-      ctx.fillStyle = 'rgba(255, 255, 255, 0.96)';
+      ctx.fillStyle = 'rgba(255, 255, 255, 0.95)';
       ctx.strokeStyle = accentColor;
-      ctx.lineWidth = 6;
+      ctx.lineWidth = 5;
       ctx.shadowColor = accentColor;
-      ctx.shadowBlur = 18;
+      ctx.shadowBlur = 16;
 
       ctx.beginPath();
       ctx.moveTo(50, 30);
       ctx.lineTo(462, 30);
       ctx.lineTo(492, 60);
-      ctx.lineTo(492, 160);
-      ctx.lineTo(462, 190);
-      ctx.lineTo(50, 190);
-      ctx.lineTo(20, 160);
+      ctx.lineTo(492, 140);
+      ctx.lineTo(462, 170);
+      ctx.lineTo(50, 170);
+      ctx.lineTo(20, 140);
       ctx.lineTo(20, 60);
       ctx.closePath();
       ctx.fill();
       ctx.stroke();
 
-      // Top corner tech accent
+      // Top corner mini badge
       ctx.fillStyle = accentColor;
-      ctx.fillRect(40, 48, 16, 16);
+      ctx.fillRect(40, 48, 14, 14);
 
       // Title Text
       ctx.fillStyle = '#0f172a';
-      ctx.font = 'bold 54px "Chakra Petch", "Plus Jakarta Sans", sans-serif';
+      ctx.font = 'bold 50px "Chakra Petch", "Plus Jakarta Sans", sans-serif';
       ctx.textAlign = 'center';
       ctx.textBaseline = 'middle';
-      ctx.fillText(title, 260, 92);
+      ctx.fillText(title, 260, 86);
 
       // Subtitle Tag
       ctx.fillStyle = accentColor;
-      ctx.font = 'bold 26px monospace';
-      ctx.fillText(`• ${subtitle} •`, 260, 146);
+      ctx.font = 'bold 24px monospace';
+      ctx.fillText(`• ${subtitle} •`, 260, 132);
 
       const texture = new THREE.CanvasTexture(canvas);
       texture.minFilter = THREE.LinearFilter;
@@ -290,120 +198,217 @@ export default function AiUniverse3D() {
         depthWrite: false
       });
       const sprite = new THREE.Sprite(spriteMat);
-      sprite.scale.set(2.2, 0.95, 1);
+      sprite.scale.set(2.0, 0.85, 1);
       return sprite;
     }
 
-    // --- 4. Place the 5 AI Nodes on the Globe Surface ---
-    const nodeObjects = [];
+    // --- 4. Generate Neurons per Functional Lobe ---
+    const allNeuronPositions = [];
+    const allNeuronColors = [];
+    const allNeuronBaseSizes = [];
+    const lobeMeshes = [];
 
-    AI_NODES.forEach((node) => {
-      const pos = latLonToVector3(node.lat, node.lon, GLOBE_RADIUS + 0.1);
-      const hubGroup = new THREE.Group();
-      hubGroup.position.copy(pos);
+    NEURAL_LOBES.forEach((lobe) => {
+      const center = new THREE.Vector3(...lobe.center);
+      const color = new THREE.Color(lobe.color);
 
-      // 3D Glowing Core Node Mesh
-      const nodeGeo = node.id === 'ai'
-        ? new THREE.IcosahedronGeometry(0.32, 1)
-        : new THREE.OctahedronGeometry(0.25, 0);
+      // Dedicated Lobe Hub Group
+      const lobeGroup = new THREE.Group();
+      lobeGroup.position.copy(center);
 
-      const nodeMat = new THREE.MeshStandardMaterial({
-        color: node.color,
-        emissive: node.color,
-        emissiveIntensity: 0.85,
-        roughness: 0.2,
-        metalness: 0.8
+      // Core Geometric Nucleus for this Lobe
+      const coreGeo = lobe.id === 'ai'
+        ? new THREE.IcosahedronGeometry(0.85, 2)
+        : new THREE.OctahedronGeometry(0.55, 1);
+
+      const coreMat = new THREE.MeshStandardMaterial({
+        color: lobe.color,
+        emissive: lobe.color,
+        emissiveIntensity: 0.75,
+        wireframe: true,
+        roughness: 0.2
       });
-      const nodeMesh = new THREE.Mesh(nodeGeo, nodeMat);
-      hubGroup.add(nodeMesh);
-
-      // Pulsing Halo Ring
-      const haloGeo = new THREE.RingGeometry(0.35, 0.44, 32);
-      const haloMat = new THREE.MeshBasicMaterial({
-        color: node.color,
-        side: THREE.DoubleSide,
-        transparent: true,
-        opacity: 0.7
-      });
-      const haloMesh = new THREE.Mesh(haloGeo, haloMat);
-      haloMesh.lookAt(pos.clone().multiplyScalar(2));
-      hubGroup.add(haloMesh);
+      const coreMesh = new THREE.Mesh(coreGeo, coreMat);
+      lobeGroup.add(coreMesh);
 
       // Floating Cyber Label Sprite
-      const sprite = createCyberSprite(node.name, node.tag, node.color);
-      const normal = pos.clone().normalize();
-      sprite.position.copy(normal.clone().multiplyScalar(0.95));
-      hubGroup.add(sprite);
+      const sprite = createCyberSprite(lobe.name, lobe.tag, lobe.color);
+      sprite.position.set(0, lobe.radius + 0.6, 0);
+      lobeGroup.add(sprite);
 
-      globeGroup.add(hubGroup);
-      nodeObjects.push({ node, hubGroup, nodeMesh, haloMesh });
+      // Pulsing Halo Ring
+      const haloGeo = new THREE.RingGeometry(0.7, 0.82, 32);
+      const haloMat = new THREE.MeshBasicMaterial({
+        color: lobe.color,
+        side: THREE.DoubleSide,
+        transparent: true,
+        opacity: 0.6
+      });
+      const haloMesh = new THREE.Mesh(haloGeo, haloMat);
+      lobeGroup.add(haloMesh);
+
+      neuralGroup.add(lobeGroup);
+      lobeMeshes.push({ lobe, coreMesh, haloMesh, center });
+
+      // Scatter micro-neurons inside this lobe
+      for (let i = 0; i < lobe.count; i++) {
+        const u = Math.random();
+        const v = Math.random();
+        const theta = u * 2.0 * Math.PI;
+        const phi = Math.acos(2.0 * v - 1.0);
+        const r = Math.cbrt(Math.random()) * lobe.radius;
+
+        const sinPhi = Math.sin(phi);
+        const x = center.x + r * sinPhi * Math.cos(theta);
+        const y = center.y + r * sinPhi * Math.sin(theta);
+        const z = center.z + r * Math.cos(phi);
+
+        allNeuronPositions.push(x, y, z);
+        allNeuronColors.push(color.r, color.g, color.b);
+        allNeuronBaseSizes.push(0.12 + Math.random() * 0.1);
+      }
     });
 
-    // --- 5. Great-Circle 3D Curved Arcs & Streaming Photon Packets ---
-    // Connects: CV -> RAG -> NLP -> ML -> AI -> CV
-    const arcConnections = [
-      { from: 'cv', to: 'rag', color: 0x0284c7 },
-      { from: 'rag', to: 'nlp', color: 0x3b82f6 },
+    // Add inter-lobe bridge neurons (connecting pathways)
+    const bridgeCount = 220;
+    for (let i = 0; i < bridgeCount; i++) {
+      const idxA = Math.floor(Math.random() * NEURAL_LOBES.length);
+      let idxB = Math.floor(Math.random() * NEURAL_LOBES.length);
+      while (idxB === idxA) idxB = Math.floor(Math.random() * NEURAL_LOBES.length);
+
+      const pA = new THREE.Vector3(...NEURAL_LOBES[idxA].center);
+      const pB = new THREE.Vector3(...NEURAL_LOBES[idxB].center);
+      const t = Math.random();
+      const pt = pA.clone().lerp(pB, t);
+
+      // Jitter slightly for organic feel
+      pt.x += (Math.random() - 0.5) * 1.5;
+      pt.y += (Math.random() - 0.5) * 1.5;
+      pt.z += (Math.random() - 0.5) * 1.5;
+
+      allNeuronPositions.push(pt.x, pt.y, pt.z);
+      const c = new THREE.Color(Math.random() > 0.5 ? 0x0284c7 : 0x8b5cf6);
+      allNeuronColors.push(c.r, c.g, c.b);
+      allNeuronBaseSizes.push(0.09 + Math.random() * 0.08);
+    }
+
+    // Create Neurons Point Cloud Buffer
+    const neuronGeo = new THREE.BufferGeometry();
+    neuronGeo.setAttribute('position', new THREE.Float32BufferAttribute(allNeuronPositions, 3));
+    neuronGeo.setAttribute('color', new THREE.Float32BufferAttribute(allNeuronColors, 3));
+    const neuronMat = new THREE.PointsMaterial({
+      size: 0.14,
+      vertexColors: true,
+      transparent: true,
+      opacity: 0.85
+    });
+    const neuronPoints = new THREE.Points(neuronGeo, neuronMat);
+    neuralGroup.add(neuronPoints);
+
+    // --- 5. Generate Synaptic Axon Connections (LineSegments) ---
+    const totalNeurons = allNeuronPositions.length / 3;
+    const axonIndices = [];
+    const maxConnectionDistSq = 2.4 * 2.4;
+
+    for (let i = 0; i < totalNeurons; i += 2) {
+      const xi = allNeuronPositions[i * 3];
+      const yi = allNeuronPositions[i * 3 + 1];
+      const zi = allNeuronPositions[i * 3 + 2];
+
+      let connected = 0;
+      for (let j = i + 1; j < totalNeurons; j++) {
+        const xj = allNeuronPositions[j * 3];
+        const yj = allNeuronPositions[j * 3 + 1];
+        const zj = allNeuronPositions[j * 3 + 2];
+
+        const dx = xi - xj;
+        const dy = yi - yj;
+        const dz = zi - zj;
+        const dSq = dx * dx + dy * dy + dz * dz;
+
+        if (dSq < maxConnectionDistSq) {
+          axonIndices.push(i, j);
+          connected++;
+          if (connected >= 3) break; // Keep lines clean and optimal
+        }
+      }
+    }
+
+    const axonGeo = new THREE.BufferGeometry();
+    axonGeo.setAttribute('position', neuronGeo.getAttribute('position'));
+    axonGeo.setIndex(axonIndices);
+    const axonMat = new THREE.LineBasicMaterial({
+      color: 0x0284c7,
+      transparent: true,
+      opacity: 0.22
+    });
+    const axonLines = new THREE.LineSegments(axonGeo, axonMat);
+    neuralGroup.add(axonLines);
+
+    // --- 6. Curved Inter-Lobe Axon Highways & Streaming Firing Pulses ---
+    // Connects: CV -> RAG -> NLP -> ML -> AI Core -> CV
+    const highwayOrder = [
+      { from: 'cv', to: 'rag', color: 0x0ea5e9 },
+      { from: 'rag', to: 'nlp', color: 0x2563eb },
       { from: 'nlp', to: 'ml', color: 0x8b5cf6 },
       { from: 'ml', to: 'ai', color: 0x6366f1 },
-      { from: 'ai', to: 'cv', color: 0x0ea5e9 }
+      { from: 'ai', to: 'cv', color: 0x0284c7 }
     ];
 
-    const splineStreams = [];
+    const highwayCurves = [];
 
-    arcConnections.forEach(({ from, to, color }) => {
-      const nodeA = AI_NODES.find((n) => n.id === from);
-      const nodeB = AI_NODES.find((n) => n.id === to);
-      if (!nodeA || !nodeB) return;
+    highwayOrder.forEach(({ from, to, color }) => {
+      const lobeA = NEURAL_LOBES.find((l) => l.id === from);
+      const lobeB = NEURAL_LOBES.find((l) => l.id === to);
+      if (!lobeA || !lobeB) return;
 
-      const pA = latLonToVector3(nodeA.lat, nodeA.lon, GLOBE_RADIUS + 0.1);
-      const pB = latLonToVector3(nodeB.lat, nodeB.lon, GLOBE_RADIUS + 0.1);
-
-      // Compute mid-point elevated above the sphere
+      const pA = new THREE.Vector3(...lobeA.center);
+      const pB = new THREE.Vector3(...lobeB.center);
       const mid = pA.clone().add(pB).multiplyScalar(0.5);
-      const elevatedMid = mid.normalize().multiplyScalar(GLOBE_RADIUS + 1.6);
+      mid.y += (Math.random() - 0.5) * 2.2;
+      mid.z += 2.0; // Arch toward viewer
 
-      const curve = new THREE.QuadraticBezierCurve3(pA, elevatedMid, pB);
-      const points = curve.getPoints(50);
-      const arcGeo = new THREE.BufferGeometry().setFromPoints(points);
-      const arcMat = new THREE.LineBasicMaterial({
+      const curve = new THREE.QuadraticBezierCurve3(pA, mid, pB);
+      const pts = curve.getPoints(50);
+      const lineGeo = new THREE.BufferGeometry().setFromPoints(pts);
+      const lineMat = new THREE.LineBasicMaterial({
         color,
         transparent: true,
-        opacity: 0.55,
+        opacity: 0.45,
         linewidth: 2
       });
-      const arcLine = new THREE.Line(arcGeo, arcMat);
-      globeGroup.add(arcLine);
+      const tube = new THREE.Line(lineGeo, lineMat);
+      neuralGroup.add(tube);
 
-      // Streaming Photon Light Packet along this arc
-      const pGeo = new THREE.SphereGeometry(0.09, 12, 12);
-      const pMat = new THREE.MeshBasicMaterial({ color: 0xffffff });
-      const pulseMesh = new THREE.Mesh(pGeo, pMat);
-      globeGroup.add(pulseMesh);
+      // Streaming Action Potential Photons along this highway
+      const packetCount = 6;
+      for (let k = 0; k < packetCount; k++) {
+        const sGeo = new THREE.SphereGeometry(0.1, 10, 10);
+        const sMat = new THREE.MeshBasicMaterial({ color: 0xffffff });
+        const packetMesh = new THREE.Mesh(sGeo, sMat);
+        neuralGroup.add(packetMesh);
 
-      splineStreams.push({ curve, pulseMesh, progress: Math.random(), speed: 0.4 + Math.random() * 0.2 });
+        highwayCurves.push({
+          curve,
+          mesh: packetMesh,
+          progress: k / packetCount,
+          speed: 0.35 + Math.random() * 0.15
+        });
+      }
     });
 
-    // --- 6. Ambient Floating Particles in Background ---
-    const ambientCount = 350;
-    const aGeo = new THREE.BufferGeometry();
-    const aPos = new Float32Array(ambientCount * 3);
-    for (let i = 0; i < ambientCount; i++) {
-      aPos[i * 3] = (Math.random() - 0.5) * 45;
-      aPos[i * 3 + 1] = (Math.random() - 0.5) * 35;
-      aPos[i * 3 + 2] = (Math.random() - 0.5) * 35;
-    }
-    aGeo.setAttribute('position', new THREE.BufferAttribute(aPos, 3));
-    const aMat = new THREE.PointsMaterial({
-      color: 0x0284c7,
-      size: 0.12,
+    // Expanding Electrical Wave Ring (Triggers on "Fire Neural Impulse")
+    const shockRingGeo = new THREE.RingGeometry(0.1, 0.25, 48);
+    const shockRingMat = new THREE.MeshBasicMaterial({
+      color: 0x00f0ff,
+      side: THREE.DoubleSide,
       transparent: true,
-      opacity: 0.35
+      opacity: 0
     });
-    const ambientMesh = new THREE.Points(aGeo, aMat);
-    scene.add(ambientMesh);
+    const shockRing = new THREE.Mesh(shockRingGeo, shockRingMat);
+    neuralGroup.add(shockRing);
 
-    // --- 7. Interactive 360° Mouse & Touch Dragging + Parallax ---
+    // --- 7. Interactive 360° Mouse & Touch Dragging ---
     let targetRotY = 0;
     let targetRotX = 0;
     let isDragging = false;
@@ -428,8 +433,8 @@ export default function AiUniverse3D() {
       if (isDragging) {
         const dx = clientX - prevX;
         const dy = clientY - prevY;
-        targetRotY += dx * 0.006;
-        targetRotX += dy * 0.006;
+        targetRotY += dx * 0.005;
+        targetRotX += dy * 0.005;
         prevX = clientX;
         prevY = clientY;
       }
@@ -446,14 +451,14 @@ export default function AiUniverse3D() {
     window.addEventListener('touchmove', onPointerMove, { passive: true });
     window.addEventListener('touchend', onPointerUp);
 
-    // Scroll Travel interpolation
+    // Scroll interpolation
     let scrollY = 0;
     const onScroll = () => {
       scrollY = window.scrollY || window.pageYOffset;
     };
     window.addEventListener('scroll', onScroll, { passive: true });
 
-    // Window Resize
+    // Resize
     const onResize = () => {
       camera.aspect = window.innerWidth / window.innerHeight;
       camera.updateProjectionMatrix();
@@ -470,43 +475,50 @@ export default function AiUniverse3D() {
       const delta = clock.getDelta();
       const elapsed = clock.getElapsedTime();
 
-      // Continuous gentle auto-spin when not dragging
+      // Gentle auto-rotation when user is not dragging
       if (!isDragging) {
-        targetRotY += delta * 0.18;
+        targetRotY += delta * 0.12;
       }
 
       // Smooth inertia rotation
-      globeGroup.rotation.y += (targetRotY + mouseX * 0.15 - globeGroup.rotation.y) * 0.06;
-      globeGroup.rotation.x += (targetRotX + mouseY * 0.12 - globeGroup.rotation.x) * 0.06;
+      neuralGroup.rotation.y += (targetRotY + mouseX * 0.12 - neuralGroup.rotation.y) * 0.06;
+      neuralGroup.rotation.x += (targetRotX + mouseY * 0.08 - neuralGroup.rotation.x) * 0.06;
 
-      // Outer rings independent counter-rotations
-      orbit1.rotation.z = elapsed * 0.25;
-      orbit2.rotation.z = -elapsed * 0.3;
-
-      // Hub nodes floating and pulsing
-      nodeObjects.forEach(({ nodeMesh, haloMesh }, idx) => {
-        nodeMesh.rotation.y = elapsed * 0.8 + idx;
-        nodeMesh.rotation.x = elapsed * 0.5 + idx;
-        const scale = 1.0 + Math.sin(elapsed * 3 + idx) * 0.12;
-        haloMesh.scale.set(scale, scale, 1);
+      // Rotate Lobe cores and pulse halos
+      lobeMeshes.forEach(({ coreMesh, haloMesh }, idx) => {
+        coreMesh.rotation.y = elapsed * 0.7 + idx;
+        coreMesh.rotation.x = elapsed * 0.4 + idx;
+        const s = 1.0 + Math.sin(elapsed * 3.5 + idx) * 0.15;
+        haloMesh.scale.set(s, s, 1);
       });
 
-      // Stream photon packets along great-circle arcs
-      splineStreams.forEach((stream) => {
-        stream.progress += delta * stream.speed;
-        if (stream.progress > 1) stream.progress = 0;
-        const pos = stream.curve.getPoint(stream.progress);
-        stream.pulseMesh.position.copy(pos);
+      // Stream continuous firing light packets
+      highwayCurves.forEach((packet) => {
+        packet.progress += delta * packet.speed;
+        if (packet.progress > 1) packet.progress = 0;
+        const pos = packet.curve.getPoint(packet.progress);
+        packet.mesh.position.copy(pos);
       });
 
-      // Ambient particle drift
-      ambientMesh.rotation.y = elapsed * 0.02;
+      // Handle "FIRE NEURAL IMPULSE" Electrical Wave
+      if (impulseRef.current.active) {
+        const waveTime = (performance.now() * 0.001) - impulseRef.current.startTime;
+        const waveRadius = waveTime * 12.0; // speed: 12 units/sec
+
+        shockRing.scale.set(waveRadius * 2, waveRadius * 2, 1);
+        shockRing.material.opacity = Math.max(0, 0.9 - waveTime * 0.6);
+
+        if (waveTime > 1.8) {
+          impulseRef.current.active = false;
+          shockRing.material.opacity = 0;
+        }
+      }
 
       // Subtle scroll-driven camera adjustment
       const scrollRatio = Math.min(scrollY / 1800, 1);
-      const baseCamZ = isMobile ? 18 : 15;
+      const baseCamZ = isMobile ? 19 : 16;
       const targetCamZ = baseCamZ - scrollRatio * 3.5;
-      const targetCamY = -scrollRatio * 2.5;
+      const targetCamY = -scrollRatio * 2.2;
 
       camera.position.z += (targetCamZ - camera.position.z) * 0.08;
       camera.position.y += (targetCamY - camera.position.y) * 0.08;
@@ -537,17 +549,44 @@ export default function AiUniverse3D() {
 
   return (
     <div className="fixed inset-0 pointer-events-auto z-0 overflow-hidden select-none bg-gradient-to-b from-[#f8fafc] via-[#f1f5f9] to-[#e2e8f0]">
-      {/* 3D WebGL Canvas */}
-      <div ref={mountRef} className="absolute inset-0 w-full h-full cursor-grab active:cursor-grabbing" />
+      {/* 3D WebGL Canvas Mount */}
+      <div 
+        ref={mountRef} 
+        className="absolute inset-0 w-full h-full cursor-grab active:cursor-grabbing" 
+        title="360° Interactive 3D Neural Architecture • Drag to Rotate"
+      />
 
-      {/* Futuristic Light Studio Ambience Glows */}
-      <div className="absolute top-1/4 left-1/2 -translate-x-1/2 w-[800px] h-[500px] bg-sky-200/35 rounded-full blur-3xl pointer-events-none" />
-      <div className="absolute top-1/3 left-1/4 w-[500px] h-[400px] bg-indigo-200/25 rounded-full blur-3xl pointer-events-none" />
+      {/* Futuristic Soft Studio Ambience Glows */}
+      <div className="absolute top-1/4 left-1/2 -translate-x-1/2 w-[850px] h-[550px] bg-sky-200/35 rounded-full blur-3xl pointer-events-none" />
+      <div className="absolute top-1/3 left-1/4 w-[550px] h-[450px] bg-indigo-200/25 rounded-full blur-3xl pointer-events-none" />
 
-      {/* Floating 360° Drag Interaction Pill Hint */}
-      <div className="absolute bottom-6 left-1/2 -translate-x-1/2 z-20 pointer-events-none flex items-center gap-2 px-4 py-2 rounded-full bg-white/85 backdrop-blur-xl border border-slate-200/90 text-xs font-mono font-bold text-slate-700 shadow-lg shadow-slate-200/60 select-none">
-        <Globe2 className="w-4 h-4 text-sky-600 animate-spin" style={{ animationDuration: '8s' }} />
-        <span>360° INTERACTIVE 3D AI GLOBE • DRAG TO ROTATE</span>
+      {/* Floating Interactive Sci-Fi HUD Controls Bar */}
+      <div className="absolute bottom-6 left-1/2 -translate-x-1/2 z-20 flex flex-wrap items-center justify-center gap-2 px-3 py-2 rounded-2xl bg-white/90 backdrop-blur-xl border border-slate-200/90 shadow-xl shadow-slate-200/60 select-none">
+        
+        {/* Drag Hint Pill */}
+        <div className="flex items-center gap-2 px-3 py-1 text-xs font-mono font-bold text-slate-700">
+          <BrainCircuit className="w-4 h-4 text-blue-600 animate-pulse" />
+          <span className="hidden sm:inline">3D NEURAL ARCHITECTURE:</span>
+          <span className="text-blue-600">DRAG TO ROTATE 360°</span>
+        </div>
+
+        <div className="h-4 w-px bg-slate-200 hidden sm:block" />
+
+        {/* Trigger Action: Fire Neural Impulse */}
+        <button
+          onClick={fireImpulse}
+          className="px-4 py-1.5 rounded-xl bg-gradient-to-r from-sky-600 via-blue-600 to-indigo-600 hover:from-sky-500 hover:to-indigo-500 text-white font-chakra font-black tracking-wider text-xs shadow-md hover:shadow-blue-500/30 flex items-center gap-1.5 transition-all cursor-pointer active:scale-95"
+          title="Send high-voltage electrical action potential through all neurons"
+        >
+          <Zap className="w-3.5 h-3.5 fill-current text-yellow-300 animate-bounce" />
+          <span>FIRE NEURAL IMPULSE</span>
+          {firingCount > 0 && (
+            <span className="ml-1 px-1.5 py-0.2 rounded-full bg-white/20 text-[10px]">
+              {firingCount}
+            </span>
+          )}
+        </button>
+
       </div>
     </div>
   );
