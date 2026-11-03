@@ -55,28 +55,8 @@ export default function Hero({ onOpenRegister }) {
             </div>
           </div>
 
-          {/* Connected 3D Node Pills (No Green!) */}
-          <div className="flex flex-wrap items-center justify-center gap-2 pt-2">
-            {[
-              { label: 'AI CORE', color: 'bg-sky-50 text-sky-700 border-sky-300' },
-              { label: 'CV SCANNER', color: 'bg-blue-50 text-blue-700 border-blue-300' },
-              { label: 'RAG VECTORS', color: 'bg-indigo-50 text-indigo-700 border-indigo-300' },
-              { label: 'NLP ATTENTION', color: 'bg-purple-50 text-purple-700 border-purple-300' },
-              { label: 'ML SILICON', color: 'bg-cyan-50 text-cyan-700 border-cyan-300' }
-            ].map((node, i) => (
-              <span
-                key={node.label}
-                className={`px-3 py-1 rounded-full text-[11px] font-mono font-bold border shadow-sm flex items-center gap-1.5 ${node.color}`}
-              >
-                <span className="w-1.5 h-1.5 rounded-full bg-current animate-pulse" />
-                <span>{node.label}</span>
-                {i < 4 && <span className="text-slate-300 hidden sm:inline ml-1 font-normal">─</span>}
-              </span>
-            ))}
-          </div>
-
           {/* Main Title Banner */}
-          <div className="space-y-2 select-none">
+          <div className="space-y-2 select-none pt-2">
             <h1 className="font-chakra text-4xl sm:text-6xl md:text-7xl font-black tracking-tight text-slate-900 uppercase">
               TECH<span className="text-transparent bg-clip-text bg-gradient-to-r from-sky-600 via-blue-600 to-indigo-600">ASTRA</span> 2026
             </h1>

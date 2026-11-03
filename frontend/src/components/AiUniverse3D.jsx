@@ -1,15 +1,5 @@
-import React, { useRef, useEffect, useState, useCallback } from 'react';
+import React, { useRef, useEffect } from 'react';
 import * as THREE from 'three';
-import { 
-  Zap, 
-  BrainCircuit, 
-  Scan, 
-  Database, 
-  Sparkles, 
-  RotateCcw, 
-  Eye, 
-  Activity 
-} from 'lucide-react';
 
 /**
  * AiUniverse3D: Hyper-Futuristic 3D Living Neural Architecture
@@ -18,7 +8,7 @@ import {
  * - 1,000+ Micro-neurons grouped into distinct functional lobes (CV, RAG, NLP, ML, AI Core)
  * - Synaptic axon dendrite lines connecting nearest-neighbor neurons
  * - Real-time electrical action potentials (firing light pulses) streaming along pathways
- * - "FIRE NEURAL IMPULSE" trigger that ripples an electrical wave across the entire network
+ * - Clean 3D background with zero intrusive floating text boxes or buttons
  * - 360° Mouse & Touch Dragging with smooth inertia
  * - Pure White / Light Studio Theme (Electric Cyan, Cobalt Blue, Synaptic Violet - NO GREEN)
  */
@@ -27,72 +17,47 @@ const NEURAL_LOBES = [
   {
     id: 'ai',
     name: 'AI CORE',
-    tag: 'EXECUTIVE SYNTHESIS',
     center: [0, 0.6, 0],
     color: '#0284c7',
     radius: 2.2,
-    count: 220,
-    desc: 'Central cognitive nucleus uniting sensory, memory, and reasoning models.'
+    count: 220
   },
   {
     id: 'cv',
     name: 'CV RETINA',
-    tag: 'VISUAL SENSORY CORTEX',
     center: [-5.8, 1.2, 1.5],
     color: '#0ea5e9',
     radius: 1.8,
-    count: 140,
-    desc: 'Optical receptor grid extracting mathematical tokens & visual features.'
+    count: 140
   },
   {
     id: 'rag',
     name: 'RAG MEMORY',
-    tag: '1536-D VECTOR HIPPOCAMPUS',
     center: [5.2, 2.0, -1.2],
     color: '#2563eb',
     radius: 1.9,
-    count: 150,
-    desc: 'High-dimensional associative memory lattice indexing syllabus knowledge.'
+    count: 150
   },
   {
     id: 'nlp',
     name: 'NLP ATTENTION',
-    tag: 'TRANSFORMER SYNAPSE LATTICE',
     center: [3.4, -2.4, 1.8],
     color: '#8b5cf6',
     radius: 1.7,
-    count: 130,
-    desc: 'Self-attention matrices decomposing queries into step-by-step logic.'
+    count: 130
   },
   {
     id: 'ml',
     name: 'ML PLASTICITY',
-    tag: 'SYNAPTIC WEIGHT ENGINE',
     center: [-3.8, -2.6, -1.2],
     color: '#6366f1',
     radius: 1.7,
-    count: 130,
-    desc: 'Adaptive weight updates tuning parameters to student comprehension.'
+    count: 130
   }
 ];
 
 export default function AiUniverse3D() {
   const mountRef = useRef(null);
-  const [activeFocus, setActiveFocus] = useState('full'); // 'full', 'cv', 'rag', 'ai'
-  const [firingCount, setFiringCount] = useState(0);
-
-  // References for imperative animation controller
-  const impulseRef = useRef({
-    active: false,
-    startTime: 0,
-    origin: new THREE.Vector3(0, 0, 0)
-  });
-
-  const fireImpulse = useCallback(() => {
-    impulseRef.current.active = true;
-    impulseRef.current.startTime = performance.now() * 0.001;
-    setFiringCount((c) => c + 1);
-  }, []);
 
   useEffect(() => {
     const container = mountRef.current;
@@ -147,65 +112,9 @@ export default function AiUniverse3D() {
     const neuralGroup = new THREE.Group();
     scene.add(neuralGroup);
 
-    // Helper: Create High-Tech 3D Cyber Sprite Label for Light Background
-    function createCyberSprite(title, subtitle, accentColor) {
-      const canvas = document.createElement('canvas');
-      canvas.width = 512;
-      canvas.height = 200;
-      const ctx = canvas.getContext('2d');
-
-      // Light Card Background with glowing border
-      ctx.fillStyle = 'rgba(255, 255, 255, 0.95)';
-      ctx.strokeStyle = accentColor;
-      ctx.lineWidth = 5;
-      ctx.shadowColor = accentColor;
-      ctx.shadowBlur = 16;
-
-      ctx.beginPath();
-      ctx.moveTo(50, 30);
-      ctx.lineTo(462, 30);
-      ctx.lineTo(492, 60);
-      ctx.lineTo(492, 140);
-      ctx.lineTo(462, 170);
-      ctx.lineTo(50, 170);
-      ctx.lineTo(20, 140);
-      ctx.lineTo(20, 60);
-      ctx.closePath();
-      ctx.fill();
-      ctx.stroke();
-
-      // Top corner mini badge
-      ctx.fillStyle = accentColor;
-      ctx.fillRect(40, 48, 14, 14);
-
-      // Title Text
-      ctx.fillStyle = '#0f172a';
-      ctx.font = 'bold 50px "Chakra Petch", "Plus Jakarta Sans", sans-serif';
-      ctx.textAlign = 'center';
-      ctx.textBaseline = 'middle';
-      ctx.fillText(title, 260, 86);
-
-      // Subtitle Tag
-      ctx.fillStyle = accentColor;
-      ctx.font = 'bold 24px monospace';
-      ctx.fillText(`• ${subtitle} •`, 260, 132);
-
-      const texture = new THREE.CanvasTexture(canvas);
-      texture.minFilter = THREE.LinearFilter;
-      const spriteMat = new THREE.SpriteMaterial({
-        map: texture,
-        transparent: true,
-        depthWrite: false
-      });
-      const sprite = new THREE.Sprite(spriteMat);
-      sprite.scale.set(2.0, 0.85, 1);
-      return sprite;
-    }
-
     // --- 4. Generate Neurons per Functional Lobe ---
     const allNeuronPositions = [];
     const allNeuronColors = [];
-    const allNeuronBaseSizes = [];
     const lobeMeshes = [];
 
     NEURAL_LOBES.forEach((lobe) => {
@@ -230,11 +139,6 @@ export default function AiUniverse3D() {
       });
       const coreMesh = new THREE.Mesh(coreGeo, coreMat);
       lobeGroup.add(coreMesh);
-
-      // Floating Cyber Label Sprite
-      const sprite = createCyberSprite(lobe.name, lobe.tag, lobe.color);
-      sprite.position.set(0, lobe.radius + 0.6, 0);
-      lobeGroup.add(sprite);
 
       // Pulsing Halo Ring
       const haloGeo = new THREE.RingGeometry(0.7, 0.82, 32);
@@ -265,7 +169,6 @@ export default function AiUniverse3D() {
 
         allNeuronPositions.push(x, y, z);
         allNeuronColors.push(color.r, color.g, color.b);
-        allNeuronBaseSizes.push(0.12 + Math.random() * 0.1);
       }
     });
 
@@ -289,7 +192,6 @@ export default function AiUniverse3D() {
       allNeuronPositions.push(pt.x, pt.y, pt.z);
       const c = new THREE.Color(Math.random() > 0.5 ? 0x0284c7 : 0x8b5cf6);
       allNeuronColors.push(c.r, c.g, c.b);
-      allNeuronBaseSizes.push(0.09 + Math.random() * 0.08);
     }
 
     // Create Neurons Point Cloud Buffer
@@ -397,17 +299,6 @@ export default function AiUniverse3D() {
       }
     });
 
-    // Expanding Electrical Wave Ring (Triggers on "Fire Neural Impulse")
-    const shockRingGeo = new THREE.RingGeometry(0.1, 0.25, 48);
-    const shockRingMat = new THREE.MeshBasicMaterial({
-      color: 0x00f0ff,
-      side: THREE.DoubleSide,
-      transparent: true,
-      opacity: 0
-    });
-    const shockRing = new THREE.Mesh(shockRingGeo, shockRingMat);
-    neuralGroup.add(shockRing);
-
     // --- 7. Interactive 360° Mouse & Touch Dragging ---
     let targetRotY = 0;
     let targetRotX = 0;
@@ -500,20 +391,6 @@ export default function AiUniverse3D() {
         packet.mesh.position.copy(pos);
       });
 
-      // Handle "FIRE NEURAL IMPULSE" Electrical Wave
-      if (impulseRef.current.active) {
-        const waveTime = (performance.now() * 0.001) - impulseRef.current.startTime;
-        const waveRadius = waveTime * 12.0; // speed: 12 units/sec
-
-        shockRing.scale.set(waveRadius * 2, waveRadius * 2, 1);
-        shockRing.material.opacity = Math.max(0, 0.9 - waveTime * 0.6);
-
-        if (waveTime > 1.8) {
-          impulseRef.current.active = false;
-          shockRing.material.opacity = 0;
-        }
-      }
-
       // Subtle scroll-driven camera adjustment
       const scrollRatio = Math.min(scrollY / 1800, 1);
       const baseCamZ = isMobile ? 19 : 16;
@@ -553,41 +430,11 @@ export default function AiUniverse3D() {
       <div 
         ref={mountRef} 
         className="absolute inset-0 w-full h-full cursor-grab active:cursor-grabbing" 
-        title="360° Interactive 3D Neural Architecture • Drag to Rotate"
       />
 
       {/* Futuristic Soft Studio Ambience Glows */}
       <div className="absolute top-1/4 left-1/2 -translate-x-1/2 w-[850px] h-[550px] bg-sky-200/35 rounded-full blur-3xl pointer-events-none" />
       <div className="absolute top-1/3 left-1/4 w-[550px] h-[450px] bg-indigo-200/25 rounded-full blur-3xl pointer-events-none" />
-
-      {/* Floating Interactive Sci-Fi HUD Controls Bar */}
-      <div className="absolute bottom-6 left-1/2 -translate-x-1/2 z-20 flex flex-wrap items-center justify-center gap-2 px-3 py-2 rounded-2xl bg-white/90 backdrop-blur-xl border border-slate-200/90 shadow-xl shadow-slate-200/60 select-none">
-        
-        {/* Drag Hint Pill */}
-        <div className="flex items-center gap-2 px-3 py-1 text-xs font-mono font-bold text-slate-700">
-          <BrainCircuit className="w-4 h-4 text-blue-600 animate-pulse" />
-          <span className="hidden sm:inline">3D NEURAL ARCHITECTURE:</span>
-          <span className="text-blue-600">DRAG TO ROTATE 360°</span>
-        </div>
-
-        <div className="h-4 w-px bg-slate-200 hidden sm:block" />
-
-        {/* Trigger Action: Fire Neural Impulse */}
-        <button
-          onClick={fireImpulse}
-          className="px-4 py-1.5 rounded-xl bg-gradient-to-r from-sky-600 via-blue-600 to-indigo-600 hover:from-sky-500 hover:to-indigo-500 text-white font-chakra font-black tracking-wider text-xs shadow-md hover:shadow-blue-500/30 flex items-center gap-1.5 transition-all cursor-pointer active:scale-95"
-          title="Send high-voltage electrical action potential through all neurons"
-        >
-          <Zap className="w-3.5 h-3.5 fill-current text-yellow-300 animate-bounce" />
-          <span>FIRE NEURAL IMPULSE</span>
-          {firingCount > 0 && (
-            <span className="ml-1 px-1.5 py-0.2 rounded-full bg-white/20 text-[10px]">
-              {firingCount}
-            </span>
-          )}
-        </button>
-
-      </div>
     </div>
   );
 }
