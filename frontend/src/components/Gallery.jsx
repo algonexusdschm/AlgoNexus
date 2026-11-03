@@ -1,19 +1,25 @@
 import React, { useState, useEffect } from 'react';
-import { Camera, ZoomIn, X, ChevronLeft, ChevronRight, Download, Share2, Tag, Calendar, Box } from 'lucide-react';
+import { Camera, ZoomIn, X, ChevronLeft, ChevronRight, Sparkles } from 'lucide-react';
 import { PAST_YEAR_GALLERY } from '../data/eventData';
 
 export default function Gallery() {
   const [selectedCategory, setSelectedCategory] = useState('All');
   const [activePhotoIndex, setActivePhotoIndex] = useState(null);
 
-  const categories = ['All', 'Hackathons', 'Stage & Keynotes', 'Competitions', 'Prize Ceremony', 'Campus Vibes'];
+  const categories = ['All', 'Organizers & Council', 'Core Leads', 'Faculty & Mentors', 'Celebrations & Faculty', 'Stage & Ceremonies', 'Celebrations'];
 
   const filteredPhotos = selectedCategory === 'All'
     ? PAST_YEAR_GALLERY
     : PAST_YEAR_GALLERY.filter(item => item.category === selectedCategory);
 
-  // Keyboard navigation for Lightbox
+  // Lock body scroll and handle keyboard navigation when modal is open
   useEffect(() => {
+    if (activePhotoIndex !== null) {
+      document.body.style.overflow = 'hidden';
+    } else {
+      document.body.style.overflow = 'auto';
+    }
+
     const handleKeyDown = (e) => {
       if (activePhotoIndex === null) return;
       if (e.key === 'Escape') setActivePhotoIndex(null);
@@ -25,41 +31,43 @@ export default function Gallery() {
       }
     };
     window.addEventListener('keydown', handleKeyDown);
-    return () => window.removeEventListener('keydown', handleKeyDown);
+    return () => {
+      window.removeEventListener('keydown', handleKeyDown);
+      document.body.style.overflow = 'auto';
+    };
   }, [activePhotoIndex, filteredPhotos.length]);
 
   const activePhoto = activePhotoIndex !== null ? filteredPhotos[activePhotoIndex] : null;
 
   return (
-    <section id="gallery" className="py-24 relative bg-[#0b0e14]/75 backdrop-blur-sm border-b-4 border-mc-border">
+    <section id="gallery" className="py-24 relative bg-transparent border-t border-slate-200/80">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         
         {/* Section Header */}
         <div className="flex flex-col md:flex-row md:items-end justify-between mb-12 gap-6">
-          <div>
-            <div className="inline-flex items-center gap-2 px-3 py-1 bg-mc-deepslate border border-mc-diamond/40 text-mc-diamond text-xs font-mc mb-3">
-              <Camera className="w-3.5 h-3.5 text-mc-diamond" />
-              <span>[LAST EVENT MEMORIES]</span>
+          <div className="space-y-3">
+            <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-blue-50 border border-blue-200 text-blue-700 text-xs font-mono font-bold shadow-sm">
+              <Camera className="w-3.5 h-3.5 text-blue-600" />
+              <span>EVENT MEMORIES & HIGHLIGHTS</span>
             </div>
-            <h2 className="text-4xl sm:text-5xl md:text-6xl flex flex-col items-start mb-6">
-              <span className="avengers-chrome block pb-1">PHOTO GALLERY OF</span>
-              <span className="doomsday-neon block text-xl sm:text-2xl md:text-3xl mt-1">LAST EVENT MEMORIES</span>
+            <h2 className="text-3xl sm:text-5xl font-chakra font-black tracking-tight text-slate-900 uppercase">
+              GALLERY OF PAST EDITIONS
             </h2>
-            <p className="text-slate-400 text-xs sm:text-sm mt-2 max-w-xl font-light">
-              Relive the high-voltage coding battles, late-night hackathon sprints, and victory celebrations from our last event memories.
+            <p className="text-slate-600 text-xs sm:text-sm max-w-xl font-mono">
+              Relive the high-voltage coding battles, late-night hackathon sprints, faculty mentorship, and victory celebrations.
             </p>
           </div>
 
-          {/* Filter Chips with Doomsday Cyber Button Styling */}
+          {/* Filter Chips */}
           <div className="flex flex-wrap gap-2">
-            {categories.map((cat) => (
+            {categories.slice(0, 5).map((cat) => (
               <button
                 key={cat}
                 onClick={() => setSelectedCategory(cat)}
-                className={`px-4 py-2 text-xs font-chakra font-bold uppercase tracking-wider rounded-lg transition-all ${
+                className={`px-4 py-2 text-xs font-mono font-bold rounded-xl transition-all ${
                   selectedCategory === cat
-                    ? 'bg-emerald-500 text-slate-950 shadow-[0_0_15px_rgba(16,185,129,0.5)] border border-emerald-400'
-                    : 'bg-slate-900/80 text-slate-300 hover:text-white border border-slate-700/80 hover:border-slate-500'
+                    ? 'bg-blue-600 text-white shadow-md shadow-blue-500/25'
+                    : 'bg-white/80 hover:bg-white text-slate-700 border border-slate-200 shadow-sm'
                 }`}
               >
                 {cat}
@@ -68,54 +76,54 @@ export default function Gallery() {
           </div>
         </div>
 
-        {/* Photos Grid with Doomsday Cyber Frames */}
+        {/* Photos Grid */}
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
           {filteredPhotos.map((photo, index) => (
             <div
               key={photo.id}
               onClick={() => setActivePhotoIndex(index)}
-              className="group relative rounded-xl overflow-hidden cursor-pointer bg-slate-900/80 border border-slate-800 hover:border-emerald-500/50 hover:shadow-[0_0_20px_rgba(16,185,129,0.25)] transition-all"
+              className="group relative rounded-3xl overflow-hidden cursor-pointer bg-white/90 border border-slate-200 shadow-md hover:shadow-2xl hover:border-blue-400 hover:-translate-y-1 transition-all duration-300"
             >
-              {/* Image Container with Aspect Ratio */}
-              <div className="relative aspect-[4/3] w-full overflow-hidden bg-slate-950">
+              {/* Image Container */}
+              <div className="relative aspect-[4/3] w-full overflow-hidden bg-slate-100">
                 <img
                   src={photo.image}
                   alt={photo.title}
                   className="w-full h-full object-cover transition-transform duration-500 ease-out group-hover:scale-105"
                   loading="lazy"
                 />
-                <div className="absolute inset-0 bg-gradient-to-t from-[#0b0e14] via-[#0b0e14]/40 to-transparent opacity-80 group-hover:opacity-50 transition-opacity" />
+                <div className="absolute inset-0 bg-gradient-to-t from-slate-950/70 via-transparent to-transparent opacity-60 group-hover:opacity-30 transition-opacity" />
 
                 {/* Top Badges */}
                 <div className="absolute top-3 left-3 right-3 flex items-center justify-between">
-                  <span className="text-[10px] font-chakra font-bold px-2.5 py-0.5 rounded bg-black/80 text-emerald-400 border border-emerald-500/40 shadow-sm">
+                  <span className="text-[10px] font-mono font-bold px-2.5 py-1 rounded-full bg-white/90 text-slate-800 shadow-sm backdrop-blur-md">
                     {photo.category}
                   </span>
-                  <span className="text-[10px] font-mono px-2 py-0.5 rounded bg-black/80 text-slate-300 border border-slate-700">
+                  <span className="text-[10px] font-mono font-bold px-2 py-0.5 rounded-full bg-blue-600 text-white">
                     {photo.year}
                   </span>
                 </div>
 
-                {/* Zoom Icon overlay */}
+                {/* Hover Zoom Icon */}
                 <div className="absolute inset-0 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity">
-                  <div className="w-12 h-12 rounded-full bg-emerald-500/20 backdrop-blur-md border border-emerald-500/60 flex items-center justify-center text-emerald-300 shadow-[0_0_20px_rgba(16,185,129,0.5)] transform group-hover:scale-110 transition-transform">
+                  <div className="w-12 h-12 rounded-full bg-white/90 shadow-xl flex items-center justify-center text-blue-600 transform group-hover:scale-110 transition-transform">
                     <ZoomIn className="w-6 h-6" />
                   </div>
                 </div>
               </div>
 
               {/* Text Meta Content */}
-              <div className="p-4 bg-slate-900/90 border-t border-slate-800">
-                <h3 className="text-sm font-chakra font-bold text-white group-hover:text-emerald-300 transition-colors line-clamp-1">
+              <div className="p-5 bg-white">
+                <h3 className="text-sm font-chakra font-bold text-slate-900 group-hover:text-blue-600 transition-colors line-clamp-1">
                   {photo.title}
                 </h3>
-                <p className="text-xs text-slate-400 mt-1 line-clamp-2 leading-relaxed font-light">
+                <p className="text-xs text-slate-500 mt-1 line-clamp-2 leading-relaxed font-mono">
                   {photo.caption}
                 </p>
 
-                <div className="flex flex-wrap gap-1.5 mt-3 pt-3 border-t border-mc-border">
-                  {photo.tags.map((tag) => (
-                    <span key={tag} className="text-[10px] text-slate-400 bg-mc-deepslate px-2 py-0.5 border border-mc-border font-mono">
+                <div className="flex flex-wrap gap-1.5 mt-3 pt-3 border-t border-slate-100">
+                  {photo.tags.slice(0, 3).map((tag) => (
+                    <span key={tag} className="text-[10px] text-blue-600 bg-blue-50 px-2 py-0.5 rounded-md font-mono">
                       #{tag}
                     </span>
                   ))}
@@ -125,14 +133,17 @@ export default function Gallery() {
           ))}
         </div>
 
-        {/* Lightbox Modal */}
+        {/* Fullscreen Instant Modal Lightbox (No Scrolling Needed on Mobile!) */}
         {activePhoto && (
-          <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/90 backdrop-blur-md p-4">
-            
-            {/* Close Button */}
+          <div 
+            onClick={() => setActivePhotoIndex(null)}
+            className="fixed inset-0 z-50 flex items-center justify-center bg-slate-950/90 backdrop-blur-xl p-3 sm:p-6 overflow-hidden"
+          >
+            {/* Top Close Button (Prominent for Mobile) */}
             <button
               onClick={() => setActivePhotoIndex(null)}
-              className="absolute top-6 right-6 p-2 rounded-lg bg-slate-900/90 border border-slate-700 text-slate-300 hover:text-white transition-all z-10"
+              className="absolute top-4 right-4 p-2.5 rounded-full bg-white/20 hover:bg-white text-white hover:text-slate-900 transition-all z-60 shadow-lg"
+              title="Close Image"
             >
               <X className="w-6 h-6" />
             </button>
@@ -143,7 +154,7 @@ export default function Gallery() {
                 e.stopPropagation();
                 setActivePhotoIndex((prev) => (prev - 1 + filteredPhotos.length) % filteredPhotos.length);
               }}
-              className="absolute left-4 sm:left-8 p-3 rounded-full bg-slate-900/90 border border-slate-700 hover:border-emerald-400 text-white z-10 transition-all shadow-lg"
+              className="absolute left-2 sm:left-6 top-1/2 -translate-y-1/2 p-2.5 sm:p-3 rounded-full bg-white/20 hover:bg-white text-white hover:text-slate-900 z-50 transition-all shadow-xl"
             >
               <ChevronLeft className="w-6 h-6" />
             </button>
@@ -154,44 +165,45 @@ export default function Gallery() {
                 e.stopPropagation();
                 setActivePhotoIndex((prev) => (prev + 1) % filteredPhotos.length);
               }}
-              className="absolute right-4 sm:right-8 p-3 rounded-full bg-slate-900/90 border border-slate-700 hover:border-emerald-400 text-white z-10 transition-all shadow-lg"
+              className="absolute right-2 sm:right-6 top-1/2 -translate-y-1/2 p-2.5 sm:p-3 rounded-full bg-white/20 hover:bg-white text-white hover:text-slate-900 z-50 transition-all shadow-xl"
             >
               <ChevronRight className="w-6 h-6" />
             </button>
 
-            {/* Lightbox Content Container */}
-            <div className="max-w-4xl w-full bg-slate-950 border border-emerald-500/30 rounded-2xl overflow-hidden shadow-2xl flex flex-col">
-              <div className="relative aspect-[16/10] w-full bg-black max-h-[65vh]">
+            {/* Centered Modal Card: Fits 100% inside screen viewport without any scrolling */}
+            <div 
+              onClick={(e) => e.stopPropagation()}
+              className="relative max-w-4xl w-full max-h-[90vh] bg-white rounded-3xl overflow-hidden shadow-2xl flex flex-col my-auto"
+            >
+              {/* Photo Viewport - dynamically scaled to screen height */}
+              <div className="relative w-full flex-1 min-h-[45vh] max-h-[65vh] bg-slate-950 flex items-center justify-center p-2">
                 <img
                   src={activePhoto.image}
                   alt={activePhoto.title}
-                  className="w-full h-full object-contain"
+                  className="max-h-[60vh] w-auto max-w-full object-contain mx-auto rounded-lg"
                 />
               </div>
 
-              <div className="p-6 bg-slate-900 border-t border-slate-800">
-                <div className="flex items-center justify-between gap-4 mb-2">
+              {/* Bottom Details Panel */}
+              <div className="p-4 sm:p-6 bg-white shrink-0 border-t border-slate-100">
+                <div className="flex items-center justify-between gap-4 mb-1">
                   <div className="flex items-center gap-2">
-                    <span className="text-xs px-2.5 py-0.5 rounded bg-emerald-500/20 text-emerald-300 font-chakra font-bold border border-emerald-500/40">
+                    <span className="text-xs px-2.5 py-0.5 rounded-full bg-blue-50 text-blue-700 font-mono font-bold">
                       {activePhoto.category}
                     </span>
-                    <span className="text-xs text-slate-400 font-mono">Edition {activePhoto.year}</span>
+                    <span className="text-xs text-slate-400 font-mono">{activePhoto.year}</span>
                   </div>
-                  <span className="text-xs text-slate-500 font-mono">
+                  <span className="text-xs text-slate-400 font-mono">
                     {activePhotoIndex + 1} of {filteredPhotos.length}
                   </span>
                 </div>
 
-                <h3 className="text-lg font-bold text-white mb-1.5">{activePhoto.title}</h3>
-                <p className="text-xs text-slate-300 leading-relaxed font-light">{activePhoto.caption}</p>
-
-                <div className="flex flex-wrap gap-2 mt-4 pt-4 border-t border-mc-border">
-                  {activePhoto.tags.map((tag) => (
-                    <span key={tag} className="text-xs text-mc-diamond bg-mc-deepslate px-2.5 py-1 border border-mc-border font-mono">
-                      #{tag}
-                    </span>
-                  ))}
-                </div>
+                <h3 className="text-base sm:text-lg font-chakra font-bold text-slate-900 mt-1 line-clamp-1">
+                  {activePhoto.title}
+                </h3>
+                <p className="text-xs text-slate-600 mt-1 font-mono leading-relaxed line-clamp-2">
+                  {activePhoto.caption}
+                </p>
               </div>
             </div>
 

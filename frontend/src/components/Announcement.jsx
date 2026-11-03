@@ -1,144 +1,122 @@
 import React from 'react';
-import { ArrowRight, Calendar, CheckCircle2, Clock, Trophy, ShieldCheck, Terminal, Radio } from 'lucide-react';
+import { ArrowRight, Sparkles, CheckCircle2 } from 'lucide-react';
 import { useEvent } from '../context/EventContext';
+import { EVENT_DETAILS } from '../data/eventData';
 
 export default function Announcement({ onOpenRegister }) {
   const { eventSettings } = useEvent();
 
   return (
-    <section id="announcement" className="py-20 relative border-b border-emerald-500/20 bg-slate-950/60 backdrop-blur-sm">
+    <section id="announcement" className="py-20 relative border-t border-slate-200/80 bg-transparent">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         
         {/* Section Header */}
-        <div className="text-center max-w-3xl mx-auto mb-16">
-          <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-emerald-500/10 border border-emerald-500/30 text-emerald-400 text-xs font-chakra tracking-widest uppercase mb-4 shadow-[0_0_12px_rgba(16,185,129,0.2)]">
-            <Radio className="w-3.5 h-3.5 animate-pulse text-emerald-400" />
-            <span>[OFFICIAL EVENT ANNOUNCEMENT]</span>
+        <div className="text-center max-w-3xl mx-auto mb-16 space-y-3">
+          <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-blue-50 border border-blue-200 text-blue-700 text-xs font-mono font-bold shadow-sm">
+            <Sparkles className="w-3.5 h-3.5 text-blue-600" />
+            <span>OFFICIAL NATIONAL ANNOUNCEMENT</span>
           </div>
 
-          <div className="mb-3 space-y-1">
-            <div className="text-xs sm:text-sm font-chakra tracking-[0.2em] uppercase text-slate-300 font-semibold">
-              Smt. Chandibai Himathmal Mansukhani College
+          <div className="space-y-1">
+            <div className="text-xs sm:text-sm font-space uppercase text-slate-500 font-bold">
+              Smt. Chandibai Himathmal Mansukhani College (CHM)
             </div>
-            <div className="text-xs sm:text-sm font-space text-emerald-400 tracking-wider uppercase font-medium">
-              Department of Data Science <span className="text-slate-500">•</span> Organized under <span className="text-white underline decoration-emerald-500/60 font-bold">Club Data Decoder</span>
+            <div className="text-xs sm:text-sm font-mono text-blue-600 uppercase font-semibold">
+              Department of Data Science • Organized under Club Data Decoder
             </div>
           </div>
 
-          <h2 className="text-4xl sm:text-5xl md:text-6xl font-black uppercase text-center flex flex-col items-center mb-5">
-            <span className="font-bebas tracking-wide block text-slate-400">ANNOUNCING</span>
-            <span className="font-bebas tracking-wider text-white text-4xl sm:text-6xl md:text-7xl mt-1 text-transparent bg-clip-text bg-gradient-to-r from-emerald-400 via-teal-300 to-cyan-400">
-              TECH ASTRA 2026
-            </span>
+          <h2 className="text-3xl sm:text-5xl font-chakra font-black tracking-tight text-slate-900 uppercase">
+            FLAGSHIP 48-HOUR HACKATHON
           </h2>
-          <p className="text-slate-300 text-sm sm:text-base font-light font-space max-w-2xl mx-auto leading-relaxed">
-            Prepare your squads for the national engineering conclave. Two days of intense problem-solving, development, collaboration, and innovation.
+          <p className="text-slate-600 text-xs sm:text-sm font-mono max-w-xl mx-auto">
+            Two intense days of collaborative intelligence, software architecture, neural model deployment, and real-world educational problem-solving.
           </p>
         </div>
 
         {/* Feature Highlight Card */}
-        <div className="p-8 sm:p-12 mb-16 relative overflow-hidden rounded-2xl bg-slate-900/60 border border-emerald-500/30 backdrop-blur-md shadow-2xl">
+        <div className="p-8 sm:p-12 mb-12 relative overflow-hidden rounded-3xl bg-white/90 border border-slate-200/90 shadow-xl backdrop-blur-xl">
           
           <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-center relative z-10">
             <div className="lg:col-span-7 space-y-5">
               
               <div className="flex flex-wrap items-center gap-3">
-                <span className="px-3 py-1 bg-emerald-500/15 border border-emerald-500/30 text-emerald-300 text-xs font-chakra font-bold tracking-wider uppercase rounded-md">
-                  FLAGSHIP 48-HOUR HACKATHON
+                <span className="px-3.5 py-1 bg-blue-50 border border-blue-200 text-blue-700 text-xs font-mono font-bold uppercase rounded-full">
+                  NATIONAL EDITION
                 </span>
-                <span className="text-xs text-slate-400 font-mono">Theme: 48 Hours. One Problem. Unlimited Possibilities.</span>
+                <span className="text-xs text-slate-500 font-mono">₹1,00,000 Cash Pool Across All Tracks</span>
               </div>
 
-              <h3 className="text-2xl sm:text-4xl font-extrabold text-white leading-tight font-space">
-                48-Hour Hackathon with ₹1,00,000 Cash Prize Pool
+              <h3 className="text-2xl sm:text-4xl font-chakra font-black text-slate-900 leading-tight">
+                Empowering the Next Generation of AI & EduTech Builders
               </h3>
 
-              <p className="text-slate-300 leading-relaxed text-sm sm:text-base font-light">
-                Whether you build autonomous neural agents, architect high-throughput distributed microservices, solve complex algorithmic graphs, or harden zero-day cybersecurity defenses — TechAstra 2026 is your forge.
+              <p className="text-slate-600 leading-relaxed text-xs sm:text-sm font-mono">
+                Whether you develop RAG factual knowledge engines, multimodal tutoring agents, automated code debuggers, spatial classroom vision models, or adaptive pacing algorithms — TechAstra 2026 is your launchpad.
               </p>
 
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 pt-2 text-xs">
-                <div className="flex items-center gap-2 text-slate-200">
-                  <span className="w-4 h-4 rounded-full bg-emerald-500/20 border border-emerald-500/40 flex items-center justify-center text-emerald-400 text-[10px] font-bold">✓</span>
-                  <span>Complimentary Meals & Midnight Energy Rations</span>
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 pt-2 text-xs font-mono text-slate-700">
+                <div className="flex items-center gap-2">
+                  <CheckCircle2 className="w-4 h-4 text-blue-600 shrink-0" />
+                  <span>Complimentary Meals & Midnight Refreshments</span>
                 </div>
-                <div className="flex items-center gap-2 text-slate-200">
-                  <span className="w-4 h-4 rounded-full bg-cyan-500/20 border border-cyan-500/40 flex items-center justify-center text-cyan-400 text-[10px] font-bold">✓</span>
-                  <span>Encrypted Digital Pass with QR Gate Check-in</span>
+                <div className="flex items-center gap-2">
+                  <CheckCircle2 className="w-4 h-4 text-blue-600 shrink-0" />
+                  <span>Digital Pass with Instant QR Check-in</span>
                 </div>
-                <div className="flex items-center gap-2 text-slate-200">
-                  <span className="w-4 h-4 rounded-full bg-amber-500/20 border border-amber-500/40 flex items-center justify-center text-amber-400 text-[10px] font-bold">✓</span>
-                  <span>48-Hour Dedicated Workspace & High-Speed Power Setup</span>
+                <div className="flex items-center gap-2">
+                  <CheckCircle2 className="w-4 h-4 text-blue-600 shrink-0" />
+                  <span>1-on-1 Mentorship from AI Industry Experts</span>
                 </div>
-                <div className="flex items-center gap-2 text-slate-200">
-                  <span className="w-4 h-4 rounded-full bg-purple-500/20 border border-purple-500/40 flex items-center justify-center text-purple-400 text-[10px] font-bold">✓</span>
-                  <span>Official Certificate of Excellence & Achievement</span>
+                <div className="flex items-center gap-2">
+                  <CheckCircle2 className="w-4 h-4 text-blue-600 shrink-0" />
+                  <span>Verified National Participation Certificates</span>
                 </div>
               </div>
 
-              <div className="pt-3">
+              <div className="pt-4 flex flex-wrap items-center gap-4">
                 <button
-                  onClick={() => onOpenRegister && onOpenRegister()}
-                  className="btn-doomsday-cyber px-8 py-3.5 text-xs uppercase flex items-center gap-2 cursor-pointer shadow-[0_0_20px_rgba(34,197,94,0.35)]"
+                  onClick={() => onOpenRegister()}
+                  className="px-8 py-3.5 rounded-2xl bg-blue-600 hover:bg-blue-700 text-white font-chakra font-bold text-xs uppercase tracking-wider shadow-lg shadow-blue-500/25 flex items-center gap-2 transition-all"
                 >
-                  <span className="font-chakra font-bold tracking-widest text-emerald-300">[SECURE SQUAD PASS]</span>
-                  <ArrowRight className="w-4 h-4 text-emerald-300" />
+                  <span>Enlist Squad Now</span>
+                  <ArrowRight className="w-4 h-4" />
                 </button>
               </div>
+
             </div>
 
-            {/* Operational Schedule Snapshot */}
-            <div className="lg:col-span-5 bg-slate-950/80 p-6 rounded-2xl border border-emerald-500/30 space-y-4 shadow-xl">
-              <div className="flex items-center justify-between border-b border-slate-800 pb-3">
-                <h4 className="text-xs font-chakra font-bold text-white flex items-center gap-2 uppercase tracking-wider">
-                  <Calendar className="w-4 h-4 text-emerald-400" />
-                  <span>OPERATIONAL TIMELINE</span>
-                </h4>
-                <span className="text-[10px] font-mono text-emerald-400 px-2 py-0.5 bg-emerald-500/10 border border-emerald-500/30 rounded">
-                  48-HOUR SCHEDULE
-                </span>
+            <div className="lg:col-span-5 bg-gradient-to-br from-blue-50 to-indigo-50/60 p-6 sm:p-8 rounded-3xl border border-blue-100 space-y-4">
+              <div className="text-xs font-mono font-bold text-blue-600 uppercase tracking-widest">
+                KEY DETAILS AT A GLANCE
               </div>
 
-              <div className="space-y-3 text-xs">
-                <div className="p-3.5 rounded-xl bg-slate-900/70 border border-slate-800">
-                  <div className="flex items-center justify-between text-[11px] font-chakra text-emerald-400 font-bold mb-1">
-                    <span>PHASE 01 • THE COUNTDOWN</span>
-                    <span className="font-mono text-[10px] text-slate-400">09:00 AM</span>
-                  </div>
-                  <p className="font-bold text-white font-space">Opening Ceremony & Problem Statement Reveal</p>
-                  <p className="text-[11px] text-slate-400 mt-0.5 font-light">Squad registration check-in, rules briefing, and challenge launch.</p>
+              <div className="space-y-3 font-mono text-xs">
+                <div className="flex justify-between py-2 border-b border-blue-100">
+                  <span className="text-slate-500">Venue:</span>
+                  <span className="font-bold text-slate-900 text-right">{EVENT_DETAILS.college}</span>
                 </div>
-
-                <div className="p-3.5 rounded-xl bg-slate-900/70 border border-slate-800">
-                  <div className="flex items-center justify-between text-[11px] font-chakra text-amber-400 font-bold mb-1">
-                    <span>PHASE 02 • THE 48-HOUR SPRINT</span>
-                    <span className="font-mono text-[10px] text-slate-400">DAY 1–2</span>
-                  </div>
-                  <p className="font-bold text-white font-space">Sprint Development & Mentor Reviews</p>
-                  <p className="text-[11px] text-slate-400 mt-0.5 font-light">Rapid coding, architectural prototyping, scheduled mentor checkpoints.</p>
+                <div className="flex justify-between py-2 border-b border-blue-100">
+                  <span className="text-slate-500">Eligibility:</span>
+                  <span className="font-bold text-blue-700">Open for All College Students (UG/PG)</span>
                 </div>
-
-                <div className="p-3.5 rounded-xl bg-slate-900/70 border border-slate-800">
-                  <div className="flex items-center justify-between text-[11px] font-chakra text-rose-400 font-bold mb-1">
-                    <span>PHASE 03 • SYSTEM LOCKDOWN</span>
-                    <span className="font-mono text-[10px] text-slate-400">09:00 AM</span>
-                  </div>
-                  <p className="font-bold text-white font-space">Code Freeze & Final Repository Submission</p>
-                  <p className="text-[11px] text-slate-400 mt-0.5 font-light">Commit hash verification and live demonstration readiness.</p>
+                <div className="flex justify-between py-2 border-b border-blue-100">
+                  <span className="text-slate-500">Squad Size:</span>
+                  <span className="font-bold text-slate-900">1 to 4 Members</span>
                 </div>
-
-                <div className="p-3.5 rounded-xl bg-slate-900/70 border border-slate-800">
-                  <div className="flex items-center justify-between text-[11px] font-chakra text-cyan-400 font-bold mb-1">
-                    <span>PHASE 04 • FINAL JUDGEMENT & FINALE</span>
-                    <span className="font-mono text-[10px] text-slate-400">03:00 PM</span>
-                  </div>
-                  <p className="font-bold text-white font-space">Live Jury Demos & ₹1,00,000 Prize Ceremony</p>
-                  <p className="text-[11px] text-slate-400 mt-0.5 font-light">Technical code viva, grand winners declaration, and awards distribution.</p>
+                <div className="flex justify-between py-2 border-b border-blue-100">
+                  <span className="text-slate-500">Prize Pool:</span>
+                  <span className="font-bold text-emerald-600 text-sm">₹1,00,000 Total</span>
+                </div>
+                <div className="flex justify-between py-2">
+                  <span className="text-slate-500">Format:</span>
+                  <span className="font-bold text-slate-900">48-Hour On-Campus Hackathon</span>
                 </div>
               </div>
             </div>
 
           </div>
+
         </div>
 
       </div>
