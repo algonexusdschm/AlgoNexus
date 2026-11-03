@@ -18,8 +18,51 @@ export const EVENT_DETAILS = {
   organizers: "Club Data Decoder, Department of Data Science, Smt. Chandibai Himathmal Mansukhani College",
   prizePool: "₹1,00,000",
   participantsExpected: "300+ Innovators & Hackers",
-  collegesExpected: "80+ Universities Across India"
+  collegesExpected: "80+ Universities Across India",
+  
+  // Faculty Leadership & Organizing Committee
+  coordinator: {
+    title: "Event Co-ordinator",
+    name: "Dr. Shiji Johnson",
+    role: "Head & Co-ordinator, Department of Data Science"
+  },
+  facultyMentors: [
+    { name: "Ms. Kalyani Patil", role: "Assistant Professor, Department of Data Science" },
+    { name: "Ms. Razia Khan", role: "Assistant Professor, Department of Data Science" },
+    { name: "Mr. Anshul Chimnani", role: "Assistant Professor, Department of Data Science" }
+  ]
 };
+
+export const FACULTY_COMMITTEE = [
+  {
+    role: "Event Co-ordinator",
+    name: "Dr. Shiji Johnson",
+    dept: "Department of Data Science",
+    badge: "Chief Coordinator",
+    accent: "blue"
+  },
+  {
+    role: "Teacher / Faculty Mentor",
+    name: "Ms. Kalyani Patil",
+    dept: "Department of Data Science",
+    badge: "Faculty Mentor",
+    accent: "sky"
+  },
+  {
+    role: "Teacher / Faculty Mentor",
+    name: "Ms. Razia Khan",
+    dept: "Department of Data Science",
+    badge: "Faculty Mentor",
+    accent: "indigo"
+  },
+  {
+    role: "Teacher / Faculty Mentor",
+    name: "Mr. Anshul Chimnani",
+    dept: "Department of Data Science",
+    badge: "Faculty Mentor",
+    accent: "purple"
+  }
+];
 
 export const PAST_YEAR_GALLERY = [
   {
@@ -185,7 +228,6 @@ export const REGISTRATION_TIERS = [
   }
 ];
 
-
 export const FAQ_LIST = [
   {
     q: "Who is eligible to participate in TechAstra 2026?",
@@ -209,6 +251,6 @@ export const FAQ_LIST = [
   },
   {
     q: "Where is the venue and how do I contact the organizing committee?",
-    a: "TechAstra 2026 is hosted on-campus at Smt. Chandibai Himathmal Mansukhani College, organized by the Department of Data Science under Club Data Decoder. For queries, sponsorships, or urgent support, reach out via email at algonexusdschm@gmail.com or mobile at +91 80100 86323."
+    a: "TechAstra 2026 is hosted on-campus at Smt. Chandibai Himathmal Mansukhani College, organized by the Department of Data Science under Club Data Decoder. Under the leadership of Co-ordinator Dr. Shiji Johnson and Faculty Mentors Ms. Kalyani Patil, Ms. Razia Khan, and Mr. Anshul Chimnani. Reach out via email at algonexusdschm@gmail.com or mobile at +91 80100 86323."
   }
 ];

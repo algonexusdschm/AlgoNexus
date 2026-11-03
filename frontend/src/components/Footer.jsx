@@ -1,16 +1,42 @@
 import React from 'react';
-import { Mail, Phone, MapPin, BrainCircuit, Sparkles } from 'lucide-react';
+import { Mail, Phone, MapPin, BrainCircuit, Sparkles, GraduationCap } from 'lucide-react';
 import { useEvent } from '../context/EventContext';
-import { EVENT_DETAILS } from '../data/eventData';
+import { EVENT_DETAILS, FACULTY_COMMITTEE } from '../data/eventData';
 
 export default function Footer({ onOpenRegister, onOpenAdmin }) {
   const { eventSettings } = useEvent();
 
   return (
     <footer className="bg-white border-t border-slate-200/90 pt-16 pb-12 text-slate-500 text-xs relative overflow-hidden">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10 space-y-12">
         
-        <div className="grid grid-cols-1 md:grid-cols-4 gap-10 mb-12">
+        {/* Top Section: Dedicated Faculty Mentors & Co-ordinator Credits */}
+        <div className="p-6 rounded-3xl bg-slate-50 border border-slate-200/80">
+          <div className="flex flex-wrap items-center justify-between gap-3 border-b border-slate-200 pb-3 mb-4">
+            <div className="flex items-center gap-2">
+              <GraduationCap className="w-5 h-5 text-blue-600" />
+              <span className="font-chakra font-black text-slate-900 tracking-wider uppercase text-xs">
+                DEPARTMENT FACULTY COORDINATION & MENTORSHIP
+              </span>
+            </div>
+            <span className="text-[10px] font-mono font-bold text-blue-700 bg-blue-100/60 px-2.5 py-0.5 rounded-full">
+              Smt. CHM College
+            </span>
+          </div>
+
+          <div className="grid grid-cols-1 sm:grid-cols-4 gap-4">
+            {FACULTY_COMMITTEE.map((fac, idx) => (
+              <div key={idx} className="space-y-0.5 font-mono">
+                <span className="text-[10px] font-bold text-blue-600 block">{fac.role}</span>
+                <div className="font-chakra font-black text-slate-900 text-sm">{fac.name}</div>
+                <div className="text-[10px] text-slate-500">{fac.dept}</div>
+              </div>
+            ))}
+          </div>
+        </div>
+
+        {/* 4-Column Footer Information */}
+        <div className="grid grid-cols-1 md:grid-cols-4 gap-10">
           
           {/* Brand Info */}
           <div className="space-y-4 md:col-span-1">
@@ -23,7 +49,7 @@ export default function Footer({ onOpenRegister, onOpenAdmin }) {
               </span>
             </div>
             <p className="text-xs text-slate-600 leading-relaxed font-mono">
-              Organized by <strong className="text-slate-900 font-semibold">Club Data Decoder</strong> & the <strong className="text-slate-900 font-semibold">Department of Data Science</strong> at Smt. Chandibai Himathmal Mansukhani College. Empowering innovators across AI, Machine Learning, RAG, NLP, and Computer Vision.
+              Organized by <strong className="text-slate-900 font-semibold">Club Data Decoder</strong> & the <strong className="text-slate-900 font-semibold">Department of Data Science</strong> at Smt. Chandibai Himathmal Mansukhani College. Under the leadership of Co-ordinator Dr. Shiji Johnson and Faculty Mentors.
             </p>
             <div className="flex items-center gap-2 pt-1 font-mono">
               <span className="px-2.5 py-1 rounded-full bg-blue-50 border border-blue-200 text-[10px] text-blue-700 font-bold tracking-wider flex items-center gap-1.5">
@@ -44,6 +70,7 @@ export default function Footer({ onOpenRegister, onOpenAdmin }) {
             <ul className="space-y-2.5 text-xs font-mono">
               <li><a href="#tracks" className="hover:text-blue-600 transition-colors">AI Innovation Tracks</a></li>
               <li><a href="#announcement" className="hover:text-blue-600 transition-colors">Official Announcement</a></li>
+              <li><a href="#faculty" className="hover:text-blue-600 transition-colors">Faculty & Mentors</a></li>
               <li><a href="#gallery" className="hover:text-blue-600 transition-colors">Event Memories</a></li>
               <li><a href="#passes" className="hover:text-blue-600 transition-colors">Delegate Passes</a></li>
               <li><a href="#faq" className="hover:text-blue-600 transition-colors">Frequently Asked Questions</a></li>
@@ -98,7 +125,7 @@ export default function Footer({ onOpenRegister, onOpenAdmin }) {
         {/* Bottom Bar */}
         <div className="pt-8 border-t border-slate-200 flex flex-col sm:flex-row items-center justify-between gap-4 text-xs font-mono text-slate-500">
           <p>© 2026 TechAstra • Department of Data Science • Smt. CHM College. All rights reserved.</p>
-          <p>Powered by Club Data Decoder</p>
+          <p>Guided by Co-ordinator Dr. Shiji Johnson & Faculty Mentors</p>
         </div>
 
       </div>
