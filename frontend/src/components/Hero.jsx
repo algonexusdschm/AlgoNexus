@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
-import { Calendar, MapPin, ArrowRight, Trophy, Users, Clock, ShieldCheck, Zap, Sparkles, BrainCircuit, GraduationCap } from 'lucide-react';
+import { Calendar, MapPin, ArrowRight, Trophy, Users, Clock, ShieldCheck, Zap, Sparkles, BrainCircuit, Layers } from 'lucide-react';
 import { useEvent } from '../context/EventContext';
-import { EVENT_DETAILS, FACULTY_COMMITTEE } from '../data/eventData';
+import { EVENT_DETAILS } from '../data/eventData';
 
 export default function Hero({ onOpenRegister }) {
   const { eventSettings } = useEvent();
@@ -101,119 +101,16 @@ export default function Hero({ onOpenRegister }) {
             </button>
 
             <a
-              href="#faculty"
+              href="#tracks"
               className="px-7 py-3.5 rounded-2xl bg-white/90 hover:bg-white border border-slate-300 text-slate-800 font-chakra font-bold tracking-wider text-sm shadow-md hover:shadow-lg transition-all flex items-center gap-2"
             >
-              <GraduationCap className="w-4 h-4 text-blue-600" />
-              <span>FACULTY & MENTORS</span>
+              <Layers className="w-4 h-4 text-blue-600" />
+              <span>EXPLORE CHALLENGE TRACKS</span>
             </a>
           </div>
 
-          {/* ========================================================================= */}
-          {/* 🎓 FACULTY LEADERSHIP & CO-ORDINATOR BANNER                                */}
-          {/* ========================================================================= */}
-          <div id="faculty" className="pt-4 max-w-4xl mx-auto w-full">
-            <div className="p-5 sm:p-6 rounded-3xl bg-white/90 backdrop-blur-xl border border-slate-200/90 shadow-xl shadow-slate-200/60 text-left space-y-4">
-              
-              <div className="flex flex-wrap items-center justify-between gap-2 border-b border-slate-100 pb-3">
-                <div className="flex items-center gap-2">
-                  <div className="w-8 h-8 rounded-xl bg-blue-50 border border-blue-200 flex items-center justify-center text-blue-600">
-                    <GraduationCap className="w-4 h-4" />
-                  </div>
-                  <div>
-                    <h3 className="text-xs font-chakra font-black tracking-wider uppercase text-slate-900">
-                      FACULTY ADVISORY & EVENT LEADERSHIP
-                    </h3>
-                    <p className="text-[10px] font-mono text-slate-500">Department of Data Science • Smt. CHM College</p>
-                  </div>
-                </div>
-                <span className="text-[10px] font-mono px-2.5 py-0.5 rounded-full bg-blue-50 text-blue-700 font-bold border border-blue-200">
-                  OFFICIAL MENTORS
-                </span>
-              </div>
-
-              {/* Faculty Grid */}
-              <div className="grid grid-cols-1 sm:grid-cols-4 gap-3">
-                
-                {/* 1. Co-ordinator Dr. Shiji Johnson */}
-                <div className="p-3.5 rounded-2xl bg-gradient-to-b from-blue-50 to-white border-2 border-blue-500/80 shadow-md sm:col-span-1 flex flex-col justify-between">
-                  <div>
-                    <span className="text-[9px] font-mono font-bold px-2 py-0.5 rounded-full bg-blue-600 text-white block w-fit mb-2">
-                      EVENT CO-ORDINATOR
-                    </span>
-                    <h4 className="text-sm font-chakra font-black text-slate-900">
-                      Dr. Shiji Johnson
-                    </h4>
-                    <p className="text-[10px] font-mono text-blue-700 font-semibold mt-0.5">
-                      Co-ordinator
-                    </p>
-                    <p className="text-[9px] font-mono text-slate-500 mt-1">
-                      Dept. of Data Science
-                    </p>
-                  </div>
-                </div>
-
-                {/* 2. Ms. Kalyani Patil */}
-                <div className="p-3.5 rounded-2xl bg-white border border-slate-200 shadow-sm flex flex-col justify-between">
-                  <div>
-                    <span className="text-[9px] font-mono font-bold px-2 py-0.5 rounded-full bg-slate-100 text-slate-700 block w-fit mb-2">
-                      TEACHER / MENTOR
-                    </span>
-                    <h4 className="text-sm font-chakra font-bold text-slate-900">
-                      Ms. Kalyani Patil
-                    </h4>
-                    <p className="text-[10px] font-mono text-slate-600 mt-0.5">
-                      Assistant Professor
-                    </p>
-                    <p className="text-[9px] font-mono text-slate-400 mt-1">
-                      Dept. of Data Science
-                    </p>
-                  </div>
-                </div>
-
-                {/* 3. Ms. Razia Khan */}
-                <div className="p-3.5 rounded-2xl bg-white border border-slate-200 shadow-sm flex flex-col justify-between">
-                  <div>
-                    <span className="text-[9px] font-mono font-bold px-2 py-0.5 rounded-full bg-slate-100 text-slate-700 block w-fit mb-2">
-                      TEACHER / MENTOR
-                    </span>
-                    <h4 className="text-sm font-chakra font-bold text-slate-900">
-                      Ms. Razia Khan
-                    </h4>
-                    <p className="text-[10px] font-mono text-slate-600 mt-0.5">
-                      Assistant Professor
-                    </p>
-                    <p className="text-[9px] font-mono text-slate-400 mt-1">
-                      Dept. of Data Science
-                    </p>
-                  </div>
-                </div>
-
-                {/* 4. Mr. Anshul Chimnani */}
-                <div className="p-3.5 rounded-2xl bg-white border border-slate-200 shadow-sm flex flex-col justify-between">
-                  <div>
-                    <span className="text-[9px] font-mono font-bold px-2 py-0.5 rounded-full bg-slate-100 text-slate-700 block w-fit mb-2">
-                      TEACHER / MENTOR
-                    </span>
-                    <h4 className="text-sm font-chakra font-bold text-slate-900">
-                      Mr. Anshul Chimnani
-                    </h4>
-                    <p className="text-[10px] font-mono text-slate-600 mt-0.5">
-                      Assistant Professor
-                    </p>
-                    <p className="text-[9px] font-mono text-slate-400 mt-1">
-                      Dept. of Data Science
-                    </p>
-                  </div>
-                </div>
-
-              </div>
-
-            </div>
-          </div>
-
           {/* Quick Pillars Grid (No Green!) */}
-          <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 max-w-3xl mx-auto pt-2 text-left">
+          <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 max-w-3xl mx-auto pt-6 text-left">
             <div className="p-4 rounded-2xl bg-white/80 backdrop-blur-md border border-slate-200 shadow-sm flex items-center gap-3">
               <div className="w-10 h-10 rounded-xl bg-blue-50 border border-blue-200 flex items-center justify-center text-blue-600 shrink-0">
                 <Trophy className="w-5 h-5" />

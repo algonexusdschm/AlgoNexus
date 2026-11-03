@@ -35,7 +35,6 @@ export default function Navbar({ onOpenRegister, onOpenAdmin }) {
               <span className="w-1.5 h-1.5 rounded-full bg-blue-600 animate-pulse" />
               <span>AI Tracks</span>
             </a>
-            <a href="#faculty" className="hover:text-blue-600 transition-colors">Mentors</a>
             <a href="#announcement" className="hover:text-blue-600 transition-colors">Announcement</a>
             <a href="#gallery" className="hover:text-blue-600 transition-colors">Memories</a>
             <a href="#passes" className="hover:text-blue-600 transition-colors">Delegate Passes</a>
@@ -83,13 +82,6 @@ export default function Navbar({ onOpenRegister, onOpenAdmin }) {
             className="block py-2 hover:text-blue-600"
           >
             AI Tracks & Roadmap
-          </a>
-          <a
-            href="#faculty"
-            onClick={() => setMobileMenuOpen(false)}
-            className="block py-2 hover:text-blue-600"
-          >
-            Faculty Mentors & Advisory
           </a>
           <a
             href="#announcement"

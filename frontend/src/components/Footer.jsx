@@ -10,13 +10,13 @@ export default function Footer({ onOpenRegister, onOpenAdmin }) {
     <footer className="bg-white border-t border-slate-200/90 pt-16 pb-12 text-slate-500 text-xs relative overflow-hidden">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10 space-y-12">
         
-        {/* Top Section: Dedicated Faculty Mentors & Co-ordinator Credits */}
+        {/* Top Section: Dedicated Faculty Teachers & Co-ordinator Credits (No mentor mention) */}
         <div className="p-6 rounded-3xl bg-slate-50 border border-slate-200/80 shadow-sm">
           <div className="flex flex-wrap items-center justify-between gap-3 border-b border-slate-200 pb-3 mb-4">
             <div className="flex items-center gap-2">
               <GraduationCap className="w-5 h-5 text-blue-600" />
               <span className="font-chakra font-black text-slate-900 tracking-wider uppercase text-xs">
-                DEPARTMENT FACULTY COORDINATION & MENTORSHIP
+                DEPARTMENT FACULTY COORDINATION & TEACHERS
               </span>
             </div>
             <span className="text-[10px] font-mono font-bold text-blue-700 bg-blue-100/60 px-2.5 py-0.5 rounded-full">
@@ -49,7 +49,7 @@ export default function Footer({ onOpenRegister, onOpenAdmin }) {
               </span>
             </div>
             <p className="text-xs text-slate-600 leading-relaxed font-mono">
-              Organized by <strong className="text-slate-900 font-semibold">Club Data Decoder</strong> & the <strong className="text-slate-900 font-semibold">Department of Data Science</strong> at Smt. Chandibai Himathmal Mansukhani College. Under the leadership of Co-ordinator Dr. Shiji Johnson and Faculty Mentors.
+              Organized by <strong className="text-slate-900 font-semibold">Club Data Decoder</strong> & the <strong className="text-slate-900 font-semibold">Department of Data Science</strong> at Smt. Chandibai Himathmal Mansukhani College. Under the leadership of Co-ordinator Dr. Shiji Johnson and Teachers.
             </p>
             <div className="flex items-center gap-2 pt-1 font-mono">
               <span className="px-2.5 py-1 rounded-full bg-blue-50 border border-blue-200 text-[10px] text-blue-700 font-bold tracking-wider flex items-center gap-1.5">
@@ -70,7 +70,6 @@ export default function Footer({ onOpenRegister, onOpenAdmin }) {
             <ul className="space-y-2.5 text-xs font-mono">
               <li><a href="#tracks" className="hover:text-blue-600 transition-colors">AI Innovation Tracks</a></li>
               <li><a href="#announcement" className="hover:text-blue-600 transition-colors">Official Announcement</a></li>
-              <li><a href="#faculty" className="hover:text-blue-600 transition-colors">Faculty & Mentors</a></li>
               <li><a href="#gallery" className="hover:text-blue-600 transition-colors">Event Memories</a></li>
               <li><a href="#passes" className="hover:text-blue-600 transition-colors">Delegate Passes</a></li>
               <li><a href="#faq" className="hover:text-blue-600 transition-colors">Frequently Asked Questions</a></li>
@@ -125,7 +124,7 @@ export default function Footer({ onOpenRegister, onOpenAdmin }) {
         {/* Bottom Bar */}
         <div className="pt-8 border-t border-slate-200 flex flex-col sm:flex-row items-center justify-between gap-4 text-xs font-mono text-slate-500">
           <p>© 2026 TechAstra • Department of Data Science • Smt. CHM College. All rights reserved.</p>
-          <p>Guided by Co-ordinator Dr. Shiji Johnson & Faculty Mentors</p>
+          <p>Guided by Event Co-ordinator Dr. Shiji Johnson & Teachers</p>
         </div>
 
       </div>

@@ -26,7 +26,7 @@ export const EVENT_DETAILS = {
     name: "Dr. Shiji Johnson",
     role: "Head & Co-ordinator, Department of Data Science"
   },
-  facultyMentors: [
+  teachers: [
     { name: "Ms. Kalyani Patil", role: "Assistant Professor, Department of Data Science" },
     { name: "Ms. Razia Khan", role: "Assistant Professor, Department of Data Science" },
     { name: "Mr. Anshul Chimnani", role: "Assistant Professor, Department of Data Science" }
@@ -38,28 +38,28 @@ export const FACULTY_COMMITTEE = [
     role: "Event Co-ordinator",
     name: "Dr. Shiji Johnson",
     dept: "Department of Data Science",
-    badge: "Chief Coordinator",
+    badge: "Co-ordinator",
     accent: "blue"
   },
   {
-    role: "Teacher / Faculty Mentor",
+    role: "Teacher",
     name: "Ms. Kalyani Patil",
     dept: "Department of Data Science",
-    badge: "Faculty Mentor",
+    badge: "Teacher",
     accent: "sky"
   },
   {
-    role: "Teacher / Faculty Mentor",
+    role: "Teacher",
     name: "Ms. Razia Khan",
     dept: "Department of Data Science",
-    badge: "Faculty Mentor",
+    badge: "Teacher",
     accent: "indigo"
   },
   {
-    role: "Teacher / Faculty Mentor",
+    role: "Teacher",
     name: "Mr. Anshul Chimnani",
     dept: "Department of Data Science",
-    badge: "Faculty Mentor",
+    badge: "Teacher",
     accent: "purple"
   }
 ];
