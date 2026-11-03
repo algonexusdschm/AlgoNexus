@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
-import { Calendar, MapPin, ArrowRight, Trophy, Users, Clock, ShieldCheck, Zap, Sparkles } from 'lucide-react';
+import { Calendar, MapPin, ArrowRight, Trophy, Users, Clock, ShieldCheck, Zap, Sparkles, BrainCircuit, Network, Database, Scan, Cpu } from 'lucide-react';
 import { useEvent } from '../context/EventContext';
+import { EVENT_DETAILS } from '../data/eventData';
 
 export default function Hero({ onOpenRegister }) {
   const { eventSettings } = useEvent();
@@ -35,198 +36,163 @@ export default function Hero({ onOpenRegister }) {
   }, [eventSettings.targetDate]);
 
   return (
-    <section className="relative min-h-screen flex flex-col justify-center items-center pt-24 pb-16 md:pt-28 md:pb-20 overflow-hidden bg-transparent">
+    <section className="relative min-h-screen flex flex-col justify-center items-center pt-28 pb-20 overflow-hidden bg-transparent pointer-events-none">
       
-      {/* Subtle Ambient Backlight (Matching the Arcane Hall) */}
-      <div className="absolute top-1/4 left-1/4 w-[40rem] h-[40rem] bg-amber-500/5 blur-[120px] -z-10 pointer-events-none rounded-full" />
-      <div className="absolute top-1/3 right-1/4 w-[40rem] h-[40rem] bg-emerald-500/5 blur-[120px] -z-10 pointer-events-none rounded-full" />
-
-      <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
+      {/* Light Glassmorphic Main Card Container */}
+      <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10 w-full pointer-events-auto">
         
-        {/* Hero Main Content (Matching Image 1: DOOMSDAY Hackathon) */}
-        <div className="relative text-center space-y-3 sm:space-y-4 pt-4 md:pt-8">
-          {/* Subtle radial shadow to ensure maximum sharpness over the monument */}
-          <div className="absolute -inset-4 sm:-inset-10 bg-radial from-slate-950/80 via-slate-950/40 to-transparent -z-10 rounded-full blur-2xl pointer-events-none" />
-
-          {/* Institutional Presentation Header: Smt. CHM College & Dept of Data Science Presents */}
-          <div className="inline-flex flex-col items-center justify-center px-6 sm:px-10 py-3.5 rounded-2xl bg-slate-950/85 border border-emerald-500/30 backdrop-blur-md shadow-[0_12px_40px_rgba(0,0,0,0.9)] max-w-3xl mx-auto space-y-1.5 select-none">
-            {/* College Name: Ultra-crisp Pure White with high-contrast shadow */}
-            <div className="font-space text-xs sm:text-sm md:text-base tracking-[0.22em] sm:tracking-[0.3em] text-white uppercase font-extrabold drop-shadow-[0_2px_8px_rgba(0,0,0,1)]">
-              SMT. CHANDIBAI HIMATHMAL MANSUKHANI COLLEGE (CHM)
+        <div className="relative text-center space-y-5 pt-4">
+          
+          {/* Institutional Badge: CHM College & Data Science */}
+          <div className="inline-flex flex-col items-center justify-center px-6 sm:px-10 py-3 rounded-2xl bg-white/80 border border-slate-200/80 backdrop-blur-xl shadow-lg shadow-slate-200/50 max-w-2xl mx-auto space-y-1 select-none">
+            <div className="font-space text-xs sm:text-sm tracking-[0.25em] text-slate-800 uppercase font-black">
+              SMT. CHANDIBAI HIMATHMAL MANSUKHANI COLLEGE
             </div>
-
-            {/* Department: High-Voltage Electric Cyan for 100% visibility against green backdrop */}
-            <div className="font-space text-xs sm:text-sm md:text-[15px] tracking-[0.2em] sm:tracking-[0.25em] text-cyan-300 uppercase font-bold drop-shadow-[0_0_12px_rgba(6,182,212,0.7)]">
-              DEPARTMENT OF DATA SCIENCE
+            <div className="font-space text-[11px] sm:text-xs tracking-[0.2em] text-sky-600 uppercase font-bold flex items-center gap-2">
+              <span>DEPARTMENT OF DATA SCIENCE</span>
+              <span className="w-1.5 h-1.5 rounded-full bg-sky-500" />
+              <span className="text-purple-600">CLUB DATA DECODER</span>
             </div>
+          </div>
 
-            {/* Presents Divider: Radiant Amber Gold */}
-            <div className="flex items-center justify-center gap-3 pt-0.5 w-full">
-              <span className="w-10 sm:w-16 h-[1.5px] bg-gradient-to-r from-transparent via-amber-400 to-amber-400/20" />
-              <span className="font-chakra text-[10px] sm:text-xs tracking-[0.45em] text-amber-300 uppercase font-black drop-shadow-[0_0_10px_rgba(245,158,11,0.8)]">
-                PRESENTS
+          {/* Connected 3D Node Pills */}
+          <div className="flex flex-wrap items-center justify-center gap-2 pt-2">
+            {[
+              { label: 'AI CORE', color: 'bg-sky-50 text-sky-700 border-sky-300' },
+              { label: 'ML', color: 'bg-amber-50 text-amber-700 border-amber-300' },
+              { label: 'RAG', color: 'bg-blue-50 text-blue-700 border-blue-300' },
+              { label: 'NLP', color: 'bg-purple-50 text-purple-700 border-purple-300' },
+              { label: 'CV', color: 'bg-emerald-50 text-emerald-700 border-emerald-300' }
+            ].map((node, i) => (
+              <span
+                key={node.label}
+                className={`px-3 py-1 rounded-full text-[11px] font-mono font-bold border shadow-sm flex items-center gap-1.5 ${node.color}`}
+              >
+                <span className="w-1.5 h-1.5 rounded-full bg-current animate-pulse" />
+                <span>{node.label}</span>
+                {i < 4 && <span className="text-slate-300 hidden sm:inline ml-1 font-normal">─</span>}
               </span>
-              <span className="w-10 sm:w-16 h-[1.5px] bg-gradient-to-l from-transparent via-amber-400 to-amber-400/20" />
-            </div>
+            ))}
           </div>
 
-          {/* Top Line: TECH ASTRA 2026 */}
-          <div className="font-space font-bold text-xs sm:text-sm tracking-[0.35em] sm:tracking-[0.45em] text-slate-100 uppercase flex items-center justify-center gap-2.5 drop-shadow-[0_2px_12px_rgba(0,0,0,1)] pt-1">
-            <span className="text-white">TECH ASTRA</span>
-            <span className="text-emerald-400 font-extrabold drop-shadow-[0_0_12px_rgba(52,211,153,0.8)]">2026</span>
+          {/* Main Title Banner */}
+          <div className="space-y-2 select-none">
+            <h1 className="font-chakra text-4xl sm:text-6xl md:text-7xl font-black tracking-tight text-slate-900 uppercase">
+              TECH<span className="text-transparent bg-clip-text bg-gradient-to-r from-sky-600 via-blue-600 to-indigo-600">ASTRA</span> 2026
+            </h1>
+            <p className="font-space text-sm sm:text-lg md:text-xl font-bold tracking-[0.25em] text-slate-700 uppercase">
+              AI IN EDUTECH NATIONAL HACKATHON
+            </p>
           </div>
 
-          {/* Authentic 3D Chiseled DOOMSDAY Monument with Integrated Avengers 'A' & Emerald Laser Line */}
-          <div className="relative flex flex-col items-center justify-center py-2 sm:py-3 select-none w-full max-w-4xl mx-auto group">
-            {/* Ambient emerald & void lighting backplate for flawless contrast against the background */}
-            <div className="absolute inset-0 max-w-3xl mx-auto bg-radial from-emerald-500/20 via-black/70 to-transparent blur-3xl -z-10 pointer-events-none" />
-            <div className="absolute inset-x-4 sm:inset-x-12 inset-y-1 bg-black/60 rounded-full blur-2xl -z-10 pointer-events-none" />
+          {/* Hackathon Mission Tagline */}
+          <p className="max-w-2xl mx-auto text-slate-600 text-xs sm:text-sm md:text-base leading-relaxed font-mono">
+            {EVENT_DETAILS.tagline}
+          </p>
 
-            <img
-              src="/images/doomsday_title_chiseled.png"
-              alt="DOOMSDAY"
-              className="w-full max-w-xl sm:max-w-2xl md:max-w-3xl lg:max-w-4xl h-auto object-contain drop-shadow-[0_16px_45px_rgba(0,0,0,0.95)] drop-shadow-[0_0_40px_rgba(45,255,79,0.38)] pointer-events-none select-none transition-transform duration-300 hover:scale-[1.01]"
-              loading="eager"
-            />
-          </div>
-
-          {/* Subtitle: 48-HOUR HACKATHON (Wide Geometric Sans-Serif / Eurostile / Syncopate) */}
-          <div className="font-syncopate text-sm sm:text-lg md:text-xl font-bold text-white tracking-[0.35em] sm:tracking-[0.45em] uppercase pt-1 drop-shadow-[0_2px_8px_rgba(0,0,0,0.95)]">
-            48-HOUR HACKATHON
-          </div>
-
-          {/* Tagline: Wide Geometric Sans-Serif */}
-          <div className="font-syncopate text-xs sm:text-sm text-slate-200 tracking-[0.25em] sm:tracking-[0.35em] uppercase space-y-1.5 pt-2 drop-shadow-[0_2px_8px_rgba(0,0,0,1)]">
-            <p className="font-bold text-white tracking-[0.3em]">BEFORE THE BREAKING POINT</p>
-            <p className="text-cyan-300 font-bold text-[10px] sm:text-xs tracking-[0.28em] drop-shadow-[0_0_8px_rgba(6,182,212,0.6)]">REAL PROBLEMS. BOLD SOLUTIONS.</p>
-          </div>
-
-          {/* Organised by Data Decoders */}
-          <div className="pt-2 sm:pt-3 flex items-center justify-center">
-            <div className="inline-flex items-center gap-2.5 px-6 py-2 rounded-full bg-slate-950/90 border border-cyan-500/50 backdrop-blur-md shadow-[0_0_25px_rgba(6,182,212,0.3)]">
-              <span className="text-[10px] sm:text-xs font-space tracking-[0.25em] text-slate-200 uppercase font-medium">
-                ORGANISED BY
-              </span>
-              <span className="text-xs sm:text-sm font-chakra font-black tracking-[0.22em] text-cyan-300 uppercase drop-shadow-[0_0_12px_rgba(34,211,238,0.9)]">
-                DATA DECODERS
-              </span>
-            </div>
-          </div>
-
-          {/* Tactical Chamfered Register Button (Image 1) */}
-          <div className="flex items-center justify-center pt-4 sm:pt-5">
+          {/* High-Key Interactive CTA Button */}
+          <div className="flex flex-wrap items-center justify-center gap-4 pt-3">
             <button
               onClick={() => onOpenRegister()}
-              className="btn-doomsday-cyber group relative px-10 sm:px-14 py-3 sm:py-3.5 flex items-center justify-center gap-2.5 cursor-pointer"
+              className="px-8 sm:px-10 py-3.5 rounded-2xl bg-gradient-to-r from-sky-600 via-blue-600 to-indigo-600 hover:from-sky-500 hover:to-indigo-500 text-white font-chakra font-black tracking-wider text-sm shadow-xl shadow-blue-500/25 hover:shadow-blue-500/40 hover:-translate-y-0.5 active:translate-y-0 transition-all flex items-center gap-3 cursor-pointer"
             >
-              <span className="font-chakra text-xs sm:text-sm font-bold tracking-[0.25em] text-emerald-400 group-hover:text-emerald-300 uppercase flex items-center gap-2.5">
-                <span>REGISTER NOW</span>
-                <span className="text-base group-hover:translate-x-1.5 transition-transform duration-200">→</span>
-              </span>
+              <span>REGISTER FOR HACKATHON</span>
+              <ArrowRight className="w-4 h-4" />
             </button>
-          </div>
-        </div>
 
-          {/* Live Countdown HUD */}
-          <div className="pt-8 max-w-2xl mx-auto w-full">
+            <a
+              href="#tracks"
+              className="px-7 py-3.5 rounded-2xl bg-white/80 hover:bg-white border border-slate-300 text-slate-800 font-chakra font-bold tracking-wider text-sm shadow-md hover:shadow-lg transition-all flex items-center gap-2"
+            >
+              <span>EXPLORE 3D TRACKS</span>
+            </a>
+          </div>
+
+          {/* 3D Interaction Hint */}
+          <p className="text-[11px] font-mono text-slate-400 select-none pt-1">
+            💡 <strong>3D Interactive Scene:</strong> Click & drag anywhere to spin the connected AI neural network in 360°!
+          </p>
+
+          {/* Live Countdown & Stats Card */}
+          <div className="pt-6 max-w-2xl mx-auto w-full">
             {eventSettings.datesAnnounced ? (
-              <div className="p-5 rounded-2xl bg-slate-900/60 backdrop-blur-md border border-white/10 shadow-xl">
-                <div className="flex items-center justify-center gap-2 text-xs font-mono text-amber-400 mb-4 tracking-widest">
-                  <Clock className="w-4 h-4 animate-pulse" />
+              <div className="p-5 rounded-3xl bg-white/85 backdrop-blur-xl border border-slate-200/90 shadow-xl shadow-slate-200/60">
+                <div className="flex items-center justify-center gap-2 text-xs font-mono text-blue-600 mb-3 tracking-widest font-bold">
+                  <Clock className="w-4 h-4 animate-spin text-blue-500" />
                   <span>HACKATHON COMMENCES IN</span>
                 </div>
 
-                <div className="grid grid-cols-4 gap-3 sm:gap-4 text-center">
-                  <div className="bg-slate-950/80 p-3 sm:p-4 rounded-xl border border-white/5">
-                    <span className="block text-3xl sm:text-4xl font-black text-white font-mono">{timeLeft.days}</span>
-                    <span className="text-[10px] sm:text-xs text-slate-400 uppercase tracking-widest mt-1 block">DAYS</span>
+                <div className="grid grid-cols-4 gap-3 text-center">
+                  <div className="bg-slate-50 p-3 rounded-2xl border border-slate-200">
+                    <span className="block text-2xl sm:text-3xl font-black text-slate-900 font-mono">{timeLeft.days}</span>
+                    <span className="text-[10px] text-slate-500 uppercase tracking-widest font-bold block">DAYS</span>
                   </div>
-                  <div className="bg-slate-950/80 p-3 sm:p-4 rounded-xl border border-white/5">
-                    <span className="block text-3xl sm:text-4xl font-black text-amber-400 font-mono">{timeLeft.hours}</span>
-                    <span className="text-[10px] sm:text-xs text-slate-400 uppercase tracking-widest mt-1 block">HOURS</span>
+                  <div className="bg-slate-50 p-3 rounded-2xl border border-slate-200">
+                    <span className="block text-2xl sm:text-3xl font-black text-blue-600 font-mono">{timeLeft.hours}</span>
+                    <span className="text-[10px] text-slate-500 uppercase tracking-widest font-bold block">HOURS</span>
                   </div>
-                  <div className="bg-slate-950/80 p-3 sm:p-4 rounded-xl border border-white/5">
-                    <span className="block text-3xl sm:text-4xl font-black text-emerald-400 font-mono">{timeLeft.minutes}</span>
-                    <span className="text-[10px] sm:text-xs text-slate-400 uppercase tracking-widest mt-1 block">MINS</span>
+                  <div className="bg-slate-50 p-3 rounded-2xl border border-slate-200">
+                    <span className="block text-2xl sm:text-3xl font-black text-indigo-600 font-mono">{timeLeft.minutes}</span>
+                    <span className="text-[10px] text-slate-500 uppercase tracking-widest font-bold block">MINS</span>
                   </div>
-                  <div className="bg-slate-950/80 p-3 sm:p-4 rounded-xl border border-white/5">
-                    <span className="block text-3xl sm:text-4xl font-black text-cyan-400 font-mono">{timeLeft.seconds}</span>
-                    <span className="text-[10px] sm:text-xs text-slate-400 uppercase tracking-widest mt-1 block">SECS</span>
+                  <div className="bg-slate-50 p-3 rounded-2xl border border-slate-200">
+                    <span className="block text-2xl sm:text-3xl font-black text-sky-600 font-mono">{timeLeft.seconds}</span>
+                    <span className="text-[10px] text-slate-500 uppercase tracking-widest font-bold block">SECS</span>
                   </div>
                 </div>
               </div>
             ) : (
-              <div className="p-6 rounded-2xl bg-slate-900/60 backdrop-blur-md border border-emerald-500/20 shadow-xl">
-                <div className="flex items-center justify-center gap-2 text-xs font-mono text-emerald-400 mb-3">
-                  <Clock className="w-4 h-4 animate-pulse" />
-                  <span>EVENT TIMELINE STATUS</span>
+              <div className="p-6 rounded-3xl bg-white/85 backdrop-blur-xl border border-slate-200/90 shadow-xl shadow-slate-200/60 text-center space-y-3">
+                <div className="inline-flex items-center gap-2 text-xs font-mono font-bold text-sky-700 px-3 py-1 rounded-full bg-sky-50 border border-sky-200">
+                  <Sparkles className="w-3.5 h-3.5 text-sky-500" />
+                  <span>DATES TO BE ANNOUNCED SOON</span>
                 </div>
-
-                <div className="text-2xl sm:text-3xl font-black text-transparent bg-clip-text bg-gradient-to-r from-emerald-300 to-cyan-300 tracking-wider">
-                  DATES TO BE ANNOUNCED
-                </div>
-                <p className="text-sm text-slate-300 mt-2 font-light">
-                  Official hackathon dates will be revealed soon. Registrations are currently open.
+                <h4 className="text-base sm:text-lg font-chakra font-bold text-slate-900">
+                  Smt. CHM College Campus, Ulhasnagar • 48-Hour National Sprint
+                </h4>
+                <p className="text-xs text-slate-500 font-mono max-w-lg mx-auto">
+                  Registrations are open for early innovator slots. Secure your spot before slots are filled!
                 </p>
               </div>
             )}
           </div>
 
-        {/* Bottom Tactical Metric HUD */}
-        <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mt-16 max-w-5xl mx-auto">
-          <div className="bg-slate-900/60 backdrop-blur-sm p-4 rounded-xl border border-emerald-500/20 hover:border-emerald-500/40 transition-all">
-            <div className="flex items-center gap-3">
-              <div className="p-2.5 rounded-lg bg-emerald-500/10 border border-emerald-500/30 text-emerald-400">
+          {/* Quick Pillars Grid */}
+          <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 max-w-3xl mx-auto pt-4 text-left">
+            <div className="p-4 rounded-2xl bg-white/75 backdrop-blur-md border border-slate-200 shadow-sm flex items-center gap-3">
+              <div className="w-10 h-10 rounded-xl bg-blue-50 border border-blue-200 flex items-center justify-center text-blue-600 shrink-0">
                 <Trophy className="w-5 h-5" />
               </div>
-              <div className="text-left">
-                <div className="text-xl font-bold text-white font-mono">{eventSettings.prizePool}</div>
-                <div className="text-[11px] text-slate-400 font-light uppercase tracking-wider">Prize Pool</div>
+              <div>
+                <div className="text-xs font-chakra font-bold text-slate-900">{EVENT_DETAILS.prizePool} Cash Pool</div>
+                <div className="text-[11px] text-slate-500 font-mono">Prizes for all AI Tracks</div>
               </div>
             </div>
-          </div>
 
-          <div className="bg-slate-900/60 backdrop-blur-sm p-4 rounded-xl border border-amber-500/20 hover:border-amber-500/40 transition-all">
-            <div className="flex items-center gap-3">
-              <div className="p-2.5 rounded-lg bg-amber-500/10 border border-amber-500/30 text-amber-400">
-                <Clock className="w-5 h-5" />
-              </div>
-              <div className="text-left">
-                <div className="text-xl font-bold text-white font-mono">48 HOURS</div>
-                <div className="text-[11px] text-slate-400 font-light uppercase tracking-wider">Non-Stop Hackathon</div>
-              </div>
-            </div>
-          </div>
-
-          <div className="bg-slate-900/60 backdrop-blur-sm p-4 rounded-xl border border-cyan-500/20 hover:border-cyan-500/40 transition-all">
-            <div className="flex items-center gap-3">
-              <div className="p-2.5 rounded-lg bg-cyan-500/10 border border-cyan-500/30 text-cyan-400">
+            <div className="p-4 rounded-2xl bg-white/75 backdrop-blur-md border border-slate-200 shadow-sm flex items-center gap-3">
+              <div className="w-10 h-10 rounded-xl bg-purple-50 border border-purple-200 flex items-center justify-center text-purple-600 shrink-0">
                 <Users className="w-5 h-5" />
               </div>
-              <div className="text-left">
-                <div className="text-xl font-bold text-white font-mono">OPEN FOR ALL</div>
-                <div className="text-[11px] text-slate-400 font-light uppercase tracking-wider">All Branches & Years</div>
+              <div>
+                <div className="text-xs font-chakra font-bold text-slate-900">300+ Innovators</div>
+                <div className="text-[11px] text-slate-500 font-mono">80+ Universities Across India</div>
+              </div>
+            </div>
+
+            <div className="p-4 rounded-2xl bg-white/75 backdrop-blur-md border border-slate-200 shadow-sm flex items-center gap-3">
+              <div className="w-10 h-10 rounded-xl bg-emerald-50 border border-emerald-200 flex items-center justify-center text-emerald-600 shrink-0">
+                <ShieldCheck className="w-5 h-5" />
+              </div>
+              <div>
+                <div className="text-xs font-chakra font-bold text-slate-900">Free Food & Swag</div>
+                <div className="text-[11px] text-slate-500 font-mono">Hardware & Cloud Credits</div>
               </div>
             </div>
           </div>
 
-          <div className="bg-slate-900/60 backdrop-blur-sm p-4 rounded-xl border border-purple-500/20 hover:border-purple-500/40 transition-all">
-            <div className="flex items-center gap-3">
-              <div className="p-2.5 rounded-lg bg-purple-500/10 border border-purple-500/30 text-purple-400">
-                <ShieldCheck className="w-5 h-5" />
-              </div>
-              <div className="text-left">
-                <div className="text-xl font-bold text-white font-mono">CERTIFIED</div>
-                <div className="text-[11px] text-slate-400 font-light uppercase tracking-wider">Participation Certs</div>
-              </div>
-            </div>
-          </div>
         </div>
 
       </div>
-
-      {/* Atmospheric bottom fade into consecutive sections */}
-      <div className="absolute bottom-0 left-0 right-0 h-28 bg-gradient-to-t from-[#070913] to-transparent pointer-events-none" />
     </section>
   );
 }

@@ -1,9 +1,10 @@
-// Data store for TechAstra College Tech Fest
+// Data store for TechAstra 2026: AI in EduTech National Hackathon
 
 export const EVENT_DETAILS = {
   name: "TechAstra 2026",
-  tagline: "48 Hours. One Problem. Unlimited Possibilities.",
-  edition: "4th National Edition",
+  subtitle: "AI in EduTech National Hackathon",
+  tagline: "Building the Future of Education with Intelligent Systems: AI • ML • RAG • NLP • CV",
+  edition: "Flagship National Edition",
   dates: "To Be Announced Soon",
   datesAnnounced: false,
   targetDate: "2026-10-16T09:00:00+05:30",
@@ -16,7 +17,7 @@ export const EVENT_DETAILS = {
   phone: "+91 80100 86323",
   organizers: "Club Data Decoder, Department of Data Science, Smt. Chandibai Himathmal Mansukhani College",
   prizePool: "₹1,00,000",
-  participantsExpected: "300+ Hackers (Open For All)",
+  participantsExpected: "300+ Innovators & Hackers",
   collegesExpected: "80+ Universities Across India"
 };
 
@@ -79,97 +80,111 @@ export const PAST_YEAR_GALLERY = [
 
 export const EVENT_TRACKS = [
   {
-    id: "ai-data",
-    name: "AI & Neural Frontiers",
+    id: "rag-knowledge",
+    node: "RAG",
+    name: "RAG & Knowledge Retrieval in EduTech",
+    icon: "Database",
+    color: "from-blue-600 to-cyan-500",
+    badge: "Vector Knowledge",
+    desc: "Build factual retrieval engines, verified textbook search systems, and automated curriculum grounded Q&A with vector embeddings.",
+    prize: "₹30,000 Cash Pool"
+  },
+  {
+    id: "nlp-tutoring",
+    node: "NLP",
+    name: "NLP & Intelligent Tutoring Systems",
     icon: "BrainCircuit",
-    desc: "Build autonomous agents, multi-modal LLM workflows, predictive models, or computer vision systems.",
-    prize: "₹60,000 Cash Pool"
+    color: "from-purple-600 to-indigo-500",
+    badge: "Conversational AI",
+    desc: "Create 24/7 multimodal AI mentors, real-time code debugging assistants, automated rubric essay grading, and vernacular language translators.",
+    prize: "₹30,000 Cash Pool"
   },
   {
-    id: "web3-cloud",
-    name: "Web3 & Cloud Architectures",
-    icon: "Globe",
-    desc: "Decentralized applications, smart contracts, high-throughput microservices, and serverless computing.",
-    prize: "₹50,000 Cash Pool"
+    id: "cv-classroom",
+    node: "CV",
+    name: "Computer Vision & Spatial Classrooms",
+    icon: "Scan",
+    color: "from-emerald-600 to-teal-500",
+    badge: "Visual Intelligence",
+    desc: "Digitize handwritten math equations, build smart attention & engagement analytics, remote AI proctoring, and AR spatial learning labs.",
+    prize: "₹25,000 Cash Pool"
   },
   {
-    id: "algo-cp",
-    name: "Algorithmic Duels (CP)",
-    icon: "Code2",
-    desc: "Rapid-fire data structure sprints, dynamic programming battles, and graph theorem challenges.",
-    prize: "₹45,000 Cash Pool"
+    id: "ml-predictive",
+    node: "ML",
+    name: "Machine Learning & Adaptive Pacing",
+    icon: "Network",
+    color: "from-amber-500 to-orange-500",
+    badge: "Predictive Analytics",
+    desc: "Develop dynamic difficulty adjustment engines, early dropout warning algorithms, and personalized curriculum path recommenders.",
+    prize: "₹25,000 Cash Pool"
   },
   {
-    id: "cyber-ctf",
-    name: "Cybersecurity & CTF",
-    icon: "ShieldAlert",
-    desc: "Reverse engineering, binary exploitation, web vulnerabilities, and digital forensic capture-the-flag.",
-    prize: "₹45,000 Cash Pool"
-  },
-  {
-    id: "iot-robotics",
-    name: "IoT & Embedded Robotics",
+    id: "ai-agents",
+    node: "AI Core",
+    name: "Autonomous Agents for Education",
     icon: "Cpu",
-    desc: "Smart robotics, edge computing hardware, drone navigation, and industrial automation solutions.",
-    prize: "₹50,000 Cash Pool"
+    color: "from-cyan-500 to-blue-600",
+    badge: "Foundation Models",
+    desc: "End-to-end multi-agent educational workflows where autonomous AI teachers, graders, and research assistants collaborate seamlessly.",
+    prize: "₹30,000 Cash Pool"
   }
 ];
 
 export const REGISTRATION_TIERS = [
   {
     id: "solo-coder",
-    name: "Solo Hacker Pass",
-    badge: "Most Popular for Coders",
+    name: "Solo Innovator Pass",
+    badge: "Individual Participant",
     price: 299,
     currency: "INR",
     type: "individual",
     features: [
-      "Access to Algorithmic Duels & Speed Coding",
-      "Attend All Keynotes & Tech Workshops",
-      "Dedicated Workstation & High-Speed Wi-Fi Zone",
-      "Free Lunch & Refreshments during Fest",
-      "Official Certificate of Participation"
+      "Access to all AI in EduTech Keynotes & Workstations",
+      "Participate in Individual Hackathon Sprint & Code Duels",
+      "High-Speed Campus Wi-Fi & AI Compute Credits",
+      "Free Lunch, Refreshments & Energy Drinks",
+      "Verified Certificate of Participation & Digital Badge"
     ],
     popular: false,
-    color: "from-blue-500 to-cyan-500"
+    color: "from-blue-600 to-cyan-500"
   },
   {
     id: "hackathon-squad",
-    name: "Hackathon Squad (Team 2-4)",
+    name: "Hackathon Squad Pass (Team of 2-4)",
     badge: "Flagship Hackathon",
     price: 799,
     currency: "INR",
     type: "team",
     features: [
-      "Guaranteed Entry to 48-Hr Flagship Hackathon",
-      "Covers entire team of up to 4 members",
-      "Midnight Meals, Energy Drinks & Snacks",
-      "Direct 1-on-1 Mentorship from Tech Leads",
-      "Eligible for ₹2.5L+ Cash Prizes & Pool Awards",
-      "Cloud Developer Sandbox & Infrastructure Access"
+      "Full 48-Hour Hackathon Access for 2 to 4 Members",
+      "Eligibility for ₹1,00,000 Cash Prize Pool Across All Tracks",
+      "Dedicated Team Table, Power Stations & Hardware Sandbox",
+      "1-on-1 Mentorship from Leading AI & Data Science Industry Experts",
+      "Food, Late-Night Snacks, Swag Kits & Official Delegate ID Cards"
     ],
     popular: true,
-    color: "from-indigo-500 to-purple-600"
+    color: "from-indigo-600 to-blue-600"
   },
   {
-    id: "all-access-vip",
-    name: "All-Access Delegate VIP",
-    badge: "Exclusive Experience",
+    id: "all-access",
+    name: "VIP Research & Innovator Pass",
+    badge: "All-Inclusive Elite",
     price: 1299,
     currency: "INR",
-    type: "individual",
+    type: "team",
     features: [
-      "Everything in Solo Hacker Pass",
-      "VIP Seating at Keynotes & Fireside Chats",
-      "Exclusive Invite to Sponsor Dinner & Networking",
-      "Direct 1-on-1 Mentorship & Industry Jury Feedback",
-      "Fast-Track Gate Check-in & Priority Wi-Fi Zone",
-      "VIP Certificate of Excellence & Networking Access"
+      "Squad Access (2-4 Members) with Priority Seating & Fast-Track Check-in",
+      "Exclusive Round-Table with AI Startup Founders & EduTech VCs",
+      "Premium Hardware Sandbox & Cloud GPU Sandbox Access",
+      "Exclusive TechAstra 2026 AI Innovator Hoodies & Swag Kit",
+      "Direct Interview & Internship Fast-Track with Hiring Partners"
     ],
     popular: false,
-    color: "from-amber-500 to-rose-600"
+    color: "from-emerald-600 to-teal-500"
   }
 ];
+
 
 export const FAQ_LIST = [
   {
@@ -178,7 +193,11 @@ export const FAQ_LIST = [
   },
   {
     q: "Can I participate individually in the hackathon?",
-    a: "The Flagship Hackathon allows teams of 2 to 4 members. You can either register with your squad or join our discord/on-campus team formation mixer on Day 1. Solo attendees can also participate in Algorithmic Duels and Workshops!"
+    a: "The Flagship Hackathon allows teams of 2 to 4 members. You can either register with your squad or join our team formation mixer on Day 1. Solo innovators can also participate in individual tracks and tech keynotes!"
+  },
+  {
+    q: "What tools and models are permitted in the AI in EduTech hackathon?",
+    a: "All open-source and proprietary foundation models, APIs, vector databases (Pinecone, Chroma, Milvus, Qdrant), LangChain, LlamaIndex, PyTorch, TensorFlow, and Hugging Face are fully permitted. Submissions must include genuine implementation and integration."
   },
   {
     q: "How does the payment and ticket confirmation work?",
@@ -186,7 +205,7 @@ export const FAQ_LIST = [
   },
   {
     q: "Will accommodation and food be provided?",
-    a: "Yes! All registered participants receive complimentary meals, refreshments, and midnight snacks during hackathon hours. Outstation hostel accommodation can be requested post-registration."
+    a: "Yes! All registered participants receive complimentary meals, refreshments, and midnight snacks during hackathon hours. Outstation accommodation guidance can be requested post-registration."
   },
   {
     q: "Where is the venue and how do I contact the organizing committee?",

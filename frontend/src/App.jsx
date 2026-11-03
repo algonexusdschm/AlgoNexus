@@ -7,7 +7,7 @@ import Gallery from './components/Gallery';
 import PricingSection from './components/PricingSection';
 import FAQ from './components/FAQ';
 import Footer from './components/Footer';
-import MinecraftBackground from './components/MinecraftBackground';
+import AiUniverse3D from './components/AiUniverse3D';
 import { EventProvider, useEvent } from './context/EventContext';
 
 // Lazy-loaded heavy modules for optimal initial load speed
@@ -98,8 +98,8 @@ function MainEventApp() {
   // If on Admin Website Route
   if (currentRoute === 'admin') {
     return (
-      <div className="min-h-screen bg-[#070913] text-slate-100 flex flex-col relative selection:bg-cyan-500/30 overflow-x-hidden">
-        <MinecraftBackground />
+      <div className="min-h-screen bg-[#f8fafc] text-slate-900 flex flex-col relative selection:bg-cyan-500/30 overflow-x-hidden">
+        <AiUniverse3D />
         <div className="relative z-10 flex-1 flex flex-col">
           <Suspense fallback={<div className="min-h-screen flex items-center justify-center text-emerald-400 font-chakra text-sm tracking-widest animate-pulse">CONNECTING TO GATE CONSOLE...</div>}>
             <AdminPage onBackToWebsite={navigateToEvent} />
@@ -111,9 +111,9 @@ function MainEventApp() {
 
   // Public Event Website
   return (
-    <div className="min-h-screen bg-[#070913] text-slate-100 flex flex-col relative selection:bg-cyan-500/30 overflow-x-hidden">
+    <div className="min-h-screen bg-[#f8fafc] text-slate-900 flex flex-col relative selection:bg-cyan-500/30 overflow-x-hidden">
       {/* 3D Multiverse Incursion World Background */}
-      <MinecraftBackground />
+      <AiUniverse3D />
 
       {/* Top Navbar with Admin Portal Trigger */}
       <Navbar

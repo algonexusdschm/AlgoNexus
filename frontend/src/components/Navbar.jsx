@@ -1,60 +1,60 @@
 import React, { useState } from 'react';
-import { Box, Menu, X, Ticket, LayoutDashboard, Shield } from 'lucide-react';
+import { Menu, X, Ticket, LayoutDashboard, BrainCircuit, Sparkles } from 'lucide-react';
 
 export default function Navbar({ onOpenRegister, onOpenAdmin }) {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
 
   return (
-    <nav className="fixed top-0 left-0 right-0 z-50 bg-slate-950/40 backdrop-blur-md border-b border-emerald-500/20 shadow-[0_4px_24px_rgba(0,0,0,0.6)] transition-all">
+    <nav className="fixed top-0 left-0 right-0 z-50 bg-white/80 backdrop-blur-xl border-b border-slate-200/80 shadow-sm transition-all">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex items-center justify-between h-20">
           
           {/* Brand Logo */}
           <a href="#" className="flex items-center gap-3 group">
-            <div className="w-10 h-10 bg-slate-900/80 border-2 border-emerald-500/50 p-1.5 shadow-[0_0_15px_rgba(16,185,129,0.25)] group-hover:border-emerald-400 group-hover:shadow-[0_0_20px_rgba(16,185,129,0.5)] transition-all flex items-center justify-center rounded-lg">
-              <Box className="w-5 h-5 text-emerald-400 group-hover:rotate-12 transition-transform" />
+            <div className="w-10 h-10 bg-gradient-to-tr from-sky-600 to-indigo-600 rounded-xl p-2 shadow-md shadow-blue-500/20 group-hover:scale-105 transition-all flex items-center justify-center text-white">
+              <BrainCircuit className="w-6 h-6" />
             </div>
             <div>
               <div className="flex items-center gap-2">
-                <span className="text-2xl font-bebas tracking-widest text-white uppercase">
-                  TECH<span className="text-emerald-400 drop-shadow-[0_0_8px_rgba(52,211,153,0.5)]">ASTRA</span>
+                <span className="text-xl sm:text-2xl font-chakra font-black tracking-tight text-slate-900 uppercase">
+                  TECH<span className="text-blue-600">ASTRA</span>
                 </span>
-                <span className="text-[10px] font-space font-bold px-2 py-0.5 bg-emerald-500/10 text-emerald-400 border border-emerald-500/30 rounded">
+                <span className="text-[10px] font-mono font-bold px-2 py-0.5 bg-blue-50 text-blue-700 border border-blue-200 rounded-full">
                   2026
                 </span>
               </div>
-              <p className="text-[10px] text-slate-300 tracking-wider uppercase font-space">
-                <span className="text-emerald-400 font-semibold">Club Data Decoder</span> • Dept. of Data Science • CHM College
+              <p className="text-[10px] text-slate-500 tracking-wider uppercase font-mono">
+                <span className="text-blue-600 font-bold">Data Decoders</span> • Dept. of Data Science • CHM College
               </p>
             </div>
           </a>
 
-          {/* Desktop Nav Links (Clean, Wide Geometric Sans-Serif / Eurostile / Syncopate) */}
-          <div className="hidden md:flex items-center space-x-6 text-[10px] font-syncopate font-bold uppercase tracking-[0.2em] text-slate-300">
-            <a href="#protocol" className="hover:text-emerald-400 text-emerald-300 transition-colors flex items-center gap-1.5">
-              <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse" />
-              <span>Protocol</span>
+          {/* Desktop Nav Links */}
+          <div className="hidden md:flex items-center space-x-7 text-xs font-mono font-semibold text-slate-600">
+            <a href="#tracks" className="hover:text-blue-600 text-blue-600 transition-colors flex items-center gap-1.5 font-bold">
+              <span className="w-1.5 h-1.5 rounded-full bg-blue-600 animate-pulse" />
+              <span>AI Tracks</span>
             </a>
-            <a href="#announcement" className="hover:text-emerald-400 transition-colors">Announcement</a>
-            <a href="#gallery" className="hover:text-emerald-400 transition-colors">Memories</a>
-            <a href="#passes" className="hover:text-emerald-400 transition-colors">Passes</a>
-            <a href="#faq" className="hover:text-emerald-400 transition-colors">FAQ</a>
+            <a href="#announcement" className="hover:text-blue-600 transition-colors">Announcement</a>
+            <a href="#gallery" className="hover:text-blue-600 transition-colors">Memories</a>
+            <a href="#passes" className="hover:text-blue-600 transition-colors">Delegate Passes</a>
+            <a href="#faq" className="hover:text-blue-600 transition-colors">FAQ</a>
           </div>
 
           {/* Action CTAs */}
           <div className="hidden md:flex items-center gap-3">
             <button
               onClick={onOpenAdmin}
-              className="px-4 py-2 rounded-lg bg-slate-900/70 hover:bg-slate-800/90 border border-slate-700/70 hover:border-slate-500 text-slate-300 font-chakra text-xs flex items-center gap-1.5 transition-all shadow-sm"
+              className="px-4 py-2 rounded-xl bg-slate-100 hover:bg-slate-200 border border-slate-200 text-slate-700 font-mono text-xs flex items-center gap-1.5 transition-all font-semibold"
               title="Organizers & Gate Console"
             >
-              <LayoutDashboard className="w-3.5 h-3.5 text-cyan-400" />
+              <LayoutDashboard className="w-3.5 h-3.5 text-blue-600" />
               <span>Admin Console</span>
             </button>
 
             <button
               onClick={() => onOpenRegister()}
-              className="px-5 py-2 rounded-lg bg-emerald-500/20 hover:bg-emerald-500/30 border border-emerald-500/60 hover:border-emerald-400 text-emerald-300 font-chakra font-bold text-xs flex items-center gap-2 shadow-[0_0_15px_rgba(16,185,129,0.25)] hover:shadow-[0_0_20px_rgba(16,185,129,0.45)] transition-all"
+              className="px-5 py-2.5 rounded-xl bg-blue-600 hover:bg-blue-700 text-white font-chakra font-bold text-xs flex items-center gap-2 shadow-md shadow-blue-500/25 hover:shadow-lg transition-all"
             >
               <Ticket className="w-4 h-4" />
               <span>Register Now</span>
@@ -65,7 +65,7 @@ export default function Navbar({ onOpenRegister, onOpenAdmin }) {
           <div className="md:hidden flex items-center gap-2">
             <button
               onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
-              className="p-2.5 rounded-lg bg-slate-900 border border-slate-700 text-slate-300 hover:text-white"
+              className="p-2.5 rounded-xl bg-slate-100 border border-slate-200 text-slate-700"
             >
               {mobileMenuOpen ? <X className="w-5 h-5" /> : <Menu className="w-5 h-5" />}
             </button>
@@ -75,61 +75,60 @@ export default function Navbar({ onOpenRegister, onOpenAdmin }) {
 
       {/* Mobile Drawer */}
       {mobileMenuOpen && (
-        <div className="md:hidden bg-slate-950/95 backdrop-blur-xl border-b border-emerald-500/20 px-4 pt-3 pb-6 space-y-3 font-chakra font-semibold text-xs uppercase tracking-wider">
+        <div className="md:hidden bg-white/95 backdrop-blur-xl border-b border-slate-200 px-4 pt-3 pb-6 space-y-3 font-mono font-semibold text-xs text-slate-700">
           <a
-            href="#protocol"
+            href="#tracks"
             onClick={() => setMobileMenuOpen(false)}
-            className="block px-3 py-2 text-emerald-400 hover:text-emerald-300"
+            className="block py-2 hover:text-blue-600"
           >
-            ☢️ Survival Protocol
+            AI Tracks & Roadmap
           </a>
           <a
             href="#announcement"
             onClick={() => setMobileMenuOpen(false)}
-            className="block px-3 py-2 text-slate-300 hover:text-emerald-400"
+            className="block py-2 hover:text-blue-600"
           >
-            Announcement (2026)
+            Announcement
           </a>
           <a
             href="#gallery"
             onClick={() => setMobileMenuOpen(false)}
-            className="block px-3 py-2 text-slate-300 hover:text-emerald-400"
+            className="block py-2 hover:text-blue-600"
           >
-            Last Event Memories
+            Memories
           </a>
           <a
             href="#passes"
             onClick={() => setMobileMenuOpen(false)}
-            className="block px-3 py-2 text-slate-300 hover:text-emerald-400"
+            className="block py-2 hover:text-blue-600"
           >
-            Doomsday Passes
+            Passes
           </a>
           <a
             href="#faq"
             onClick={() => setMobileMenuOpen(false)}
-            className="block px-3 py-2 text-slate-300 hover:text-emerald-400"
+            className="block py-2 hover:text-blue-600"
           >
             FAQ
           </a>
-
-          <div className="pt-3 border-t border-slate-800 flex flex-col gap-2">
+          <div className="pt-2 flex flex-col gap-2">
             <button
               onClick={() => {
                 setMobileMenuOpen(false);
                 onOpenRegister();
               }}
-              className="w-full py-3 rounded-xl bg-gradient-to-r from-emerald-500 to-emerald-400 text-slate-950 font-bold text-xs flex items-center justify-center gap-2 shadow-[0_0_15px_rgba(16,185,129,0.4)]"
+              className="w-full py-3 rounded-xl bg-blue-600 text-white font-chakra font-bold text-center"
             >
-              <Ticket className="w-4 h-4" /> Claim Event Pass
+              Register Now
             </button>
             <button
               onClick={() => {
                 setMobileMenuOpen(false);
                 onOpenAdmin();
               }}
-              className="w-full py-2.5 rounded-xl bg-slate-900 border border-slate-700 text-slate-200 text-xs flex items-center justify-center gap-2"
+              className="w-full py-2.5 rounded-xl bg-slate-100 text-slate-800 font-mono text-center border border-slate-200"
             >
-              <LayoutDashboard className="w-4 h-4 text-emerald-400" /> Organizer Admin Console
+              Admin Console
             </button>
           </div>
         </div>

@@ -1,15 +1,13 @@
 import React from 'react';
-import { Shield, Globe, Mail, Phone, MapPin, Heart, Code2, MessageSquare, Terminal, Zap } from 'lucide-react';
+import { Mail, Phone, MapPin, BrainCircuit, Sparkles } from 'lucide-react';
 import { useEvent } from '../context/EventContext';
+import { EVENT_DETAILS } from '../data/eventData';
 
 export default function Footer({ onOpenRegister, onOpenAdmin }) {
   const { eventSettings } = useEvent();
 
   return (
-    <footer className="bg-[#05080b]/95 border-t border-emerald-500/20 pt-16 pb-12 text-slate-400 text-xs backdrop-blur-md relative overflow-hidden">
-      {/* Subtle emerald bottom glow */}
-      <div className="absolute bottom-0 left-1/2 -translate-x-1/2 w-96 h-32 bg-emerald-500/5 blur-3xl pointer-events-none -z-10" />
-
+    <footer className="bg-white border-t border-slate-200/90 pt-16 pb-12 text-slate-500 text-xs relative overflow-hidden">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
         
         <div className="grid grid-cols-1 md:grid-cols-4 gap-10 mb-12">
@@ -17,94 +15,90 @@ export default function Footer({ onOpenRegister, onOpenAdmin }) {
           {/* Brand Info */}
           <div className="space-y-4 md:col-span-1">
             <div className="flex items-center gap-2.5">
-              <div className="w-9 h-9 rounded-lg bg-slate-900 border border-emerald-500/40 flex items-center justify-center shadow-[0_0_15px_rgba(16,185,129,0.25)]">
-                <Zap className="w-5 h-5 text-emerald-400" />
+              <div className="w-9 h-9 rounded-xl bg-blue-600 flex items-center justify-center text-white shadow-md shadow-blue-500/20">
+                <BrainCircuit className="w-5 h-5" />
               </div>
-              <span className="text-xl font-bebas tracking-widest text-white uppercase">
-                TECH<span className="text-emerald-400 drop-shadow-[0_0_8px_rgba(52,211,153,0.6)]">ASTRA</span>
+              <span className="text-xl font-chakra font-black tracking-tight text-slate-900 uppercase">
+                TECH<span className="text-blue-600">ASTRA</span>
               </span>
             </div>
-            <p className="text-xs text-slate-400 leading-relaxed font-light">
-              Organized under <strong className="text-emerald-400 font-semibold">Club Data Decoder</strong> by the <strong className="text-slate-200">Department of Data Science</strong> at Smt. Chandibai Himathmal Mansukhani College. Built to forge the next generation of algorithmic pioneers and software architects.
+            <p className="text-xs text-slate-600 leading-relaxed font-mono">
+              Organized by <strong className="text-slate-900 font-semibold">Club Data Decoder</strong> & the <strong className="text-slate-900 font-semibold">Department of Data Science</strong> at Smt. Chandibai Himathmal Mansukhani College. Empowering innovators across AI, Machine Learning, RAG, NLP, and Computer Vision.
             </p>
             <div className="flex items-center gap-2 pt-1 font-mono">
-              <span className="px-2.5 py-1 rounded bg-slate-900/90 border border-emerald-500/30 text-[10px] text-emerald-400 font-bold tracking-wider flex items-center gap-1.5 shadow-[0_0_10px_rgba(16,185,129,0.15)]">
-                <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse" />
-                LATVERIA-PROTOCOL
+              <span className="px-2.5 py-1 rounded-full bg-blue-50 border border-blue-200 text-[10px] text-blue-700 font-bold tracking-wider flex items-center gap-1.5">
+                <span className="w-1.5 h-1.5 rounded-full bg-blue-600 animate-pulse" />
+                AI IN EDUTECH
               </span>
-              <span className="px-2.5 py-1 rounded bg-slate-900/90 border border-cyan-500/30 text-[10px] text-cyan-300 font-bold tracking-wider shadow-[0_0_10px_rgba(6,182,212,0.15)]">
-                DOOMSDAY ENGINE
+              <span className="px-2.5 py-1 rounded-full bg-purple-50 border border-purple-200 text-[10px] text-purple-700 font-bold tracking-wider">
+                FLAGSHIP 2026
               </span>
             </div>
           </div>
 
           {/* Quick Links */}
           <div>
-            <h4 className="text-xs font-chakra font-bold uppercase tracking-wider text-emerald-400 mb-4 flex items-center gap-1.5">
-              <span>[TACTICAL SECTOR MATRIX]</span>
+            <h4 className="text-xs font-mono font-bold uppercase tracking-wider text-slate-900 mb-4">
+              Navigation
             </h4>
-            <ul className="space-y-2.5 text-xs font-space">
-              <li><a href="#protocol" className="hover:text-emerald-400 transition-colors">Survival Protocol</a></li>
-              <li><a href="#announcement" className="hover:text-emerald-400 transition-colors">Announcement 2026</a></li>
-              <li><a href="#gallery" className="hover:text-emerald-400 transition-colors">Last Event Memories</a></li>
-              <li><a href="#passes" className="hover:text-emerald-400 transition-colors">Doomsday Passes & Tiers</a></li>
-              <li><a href="#faq" className="hover:text-emerald-400 transition-colors">Frequently Asked Questions</a></li>
+            <ul className="space-y-2.5 text-xs font-mono">
+              <li><a href="#tracks" className="hover:text-blue-600 transition-colors">AI Innovation Tracks</a></li>
+              <li><a href="#announcement" className="hover:text-blue-600 transition-colors">Official Announcement</a></li>
+              <li><a href="#gallery" className="hover:text-blue-600 transition-colors">Event Memories</a></li>
+              <li><a href="#passes" className="hover:text-blue-600 transition-colors">Delegate Passes</a></li>
+              <li><a href="#faq" className="hover:text-blue-600 transition-colors">Frequently Asked Questions</a></li>
             </ul>
           </div>
 
           {/* College & Department */}
           <div>
-            <h4 className="text-xs font-chakra font-bold uppercase tracking-wider text-cyan-300 mb-4 flex items-center gap-1.5">
-              <span>[COMMAND HEADQUARTERS]</span>
+            <h4 className="text-xs font-mono font-bold uppercase tracking-wider text-slate-900 mb-4">
+              Institution & Host
             </h4>
-            <div className="space-y-2 text-xs">
-              <div className="inline-block px-2.5 py-1 rounded bg-emerald-500/10 border border-emerald-500/30 mb-1">
-                <span className="font-bold text-emerald-400 text-[11px] font-space tracking-wider uppercase">Club Data Decoder</span>
+            <div className="space-y-2 text-xs font-mono">
+              <div className="inline-block px-2.5 py-1 rounded-full bg-blue-50 border border-blue-200 mb-1">
+                <span className="font-bold text-blue-700 text-[11px] uppercase">Club Data Decoder</span>
               </div>
-              <p className="font-semibold text-slate-200">Department of Data Science</p>
-              <p className="text-slate-300 font-medium">{eventSettings.venue || "Smt. Chandibai Himathmal Mansukhani College"}</p>
-              <p className="text-slate-400 flex items-start gap-2 pt-0.5 font-light">
-                <MapPin className="w-4 h-4 text-emerald-400 shrink-0 mt-0.5" />
+              <p className="font-semibold text-slate-800">Department of Data Science</p>
+              <p className="text-slate-600">{eventSettings.venue || "Smt. Chandibai Himathmal Mansukhani College"}</p>
+              <p className="text-slate-500 flex items-start gap-2 pt-0.5">
+                <MapPin className="w-4 h-4 text-blue-600 shrink-0 mt-0.5" />
                 <span>Ulhasnagar, Maharashtra</span>
-              </p>
-              <p className="text-slate-400 flex items-center gap-2 font-mono">
-                <Mail className="w-4 h-4 text-emerald-400 shrink-0" />
-                <a href="mailto:algonexusdschm@gmail.com" className="hover:text-emerald-400 transition-colors">algonexusdschm@gmail.com</a>
-              </p>
-              <p className="text-slate-400 flex items-center gap-2 font-mono">
-                <Phone className="w-4 h-4 text-emerald-400 shrink-0" />
-                <a href="tel:8010086323" className="hover:text-emerald-400 transition-colors">+91 80100 86323</a>
               </p>
             </div>
           </div>
 
-          {/* Admin & Security Desk */}
-          <div className="space-y-3">
-            <h4 className="text-xs font-chakra font-bold uppercase tracking-wider text-emerald-400">
-              [GATE SECURITY & DESK]
+          {/* Contact & Support */}
+          <div>
+            <h4 className="text-xs font-mono font-bold uppercase tracking-wider text-slate-900 mb-4">
+              Helpline & Coordination
             </h4>
-            <p className="text-xs text-slate-400 font-light leading-relaxed">
-              Authorized gate desks and student coordinators can access the check-in console to scan entrant QR passes or update college bank/QR settings.
-            </p>
-            <button
-              onClick={onOpenAdmin}
-              className="px-4 py-2.5 rounded-lg bg-slate-900/90 hover:bg-slate-800 border border-emerald-500/30 hover:border-emerald-400 text-xs font-chakra tracking-wider text-slate-200 hover:text-emerald-300 flex items-center gap-2 transition-all shadow-[0_0_15px_rgba(16,185,129,0.15)]"
-            >
-              <Terminal className="w-3.5 h-3.5 text-emerald-400" />
-              <span>[ACCESS GATE CONSOLE]</span>
-            </button>
+            <div className="space-y-2.5 text-xs font-mono">
+              <p className="text-slate-600 flex items-center gap-2">
+                <Mail className="w-4 h-4 text-blue-600 shrink-0" />
+                <span>{EVENT_DETAILS.email}</span>
+              </p>
+              <p className="text-slate-600 flex items-center gap-2">
+                <Phone className="w-4 h-4 text-blue-600 shrink-0" />
+                <span>{EVENT_DETAILS.phone}</span>
+              </p>
+              <div className="pt-3">
+                <button
+                  onClick={onOpenAdmin}
+                  className="px-3.5 py-2 rounded-xl bg-slate-100 hover:bg-slate-200 border border-slate-200 text-slate-700 text-xs font-semibold flex items-center gap-2 transition-colors"
+                >
+                  <span>Organizer & Admin Portal</span>
+                </button>
+              </div>
+            </div>
           </div>
 
         </div>
 
         {/* Bottom Bar */}
-        <div className="pt-8 border-t border-slate-800/80 flex flex-col sm:flex-row items-center justify-between text-xs text-slate-500 gap-4 font-mono">
-          <div>
-            © 2026 TechAstra. All rights reserved. Doomsday Engine powered by React, Three.js & Tailwind.
-          </div>
-          <div className="flex items-center gap-1 text-slate-400">
-            <span>Crafted for collegiate innovation & coding dominance</span>
-          </div>
+        <div className="pt-8 border-t border-slate-200 flex flex-col sm:flex-row items-center justify-between gap-4 text-xs font-mono text-slate-500">
+          <p>© 2026 TechAstra • Department of Data Science • Smt. CHM College. All rights reserved.</p>
+          <p>Powered by Club Data Decoder</p>
         </div>
 
       </div>
