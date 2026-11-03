@@ -36,95 +36,99 @@ export default function Hero({ onOpenRegister }) {
   }, [eventSettings.targetDate]);
 
   return (
-    <section className="relative min-h-screen flex flex-col justify-center items-center pt-28 pb-20 overflow-hidden bg-transparent pointer-events-none">
+    <section className="relative min-h-screen flex flex-col justify-between items-center pt-24 pb-8 sm:pb-12 px-4 sm:px-6 lg:px-8 overflow-hidden bg-transparent pointer-events-none w-full max-w-7xl mx-auto">
       
-      {/* Light Glassmorphic Main Card Container */}
-      <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10 w-full pointer-events-auto">
+      {/* Spacer to balance top margin */}
+      <div className="h-2" />
+
+      {/* Main Hero Centerpiece */}
+      <div className="relative z-10 w-full max-w-5xl mx-auto text-center space-y-6 pointer-events-auto">
         
-        <div className="relative text-center space-y-5 pt-4">
-          
-          {/* Institutional Badge: CHM College & Data Science */}
-          <div className="inline-flex flex-col items-center justify-center px-6 sm:px-10 py-3 rounded-2xl bg-white/90 border border-slate-200/90 backdrop-blur-xl shadow-lg shadow-slate-200/50 max-w-2xl mx-auto space-y-1 select-none">
-            <div className="font-space text-xs sm:text-sm tracking-[0.25em] text-slate-800 uppercase font-black">
-              SMT. CHANDIBAI HIMATHMAL MANSUKHANI COLLEGE
-            </div>
-            <div className="font-space text-[11px] sm:text-xs tracking-[0.2em] text-sky-600 uppercase font-bold flex items-center gap-2">
-              <span>DEPARTMENT OF DATA SCIENCE</span>
-              <span className="w-1.5 h-1.5 rounded-full bg-sky-500 animate-pulse" />
-              <span className="text-purple-600">CLUB DATA DECODER</span>
-            </div>
+        {/* Institutional Badge: CHM College & Data Science */}
+        <div className="inline-flex flex-col items-center justify-center px-6 sm:px-12 py-3 rounded-2xl bg-white/90 border border-slate-200/90 backdrop-blur-xl shadow-lg shadow-slate-200/50 max-w-2xl mx-auto space-y-1 select-none">
+          <div className="font-space text-xs sm:text-sm tracking-[0.25em] text-slate-800 uppercase font-black">
+            SMT. CHANDIBAI HIMATHMAL MANSUKHANI COLLEGE
           </div>
-
-          {/* Main Title Banner */}
-          <div className="space-y-2 select-none pt-2">
-            <h1 className="font-chakra text-4xl sm:text-6xl md:text-7xl font-black tracking-tight text-slate-900 uppercase">
-              TECH<span className="text-transparent bg-clip-text bg-gradient-to-r from-sky-600 via-blue-600 to-indigo-600">ASTRA</span> 2026
-            </h1>
-            <p className="font-space text-sm sm:text-lg md:text-xl font-bold tracking-[0.25em] text-slate-700 uppercase">
-              AI IN EDUTECH NATIONAL HACKATHON
-            </p>
+          <div className="font-space text-[11px] sm:text-xs tracking-[0.2em] text-sky-600 uppercase font-bold flex items-center gap-2">
+            <span>DEPARTMENT OF DATA SCIENCE</span>
+            <span className="w-1.5 h-1.5 rounded-full bg-sky-500 animate-pulse" />
+            <span className="text-purple-600">CLUB DATA DECODER</span>
           </div>
+        </div>
 
-          {/* Hackathon Mission Tagline */}
-          <p className="max-w-2xl mx-auto text-slate-600 text-xs sm:text-sm md:text-base leading-relaxed font-mono">
-            {EVENT_DETAILS.tagline}
+        {/* Grand Title Banner for Widescreen Laptop Display */}
+        <div className="space-y-3 select-none">
+          <h1 className="font-chakra text-5xl sm:text-7xl md:text-8xl lg:text-9xl font-black tracking-tight text-slate-900 uppercase leading-none">
+            TECH<span className="text-transparent bg-clip-text bg-gradient-to-r from-sky-600 via-blue-600 to-indigo-600">ASTRA</span> 2026
+          </h1>
+          <p className="font-space text-base sm:text-xl md:text-2xl font-bold tracking-[0.25em] text-slate-700 uppercase">
+            AI IN EDUTECH NATIONAL HACKATHON
           </p>
+        </div>
 
-          {/* High-Key Interactive CTA Button */}
-          <div className="flex flex-wrap items-center justify-center gap-4 pt-2">
-            <button
-              onClick={() => onOpenRegister()}
-              className="px-8 sm:px-10 py-3.5 rounded-2xl bg-gradient-to-r from-sky-600 via-blue-600 to-indigo-600 hover:from-sky-500 hover:to-indigo-500 text-white font-chakra font-black tracking-wider text-sm shadow-xl shadow-blue-500/25 hover:shadow-blue-500/40 hover:-translate-y-0.5 active:translate-y-0 transition-all flex items-center gap-3 cursor-pointer"
-            >
-              <span>REGISTER FOR HACKATHON</span>
-              <ArrowRight className="w-4 h-4" />
-            </button>
+        {/* Mission Tagline */}
+        <p className="max-w-3xl mx-auto text-slate-600 text-sm sm:text-base md:text-lg leading-relaxed font-mono">
+          {EVENT_DETAILS.tagline}
+        </p>
 
-            <a
-              href="#tracks"
-              className="px-7 py-3.5 rounded-2xl bg-white/90 hover:bg-white border border-slate-300 text-slate-800 font-chakra font-bold tracking-wider text-sm shadow-md hover:shadow-lg transition-all flex items-center gap-2"
-            >
-              <Layers className="w-4 h-4 text-blue-600" />
-              <span>EXPLORE CHALLENGE TRACKS</span>
-            </a>
+        {/* High-Key Interactive CTA Buttons */}
+        <div className="flex flex-wrap items-center justify-center gap-4 pt-2">
+          <button
+            onClick={() => onOpenRegister()}
+            className="px-8 sm:px-12 py-4 rounded-2xl bg-gradient-to-r from-sky-600 via-blue-600 to-indigo-600 hover:from-sky-500 hover:to-indigo-500 text-white font-chakra font-black tracking-wider text-sm sm:text-base shadow-xl shadow-blue-500/25 hover:shadow-blue-500/40 hover:-translate-y-0.5 active:translate-y-0 transition-all flex items-center gap-3 cursor-pointer"
+          >
+            <span>REGISTER FOR HACKATHON</span>
+            <ArrowRight className="w-5 h-5" />
+          </button>
+
+          <a
+            href="#tracks"
+            className="px-8 sm:px-10 py-4 rounded-2xl bg-white/90 hover:bg-white border border-slate-300 text-slate-800 font-chakra font-bold tracking-wider text-sm sm:text-base shadow-md hover:shadow-lg transition-all flex items-center gap-2 cursor-pointer"
+          >
+            <Layers className="w-5 h-5 text-blue-600" />
+            <span>EXPLORE CHALLENGE TRACKS</span>
+          </a>
+        </div>
+
+      </div>
+
+      {/* Bottom Pillars Grid: Anchoring the Laptop Screen */}
+      <div className="relative z-10 w-full max-w-5xl lg:max-w-6xl mx-auto pt-8 pointer-events-auto">
+        <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 text-left">
+          
+          <div className="p-4 sm:p-5 rounded-2xl bg-white/85 backdrop-blur-md border border-slate-200/90 shadow-md flex items-center gap-4 hover:shadow-lg transition-all">
+            <div className="w-12 h-12 rounded-xl bg-blue-50 border border-blue-200 flex items-center justify-center text-blue-600 shrink-0">
+              <Trophy className="w-6 h-6" />
+            </div>
+            <div>
+              <div className="text-sm font-chakra font-black text-slate-900">{EVENT_DETAILS.prizePool} Cash Pool</div>
+              <div className="text-xs text-slate-500 font-mono">Prizes for all AI Tracks</div>
+            </div>
           </div>
 
-          {/* Quick Pillars Grid (No Green!) */}
-          <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 max-w-3xl mx-auto pt-6 text-left">
-            <div className="p-4 rounded-2xl bg-white/80 backdrop-blur-md border border-slate-200 shadow-sm flex items-center gap-3">
-              <div className="w-10 h-10 rounded-xl bg-blue-50 border border-blue-200 flex items-center justify-center text-blue-600 shrink-0">
-                <Trophy className="w-5 h-5" />
-              </div>
-              <div>
-                <div className="text-xs font-chakra font-bold text-slate-900">{EVENT_DETAILS.prizePool} Cash Pool</div>
-                <div className="text-[11px] text-slate-500 font-mono">Prizes for all AI Tracks</div>
-              </div>
+          <div className="p-4 sm:p-5 rounded-2xl bg-white/85 backdrop-blur-md border border-slate-200/90 shadow-md flex items-center gap-4 hover:shadow-lg transition-all">
+            <div className="w-12 h-12 rounded-xl bg-purple-50 border border-purple-200 flex items-center justify-center text-purple-600 shrink-0">
+              <Users className="w-6 h-6" />
             </div>
-
-            <div className="p-4 rounded-2xl bg-white/80 backdrop-blur-md border border-slate-200 shadow-sm flex items-center gap-3">
-              <div className="w-10 h-10 rounded-xl bg-purple-50 border border-purple-200 flex items-center justify-center text-purple-600 shrink-0">
-                <Users className="w-5 h-5" />
-              </div>
-              <div>
-                <div className="text-xs font-chakra font-bold text-slate-900">300+ Innovators</div>
-                <div className="text-[11px] text-slate-500 font-mono">80+ Universities Across India</div>
-              </div>
+            <div>
+              <div className="text-sm font-chakra font-black text-slate-900">300+ Innovators</div>
+              <div className="text-xs text-slate-500 font-mono">80+ Universities Across India</div>
             </div>
+          </div>
 
-            <div className="p-4 rounded-2xl bg-white/80 backdrop-blur-md border border-slate-200 shadow-sm flex items-center gap-3">
-              <div className="w-10 h-10 rounded-xl bg-sky-50 border border-sky-200 flex items-center justify-center text-sky-600 shrink-0">
-                <ShieldCheck className="w-5 h-5" />
-              </div>
-              <div>
-                <div className="text-xs font-chakra font-bold text-slate-900">Free Food & Swag</div>
-                <div className="text-[11px] text-slate-500 font-mono">Hardware & Cloud Credits</div>
-              </div>
+          <div className="p-4 sm:p-5 rounded-2xl bg-white/85 backdrop-blur-md border border-slate-200/90 shadow-md flex items-center gap-4 hover:shadow-lg transition-all">
+            <div className="w-12 h-12 rounded-xl bg-sky-50 border border-sky-200 flex items-center justify-center text-sky-600 shrink-0">
+              <ShieldCheck className="w-6 h-6" />
+            </div>
+            <div>
+              <div className="text-sm font-chakra font-black text-slate-900">Free Food & Swag</div>
+              <div className="text-xs text-slate-500 font-mono">Hardware & Cloud Credits</div>
             </div>
           </div>
 
         </div>
-
       </div>
+
     </section>
   );
 }

@@ -2,57 +2,99 @@ import React, { useRef, useEffect } from 'react';
 import * as THREE from 'three';
 
 /**
- * AiUniverse3D: Hyper-Futuristic 3D Living Neural Architecture
+ * AiUniverse3D: Widescreen Full-Screen Neural Constellation
  * 
- * Features:
- * - 1,000+ Micro-neurons grouped into distinct functional lobes (CV, RAG, NLP, ML, AI Core)
- * - Synaptic axon dendrite lines connecting nearest-neighbor neurons
- * - Real-time electrical action potentials (firing light pulses) streaming along pathways
- * - Clean 3D background with zero intrusive floating text boxes or buttons
- * - 360° Mouse & Touch Dragging with smooth inertia
+ * Optimized for Laptop & Desktop:
+ * - Expands across the FULL widescreen display from edge to edge (X: -18 to +18, Y: -8 to +8)
+ * - 2,200+ interconnected micro-neurons forming a majestic living neural brain topology
+ * - Dense synaptic axon network connecting neurons across the full width
+ * - Great-circle axon highways traversing the entire laptop screen
+ * - Real-time electrical action potentials (firing light packets) racing between all nodes
+ * - Smooth 360° mouse & touch drag + cursor parallax
  * - Pure White / Light Studio Theme (Electric Cyan, Cobalt Blue, Synaptic Violet - NO GREEN)
  */
 
 const NEURAL_LOBES = [
+  // 1. Central Executive Nucleus
   {
     id: 'ai',
     name: 'AI CORE',
-    center: [0, 0.6, 0],
+    center: [0, 0.4, 0],
     color: '#0284c7',
-    radius: 2.2,
-    count: 220
+    radius: 3.4,
+    count: 320
   },
+  // 2. Left Wing: Visual Sensory Cortex (CV)
   {
     id: 'cv',
     name: 'CV RETINA',
-    center: [-5.8, 1.2, 1.5],
+    center: [-10.8, 1.8, 1.2],
     color: '#0ea5e9',
-    radius: 1.8,
-    count: 140
+    radius: 3.0,
+    count: 240
   },
+  // 3. Right Wing: Vector Memory Lattice (RAG)
   {
     id: 'rag',
     name: 'RAG MEMORY',
-    center: [5.2, 2.0, -1.2],
+    center: [10.8, 2.2, -1.0],
     color: '#2563eb',
-    radius: 1.9,
-    count: 150
+    radius: 3.0,
+    count: 240
   },
+  // 4. Bottom-Right: Transformer Synapse Lattice (NLP)
   {
     id: 'nlp',
     name: 'NLP ATTENTION',
-    center: [3.4, -2.4, 1.8],
+    center: [7.8, -4.2, 1.6],
     color: '#8b5cf6',
-    radius: 1.7,
-    count: 130
+    radius: 2.7,
+    count: 200
   },
+  // 5. Bottom-Left: Synaptic Weight Engine (ML)
   {
     id: 'ml',
     name: 'ML PLASTICITY',
-    center: [-3.8, -2.6, -1.2],
+    center: [-7.8, -4.2, -1.2],
     color: '#6366f1',
-    radius: 1.7,
-    count: 130
+    radius: 2.7,
+    count: 200
+  },
+  // 6. Far-Left Peripheral Constellation (Fills laptop screen left margin)
+  {
+    id: 'peri_left',
+    name: 'DATA EDGE WEST',
+    center: [-15.5, -1.0, -1.8],
+    color: '#38bdf8',
+    radius: 2.5,
+    count: 160
+  },
+  // 7. Far-Right Peripheral Constellation (Fills laptop screen right margin)
+  {
+    id: 'peri_right',
+    name: 'DATA EDGE EAST',
+    center: [15.5, -0.8, -1.8],
+    color: '#818cf8',
+    radius: 2.5,
+    count: 160
+  },
+  // 8. Top-Left Horizon Lobe
+  {
+    id: 'top_left',
+    name: 'HORIZON NORTHWEST',
+    center: [-8.5, 5.6, -1.5],
+    color: '#0284c7',
+    radius: 2.4,
+    count: 140
+  },
+  // 9. Top-Right Horizon Lobe
+  {
+    id: 'top_right',
+    name: 'HORIZON NORTHEAST',
+    center: [8.5, 5.8, -1.5],
+    color: '#7c3aed',
+    radius: 2.4,
+    count: 140
   }
 ];
 
@@ -67,15 +109,16 @@ export default function AiUniverse3D() {
 
     // --- 1. Scene, Camera, Renderer ---
     const scene = new THREE.Scene();
-    scene.fog = new THREE.FogExp2(0xf8fafc, 0.015);
+    scene.fog = new THREE.FogExp2(0xf8fafc, 0.014);
 
     const camera = new THREE.PerspectiveCamera(
-      48,
+      52,
       window.innerWidth / window.innerHeight,
       0.1,
       1000
     );
-    camera.position.set(0, 0, isMobile ? 19 : 16);
+    // Camera distance calibrated to frame full widescreen on laptop
+    camera.position.set(0, 0, isMobile ? 19 : 14.2);
 
     const renderer = new THREE.WebGLRenderer({
       antialias: true,
@@ -93,26 +136,26 @@ export default function AiUniverse3D() {
     scene.add(ambientLight);
 
     const dirLight = new THREE.DirectionalLight(0xffffff, 1.6);
-    dirLight.position.set(12, 20, 16);
+    dirLight.position.set(15, 20, 16);
     scene.add(dirLight);
 
-    const cyanPoint = new THREE.PointLight(0x00f0ff, 3.5, 60);
-    cyanPoint.position.set(-14, 10, 8);
+    const cyanPoint = new THREE.PointLight(0x00f0ff, 3.5, 75);
+    cyanPoint.position.set(-18, 12, 10);
     scene.add(cyanPoint);
 
-    const violetPoint = new THREE.PointLight(0x8b5cf6, 3.0, 60);
-    violetPoint.position.set(14, -8, 8);
+    const violetPoint = new THREE.PointLight(0x8b5cf6, 3.2, 75);
+    violetPoint.position.set(18, -10, 10);
     scene.add(violetPoint);
 
-    const blueFill = new THREE.PointLight(0x2563eb, 2.5, 50);
-    blueFill.position.set(0, -12, 10);
+    const blueFill = new THREE.PointLight(0x2563eb, 2.8, 60);
+    blueFill.position.set(0, -14, 12);
     scene.add(blueFill);
 
     // --- 3. Master 3D Neural Network Group ---
     const neuralGroup = new THREE.Group();
     scene.add(neuralGroup);
 
-    // --- 4. Generate Neurons per Functional Lobe ---
+    // --- 4. Generate Neurons per Functional Lobe Across Widescreen ---
     const allNeuronPositions = [];
     const allNeuronColors = [];
     const lobeMeshes = [];
@@ -127,8 +170,8 @@ export default function AiUniverse3D() {
 
       // Core Geometric Nucleus for this Lobe
       const coreGeo = lobe.id === 'ai'
-        ? new THREE.IcosahedronGeometry(0.85, 2)
-        : new THREE.OctahedronGeometry(0.55, 1);
+        ? new THREE.IcosahedronGeometry(1.0, 2)
+        : new THREE.OctahedronGeometry(0.65, 1);
 
       const coreMat = new THREE.MeshStandardMaterial({
         color: lobe.color,
@@ -141,7 +184,7 @@ export default function AiUniverse3D() {
       lobeGroup.add(coreMesh);
 
       // Pulsing Halo Ring
-      const haloGeo = new THREE.RingGeometry(0.7, 0.82, 32);
+      const haloGeo = new THREE.RingGeometry(0.85, 0.98, 36);
       const haloMat = new THREE.MeshBasicMaterial({
         color: lobe.color,
         side: THREE.DoubleSide,
@@ -172,8 +215,8 @@ export default function AiUniverse3D() {
       }
     });
 
-    // Add inter-lobe bridge neurons (connecting pathways)
-    const bridgeCount = 220;
+    // Add inter-lobe bridge neurons spanning the full width
+    const bridgeCount = 450;
     for (let i = 0; i < bridgeCount; i++) {
       const idxA = Math.floor(Math.random() * NEURAL_LOBES.length);
       let idxB = Math.floor(Math.random() * NEURAL_LOBES.length);
@@ -184,10 +227,10 @@ export default function AiUniverse3D() {
       const t = Math.random();
       const pt = pA.clone().lerp(pB, t);
 
-      // Jitter slightly for organic feel
-      pt.x += (Math.random() - 0.5) * 1.5;
-      pt.y += (Math.random() - 0.5) * 1.5;
-      pt.z += (Math.random() - 0.5) * 1.5;
+      // Jitter for organic neural fiber cloud
+      pt.x += (Math.random() - 0.5) * 2.2;
+      pt.y += (Math.random() - 0.5) * 2.2;
+      pt.z += (Math.random() - 0.5) * 2.2;
 
       allNeuronPositions.push(pt.x, pt.y, pt.z);
       const c = new THREE.Color(Math.random() > 0.5 ? 0x0284c7 : 0x8b5cf6);
@@ -210,7 +253,7 @@ export default function AiUniverse3D() {
     // --- 5. Generate Synaptic Axon Connections (LineSegments) ---
     const totalNeurons = allNeuronPositions.length / 3;
     const axonIndices = [];
-    const maxConnectionDistSq = 2.4 * 2.4;
+    const maxConnectionDistSq = 2.8 * 2.8;
 
     for (let i = 0; i < totalNeurons; i += 2) {
       const xi = allNeuronPositions[i * 3];
@@ -231,7 +274,7 @@ export default function AiUniverse3D() {
         if (dSq < maxConnectionDistSq) {
           axonIndices.push(i, j);
           connected++;
-          if (connected >= 3) break; // Keep lines clean and optimal
+          if (connected >= 3) break;
         }
       }
     }
@@ -242,19 +285,26 @@ export default function AiUniverse3D() {
     const axonMat = new THREE.LineBasicMaterial({
       color: 0x0284c7,
       transparent: true,
-      opacity: 0.22
+      opacity: 0.24
     });
     const axonLines = new THREE.LineSegments(axonGeo, axonMat);
     neuralGroup.add(axonLines);
 
-    // --- 6. Curved Inter-Lobe Axon Highways & Streaming Firing Pulses ---
-    // Connects: CV -> RAG -> NLP -> ML -> AI Core -> CV
+    // --- 6. Great Widescreen Axon Highways & Streaming Firing Pulses ---
+    // Connects major lobes across the full width of the screen
     const highwayOrder = [
+      { from: 'peri_left', to: 'cv', color: 0x38bdf8 },
+      { from: 'cv', to: 'top_left', color: 0x0ea5e9 },
+      { from: 'top_left', to: 'ai', color: 0x0284c7 },
+      { from: 'ai', to: 'top_right', color: 0x7c3aed },
+      { from: 'top_right', to: 'rag', color: 0x2563eb },
+      { from: 'rag', to: 'peri_right', color: 0x818cf8 },
+      { from: 'peri_right', to: 'nlp', color: 0x8b5cf6 },
+      { from: 'nlp', to: 'ml', color: 0x6366f1 },
+      { from: 'ml', to: 'peri_left', color: 0x0284c7 },
       { from: 'cv', to: 'rag', color: 0x0ea5e9 },
-      { from: 'rag', to: 'nlp', color: 0x2563eb },
-      { from: 'nlp', to: 'ml', color: 0x8b5cf6 },
       { from: 'ml', to: 'ai', color: 0x6366f1 },
-      { from: 'ai', to: 'cv', color: 0x0284c7 }
+      { from: 'nlp', to: 'ai', color: 0x8b5cf6 }
     ];
 
     const highwayCurves = [];
@@ -267,8 +317,8 @@ export default function AiUniverse3D() {
       const pA = new THREE.Vector3(...lobeA.center);
       const pB = new THREE.Vector3(...lobeB.center);
       const mid = pA.clone().add(pB).multiplyScalar(0.5);
-      mid.y += (Math.random() - 0.5) * 2.2;
-      mid.z += 2.0; // Arch toward viewer
+      mid.y += (Math.random() - 0.5) * 2.5;
+      mid.z += 1.8; // Arch forward
 
       const curve = new THREE.QuadraticBezierCurve3(pA, mid, pB);
       const pts = curve.getPoints(50);
@@ -283,9 +333,9 @@ export default function AiUniverse3D() {
       neuralGroup.add(tube);
 
       // Streaming Action Potential Photons along this highway
-      const packetCount = 6;
+      const packetCount = 5;
       for (let k = 0; k < packetCount; k++) {
-        const sGeo = new THREE.SphereGeometry(0.1, 10, 10);
+        const sGeo = new THREE.SphereGeometry(0.12, 12, 12);
         const sMat = new THREE.MeshBasicMaterial({ color: 0xffffff });
         const packetMesh = new THREE.Mesh(sGeo, sMat);
         neuralGroup.add(packetMesh);
@@ -368,18 +418,18 @@ export default function AiUniverse3D() {
 
       // Gentle auto-rotation when user is not dragging
       if (!isDragging) {
-        targetRotY += delta * 0.12;
+        targetRotY += delta * 0.1;
       }
 
       // Smooth inertia rotation
-      neuralGroup.rotation.y += (targetRotY + mouseX * 0.12 - neuralGroup.rotation.y) * 0.06;
+      neuralGroup.rotation.y += (targetRotY + mouseX * 0.14 - neuralGroup.rotation.y) * 0.06;
       neuralGroup.rotation.x += (targetRotX + mouseY * 0.08 - neuralGroup.rotation.x) * 0.06;
 
       // Rotate Lobe cores and pulse halos
       lobeMeshes.forEach(({ coreMesh, haloMesh }, idx) => {
         coreMesh.rotation.y = elapsed * 0.7 + idx;
         coreMesh.rotation.x = elapsed * 0.4 + idx;
-        const s = 1.0 + Math.sin(elapsed * 3.5 + idx) * 0.15;
+        const s = 1.0 + Math.sin(elapsed * 3.5 + idx) * 0.14;
         haloMesh.scale.set(s, s, 1);
       });
 
@@ -393,8 +443,8 @@ export default function AiUniverse3D() {
 
       // Subtle scroll-driven camera adjustment
       const scrollRatio = Math.min(scrollY / 1800, 1);
-      const baseCamZ = isMobile ? 19 : 16;
-      const targetCamZ = baseCamZ - scrollRatio * 3.5;
+      const baseCamZ = isMobile ? 19 : 14.2;
+      const targetCamZ = baseCamZ - scrollRatio * 3.2;
       const targetCamY = -scrollRatio * 2.2;
 
       camera.position.z += (targetCamZ - camera.position.z) * 0.08;
@@ -432,9 +482,10 @@ export default function AiUniverse3D() {
         className="absolute inset-0 w-full h-full cursor-grab active:cursor-grabbing" 
       />
 
-      {/* Futuristic Soft Studio Ambience Glows */}
-      <div className="absolute top-1/4 left-1/2 -translate-x-1/2 w-[850px] h-[550px] bg-sky-200/35 rounded-full blur-3xl pointer-events-none" />
-      <div className="absolute top-1/3 left-1/4 w-[550px] h-[450px] bg-indigo-200/25 rounded-full blur-3xl pointer-events-none" />
+      {/* Futuristic Soft Studio Ambience Glows Across Full Widescreen */}
+      <div className="absolute top-1/4 left-1/2 -translate-x-1/2 w-[1200px] h-[750px] bg-sky-200/35 rounded-full blur-3xl pointer-events-none" />
+      <div className="absolute top-1/3 left-1/4 w-[850px] h-[600px] bg-indigo-200/25 rounded-full blur-3xl pointer-events-none" />
+      <div className="absolute top-1/3 right-1/4 w-[850px] h-[600px] bg-blue-200/25 rounded-full blur-3xl pointer-events-none" />
     </div>
   );
 }
