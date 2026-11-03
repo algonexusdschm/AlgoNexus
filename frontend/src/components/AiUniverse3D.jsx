@@ -3,15 +3,13 @@ import * as THREE from 'three';
 
 /**
  * AiUniverse3D
- * Next-Gen Hyper-Futuristic 3D WebGL Neural Matrix
- *
- * Features:
- * - Layer 0: Futuristic panoramic ambient cyber-atrium backdrop with light dispersion
- * - Layer 1: Real-time 3D Cybernetic Grid with horizon glow
- * - Layer 2: Floating 3D Quantum Data Rings & Holographic Manifolds
- * - Layer 3: Central Master AI Core with pulsing energy halos & gyroscope rings
- * - Layer 4: Connected 3D Hubs (AI, ML, RAG, NLP, CV) with glowing spline data pulses
- * - Full 360-degree interactive mouse/touch drag + parallax + scroll camera travel
+ * Live Operational 3D AI Matrix:
+ * - 📸 CV Hub: Scanning a holographic image with moving laser mesh & bounding box
+ * - 💻 ML Hub: High-speed neural training simulation on an edge silicon GPU chip with animated gradient loss curve
+ * - 🧠 AI Core: Generating real-time holographic code, mathematics & synthetic data particles
+ * - 📚 RAG Hub: 3D vector retrieval searching through stacked holographic knowledge documents
+ * - 💬 NLP Hub: Live tokenization & transformer attention arcs streaming linguistic tokens
+ * - Interactive 360° drag + mouse parallax + smooth scroll flight
  */
 export default function AiUniverse3D() {
   const mountRef = useRef(null);
@@ -24,8 +22,8 @@ export default function AiUniverse3D() {
 
     // --- 1. Scene, Camera, Renderer ---
     const scene = new THREE.Scene();
-    scene.background = new THREE.Color(0xf1f5f9);
-    scene.fog = new THREE.FogExp2(0xe2e8f0, 0.018);
+    scene.background = new THREE.Color(0xf8fafc);
+    scene.fog = new THREE.FogExp2(0xf1f5f9, 0.02);
 
     const camera = new THREE.PerspectiveCamera(
       52,
@@ -33,7 +31,7 @@ export default function AiUniverse3D() {
       0.1,
       1000
     );
-    camera.position.set(0, 0, 16);
+    camera.position.set(0, 0, 16.5);
 
     const renderer = new THREE.WebGLRenderer({
       antialias: !isMobile,
@@ -48,305 +46,346 @@ export default function AiUniverse3D() {
     renderer.toneMappingExposure = 1.1;
     container.appendChild(renderer.domElement);
 
-    // --- 2. Lighting (Futuristic Studio + Neon Rim Lights) ---
-    const ambientLight = new THREE.AmbientLight(0xffffff, 1.8);
+    // --- 2. Lighting ---
+    const ambientLight = new THREE.AmbientLight(0xffffff, 2.0);
     scene.add(ambientLight);
 
-    const keyLight = new THREE.DirectionalLight(0xffffff, 1.4);
+    const keyLight = new THREE.DirectionalLight(0xffffff, 1.3);
     keyLight.position.set(12, 22, 16);
     scene.add(keyLight);
 
-    const cyanLaser = new THREE.PointLight(0x06b6d4, 3.5, 35);
+    const cyanLaser = new THREE.PointLight(0x0284c7, 3.5, 35);
     cyanLaser.position.set(-10, 5, 4);
     scene.add(cyanLaser);
 
-    const violetLaser = new THREE.PointLight(0x8b5cf6, 3.5, 35);
+    const violetLaser = new THREE.PointLight(0x7c3aed, 3.5, 35);
     violetLaser.position.set(10, -4, 4);
     scene.add(violetLaser);
 
-    const emeraldLaser = new THREE.PointLight(0x10b981, 2.5, 30);
-    emeraldLaser.position.set(0, -8, 2);
-    scene.add(emeraldLaser);
-
-    // --- 3. Futuristic Quantum Floor Grid & Horizon Horizon Glow ---
-    const gridHelper = new THREE.GridHelper(80, 50, 0x0284c7, 0xcfd8dc);
+    // Clean Cyber Grid Floor
+    const gridHelper = new THREE.GridHelper(80, 50, 0x0284c7, 0xe2e8f0);
     gridHelper.position.y = -7.5;
     scene.add(gridHelper);
 
-    // Floating Cybernetic Hex Rings in the background
-    const hexGroup = new THREE.Group();
-    scene.add(hexGroup);
-    const hexMat = new THREE.MeshBasicMaterial({
-      color: 0x38bdf8,
-      wireframe: true,
-      transparent: true,
-      opacity: 0.22
-    });
-    for (let i = 0; i < 4; i++) {
-      const hexGeo = new THREE.CylinderGeometry(8 + i * 4, 8 + i * 4, 0.4, 6, 1, true);
-      const hexMesh = new THREE.Mesh(hexGeo, hexMat);
-      hexMesh.position.y = -6.8 + i * 0.2;
-      hexGroup.add(hexMesh);
-    }
-
-    // --- 4. Master 3D World Group (Rotatable) ---
+    // --- 3. Master World Group ---
     const worldGroup = new THREE.Group();
     scene.add(worldGroup);
 
-    // Helper: High-Tech Cyber Badge Sprites for Nodes
-    function createCyberSprite(title, subtitle = '', accentColor = '#0284c7') {
+    // Helper: Canvas-rendered 3D Label Badge
+    function createBadge(title, subtitle, badgeColor = '#0284c7') {
       const canvas = document.createElement('canvas');
       canvas.width = 512;
       canvas.height = 256;
       const ctx = canvas.getContext('2d');
 
-      // Futuristic Chamfered Polygon Card
       ctx.fillStyle = 'rgba(255, 255, 255, 0.95)';
-      ctx.strokeStyle = accentColor;
+      ctx.strokeStyle = badgeColor;
       ctx.lineWidth = 6;
-      ctx.shadowColor = accentColor;
-      ctx.shadowBlur = 16;
+      ctx.shadowColor = badgeColor;
+      ctx.shadowBlur = 12;
 
       ctx.beginPath();
-      ctx.moveTo(70, 40);
-      ctx.lineTo(442, 40);
-      ctx.lineTo(472, 70);
-      ctx.lineTo(472, 186);
-      ctx.lineTo(442, 216);
-      ctx.lineTo(70, 216);
-      ctx.lineTo(40, 186);
-      ctx.lineTo(40, 70);
-      ctx.closePath();
+      ctx.roundRect(40, 40, 432, 176, 28);
       ctx.fill();
       ctx.stroke();
 
-      // Top corner mini indicator
-      ctx.fillStyle = accentColor;
-      ctx.fillRect(56, 56, 16, 16);
+      ctx.fillStyle = badgeColor;
+      ctx.beginPath();
+      ctx.arc(80, 84, 12, 0, Math.PI * 2);
+      ctx.fill();
 
-      // Title Text
       ctx.fillStyle = '#0f172a';
-      ctx.font = 'bold 72px "Chakra Petch", "Plus Jakarta Sans", sans-serif';
-      ctx.textAlign = 'center';
-      ctx.textBaseline = 'middle';
-      ctx.fillText(title, 256, subtitle ? 108 : 128);
+      ctx.font = 'bold 64px "Chakra Petch", sans-serif';
+      ctx.textAlign = 'left';
+      ctx.fillText(title, 110, 96);
 
-      // Subtitle Tag
-      if (subtitle) {
-        ctx.fillStyle = accentColor;
-        ctx.font = 'bold 30px "Plus Jakarta Sans", monospace';
-        ctx.fillText(`• ${subtitle.toUpperCase()} •`, 256, 168);
-      }
+      ctx.fillStyle = badgeColor;
+      ctx.font = 'bold 28px "Plus Jakarta Sans", monospace';
+      ctx.fillText(subtitle.toUpperCase(), 80, 166);
 
       const texture = new THREE.CanvasTexture(canvas);
-      texture.minFilter = THREE.LinearFilter;
-      const spriteMaterial = new THREE.SpriteMaterial({
-        map: texture,
-        transparent: true,
-        depthWrite: false
-      });
+      const spriteMaterial = new THREE.SpriteMaterial({ map: texture, transparent: true });
       const sprite = new THREE.Sprite(spriteMaterial);
       sprite.scale.set(3.4, 1.7, 1);
       return sprite;
     }
 
-    // --- 5. Central Master AI Quantum Core ---
-    const aiCoreGroup = new THREE.Group();
-    worldGroup.add(aiCoreGroup);
+    // =========================================================================
+    // 🧠 1. CENTRAL AI MASTER CORE — Real-time Generation
+    // =========================================================================
+    const aiGroup = new THREE.Group();
+    worldGroup.add(aiGroup);
 
-    // Glass Outer Shield
-    const coreGeo = new THREE.IcosahedronGeometry(1.65, 3);
-    const coreMat = new THREE.MeshPhysicalMaterial({
+    // Glowing Generative Core
+    const aiCoreGeo = new THREE.IcosahedronGeometry(1.6, 2);
+    const aiCoreMat = new THREE.MeshPhysicalMaterial({
       color: 0x0284c7,
-      metalness: 0.15,
+      transmission: 0.8,
+      thickness: 1.2,
       roughness: 0.1,
-      transmission: 0.75,
-      thickness: 1.4,
-      ior: 1.55,
+      metalness: 0.1,
       transparent: true,
       opacity: 0.9
     });
-    const coreMesh = new THREE.Mesh(coreGeo, coreMat);
-    aiCoreGroup.add(coreMesh);
+    const aiCoreMesh = new THREE.Mesh(aiCoreGeo, aiCoreMat);
+    aiGroup.add(aiCoreMesh);
 
-    // Quantum Wireframe Inner Core
-    const innerGeo = new THREE.IcosahedronGeometry(1.15, 1);
-    const innerMat = new THREE.MeshBasicMaterial({
-      color: 0x38bdf8,
-      wireframe: true
-    });
-    const innerMesh = new THREE.Mesh(innerGeo, innerMat);
-    aiCoreGroup.add(innerMesh);
+    // Wireframe Synth Core
+    const aiInnerMesh = new THREE.Mesh(
+      new THREE.IcosahedronGeometry(1.1, 1),
+      new THREE.MeshBasicMaterial({ color: 0x38bdf8, wireframe: true })
+    );
+    aiGroup.add(aiInnerMesh);
 
-    // Spinning Concentric Orbital Rings
-    const ring1 = new THREE.Mesh(
-      new THREE.TorusGeometry(2.4, 0.045, 16, 80),
-      new THREE.MeshBasicMaterial({ color: 0x0284c7 })
-    );
-    const ring2 = new THREE.Mesh(
-      new THREE.TorusGeometry(2.9, 0.035, 16, 80),
-      new THREE.MeshBasicMaterial({ color: 0x8b5cf6 })
-    );
-    const ring3 = new THREE.Mesh(
-      new THREE.TorusGeometry(3.4, 0.025, 16, 80),
-      new THREE.MeshBasicMaterial({ color: 0x06b6d4 })
-    );
+    // Concentric Gyroscope Rings
+    const ring1 = new THREE.Mesh(new THREE.TorusGeometry(2.3, 0.04, 16, 64), new THREE.MeshBasicMaterial({ color: 0x0284c7 }));
+    const ring2 = new THREE.Mesh(new THREE.TorusGeometry(2.8, 0.03, 16, 64), new THREE.MeshBasicMaterial({ color: 0x7c3aed }));
     ring1.rotation.x = Math.PI / 3;
     ring2.rotation.y = Math.PI / 4;
-    ring3.rotation.z = Math.PI / 6;
-    aiCoreGroup.add(ring1);
-    aiCoreGroup.add(ring2);
-    aiCoreGroup.add(ring3);
+    aiGroup.add(ring1);
+    aiGroup.add(ring2);
 
-    // AI Core Label Sprite
-    const aiLabel = createCyberSprite('AI CORE', 'Foundation LLM', '#0284c7');
-    aiLabel.position.set(0, 2.8, 0);
-    aiCoreGroup.add(aiLabel);
+    // Swirling Generated Code / Syntax Particles radiating outward
+    const genCount = 35;
+    const genGeo = new THREE.BufferGeometry();
+    const genPos = new Float32Array(genCount * 3);
+    for (let i = 0; i < genCount * 3; i += 3) {
+      const angle = Math.random() * Math.PI * 2;
+      const r = 2.0 + Math.random() * 1.8;
+      genPos[i] = Math.cos(angle) * r;
+      genPos[i + 1] = (Math.random() - 0.5) * 1.5;
+      genPos[i + 2] = Math.sin(angle) * r;
+    }
+    genGeo.setAttribute('position', new THREE.BufferAttribute(genPos, 3));
+    const genParticles = new THREE.Points(
+      genGeo,
+      new THREE.PointsMaterial({ color: 0x0284c7, size: 0.22, transparent: true, opacity: 0.85 })
+    );
+    aiGroup.add(genParticles);
 
-    // --- 6. Orbiting Labeled Hubs (ML, RAG, NLP, CV) ---
-    const nodesData = [
-      {
-        id: 'RAG',
-        label: 'RAG',
-        sub: 'Vector Knowledge',
+    const aiBadge = createBadge('AI CORE', 'Generating Synthetic Logic', '#0284c7');
+    aiBadge.position.set(0, 3.2, 0);
+    aiGroup.add(aiBadge);
+
+    // =========================================================================
+    // 📸 2. COMPUTER VISION (CV) — Scanning an Image with Laser Bounding Box
+    // =========================================================================
+    const cvGroup = new THREE.Group();
+    cvGroup.position.set(-6.2, -2.8, 0.8);
+    worldGroup.add(cvGroup);
+
+    // Holographic Photo Plane being scanned
+    const photoCanvas = document.createElement('canvas');
+    photoCanvas.width = 256;
+    photoCanvas.height = 256;
+    const pCtx = photoCanvas.getContext('2d');
+    pCtx.fillStyle = '#0f172a';
+    pCtx.fillRect(0, 0, 256, 256);
+    pCtx.strokeStyle = '#38bdf8';
+    pCtx.lineWidth = 4;
+    pCtx.strokeRect(20, 20, 216, 216);
+    // Student face silhouette
+    pCtx.fillStyle = '#38bdf8';
+    pCtx.beginPath();
+    pCtx.arc(128, 90, 40, 0, Math.PI * 2);
+    pCtx.fill();
+    pCtx.beginPath();
+    pCtx.arc(128, 200, 65, Math.PI, 0);
+    pCtx.fill();
+    const photoTexture = new THREE.CanvasTexture(photoCanvas);
+
+    const photoPlane = new THREE.Mesh(
+      new THREE.PlaneGeometry(2.2, 2.2),
+      new THREE.MeshBasicMaterial({ map: photoTexture, side: THREE.DoubleSide, transparent: true, opacity: 0.9 })
+    );
+    cvGroup.add(photoPlane);
+
+    // CV Cyan Laser Scanning Beam
+    const scanLineGeo = new THREE.BoxGeometry(2.4, 0.05, 0.05);
+    const scanLineMat = new THREE.MeshBasicMaterial({ color: 0x0284c7 });
+    const scanLine = new THREE.Mesh(scanLineGeo, scanLineMat);
+    cvGroup.add(scanLine);
+
+    // Bounding Box Reticle
+    const boxGeo = new THREE.BufferGeometry().setFromPoints([
+      new THREE.Vector3(-0.7, -0.7, 0.1), new THREE.Vector3(0.7, -0.7, 0.1),
+      new THREE.Vector3(0.7, 0.7, 0.1), new THREE.Vector3(-0.7, 0.7, 0.1),
+      new THREE.Vector3(-0.7, -0.7, 0.1)
+    ]);
+    const boundingBox = new THREE.Line(boxGeo, new THREE.LineBasicMaterial({ color: 0x0284c7, linewidth: 2 }));
+    cvGroup.add(boundingBox);
+
+    const cvBadge = createBadge('CV', 'Object Detection & OCR', '#0284c7');
+    cvBadge.position.set(0, 2.2, 0);
+    cvGroup.add(cvBadge);
+
+    // =========================================================================
+    // 💻 3. MACHINE LEARNING (ML) — Training Neural Device & Loss Gradient
+    // =========================================================================
+    const mlGroup = new THREE.Group();
+    mlGroup.position.set(6.2, -2.8, 0.5);
+    worldGroup.add(mlGroup);
+
+    // Silicon Neural Chip substrate
+    const chipGeo = new THREE.BoxGeometry(2.4, 0.35, 2.4);
+    const chipMat = new THREE.MeshStandardMaterial({
+      color: 0x1e293b,
+      metalness: 0.8,
+      roughness: 0.2
+    });
+    const chipMesh = new THREE.Mesh(chipGeo, chipMat);
+    chipMesh.rotation.x = Math.PI / 6;
+    mlGroup.add(chipMesh);
+
+    // Glowing Golden Silicon Die
+    const dieMesh = new THREE.Mesh(
+      new THREE.BoxGeometry(1.2, 0.42, 1.2),
+      new THREE.MeshBasicMaterial({ color: 0xf59e0b })
+    );
+    dieMesh.rotation.x = Math.PI / 6;
+    mlGroup.add(dieMesh);
+
+    // Loss Gradient Curve (Descending Line showing model training convergence)
+    const lossPts = [];
+    for (let i = 0; i < 20; i++) {
+      const x = (i / 19) * 2.2 - 1.1;
+      const y = Math.exp(-i * 0.22) * 1.2 - 0.2;
+      lossPts.push(new THREE.Vector3(x, y + 1.2, 0));
+    }
+    const lossLine = new THREE.Line(
+      new THREE.BufferGeometry().setFromPoints(lossPts),
+      new THREE.LineBasicMaterial({ color: 0xf59e0b, linewidth: 3 })
+    );
+    mlGroup.add(lossLine);
+
+    const mlBadge = createBadge('ML', 'Neural Model Training', '#f59e0b');
+    mlBadge.position.set(0, 2.2, 0);
+    mlGroup.add(mlBadge);
+
+    // =========================================================================
+    // 📚 4. RAG (Vector Knowledge Base) — Indexing Document Vectors
+    // =========================================================================
+    const ragGroup = new THREE.Group();
+    ragGroup.position.set(-6.0, 2.8, 0);
+    worldGroup.add(ragGroup);
+
+    // Stacked Floating Holographic Document Slates
+    const docMeshes = [];
+    for (let d = 0; d < 3; d++) {
+      const docGeo = new THREE.BoxGeometry(1.8, 0.04, 1.4);
+      const docMat = new THREE.MeshPhysicalMaterial({
         color: 0x0284c7,
-        hexStr: '#0284c7',
-        pos: new THREE.Vector3(-5.8, 2.4, 0.5),
-        geo: new THREE.OctahedronGeometry(1.0, 0)
-      },
-      {
-        id: 'NLP',
-        label: 'NLP',
-        sub: 'Adaptive Tutoring',
-        color: 0x8b5cf6,
-        hexStr: '#8b5cf6',
-        pos: new THREE.Vector3(5.8, 2.2, -0.5),
-        geo: new THREE.DodecahedronGeometry(0.95, 0)
-      },
-      {
-        id: 'CV',
-        label: 'CV',
-        sub: 'Spatial Classrooms',
-        color: 0x10b981,
-        hexStr: '#10b981',
-        pos: new THREE.Vector3(-5.0, -3.4, 0.5),
-        geo: new THREE.BoxGeometry(1.3, 1.3, 1.3)
-      },
-      {
-        id: 'ML',
-        label: 'ML',
-        sub: 'Predictive Engine',
-        color: 0xf59e0b,
-        hexStr: '#f59e0b',
-        pos: new THREE.Vector3(5.0, -3.4, 0),
-        geo: new THREE.TetrahedronGeometry(1.2, 0)
-      }
+        transmission: 0.7,
+        transparent: true,
+        opacity: 0.85
+      });
+      const doc = new THREE.Mesh(docGeo, docMat);
+      doc.position.y = (d - 1) * 0.45;
+      ragGroup.add(doc);
+      docMeshes.push(doc);
+    }
+
+    // Vector Embedding Search Cone / Probe
+    const probeGeo = new THREE.ConeGeometry(0.35, 0.9, 16);
+    const probeMat = new THREE.MeshBasicMaterial({ color: 0x38bdf8, wireframe: true });
+    const probeMesh = new THREE.Mesh(probeGeo, probeMat);
+    probeMesh.rotation.x = Math.PI;
+    probeMesh.position.y = 1.0;
+    ragGroup.add(probeMesh);
+
+    const ragBadge = createBadge('RAG', 'Vector Embeddings & Search', '#0284c7');
+    ragBadge.position.set(0, 2.2, 0);
+    ragGroup.add(ragBadge);
+
+    // =========================================================================
+    // 💬 5. NLP (Natural Language Processing) — Attention Head & Token Stream
+    // =========================================================================
+    const nlpGroup = new THREE.Group();
+    nlpGroup.position.set(6.0, 2.8, 0);
+    worldGroup.add(nlpGroup);
+
+    // Central Multi-Head Attention Polyhedron
+    const nlpMesh = new THREE.Mesh(
+      new THREE.DodecahedronGeometry(1.0, 0),
+      new THREE.MeshPhysicalMaterial({
+        color: 0x7c3aed,
+        transmission: 0.7,
+        roughness: 0.15,
+        transparent: true,
+        opacity: 0.9
+      })
+    );
+    nlpGroup.add(nlpMesh);
+
+    // Orbiting Floating Tokens (Linguistic data cubes)
+    const tokenCubes = [];
+    for (let t = 0; t < 4; t++) {
+      const tMesh = new THREE.Mesh(
+        new THREE.BoxGeometry(0.35, 0.35, 0.35),
+        new THREE.MeshBasicMaterial({ color: 0x8b5cf6 })
+      );
+      nlpGroup.add(tMesh);
+      tokenCubes.push({ mesh: tMesh, angleOffset: (t * Math.PI) / 2 });
+    }
+
+    const nlpBadge = createBadge('NLP', 'Multimodal Transformer', '#7c3aed');
+    nlpBadge.position.set(0, 2.2, 0);
+    nlpGroup.add(nlpBadge);
+
+    // =========================================================================
+    // ⚡ INTERCONNECTED SYNAPTIC ARCS & DATA CABLES
+    // =========================================================================
+    const hubPositions = [
+      { pos: cvGroup.position, color: 0x0284c7 },
+      { pos: mlGroup.position, color: 0xf59e0b },
+      { pos: ragGroup.position, color: 0x0284c7 },
+      { pos: nlpGroup.position, color: 0x7c3aed }
     ];
 
-    const nodeObjects = [];
-    const connectionSplines = [];
-
-    nodesData.forEach((item) => {
-      const nodeGroup = new THREE.Group();
-      nodeGroup.position.copy(item.pos);
-      worldGroup.add(nodeGroup);
-
-      // Translucent Glossy Crystal
-      const mat = new THREE.MeshPhysicalMaterial({
-        color: item.color,
-        roughness: 0.1,
-        metalness: 0.2,
-        transmission: 0.7,
-        thickness: 0.9,
-        transparent: true,
-        opacity: 0.95
-      });
-      const mesh = new THREE.Mesh(item.geo, mat);
-      nodeGroup.add(mesh);
-
-      // Outer holographic halo ring
-      const haloGeo = new THREE.TorusGeometry(1.5, 0.025, 8, 48);
-      const haloMesh = new THREE.Mesh(
-        haloGeo,
-        new THREE.MeshBasicMaterial({ color: item.color, transparent: true, opacity: 0.5 })
-      );
-      haloMesh.rotation.x = Math.PI / 2;
-      nodeGroup.add(haloMesh);
-
-      // Node Cyber Label
-      const sprite = createCyberSprite(item.label, item.sub, item.hexStr);
-      sprite.position.set(0, 1.7, 0);
-      nodeGroup.add(sprite);
-
-      nodeObjects.push({ group: nodeGroup, mesh, haloMesh, item, initialPos: item.pos.clone() });
-
-      // Luminous Connecting Spline to Central AI Core
+    const splineCables = [];
+    hubPositions.forEach((hub) => {
       const p1 = new THREE.Vector3(0, 0, 0);
-      const p2 = item.pos;
+      const p2 = hub.pos;
       const mid = new THREE.Vector3().addVectors(p1, p2).multiplyScalar(0.5);
       mid.y += (Math.random() - 0.5) * 1.5;
 
       const curve = new THREE.QuadraticBezierCurve3(p1, mid, p2);
-      const pts = curve.getPoints(45);
+      const pts = curve.getPoints(40);
       const line = new THREE.Line(
         new THREE.BufferGeometry().setFromPoints(pts),
-        new THREE.LineBasicMaterial({ color: item.color, transparent: true, opacity: 0.6, linewidth: 2 })
+        new THREE.LineBasicMaterial({ color: hub.color, transparent: true, opacity: 0.5, linewidth: 2 })
       );
       worldGroup.add(line);
 
-      // Streaming High-Speed Quantum Light Packets (Multiple along line)
-      for (let k = 0; k < 2; k++) {
-        const pulse = new THREE.Mesh(
-          new THREE.SphereGeometry(0.14, 12, 12),
-          new THREE.MeshBasicMaterial({ color: 0xffffff })
-        );
-        worldGroup.add(pulse);
-        connectionSplines.push({ curve, pulseMesh: pulse, progress: (k * 0.5 + Math.random() * 0.3) % 1 });
-      }
-    });
-
-    // Cross-Hub Synapses (RAG <-> NLP and CV <-> ML)
-    function addCrossSynapse(pA, pB, colorHex) {
-      const mid = new THREE.Vector3().addVectors(pA, pB).multiplyScalar(0.5);
-      mid.z -= 1.6;
-      const curve = new THREE.QuadraticBezierCurve3(pA, mid, pB);
-      const pts = curve.getPoints(35);
-      const line = new THREE.Line(
-        new THREE.BufferGeometry().setFromPoints(pts),
-        new THREE.LineBasicMaterial({ color: colorHex, transparent: true, opacity: 0.4 })
-      );
-      worldGroup.add(line);
+      // Data pulse packet
       const pulse = new THREE.Mesh(
-        new THREE.SphereGeometry(0.1, 10, 10),
-        new THREE.MeshBasicMaterial({ color: colorHex })
+        new THREE.SphereGeometry(0.13, 10, 10),
+        new THREE.MeshBasicMaterial({ color: 0xffffff })
       );
       worldGroup.add(pulse);
-      connectionSplines.push({ curve, pulseMesh: pulse, progress: Math.random() });
-    }
-
-    addCrossSynapse(nodesData[0].pos, nodesData[1].pos, 0x38bdf8);
-    addCrossSynapse(nodesData[2].pos, nodesData[3].pos, 0x10b981);
-
-    // --- 7. Floating Quantum Particles & Data Matrix ---
-    const count = isMobile ? 90 : 200;
-    const pGeo = new THREE.BufferGeometry();
-    const pPos = new Float32Array(count * 3);
-    for (let i = 0; i < count * 3; i += 3) {
-      pPos[i] = (Math.random() - 0.5) * 40;
-      pPos[i + 1] = (Math.random() - 0.5) * 26;
-      pPos[i + 2] = (Math.random() - 0.5) * 20 - 2;
-    }
-    pGeo.setAttribute('position', new THREE.BufferAttribute(pPos, 3));
-    const pMat = new THREE.PointsMaterial({
-      color: 0x0284c7,
-      size: 0.18,
-      transparent: true,
-      opacity: 0.5
+      splineCables.push({ curve, pulseMesh: pulse, progress: Math.random() });
     });
-    const pMesh = new THREE.Points(pGeo, pMat);
-    scene.add(pMesh);
 
-    // --- 8. Mouse & Touch Dragging Parallax ---
+    // Cross synapses: RAG <-> NLP and CV <-> ML
+    function addCrossCable(pA, pB, col) {
+      const mid = new THREE.Vector3().addVectors(pA, pB).multiplyScalar(0.5);
+      mid.z -= 1.4;
+      const curve = new THREE.QuadraticBezierCurve3(pA, mid, pB);
+      const line = new THREE.Line(
+        new THREE.BufferGeometry().setFromPoints(curve.getPoints(30)),
+        new THREE.LineBasicMaterial({ color: col, transparent: true, opacity: 0.35 })
+      );
+      worldGroup.add(line);
+      const pulse = new THREE.Mesh(new THREE.SphereGeometry(0.1, 8, 8), new THREE.MeshBasicMaterial({ color: col }));
+      worldGroup.add(pulse);
+      splineCables.push({ curve, pulseMesh: pulse, progress: Math.random() });
+    }
+    addCrossCable(ragGroup.position, nlpGroup.position, 0x0284c7);
+    addCrossCable(cvGroup.position, mlGroup.position, 0xf59e0b);
+
+    // =========================================================================
+    // 🖱️ MOUSE, TOUCH DRAGGING & SCROLL INTERACTION
+    // =========================================================================
     let mouseX = 0;
     let mouseY = 0;
     let targetRotX = 0;
@@ -389,14 +428,12 @@ export default function AiUniverse3D() {
     window.addEventListener('touchmove', onPointerMove, { passive: true });
     window.addEventListener('touchend', onPointerUp);
 
-    // Scroll interpolation
     let scrollY = 0;
     const onScroll = () => {
       scrollY = window.scrollY || window.pageYOffset;
     };
     window.addEventListener('scroll', onScroll, { passive: true });
 
-    // Window Resize
     const onResize = () => {
       camera.aspect = window.innerWidth / window.innerHeight;
       camera.updateProjectionMatrix();
@@ -404,7 +441,9 @@ export default function AiUniverse3D() {
     };
     window.addEventListener('resize', onResize);
 
-    // --- 9. 60-120 FPS Real-time Render Loop ---
+    // =========================================================================
+    // 🔄 REAL-TIME ANIMATION LOOP (60-120 FPS)
+    // =========================================================================
     let clock = new THREE.Clock();
     let animId;
 
@@ -413,45 +452,53 @@ export default function AiUniverse3D() {
       const delta = clock.getDelta();
       const time = clock.getElapsedTime();
 
-      // Core spin
-      coreMesh.rotation.y = time * 0.4;
-      coreMesh.rotation.x = time * 0.25;
-      innerMesh.rotation.y = -time * 0.6;
+      // 1. AI Core Animations (Generation)
+      aiCoreMesh.rotation.y = time * 0.4;
+      aiCoreMesh.rotation.x = time * 0.25;
+      aiInnerMesh.rotation.y = -time * 0.6;
       ring1.rotation.z = time * 0.5;
       ring2.rotation.x = -time * 0.4;
-      ring3.rotation.y = time * 0.35;
+      genParticles.rotation.y = time * 0.3;
 
-      // Hex background drift
-      hexGroup.rotation.y = time * 0.05;
+      // 2. CV Scanning Laser Motion
+      scanLine.position.y = Math.sin(time * 3.0) * 1.0;
+      boundingBox.scale.setScalar(0.95 + Math.sin(time * 4.0) * 0.08);
 
-      // Nodes individual floating and rotation
-      nodeObjects.forEach(({ group, mesh, haloMesh, initialPos }, idx) => {
-        mesh.rotation.y = time * 0.65 + idx;
-        mesh.rotation.x = time * 0.45 + idx;
-        haloMesh.rotation.z = -time * 0.8 + idx;
-        group.position.y = initialPos.y + Math.sin(time * 1.8 + idx) * 0.28;
+      // 3. ML Training Chip & Loss Pulse
+      dieMesh.scale.y = 1.0 + Math.sin(time * 6.0) * 0.15; // Chip clock frequency pulse
+      chipMesh.rotation.z = Math.sin(time * 1.2) * 0.08;
+
+      // 4. RAG Document Indexing Search
+      docMeshes.forEach((doc, idx) => {
+        doc.rotation.y = Math.sin(time * 1.5 + idx) * 0.15;
+      });
+      probeMesh.position.y = 1.0 + Math.sin(time * 2.5) * 0.35;
+
+      // 5. NLP Transformer Attention Heads & Orbiting Tokens
+      nlpMesh.rotation.y = time * 0.6;
+      nlpMesh.rotation.x = time * 0.35;
+      tokenCubes.forEach(({ mesh, angleOffset }) => {
+        const curAngle = time * 1.8 + angleOffset;
+        mesh.position.x = Math.cos(curAngle) * 1.4;
+        mesh.position.z = Math.sin(curAngle) * 1.4;
+        mesh.rotation.y = time * 2;
       });
 
-      // Stream data pulses
-      connectionSplines.forEach((conn) => {
-        conn.progress += delta * 0.5;
-        if (conn.progress > 1) conn.progress = 0;
-        const pt = conn.curve.getPoint(conn.progress);
-        conn.pulseMesh.position.copy(pt);
+      // 6. Spline Data Cable Pulses
+      splineCables.forEach((cable) => {
+        cable.progress += delta * 0.55;
+        if (cable.progress > 1) cable.progress = 0;
+        cable.pulseMesh.position.copy(cable.curve.getPoint(cable.progress));
       });
 
-      // Ambient particle cloud
-      pMesh.rotation.y = time * 0.025;
-
-      // Smooth camera interpolation based on scroll
+      // Camera Scroll Drift & World Orbit
       const scrollRatio = Math.min(scrollY / 1800, 1);
-      const targetCamZ = 16 - scrollRatio * 4.5;
+      const targetCamZ = 16.5 - scrollRatio * 4.5;
       const targetCamY = -scrollRatio * 3.2;
 
       camera.position.z += (targetCamZ - camera.position.z) * 0.08;
       camera.position.y += (targetCamY - camera.position.y) * 0.08;
 
-      // Smooth world orbit
       worldGroup.rotation.y += (targetRotY + mouseX * 0.28 - worldGroup.rotation.y) * 0.06;
       worldGroup.rotation.x += (targetRotX + mouseY * 0.18 - worldGroup.rotation.x) * 0.06;
 
@@ -482,11 +529,11 @@ export default function AiUniverse3D() {
     <div
       ref={mountRef}
       className="fixed inset-0 pointer-events-auto z-0 overflow-hidden select-none bg-gradient-to-b from-slate-100 via-sky-50/40 to-slate-100"
-      title="360° Drag & Orbit AI Neural Constellation"
+      title="360° Drag & Orbit Live AI Operations Matrix"
     >
-      {/* Layer 0: Futuristic Cyber-Atrium Backdrop with Subtle Parallax */}
+      {/* Background Architectural Canvas */}
       <div 
-        className="absolute inset-0 bg-cover bg-center bg-no-repeat opacity-25 mix-blend-multiply pointer-events-none transition-transform duration-700 ease-out scale-105"
+        className="absolute inset-0 bg-cover bg-center bg-no-repeat opacity-20 mix-blend-multiply pointer-events-none scale-105"
         style={{ backgroundImage: "url('/images/edutech_cyber_atrium_2050.jpg')" }}
       />
     </div>
