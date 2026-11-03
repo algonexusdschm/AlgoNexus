@@ -22,7 +22,7 @@ const HACKATHON_STEPS = [
     step: '01',
     title: 'INNOVATOR ENROLLMENT',
     desc: 'Register as a solo coder or form an innovator squad (2 to 4 members). Pick your primary AI in EduTech challenge track.',
-    accent: 'blue'
+    accent: 'cyan'
   },
   {
     step: '02',
@@ -40,13 +40,13 @@ const HACKATHON_STEPS = [
     step: '04',
     title: 'JURY EVALUATION & DEMOS',
     desc: 'Present functional prototypes to an expert jury comprising AI industry leads, college professors, and EduTech founders.',
-    accent: 'emerald'
+    accent: 'blue'
   },
   {
     step: '05',
     title: '₹1,00,000 PRIZE AWARDS',
     desc: 'Top teams crowned across all 5 AI tracks with cash prizes, verified national trophies, internship opportunities, and certificates.',
-    accent: 'amber'
+    accent: 'indigo'
   }
 ];
 
@@ -57,14 +57,14 @@ export default function SurvivalProtocol({ onOpenRegister }) {
         
         {/* Section Header */}
         <div className="text-center max-w-3xl mx-auto space-y-3">
-          <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-blue-50 border border-blue-200 text-blue-700 font-mono text-xs font-bold">
-            <BrainCircuit className="w-4 h-4 text-blue-600" />
+          <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-cyan-950/80 border border-cyan-500/40 text-cyan-300 font-mono text-xs font-bold">
+            <BrainCircuit className="w-4 h-4 text-cyan-400" />
             <span>INTERCONNECTED AI ARCHITECTURES</span>
           </div>
-          <h2 className="text-3xl sm:text-5xl font-chakra font-black tracking-tight text-slate-900 uppercase">
+          <h2 className="text-3xl sm:text-5xl font-chakra font-black tracking-tight text-white uppercase">
             HACKATHON INNOVATION TRACKS
           </h2>
-          <p className="text-slate-600 font-mono text-xs sm:text-sm">
+          <p className="text-slate-400 font-mono text-xs sm:text-sm">
             Tackle real-world challenges at the intersection of AI, Machine Learning, RAG, NLP, and Computer Vision for modern education.
           </p>
         </div>
@@ -75,38 +75,38 @@ export default function SurvivalProtocol({ onOpenRegister }) {
             return (
               <div
                 key={track.id}
-                className="group relative p-6 rounded-3xl bg-white/85 hover:bg-white backdrop-blur-xl border border-slate-200/90 hover:border-blue-400 shadow-md hover:shadow-2xl hover:-translate-y-1 transition-all duration-300 flex flex-col justify-between"
+                className="group relative p-6 rounded-3xl bg-slate-900/85 hover:bg-slate-900 backdrop-blur-xl border border-slate-800 hover:border-cyan-500/50 shadow-xl hover:shadow-cyan-500/10 hover:-translate-y-1 transition-all duration-300 flex flex-col justify-between"
               >
                 <div className="space-y-4">
                   {/* Top Badge & Node pill */}
                   <div className="flex items-center justify-between">
-                    <span className="px-3 py-1 rounded-full text-xs font-mono font-extrabold bg-slate-900 text-white tracking-wider">
+                    <span className="px-3 py-1 rounded-full text-xs font-mono font-extrabold bg-cyan-950 text-cyan-300 border border-cyan-500/40 tracking-wider">
                       {track.node}
                     </span>
-                    <span className="text-[11px] font-mono font-bold text-blue-600 bg-blue-50 px-2.5 py-0.5 rounded-full border border-blue-200">
+                    <span className="text-[11px] font-mono font-bold text-sky-400 bg-sky-950/60 px-2.5 py-0.5 rounded-full border border-sky-500/30">
                       {track.badge}
                     </span>
                   </div>
 
                   {/* Title & Desc */}
                   <div>
-                    <h3 className="text-lg font-chakra font-bold text-slate-900 group-hover:text-blue-600 transition-colors">
+                    <h3 className="text-lg font-chakra font-bold text-white group-hover:text-cyan-400 transition-colors">
                       {track.name}
                     </h3>
-                    <p className="text-xs text-slate-600 mt-2 font-mono leading-relaxed">
+                    <p className="text-xs text-slate-400 mt-2 font-mono leading-relaxed">
                       {track.desc}
                     </p>
                   </div>
                 </div>
 
-                {/* Prize Footer */}
-                <div className="pt-5 mt-4 border-t border-slate-100 flex items-center justify-between">
-                  <span className="text-xs font-mono font-bold text-emerald-600 bg-emerald-50 px-2.5 py-1 rounded-lg border border-emerald-200">
+                {/* Prize Footer (No Green!) */}
+                <div className="pt-5 mt-4 border-t border-slate-800 flex items-center justify-between">
+                  <span className="text-xs font-mono font-bold text-cyan-300 bg-cyan-950/80 px-2.5 py-1 rounded-lg border border-cyan-500/40">
                     {track.prize}
                   </span>
                   <button
                     onClick={() => onOpenRegister()}
-                    className="text-xs font-bold text-slate-900 group-hover:text-blue-600 flex items-center gap-1 font-chakra transition-colors"
+                    className="text-xs font-bold text-white group-hover:text-cyan-400 flex items-center gap-1 font-chakra transition-colors cursor-pointer"
                   >
                     <span>Register</span>
                     <ArrowRight className="w-3.5 h-3.5 group-hover:translate-x-1 transition-transform" />
@@ -120,10 +120,10 @@ export default function SurvivalProtocol({ onOpenRegister }) {
         {/* Hackathon Journey Timeline Steps */}
         <div className="pt-8">
           <div className="text-center max-w-2xl mx-auto space-y-2 mb-10">
-            <h3 className="text-2xl sm:text-3xl font-chakra font-bold text-slate-900 uppercase">
+            <h3 className="text-2xl sm:text-3xl font-chakra font-bold text-white uppercase">
               THE 48-HOUR INNOVATION ROADMAP
             </h3>
-            <p className="text-xs sm:text-sm text-slate-500 font-mono">
+            <p className="text-xs sm:text-sm text-slate-400 font-mono">
               From zero to functional AI deployment in 48 structured hours.
             </p>
           </div>
@@ -132,15 +132,15 @@ export default function SurvivalProtocol({ onOpenRegister }) {
             {HACKATHON_STEPS.map((step) => (
               <div
                 key={step.step}
-                className="p-5 rounded-2xl bg-white/80 backdrop-blur-md border border-slate-200 shadow-sm space-y-3"
+                className="p-5 rounded-2xl bg-slate-900/80 backdrop-blur-md border border-slate-800 shadow-md space-y-3"
               >
-                <div className="text-2xl font-chakra font-black text-blue-600">
+                <div className="text-2xl font-chakra font-black text-cyan-400">
                   {step.step}
                 </div>
-                <h4 className="text-xs font-chakra font-bold text-slate-900 uppercase tracking-wide">
+                <h4 className="text-xs font-chakra font-bold text-white uppercase tracking-wide">
                   {step.title}
                 </h4>
-                <p className="text-[11px] text-slate-600 font-mono leading-relaxed">
+                <p className="text-[11px] text-slate-400 font-mono leading-relaxed">
                   {step.desc}
                 </p>
               </div>
