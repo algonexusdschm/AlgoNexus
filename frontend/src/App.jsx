@@ -8,7 +8,6 @@ import PricingSection from './components/PricingSection';
 import FAQ from './components/FAQ';
 import Footer from './components/Footer';
 import AiUniverse3D from './components/AiUniverse3D';
-import AiBackground3D from './components/AiBackground3D';
 import { EventProvider, useEvent } from './context/EventContext';
 
 // Lazy-loaded heavy modules for optimal initial load speed
@@ -99,11 +98,11 @@ function MainEventApp() {
   // If on Admin Website Route
   if (currentRoute === 'admin') {
     return (
-      <div className="min-h-screen bg-[#050814] text-slate-100 flex flex-col relative selection:bg-cyan-500/30 overflow-x-hidden">
-        {/* Global 3D WebGL Background Canvas */}
-        <AiBackground3D />
+      <div className="min-h-screen bg-[#f8fafc] text-slate-900 flex flex-col relative selection:bg-sky-500/30 overflow-x-hidden">
+        {/* Global 3D Interactive AI Globe Background */}
+        <AiUniverse3D />
         <div className="relative z-10 flex-1 flex flex-col">
-          <Suspense fallback={<div className="min-h-screen flex items-center justify-center text-cyan-400 font-chakra text-sm tracking-widest animate-pulse">CONNECTING TO GATE CONSOLE...</div>}>
+          <Suspense fallback={<div className="min-h-screen flex items-center justify-center text-sky-600 font-chakra text-sm tracking-widest animate-pulse">CONNECTING TO GATE CONSOLE...</div>}>
             <AdminPage onBackToWebsite={navigateToEvent} />
           </Suspense>
         </div>
@@ -113,9 +112,9 @@ function MainEventApp() {
 
   // Public Event Website
   return (
-    <div className="min-h-screen bg-[#050814] text-slate-100 flex flex-col relative selection:bg-cyan-500/30 overflow-x-hidden">
-      {/* 1. Global 3D WebGL Spatial Universe Canvas (Pure 3D, zero static wallpaper) */}
-      <AiBackground3D />
+    <div className="min-h-screen bg-[#f8fafc] text-slate-900 flex flex-col relative selection:bg-sky-500/30 overflow-x-hidden">
+      {/* 1. Global 3D Interactive AI Globe with White Studio Background */}
+      <AiUniverse3D />
 
       {/* 2. Top Navbar with Admin Portal Trigger */}
       <Navbar
@@ -127,9 +126,6 @@ function MainEventApp() {
       <main className="flex-1 relative z-10">
         {/* Hero Section */}
         <Hero onOpenRegister={() => handleOpenRegister(pricingTiers[0])} />
-
-        {/* Dedicated 3D Interactive AI in EduTech Holodeck */}
-        <AiUniverse3D />
 
         {/* The Survival Protocol (Structure, Judging, AI Policy, Open For All Eligibility) */}
         <SurvivalProtocol onOpenRegister={() => handleOpenRegister(pricingTiers[0])} />

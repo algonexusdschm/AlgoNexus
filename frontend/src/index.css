@@ -27,8 +27,8 @@
     scroll-behavior: smooth;
   }
   body {
-    background-color: #050814;
-    color: #f8fafc;
+    background-color: #f8fafc;
+    color: #0f172a;
     font-family: 'Plus Jakarta Sans', sans-serif;
     overflow-x: hidden;
   }
@@ -157,11 +157,11 @@
   width: 10px;
 }
 ::-webkit-scrollbar-track {
-  background: #050814;
+  background: #f8fafc;
 }
 ::-webkit-scrollbar-thumb {
   background: #222938;
-  border: 2px solid #050814;
+  border: 2px solid #f8fafc;
 }
 ::-webkit-scrollbar-thumb:hover {
   background: #00f0ff;
@@ -314,7 +314,7 @@
   background: linear-gradient(
     180deg,
     #ffffff 0%,
-    #050814 18%,
+    #f8fafc 18%,
     #e2e8f0 36%,
     #cbd5e1 46%,
     #64748b 49%,
@@ -347,7 +347,7 @@
   background: linear-gradient(
     180deg,
     #ffffff 0%,
-    #050814 18%,
+    #f8fafc 18%,
     #e2e8f0 36%,
     #cbd5e1 46%,
     #64748b 49%,
@@ -400,4 +400,6 @@
 .qr-scanner-laser {
   animation: qrLaser 2.4s ease-in-out infinite;
 }
+
+
 

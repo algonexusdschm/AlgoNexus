@@ -1,819 +1,515 @@
-import React, { useState, useEffect, useRef } from 'react';
+import React, { useRef, useEffect, useState } from 'react';
 import * as THREE from 'three';
-import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls.js';
 import { 
-  Play, 
-  Pause, 
-  RotateCcw, 
   Scan, 
   Database, 
   BrainCircuit, 
   Cpu, 
   Sparkles, 
-  ChevronRight, 
+  RotateCcw, 
   Activity, 
-  Maximize2,
-  Eye,
-  CheckCircle2,
-  Terminal,
-  Zap,
-  Layers
+  Globe2 
 } from 'lucide-react';
 
 /**
- * AiUniverse3D: Hyper-Futuristic 3D AI in EduTech Interactive Holodeck
- * 
- * True WebGL 3D experience with 5 interconnected physical 3D stages:
- * 1. CV Scanner: 3D tablet with oscillating laser plane, 3D bounding boxes & point cloud
- * 2. RAG Matrix: 3D crystal hypercube with orbiting vector nodes & cosine radar
- * 3. NLP Attention: Dual concentric transformer rings with orbiting token prisms & synaptic arcs
- * 4. ML Silicon Chip: Physical NPU die with dynamic 3D parametric Loss Wave surface converging
- * 5. AI Synthesis: Quantum geodesic core with shockwave emission rings & solution shards
- * 
- * Plus:
- * - 3D spline conduits with streaming data packets connecting all stages
- * - Smooth cinematic camera transitions with OrbitControls
- * - Live sci-fi telemetry HUD & code terminal
- * - Strictly NO green: Pure cyan, sapphire blue, and cyber violet
+ * AiUniverse3D: Hyper-Futuristic 3D Interactive AI Globe on White / Light Theme
+ *
+ * Features:
+ * - 3D Translucent Pearlescent Sphere with dot-matrix continental constellation
+ * - Glowing Latitude/Longitude geodesic wireframes and gyroscopic orbital rings
+ * - 5 Interconnected AI Hubs on Globe surface:
+ *   * AI CORE (Master Node)
+ *   * CV (Computer Vision Scanner)
+ *   * RAG (Vector Knowledge Engine)
+ *   * NLP (Transformer Attention)
+ *   * ML (Silicon Edge NPU)
+ * - 3D Great-Circle Flight Arcs with streaming glowing photon data packets
+ * - Full 360° Mouse & Touch Dragging with smooth inertia
+ * - Pure Light Theme / White Studio Lighting (Strictly NO Green: Electric Cyan, Blue, Violet)
  */
 
-const STAGES = [
+const AI_NODES = [
+  {
+    id: 'ai',
+    name: 'AI CORE',
+    tag: 'AUTONOMOUS SYNTHESIS',
+    lat: 5,
+    lon: 0,
+    color: '#0284c7',
+    desc: 'Central intelligence synthesizing multimodal educational outputs.'
+  },
   {
     id: 'cv',
-    number: '01',
-    name: 'COMPUTER VISION',
-    tag: 'SPATIAL LASER SCANNER ACTIVE',
-    headline: 'Optical Neural Scan & Handwritten OCR Extraction',
-    details: 'Calibrating multi-spectral depth sensors. Detecting handwritten mathematical formulas and student facial keypoints with real-time 3D bounding box segmentation.',
-    telemetry: {
-      fps: '120.4 FPS',
-      confidence: '99.82%',
-      latency: '4.2ms',
-      resolution: '4K Ultra-Scan',
-      detected: '\\int_{0}^{\\pi} \\sin(x)dx = 2'
-    },
-    codeStream: [
-      '>> [CV_INIT] Sensor matrix linked to /dev/video0',
-      '>> [BOUNDING_BOX] Target coordinates: [X: 412, Y: 189, W: 620, H: 480]',
-      '>> [OCR_ENGINE] Extracted equation: \\int_{0}^{\\pi} \\sin(x) dx = 2',
-      '>> [HANDSHAKE] Dispatched 512-dim visual vector to RAG indexer...'
-    ],
-    accent: 'cyan',
-    icon: Scan,
-    camPos: [-6.5, 1.8, 6.5],
-    lookAt: [-6.5, 0.5, 2.5]
+    name: 'CV SCANNER',
+    tag: 'OPTICAL OCR & RETICLE',
+    lat: 34,
+    lon: -65,
+    color: '#0ea5e9',
+    desc: 'Spatial scanning of handwritten formulas and student work.'
   },
   {
     id: 'rag',
-    number: '02',
-    name: 'RAG VECTOR ENGINE',
-    tag: 'COSINE SIMILARITY RETRIEVAL',
-    headline: 'Multi-Dimensional Vector Knowledge Retrieval',
-    details: 'Traversing 250,000+ indexed syllabus textbooks, research papers, and academic lecture transcript embeddings in high-dimensional Hilbert space.',
-    telemetry: {
-      vectorsIndexed: '284,910',
-      topKScore: '0.984 Cosine',
-      queryTime: '0.018s',
-      dimension: '1536-D Vector',
-      topCitation: 'Calculus Vol. 3, Ch. 7'
-    },
-    codeStream: [
-      '>> [RAG_QUERY] Ingested visual embedding from CV node',
-      '>> [INDEX_TRAVERSAL] Querying HNSW graph cluster #892',
-      '>> [VECTOR_MATCH] 5 verified textbook citations retrieved (score: 0.984)',
-      '>> [PIPELINE] Grounded context injected into NLP attention heads...'
-    ],
-    accent: 'blue',
-    icon: Database,
-    camPos: [-3.2, 4.5, 2.0],
-    lookAt: [-3.2, 3.2, -2.5]
+    name: 'RAG VECTORS',
+    tag: '1536-D HILBERT SEARCH',
+    lat: 38,
+    lon: 68,
+    color: '#3b82f6',
+    desc: 'Semantic retrieval across 250,000+ textbooks & syllabus docs.'
   },
   {
     id: 'nlp',
-    number: '03',
-    name: 'NLP TRANSFORMER',
-    tag: 'MULTI-HEAD ATTENTION MATRIX',
-    headline: 'Syntactic Tokenization & Semantic Reasoning',
-    details: 'Transformer multi-head self-attention mechanisms decomposing student query into semantic tokens, intent trees, and interactive reasoning graphs.',
-    telemetry: {
-      contextWindow: '128K Tokens',
-      attentionHeads: '32 Parallel',
-      perplexity: '1.04 PPL',
-      throughput: '148 Tok/sec',
-      intent: 'Step-by-step Integral Proof'
-    },
-    codeStream: [
-      '>> [TOKENIZE] Parsing natural language intent with BPE encoder',
-      '>> [ATTENTION] Q*K.T / sqrt(d_k) soft-alignment matrix calculated',
-      '>> [REASONING] Generating Chain-of-Thought pedagogical proof tree',
-      '>> [DISPATCH] Passing token weights to ML Edge Silicon Chip...'
-    ],
-    accent: 'violet',
-    icon: BrainCircuit,
-    camPos: [3.2, 4.5, 2.0],
-    lookAt: [3.2, 3.2, -2.5]
+    name: 'NLP ATTENTION',
+    tag: 'MULTI-HEAD TRANSFORMER',
+    lat: -24,
+    lon: 82,
+    color: '#8b5cf6',
+    desc: 'Self-attention decomposition into verified reasoning proofs.'
   },
   {
     id: 'ml',
-    number: '04',
-    name: 'ML EDGE CHIP',
-    tag: 'NEURAL WEIGHT ADAPTATION',
-    headline: 'Real-time Silicon Training & Gradient Descent',
-    details: 'Accelerating neural weight updates on localized NPU silicon. Tuning learning curves to match the student\'s real-time comprehension velocity.',
-    telemetry: {
-      lossConvergence: '0.0041',
-      flops: '31.4 TFLOPS',
-      epochs: 'Adaptive Step',
-      temperature: '48.2°C Silicon',
-      optimizer: 'AdamW (lr=3e-4)'
-    },
-    codeStream: [
-      '>> [NPU_ENGAGE] Initializing localized edge compute core',
-      '>> [GRADIENT_DESCENT] Backward pass executed (learning_rate=0.0003)',
-      '>> [LOSS_STABILITY] Loss metric stabilized: 0.0041 (plateau reached)',
-      '>> [COMPILED] Adaptive model weights dispatched to GenAI Core...'
-    ],
-    accent: 'blue',
-    icon: Cpu,
-    camPos: [6.5, 1.8, 6.5],
-    lookAt: [6.5, 0.5, 2.5]
-  },
-  {
-    id: 'ai',
-    number: '05',
-    name: 'GENAI SYNTHESIS',
-    tag: 'AUTONOMOUS SOLUTION FORGED',
-    headline: 'Personalized Educational Solution & Interactive Walkthrough',
-    details: 'Assembling the verified step-by-step mathematical derivation, interactive 3D graphs, personalized voice hints, and concept mastery badges.',
-    telemetry: {
-      outputType: 'Interactive Stream',
-      hallucinationRate: '0.00% Grounded',
-      renderTime: 'Instant Real-Time',
-      status: 'Mission Complete',
-      studentScore: 'Mastery Level 5/5'
-    },
-    codeStream: [
-      '>> [SYNTHESIZE] Assembling RAG citations + CV OCR + NLP Logic',
-      '>> [STREAM_START] Token pipeline dispatching to student dashboard',
-      '>> [STATUS] Holographic solution projected onto student workstation',
-      '>> [SUCCESS] Feedback loop logged to institutional database ✓'
-    ],
-    accent: 'cyan',
-    icon: Sparkles,
-    camPos: [0, 2.0, 4.8],
-    lookAt: [0, 0.8, 0]
+    name: 'ML SILICON',
+    tag: 'NPU EDGE TRAINING',
+    lat: -28,
+    lon: -70,
+    color: '#6366f1',
+    desc: 'Real-time weight updates adapting to student learning curves.'
   }
 ];
 
-const OVERVIEW_CAM = {
-  camPos: [0, 4.5, 13.0],
-  lookAt: [0, 1.0, 0]
-};
-
 export default function AiUniverse3D() {
   const mountRef = useRef(null);
-  const [activeStage, setActiveStage] = useState(0); // 0..4, or -1 for overview
-  const [isPlaying, setIsPlaying] = useState(true);
-  const [progress, setProgress] = useState(0);
+  const [selectedNode, setSelectedNode] = useState(null);
 
-  // References for Three.js animation controller
-  const controllerRef = useRef({
-    targetCamPos: new THREE.Vector3(...STAGES[0].camPos),
-    targetLookAt: new THREE.Vector3(...STAGES[0].lookAt),
-    cvLaser: null,
-    ragRadar: null,
-    nlpRingA: null,
-    nlpRingB: null,
-    mlLossPlane: null,
-    aiCore: null,
-    aiRing: null,
-    packetGroup: null,
-    splinePoints: null,
-    time: 0
-  });
+  // Helper: Convert lat/lon degrees to 3D Cartesian Vector on a sphere of radius R
+  const latLonToVector3 = (lat, lon, radius) => {
+    const phi = (90 - lat) * (Math.PI / 180);
+    const theta = (lon + 180) * (Math.PI / 180);
+    const x = -(radius * Math.sin(phi) * Math.cos(theta));
+    const z = radius * Math.sin(phi) * Math.sin(theta);
+    const y = radius * Math.cos(phi);
+    return new THREE.Vector3(x, y, z);
+  };
 
-  // Auto-progress cinematic sequence when isPlaying is true
-  useEffect(() => {
-    if (!isPlaying) return;
-
-    const interval = setInterval(() => {
-      setProgress((prev) => {
-        if (prev >= 100) {
-          setActiveStage((curr) => {
-            const next = curr < 0 ? 0 : (curr + 1) % STAGES.length;
-            return next;
-          });
-          return 0;
-        }
-        return prev + 2.5; // ~4 seconds per stage
-      });
-    }, 100);
-
-    return () => clearInterval(interval);
-  }, [isPlaying]);
-
-  // Update target camera position when activeStage changes
-  useEffect(() => {
-    if (activeStage === -1) {
-      controllerRef.current.targetCamPos.set(...OVERVIEW_CAM.camPos);
-      controllerRef.current.targetLookAt.set(...OVERVIEW_CAM.lookAt);
-    } else {
-      const stage = STAGES[activeStage];
-      controllerRef.current.targetCamPos.set(...stage.camPos);
-      controllerRef.current.targetLookAt.set(...stage.lookAt);
-    }
-  }, [activeStage]);
-
-  // =========================================================================
-  // 🚀 THREE.JS WEBGL 3D SCENE SETUP
-  // =========================================================================
   useEffect(() => {
     const container = mountRef.current;
     if (!container) return;
 
-    const width = container.clientWidth || 800;
-    const height = container.clientHeight || 550;
+    const isMobile = window.innerWidth < 768;
 
-    // Scene & Fog
+    // --- 1. Scene, Camera, Renderer ---
     const scene = new THREE.Scene();
-    scene.fog = new THREE.FogExp2(0x060b19, 0.032);
+    scene.fog = new THREE.FogExp2(0xf8fafc, 0.016);
 
-    // Camera
-    const camera = new THREE.PerspectiveCamera(45, width / height, 0.1, 1000);
-    camera.position.set(...STAGES[0].camPos);
+    const camera = new THREE.PerspectiveCamera(
+      48,
+      window.innerWidth / window.innerHeight,
+      0.1,
+      1000
+    );
+    camera.position.set(0, 0, isMobile ? 18 : 15);
 
-    // Renderer
     const renderer = new THREE.WebGLRenderer({
       antialias: true,
       alpha: true,
       powerPreference: 'high-performance'
     });
-    renderer.setSize(width, height);
+    renderer.setSize(window.innerWidth, window.innerHeight);
     renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
     renderer.toneMapping = THREE.ACESFilmicToneMapping;
-    renderer.toneMappingExposure = 1.1;
+    renderer.toneMappingExposure = 1.15;
     container.appendChild(renderer.domElement);
 
-    // OrbitControls
-    const controls = new OrbitControls(camera, renderer.domElement);
-    controls.enableDamping = true;
-    controls.dampingFactor = 0.05;
-    controls.maxDistance = 25;
-    controls.minDistance = 3.5;
-    controls.target.set(...STAGES[0].lookAt);
-    controls.enablePan = false;
-
-    // Lights
-    const ambientLight = new THREE.AmbientLight(0x0f172a, 1.8);
+    // --- 2. Studio Lighting for White / Light Background ---
+    const ambientLight = new THREE.AmbientLight(0xffffff, 2.2);
     scene.add(ambientLight);
 
-    const cyanKeyLight = new THREE.PointLight(0x00f0ff, 3.5, 60);
-    cyanKeyLight.position.set(0, 8, 8);
-    scene.add(cyanKeyLight);
+    const keyLight = new THREE.DirectionalLight(0xffffff, 1.8);
+    keyLight.position.set(15, 20, 15);
+    scene.add(keyLight);
 
-    const violetFillLight = new THREE.PointLight(0x8b5cf6, 3.0, 60);
-    violetFillLight.position.set(-8, 5, -5);
-    scene.add(violetFillLight);
+    const cyanRimLight = new THREE.PointLight(0x00f0ff, 3.5, 50);
+    cyanRimLight.position.set(-15, 10, 8);
+    scene.add(cyanRimLight);
 
-    const blueRimLight = new THREE.PointLight(0x38bdf8, 2.5, 60);
-    blueRimLight.position.set(8, 4, 4);
-    scene.add(blueRimLight);
+    const violetRimLight = new THREE.PointLight(0x8b5cf6, 3.0, 50);
+    violetRimLight.position.set(15, -8, 8);
+    scene.add(violetRimLight);
 
-    // 3D Perspective Ground Grid
-    const groundGrid = new THREE.GridHelper(50, 36, 0x00f0ff, 0x1e293b);
-    groundGrid.position.y = -2.5;
-    groundGrid.material.transparent = true;
-    groundGrid.material.opacity = 0.35;
-    scene.add(groundGrid);
+    const blueFillLight = new THREE.PointLight(0x3b82f6, 2.5, 45);
+    blueFillLight.position.set(0, -12, 10);
+    scene.add(blueFillLight);
 
-    // Ground Holo Radar Ring
-    const radarGeo = new THREE.RingGeometry(2.5, 2.55, 64);
-    const radarMat = new THREE.MeshBasicMaterial({
-      color: 0x00f0ff,
-      side: THREE.DoubleSide,
+    // --- 3. Master 3D World Group (Rotatable Globe) ---
+    const globeGroup = new THREE.Group();
+    scene.add(globeGroup);
+
+    const GLOBE_RADIUS = 4.2;
+
+    // Layer 1: Inner Translucent Sphere Core
+    const coreGeo = new THREE.SphereGeometry(GLOBE_RADIUS, 64, 64);
+    const coreMat = new THREE.MeshPhysicalMaterial({
+      color: 0xffffff,
+      roughness: 0.15,
+      metalness: 0.1,
+      transmission: 0.6,
       transparent: true,
-      opacity: 0.4
+      opacity: 0.75,
+      reflectivity: 0.8
     });
-    const radarMesh = new THREE.Mesh(radarGeo, radarMat);
-    radarMesh.rotation.x = -Math.PI / 2;
-    radarMesh.position.y = -2.48;
-    scene.add(radarMesh);
+    const coreMesh = new THREE.Mesh(coreGeo, coreMat);
+    globeGroup.add(coreMesh);
 
-    // =========================================================================
-    // 1. NODE 1: COMPUTER VISION (CV) SCANNER
-    // Position: (-6.5, 0.5, 2.5)
-    // =========================================================================
-    const cvGroup = new THREE.Group();
-    cvGroup.position.set(-6.5, 0.5, 2.5);
+    // Layer 2: Fibonacci Dot-Matrix Constellation (1,200 points on sphere)
+    const DOT_COUNT = 1200;
+    const dotPositions = new Float32Array(DOT_COUNT * 3);
+    const dotColors = new Float32Array(DOT_COUNT * 3);
+    const cCyan = new THREE.Color(0x0284c7);
+    const cBlue = new THREE.Color(0x2563eb);
+    const cViolet = new THREE.Color(0x7c3aed);
 
-    // Tablet Base
-    const tabletGeo = new THREE.BoxGeometry(2.2, 3.0, 0.08);
-    const tabletMat = new THREE.MeshStandardMaterial({
-      color: 0x090d16,
-      metalness: 0.85,
-      roughness: 0.2
-    });
-    const tabletMesh = new THREE.Mesh(tabletGeo, tabletMat);
-    cvGroup.add(tabletMesh);
+    const phi = Math.PI * (3 - Math.sqrt(5)); // Golden angle
+    for (let i = 0; i < DOT_COUNT; i++) {
+      const y = 1 - (i / (DOT_COUNT - 1)) * 2; // y goes from 1 to -1
+      const radiusAtY = Math.sqrt(1 - y * y);
+      const theta = phi * i;
 
-    // Tablet Neon Border
-    const tabletEdges = new THREE.EdgesGeometry(tabletGeo);
-    const tabletBorder = new THREE.LineSegments(
-      tabletEdges,
-      new THREE.LineBasicMaterial({ color: 0x00f0ff, transparent: true, opacity: 0.8 })
-    );
-    cvGroup.add(tabletBorder);
+      const x = Math.cos(theta) * radiusAtY;
+      const z = Math.sin(theta) * radiusAtY;
 
-    // Tablet Screen Canvas Texture
-    const cvCanvas = document.createElement('canvas');
-    cvCanvas.width = 512;
-    cvCanvas.height = 700;
-    const ctx = cvCanvas.getContext('2d');
-    ctx.fillStyle = '#0a101f';
-    ctx.fillRect(0, 0, 512, 700);
+      dotPositions[i * 3] = x * (GLOBE_RADIUS + 0.04);
+      dotPositions[i * 3 + 1] = y * (GLOBE_RADIUS + 0.04);
+      dotPositions[i * 3 + 2] = z * (GLOBE_RADIUS + 0.04);
 
-    // Draw high-tech schematic on canvas
-    ctx.strokeStyle = '#00f0ff';
-    ctx.lineWidth = 2;
-    ctx.strokeRect(20, 20, 472, 660);
-
-    ctx.fillStyle = '#38bdf8';
-    ctx.font = 'bold 24px monospace';
-    ctx.fillText('CV-OPTICAL-SCAN // OCR v4.2', 40, 60);
-
-    ctx.fillStyle = '#94a3b8';
-    ctx.font = '20px monospace';
-    ctx.fillText('STUDENT_EXAM_PAPER_INPUT:', 40, 110);
-
-    ctx.fillStyle = '#ffffff';
-    ctx.font = 'bold 32px serif';
-    ctx.fillText('∫ sin(x) dx = -cos(x) + C', 40, 170);
-    ctx.fillText('lim (x→0) [sin(x)/x] = 1', 40, 220);
-
-    // Draw bounding boxes on canvas
-    ctx.strokeStyle = '#00f0ff';
-    ctx.setLineDash([6, 6]);
-    ctx.strokeRect(35, 130, 440, 55);
-    ctx.strokeRect(35, 185, 440, 50);
-    ctx.setLineDash([]);
-
-    // Draw neural node graph on canvas
-    ctx.fillStyle = '#8b5cf6';
-    ctx.font = '16px monospace';
-    ctx.fillText('CONFIDENCE: 99.82% [VERIFIED]', 40, 310);
-    ctx.fillText('HANDWRITING ENTROPY: 0.04', 40, 340);
-    ctx.fillText('EQUATION TOKEN COUNT: 14', 40, 370);
-
-    // Draw mini diagram
-    ctx.strokeStyle = '#38bdf8';
-    ctx.beginPath();
-    ctx.arc(256, 490, 80, 0, Math.PI * 2);
-    ctx.stroke();
-    ctx.beginPath();
-    ctx.moveTo(176, 490);
-    ctx.lineTo(336, 490);
-    ctx.moveTo(256, 410);
-    ctx.lineTo(256, 570);
-    ctx.stroke();
-
-    const cvTexture = new THREE.CanvasTexture(cvCanvas);
-    const screenGeo = new THREE.PlaneGeometry(2.0, 2.8);
-    const screenMat = new THREE.MeshBasicMaterial({ map: cvTexture });
-    const screenMesh = new THREE.Mesh(screenGeo, screenMat);
-    screenMesh.position.z = 0.045;
-    cvGroup.add(screenMesh);
-
-    // Sweeping 3D Laser Plane
-    const laserGeo = new THREE.PlaneGeometry(2.1, 0.12);
-    const laserMat = new THREE.MeshBasicMaterial({
-      color: 0x00f0ff,
-      transparent: true,
-      opacity: 0.85,
-      side: THREE.DoubleSide
-    });
-    const laserMesh = new THREE.Mesh(laserGeo, laserMat);
-    laserMesh.position.z = 0.08;
-    cvGroup.add(laserMesh);
-    controllerRef.current.cvLaser = laserMesh;
-
-    // 3D Spatial Bounding Box Brackets
-    const boxGeo = new THREE.BoxGeometry(1.9, 0.7, 0.2);
-    const boxEdges = new THREE.EdgesGeometry(boxGeo);
-    const boxMesh = new THREE.LineSegments(
-      boxEdges,
-      new THREE.LineBasicMaterial({ color: 0x00f0ff, transparent: true, opacity: 0.9 })
-    );
-    boxMesh.position.set(0, 0.5, 0.15);
-    cvGroup.add(boxMesh);
-
-    // Floating Detected Feature Points
-    const ptGeo = new THREE.BufferGeometry();
-    const ptPos = new Float32Array(24 * 3);
-    for (let i = 0; i < 24; i++) {
-      ptPos[i * 3] = (Math.random() - 0.5) * 1.6;
-      ptPos[i * 3 + 1] = (Math.random() - 0.5) * 2.2;
-      ptPos[i * 3 + 2] = 0.1 + Math.random() * 0.3;
+      const colChoice = Math.random();
+      const col = colChoice < 0.5 ? cCyan : colChoice < 0.85 ? cBlue : cViolet;
+      dotColors[i * 3] = col.r;
+      dotColors[i * 3 + 1] = col.g;
+      dotColors[i * 3 + 2] = col.b;
     }
-    ptGeo.setAttribute('position', new THREE.BufferAttribute(ptPos, 3));
-    const ptMat = new THREE.PointsMaterial({
-      size: 0.06,
-      color: 0x00f0ff,
+
+    const dotGeo = new THREE.BufferGeometry();
+    dotGeo.setAttribute('position', new THREE.BufferAttribute(dotPositions, 3));
+    dotGeo.setAttribute('color', new THREE.BufferAttribute(dotColors, 3));
+    const dotMat = new THREE.PointsMaterial({
+      size: 0.09,
+      vertexColors: true,
       transparent: true,
-      opacity: 0.9
+      opacity: 0.85
     });
-    const ptPoints = new THREE.Points(ptGeo, ptMat);
-    cvGroup.add(ptPoints);
+    const dotMesh = new THREE.Points(dotGeo, dotMat);
+    globeGroup.add(dotMesh);
 
-    scene.add(cvGroup);
-
-    // =========================================================================
-    // 2. NODE 2: RAG VECTOR KNOWLEDGE LATTICE
-    // Position: (-3.2, 3.2, -2.5)
-    // =========================================================================
-    const ragGroup = new THREE.Group();
-    ragGroup.position.set(-3.2, 3.2, -2.5);
-
-    // Outer Bounding Hypercube Wireframe
-    const hypercubeGeo = new THREE.BoxGeometry(2.2, 2.2, 2.2);
-    const hypercubeEdges = new THREE.EdgesGeometry(hypercubeGeo);
-    const hypercubeMesh = new THREE.LineSegments(
-      hypercubeEdges,
-      new THREE.LineBasicMaterial({ color: 0x38bdf8, transparent: true, opacity: 0.5 })
-    );
-    ragGroup.add(hypercubeMesh);
-
-    // Inner Spinning Crystal Octahedron
-    const crystalGeo = new THREE.OctahedronGeometry(0.9, 0);
-    const crystalMat = new THREE.MeshStandardMaterial({
-      color: 0x1d4ed8,
-      emissive: 0x2563eb,
-      emissiveIntensity: 0.6,
-      metalness: 0.9,
-      roughness: 0.1,
-      wireframe: true
-    });
-    const crystalMesh = new THREE.Mesh(crystalGeo, crystalMat);
-    ragGroup.add(crystalMesh);
-
-    // 35 Floating Vector Data Nodes
-    const vectorGroup = new THREE.Group();
-    const vectorCount = 35;
-    for (let i = 0; i < vectorCount; i++) {
-      const vGeo = i % 2 === 0 ? new THREE.BoxGeometry(0.12, 0.12, 0.12) : new THREE.OctahedronGeometry(0.08, 0);
-      const vMat = new THREE.MeshBasicMaterial({
-        color: i % 3 === 0 ? 0x00f0ff : i % 3 === 1 ? 0x38bdf8 : 0x8b5cf6
-      });
-      const vMesh = new THREE.Mesh(vGeo, vMat);
-      vMesh.position.set(
-        (Math.random() - 0.5) * 1.8,
-        (Math.random() - 0.5) * 1.8,
-        (Math.random() - 0.5) * 1.8
-      );
-      vMesh.userData = {
-        speed: 0.5 + Math.random() * 0.8,
-        axis: new THREE.Vector3(Math.random(), Math.random(), Math.random()).normalize()
-      };
-      vectorGroup.add(vMesh);
-    }
-    ragGroup.add(vectorGroup);
-
-    // Cosine Radar Search Ring
-    const ragRadarGeo = new THREE.RingGeometry(0.7, 0.85, 32);
-    const ragRadarMat = new THREE.MeshBasicMaterial({
-      color: 0x00f0ff,
-      side: THREE.DoubleSide,
-      transparent: true,
-      opacity: 0.6
-    });
-    const ragRadarMesh = new THREE.Mesh(ragRadarGeo, ragRadarMat);
-    ragRadarMesh.rotation.x = Math.PI / 2;
-    ragGroup.add(ragRadarMesh);
-    controllerRef.current.ragRadar = ragRadarMesh;
-
-    scene.add(ragGroup);
-
-    // =========================================================================
-    // 3. NODE 3: NLP TRANSFORMER ATTENTION ENGINE
-    // Position: (3.2, 3.2, -2.5)
-    // =========================================================================
-    const nlpGroup = new THREE.Group();
-    nlpGroup.position.set(3.2, 3.2, -2.5);
-
-    // Concentric Attention Ring A (Cyan)
-    const ringAGeo = new THREE.TorusGeometry(1.5, 0.04, 16, 64);
-    const ringAMat = new THREE.MeshBasicMaterial({ color: 0x00f0ff });
-    const ringAMesh = new THREE.Mesh(ringAGeo, ringAMat);
-    nlpGroup.add(ringAMesh);
-    controllerRef.current.nlpRingA = ringAMesh;
-
-    // Concentric Attention Ring B (Violet)
-    const ringBGeo = new THREE.TorusGeometry(1.05, 0.035, 16, 64);
-    const ringBMat = new THREE.MeshBasicMaterial({ color: 0x8b5cf6 });
-    const ringBMesh = new THREE.Mesh(ringBGeo, ringBMat);
-    ringBMesh.rotation.x = Math.PI / 3;
-    nlpGroup.add(ringBMesh);
-    controllerRef.current.nlpRingB = ringBMesh;
-
-    // 6 Orbiting Token Prisms
-    const tokenGroup = new THREE.Group();
-    for (let i = 0; i < 6; i++) {
-      const angle = (i / 6) * Math.PI * 2;
-      const tGeo = new THREE.OctahedronGeometry(0.2, 0);
-      const tMat = new THREE.MeshStandardMaterial({
-        color: 0x38bdf8,
-        emissive: 0x0284c7,
-        emissiveIntensity: 0.7,
-        metalness: 0.8
-      });
-      const tMesh = new THREE.Mesh(tGeo, tMat);
-      tMesh.position.set(Math.cos(angle) * 1.5, Math.sin(angle) * 1.5, 0);
-      tokenGroup.add(tMesh);
-    }
-    nlpGroup.add(tokenGroup);
-
-    // Synaptic Attention Lines (Q * K.T)
-    const synGeo = new THREE.BufferGeometry();
-    const synPositions = new Float32Array(6 * 3);
-    for (let i = 0; i < 6; i++) {
-      const angle = (i / 6) * Math.PI * 2;
-      synPositions[i * 3] = Math.cos(angle) * 1.5;
-      synPositions[i * 3 + 1] = Math.sin(angle) * 1.5;
-      synPositions[i * 3 + 2] = 0;
-    }
-    synGeo.setAttribute('position', new THREE.BufferAttribute(synPositions, 3));
-    const synMat = new THREE.LineBasicMaterial({
-      color: 0x8b5cf6,
-      transparent: true,
-      opacity: 0.6
-    });
-    const synLines = new THREE.Line(synGeo, synMat);
-    nlpGroup.add(synLines);
-
-    scene.add(nlpGroup);
-
-    // =========================================================================
-    // 4. NODE 4: ML SILICON EDGE CHIP & DYNAMIC LOSS WAVE
-    // Position: (6.5, 0.5, 2.5)
-    // =========================================================================
-    const mlGroup = new THREE.Group();
-    mlGroup.position.set(6.5, 0.5, 2.5);
-
-    // Silicon Substrate Base
-    const chipBaseGeo = new THREE.BoxGeometry(2.4, 0.16, 2.4);
-    const chipBaseMat = new THREE.MeshStandardMaterial({
-      color: 0x0f172a,
-      metalness: 0.9,
-      roughness: 0.3
-    });
-    const chipBase = new THREE.Mesh(chipBaseGeo, chipBaseMat);
-    mlGroup.add(chipBase);
-
-    // Central NPU Die
-    const dieGeo = new THREE.BoxGeometry(1.3, 0.24, 1.3);
-    const dieMat = new THREE.MeshStandardMaterial({
+    // Layer 3: Latitude / Longitude Geodesic Rings
+    const wireGeo = new THREE.SphereGeometry(GLOBE_RADIUS + 0.02, 28, 16);
+    const wireMat = new THREE.MeshBasicMaterial({
       color: 0x0284c7,
-      emissive: 0x0369a1,
-      emissiveIntensity: 0.5,
-      metalness: 0.95,
-      roughness: 0.1
-    });
-    const dieMesh = new THREE.Mesh(dieGeo, dieMat);
-    mlGroup.add(dieMesh);
-
-    // Gold/Cyan Edge Pins
-    const pinGroup = new THREE.Group();
-    for (let i = 0; i < 16; i++) {
-      const pGeo = new THREE.BoxGeometry(0.08, 0.05, 0.15);
-      const pMat = new THREE.MeshBasicMaterial({ color: 0x38bdf8 });
-      const pMesh = new THREE.Mesh(pGeo, pMat);
-      pMesh.position.set(-1.1 + (i / 15) * 2.2, 0, 1.25);
-      pinGroup.add(pMesh);
-
-      const pMesh2 = pMesh.clone();
-      pMesh2.position.z = -1.25;
-      pinGroup.add(pMesh2);
-    }
-    mlGroup.add(pinGroup);
-
-    // Dynamic 3D Parametric Loss Wave Surface (Hovering above the chip!)
-    const lossWaveGeo = new THREE.PlaneGeometry(1.9, 1.9, 22, 22);
-    const lossWaveMat = new THREE.MeshBasicMaterial({
-      color: 0x00f0ff,
       wireframe: true,
       transparent: true,
-      opacity: 0.8
+      opacity: 0.16
     });
-    const lossWaveMesh = new THREE.Mesh(lossWaveGeo, lossWaveMat);
-    lossWaveMesh.rotation.x = -Math.PI / 2;
-    lossWaveMesh.position.y = 0.85;
-    mlGroup.add(lossWaveMesh);
-    controllerRef.current.mlLossPlane = lossWaveMesh;
+    const wireMesh = new THREE.Mesh(wireGeo, wireMat);
+    globeGroup.add(wireMesh);
 
-    scene.add(mlGroup);
-
-    // =========================================================================
-    // 5. NODE 5: AUTONOMOUS AI SYNTHESIS (QUANTUM CORE)
-    // Position: (0, 0.8, 0) [CENTER STAGE]
-    // =========================================================================
-    const aiGroup = new THREE.Group();
-    aiGroup.position.set(0, 0.8, 0);
-
-    // Outer Geodesic Icosahedron Wireframe
-    const outerGeo = new THREE.IcosahedronGeometry(1.8, 1);
-    const outerEdges = new THREE.EdgesGeometry(outerGeo);
-    const outerMesh = new THREE.LineSegments(
-      outerEdges,
-      new THREE.LineBasicMaterial({ color: 0x00f0ff, transparent: true, opacity: 0.7 })
-    );
-    aiGroup.add(outerMesh);
-    controllerRef.current.aiCore = outerMesh;
-
-    // Mid Geodesic Dodecahedron
-    const midGeo = new THREE.DodecahedronGeometry(1.25, 0);
-    const midEdges = new THREE.EdgesGeometry(midGeo);
-    const midMesh = new THREE.LineSegments(
-      midEdges,
-      new THREE.LineBasicMaterial({ color: 0x8b5cf6, transparent: true, opacity: 0.6 })
-    );
-    aiGroup.add(midMesh);
-
-    // Inner Radiant Orb
-    const orbGeo = new THREE.SphereGeometry(0.65, 32, 32);
-    const orbMat = new THREE.MeshStandardMaterial({
-      color: 0x38bdf8,
-      emissive: 0x00f0ff,
-      emissiveIntensity: 0.9,
-      roughness: 0.1
-    });
-    const orbMesh = new THREE.Mesh(orbGeo, orbMat);
-    aiGroup.add(orbMesh);
-
-    // Concentric Emission Shockwave Ring
-    const aiRingGeo = new THREE.RingGeometry(1.85, 1.95, 48);
-    const aiRingMat = new THREE.MeshBasicMaterial({
+    // Layer 4: Glowing Equator & Polar Rings
+    const equatorGeo = new THREE.TorusGeometry(GLOBE_RADIUS + 0.08, 0.03, 16, 100);
+    const equatorMat = new THREE.MeshBasicMaterial({
       color: 0x00f0ff,
-      side: THREE.DoubleSide,
       transparent: true,
       opacity: 0.6
     });
-    const aiRingMesh = new THREE.Mesh(aiRingGeo, aiRingMat);
-    aiRingMesh.rotation.x = Math.PI / 2;
-    aiGroup.add(aiRingMesh);
-    controllerRef.current.aiRing = aiRingMesh;
+    const equatorMesh = new THREE.Mesh(equatorGeo, equatorMat);
+    equatorMesh.rotation.x = Math.PI / 2;
+    globeGroup.add(equatorMesh);
 
-    // 8 Floating Solution Diamond Shards
-    const shardGroup = new THREE.Group();
-    for (let i = 0; i < 8; i++) {
-      const angle = (i / 8) * Math.PI * 2;
-      const sGeo = new THREE.OctahedronGeometry(0.18, 0);
-      const sMat = new THREE.MeshBasicMaterial({ color: 0x38bdf8, wireframe: true });
-      const sMesh = new THREE.Mesh(sGeo, sMat);
-      sMesh.position.set(Math.cos(angle) * 2.2, (Math.random() - 0.5) * 0.8, Math.sin(angle) * 2.2);
-      shardGroup.add(sMesh);
+    // Layer 5: Outer Gyroscopic Orbital Rings
+    const orbitGroup = new THREE.Group();
+    scene.add(orbitGroup);
+
+    const orbit1Geo = new THREE.TorusGeometry(5.6, 0.025, 16, 120);
+    const orbit1Mat = new THREE.MeshBasicMaterial({ color: 0x38bdf8, transparent: true, opacity: 0.35 });
+    const orbit1 = new THREE.Mesh(orbit1Geo, orbit1Mat);
+    orbit1.rotation.x = Math.PI / 3;
+    orbit1.rotation.y = Math.PI / 6;
+    orbitGroup.add(orbit1);
+
+    const orbit2Geo = new THREE.TorusGeometry(6.4, 0.02, 16, 120);
+    const orbit2Mat = new THREE.MeshBasicMaterial({ color: 0x8b5cf6, transparent: true, opacity: 0.3 });
+    const orbit2 = new THREE.Mesh(orbit2Geo, orbit2Mat);
+    orbit2.rotation.x = -Math.PI / 4;
+    orbit2.rotation.y = -Math.PI / 4;
+    orbitGroup.add(orbit2);
+
+    // Helper: Create High-Tech 3D Cyber Sprite Label for Light Background
+    function createCyberSprite(title, subtitle, accentColor) {
+      const canvas = document.createElement('canvas');
+      canvas.width = 512;
+      canvas.height = 220;
+      const ctx = canvas.getContext('2d');
+
+      // Light Card Background with glowing border
+      ctx.fillStyle = 'rgba(255, 255, 255, 0.96)';
+      ctx.strokeStyle = accentColor;
+      ctx.lineWidth = 6;
+      ctx.shadowColor = accentColor;
+      ctx.shadowBlur = 18;
+
+      ctx.beginPath();
+      ctx.moveTo(50, 30);
+      ctx.lineTo(462, 30);
+      ctx.lineTo(492, 60);
+      ctx.lineTo(492, 160);
+      ctx.lineTo(462, 190);
+      ctx.lineTo(50, 190);
+      ctx.lineTo(20, 160);
+      ctx.lineTo(20, 60);
+      ctx.closePath();
+      ctx.fill();
+      ctx.stroke();
+
+      // Top corner tech accent
+      ctx.fillStyle = accentColor;
+      ctx.fillRect(40, 48, 16, 16);
+
+      // Title Text
+      ctx.fillStyle = '#0f172a';
+      ctx.font = 'bold 54px "Chakra Petch", "Plus Jakarta Sans", sans-serif';
+      ctx.textAlign = 'center';
+      ctx.textBaseline = 'middle';
+      ctx.fillText(title, 260, 92);
+
+      // Subtitle Tag
+      ctx.fillStyle = accentColor;
+      ctx.font = 'bold 26px monospace';
+      ctx.fillText(`• ${subtitle} •`, 260, 146);
+
+      const texture = new THREE.CanvasTexture(canvas);
+      texture.minFilter = THREE.LinearFilter;
+      const spriteMat = new THREE.SpriteMaterial({
+        map: texture,
+        transparent: true,
+        depthWrite: false
+      });
+      const sprite = new THREE.Sprite(spriteMat);
+      sprite.scale.set(2.2, 0.95, 1);
+      return sprite;
     }
-    aiGroup.add(shardGroup);
 
-    scene.add(aiGroup);
+    // --- 4. Place the 5 AI Nodes on the Globe Surface ---
+    const nodeObjects = [];
 
-    // =========================================================================
-    // 6. INTERCONNECTING 3D ENERGY CONDUITS & PACKET HIGHWAY
+    AI_NODES.forEach((node) => {
+      const pos = latLonToVector3(node.lat, node.lon, GLOBE_RADIUS + 0.1);
+      const hubGroup = new THREE.Group();
+      hubGroup.position.copy(pos);
+
+      // 3D Glowing Core Node Mesh
+      const nodeGeo = node.id === 'ai'
+        ? new THREE.IcosahedronGeometry(0.32, 1)
+        : new THREE.OctahedronGeometry(0.25, 0);
+
+      const nodeMat = new THREE.MeshStandardMaterial({
+        color: node.color,
+        emissive: node.color,
+        emissiveIntensity: 0.85,
+        roughness: 0.2,
+        metalness: 0.8
+      });
+      const nodeMesh = new THREE.Mesh(nodeGeo, nodeMat);
+      hubGroup.add(nodeMesh);
+
+      // Pulsing Halo Ring
+      const haloGeo = new THREE.RingGeometry(0.35, 0.44, 32);
+      const haloMat = new THREE.MeshBasicMaterial({
+        color: node.color,
+        side: THREE.DoubleSide,
+        transparent: true,
+        opacity: 0.7
+      });
+      const haloMesh = new THREE.Mesh(haloGeo, haloMat);
+      haloMesh.lookAt(pos.clone().multiplyScalar(2));
+      hubGroup.add(haloMesh);
+
+      // Floating Cyber Label Sprite
+      const sprite = createCyberSprite(node.name, node.tag, node.color);
+      const normal = pos.clone().normalize();
+      sprite.position.copy(normal.clone().multiplyScalar(0.95));
+      hubGroup.add(sprite);
+
+      globeGroup.add(hubGroup);
+      nodeObjects.push({ node, hubGroup, nodeMesh, haloMesh });
+    });
+
+    // --- 5. Great-Circle 3D Curved Arcs & Streaming Photon Packets ---
     // Connects: CV -> RAG -> NLP -> ML -> AI -> CV
-    // =========================================================================
-    const curvePoints = [
-      new THREE.Vector3(-6.5, 0.5, 2.5),  // CV
-      new THREE.Vector3(-3.2, 3.2, -2.5), // RAG
-      new THREE.Vector3(3.2, 3.2, -2.5),  // NLP
-      new THREE.Vector3(6.5, 0.5, 2.5),   // ML
-      new THREE.Vector3(0, 0.8, 0),       // AI
-      new THREE.Vector3(-6.5, 0.5, 2.5)   // Loop back to CV
+    const arcConnections = [
+      { from: 'cv', to: 'rag', color: 0x0284c7 },
+      { from: 'rag', to: 'nlp', color: 0x3b82f6 },
+      { from: 'nlp', to: 'ml', color: 0x8b5cf6 },
+      { from: 'ml', to: 'ai', color: 0x6366f1 },
+      { from: 'ai', to: 'cv', color: 0x0ea5e9 }
     ];
 
-    const splineCurve = new THREE.CatmullRomCurve3(curvePoints, true, 'catmullrom', 0.4);
-    const splineGeo = new THREE.BufferGeometry().setFromPoints(splineCurve.getPoints(120));
-    const splineMat = new THREE.LineBasicMaterial({
-      color: 0x00f0ff,
-      transparent: true,
-      opacity: 0.45
-    });
-    const splineLine = new THREE.Line(splineGeo, splineMat);
-    scene.add(splineLine);
+    const splineStreams = [];
 
-    // Streaming Data Packets along the spline
-    const packetGroup = new THREE.Group();
-    const packetCount = 28;
-    const packetMeshes = [];
+    arcConnections.forEach(({ from, to, color }) => {
+      const nodeA = AI_NODES.find((n) => n.id === from);
+      const nodeB = AI_NODES.find((n) => n.id === to);
+      if (!nodeA || !nodeB) return;
 
-    for (let i = 0; i < packetCount; i++) {
-      const pGeo = new THREE.SphereGeometry(0.09, 12, 12);
-      const pMat = new THREE.MeshBasicMaterial({
-        color: i % 2 === 0 ? 0x00f0ff : 0x8b5cf6
+      const pA = latLonToVector3(nodeA.lat, nodeA.lon, GLOBE_RADIUS + 0.1);
+      const pB = latLonToVector3(nodeB.lat, nodeB.lon, GLOBE_RADIUS + 0.1);
+
+      // Compute mid-point elevated above the sphere
+      const mid = pA.clone().add(pB).multiplyScalar(0.5);
+      const elevatedMid = mid.normalize().multiplyScalar(GLOBE_RADIUS + 1.6);
+
+      const curve = new THREE.QuadraticBezierCurve3(pA, elevatedMid, pB);
+      const points = curve.getPoints(50);
+      const arcGeo = new THREE.BufferGeometry().setFromPoints(points);
+      const arcMat = new THREE.LineBasicMaterial({
+        color,
+        transparent: true,
+        opacity: 0.55,
+        linewidth: 2
       });
-      const pMesh = new THREE.Mesh(pGeo, pMat);
-      pMesh.userData = {
-        offset: i / packetCount,
-        speed: 0.08
-      };
-      packetGroup.add(pMesh);
-      packetMeshes.push(pMesh);
-    }
-    scene.add(packetGroup);
-    controllerRef.current.packetGroup = packetMeshes;
-    controllerRef.current.splineCurve = splineCurve;
+      const arcLine = new THREE.Line(arcGeo, arcMat);
+      globeGroup.add(arcLine);
 
-    // Resize Handler
-    const handleResize = () => {
-      if (!container) return;
-      const w = container.clientWidth;
-      const h = container.clientHeight;
-      camera.aspect = w / h;
-      camera.updateProjectionMatrix();
-      renderer.setSize(w, h);
+      // Streaming Photon Light Packet along this arc
+      const pGeo = new THREE.SphereGeometry(0.09, 12, 12);
+      const pMat = new THREE.MeshBasicMaterial({ color: 0xffffff });
+      const pulseMesh = new THREE.Mesh(pGeo, pMat);
+      globeGroup.add(pulseMesh);
+
+      splineStreams.push({ curve, pulseMesh, progress: Math.random(), speed: 0.4 + Math.random() * 0.2 });
+    });
+
+    // --- 6. Ambient Floating Particles in Background ---
+    const ambientCount = 350;
+    const aGeo = new THREE.BufferGeometry();
+    const aPos = new Float32Array(ambientCount * 3);
+    for (let i = 0; i < ambientCount; i++) {
+      aPos[i * 3] = (Math.random() - 0.5) * 45;
+      aPos[i * 3 + 1] = (Math.random() - 0.5) * 35;
+      aPos[i * 3 + 2] = (Math.random() - 0.5) * 35;
+    }
+    aGeo.setAttribute('position', new THREE.BufferAttribute(aPos, 3));
+    const aMat = new THREE.PointsMaterial({
+      color: 0x0284c7,
+      size: 0.12,
+      transparent: true,
+      opacity: 0.35
+    });
+    const ambientMesh = new THREE.Points(aGeo, aMat);
+    scene.add(ambientMesh);
+
+    // --- 7. Interactive 360° Mouse & Touch Dragging + Parallax ---
+    let targetRotY = 0;
+    let targetRotX = 0;
+    let isDragging = false;
+    let prevX = 0;
+    let prevY = 0;
+    let mouseX = 0;
+    let mouseY = 0;
+
+    const onPointerDown = (e) => {
+      isDragging = true;
+      prevX = e.clientX || (e.touches && e.touches[0].clientX) || 0;
+      prevY = e.clientY || (e.touches && e.touches[0].clientY) || 0;
     };
 
-    window.addEventListener('resize', handleResize);
+    const onPointerMove = (e) => {
+      const clientX = e.clientX || (e.touches && e.touches[0].clientX) || 0;
+      const clientY = e.clientY || (e.touches && e.touches[0].clientY) || 0;
 
-    // =========================================================================
-    // 7. ANIMATION RENDER LOOP (60 FPS)
-    // =========================================================================
-    let animationFrameId;
+      mouseX = (clientX / window.innerWidth - 0.5) * 2;
+      mouseY = (clientY / window.innerHeight - 0.5) * 2;
+
+      if (isDragging) {
+        const dx = clientX - prevX;
+        const dy = clientY - prevY;
+        targetRotY += dx * 0.006;
+        targetRotX += dy * 0.006;
+        prevX = clientX;
+        prevY = clientY;
+      }
+    };
+
+    const onPointerUp = () => {
+      isDragging = false;
+    };
+
+    window.addEventListener('mousedown', onPointerDown);
+    window.addEventListener('mousemove', onPointerMove, { passive: true });
+    window.addEventListener('mouseup', onPointerUp);
+    window.addEventListener('touchstart', onPointerDown, { passive: true });
+    window.addEventListener('touchmove', onPointerMove, { passive: true });
+    window.addEventListener('touchend', onPointerUp);
+
+    // Scroll Travel interpolation
+    let scrollY = 0;
+    const onScroll = () => {
+      scrollY = window.scrollY || window.pageYOffset;
+    };
+    window.addEventListener('scroll', onScroll, { passive: true });
+
+    // Window Resize
+    const onResize = () => {
+      camera.aspect = window.innerWidth / window.innerHeight;
+      camera.updateProjectionMatrix();
+      renderer.setSize(window.innerWidth, window.innerHeight);
+    };
+    window.addEventListener('resize', onResize);
+
+    // --- 8. Animation Render Loop (60-120 FPS) ---
+    let animId;
     const clock = new THREE.Clock();
 
     const animate = () => {
-      animationFrameId = requestAnimationFrame(animate);
+      animId = requestAnimationFrame(animate);
       const delta = clock.getDelta();
       const elapsed = clock.getElapsedTime();
-      controllerRef.current.time = elapsed;
 
-      // Smooth Camera Lerp towards target
-      camera.position.lerp(controllerRef.current.targetCamPos, 0.04);
-      controls.target.lerp(controllerRef.current.targetLookAt, 0.04);
-      controls.update();
-
-      // 1. CV Laser Sweep Animation
-      if (controllerRef.current.cvLaser) {
-        controllerRef.current.cvLaser.position.y = Math.sin(elapsed * 3.5) * 1.15;
+      // Continuous gentle auto-spin when not dragging
+      if (!isDragging) {
+        targetRotY += delta * 0.18;
       }
 
-      // 2. RAG Matrix Rotation & Radar Sweep
-      crystalMesh.rotation.y = elapsed * 0.6;
-      crystalMesh.rotation.x = elapsed * 0.3;
-      vectorGroup.rotation.y = elapsed * 0.2;
-      if (controllerRef.current.ragRadar) {
-        controllerRef.current.ragRadar.rotation.z = elapsed * 1.8;
-      }
+      // Smooth inertia rotation
+      globeGroup.rotation.y += (targetRotY + mouseX * 0.15 - globeGroup.rotation.y) * 0.06;
+      globeGroup.rotation.x += (targetRotX + mouseY * 0.12 - globeGroup.rotation.x) * 0.06;
 
-      // 3. NLP Attention Rings Spinning
-      if (controllerRef.current.nlpRingA) {
-        controllerRef.current.nlpRingA.rotation.z = elapsed * 0.7;
-        controllerRef.current.nlpRingA.rotation.x = Math.sin(elapsed * 0.4) * 0.2;
-      }
-      if (controllerRef.current.nlpRingB) {
-        controllerRef.current.nlpRingB.rotation.z = -elapsed * 0.9;
-        controllerRef.current.nlpRingB.rotation.y = Math.cos(elapsed * 0.5) * 0.3;
-      }
-      tokenGroup.rotation.z = elapsed * 0.5;
+      // Outer rings independent counter-rotations
+      orbit1.rotation.z = elapsed * 0.25;
+      orbit2.rotation.z = -elapsed * 0.3;
 
-      // 4. ML Silicon Loss Wave Parametric Deformation
-      if (controllerRef.current.mlLossPlane) {
-        const positions = controllerRef.current.mlLossPlane.geometry.attributes.position;
-        const decay = Math.exp(-(progress / 100) * 1.8);
+      // Hub nodes floating and pulsing
+      nodeObjects.forEach(({ nodeMesh, haloMesh }, idx) => {
+        nodeMesh.rotation.y = elapsed * 0.8 + idx;
+        nodeMesh.rotation.x = elapsed * 0.5 + idx;
+        const scale = 1.0 + Math.sin(elapsed * 3 + idx) * 0.12;
+        haloMesh.scale.set(scale, scale, 1);
+      });
 
-        for (let i = 0; i < positions.count; i++) {
-          const u = positions.getX(i);
-          const v = positions.getY(i);
-          // Parametric Loss surface with decaying amplitude (Gradient Descent converging!)
-          const z = Math.sin(u * 4.5 - elapsed * 3.0) * Math.cos(v * 4.5 - elapsed * 2.5) * 0.28 * decay;
-          positions.setZ(i, z);
-        }
-        positions.needsUpdate = true;
-      }
+      // Stream photon packets along great-circle arcs
+      splineStreams.forEach((stream) => {
+        stream.progress += delta * stream.speed;
+        if (stream.progress > 1) stream.progress = 0;
+        const pos = stream.curve.getPoint(stream.progress);
+        stream.pulseMesh.position.copy(pos);
+      });
 
-      // 5. AI Core Geodesic Shells Spinning
-      if (controllerRef.current.aiCore) {
-        controllerRef.current.aiCore.rotation.y = elapsed * 0.4;
-        controllerRef.current.aiCore.rotation.x = elapsed * 0.2;
-      }
-      midMesh.rotation.y = -elapsed * 0.5;
-      midMesh.rotation.z = elapsed * 0.3;
-      shardGroup.rotation.y = elapsed * 0.3;
+      // Ambient particle drift
+      ambientMesh.rotation.y = elapsed * 0.02;
 
-      if (controllerRef.current.aiRing) {
-        const scale = 1.0 + (Math.sin(elapsed * 2.5) * 0.5 + 0.5) * 0.35;
-        controllerRef.current.aiRing.scale.set(scale, scale, 1);
-        controllerRef.current.aiRing.material.opacity = 0.8 - (scale - 1.0) * 1.8;
-      }
+      // Subtle scroll-driven camera adjustment
+      const scrollRatio = Math.min(scrollY / 1800, 1);
+      const baseCamZ = isMobile ? 18 : 15;
+      const targetCamZ = baseCamZ - scrollRatio * 3.5;
+      const targetCamY = -scrollRatio * 2.5;
 
-      // 6. Data Packets Flowing along Interconnected Spline
-      if (controllerRef.current.packetGroup && controllerRef.current.splineCurve) {
-        const packets = controllerRef.current.packetGroup;
-        const curve = controllerRef.current.splineCurve;
-
-        packets.forEach((mesh) => {
-          let u = (elapsed * mesh.userData.speed + mesh.userData.offset) % 1.0;
-          const pos = curve.getPointAt(u);
-          mesh.position.copy(pos);
-        });
-      }
+      camera.position.z += (targetCamZ - camera.position.z) * 0.08;
+      camera.position.y += (targetCamY - camera.position.y) * 0.08;
 
       renderer.render(scene, camera);
     };
@@ -822,184 +518,37 @@ export default function AiUniverse3D() {
 
     // Cleanup
     return () => {
-      cancelAnimationFrame(animationFrameId);
-      window.removeEventListener('resize', handleResize);
+      cancelAnimationFrame(animId);
+      window.removeEventListener('mousedown', onPointerDown);
+      window.removeEventListener('mousemove', onPointerMove);
+      window.removeEventListener('mouseup', onPointerUp);
+      window.removeEventListener('touchstart', onPointerDown);
+      window.removeEventListener('touchmove', onPointerMove);
+      window.removeEventListener('touchend', onPointerUp);
+      window.removeEventListener('scroll', onScroll);
+      window.removeEventListener('resize', onResize);
+
       if (container.contains(renderer.domElement)) {
         container.removeChild(renderer.domElement);
       }
       renderer.dispose();
-      controls.dispose();
     };
   }, []);
 
-  const currentStage = activeStage >= 0 ? STAGES[activeStage] : null;
-
   return (
-    <section id="ai-3d-lab" className="py-20 relative z-10 select-none">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 space-y-8">
-        
-        {/* Section Header */}
-        <div className="text-center max-w-3xl mx-auto space-y-3">
-          <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-cyan-950/80 border border-cyan-500/40 text-cyan-300 font-mono text-xs font-bold shadow-lg shadow-cyan-950/50">
-            <span className="w-2 h-2 rounded-full bg-cyan-400 animate-ping" />
-            <span>INTERACTIVE 3D AI IN EDUTECH HOLODECK</span>
-          </div>
+    <div className="fixed inset-0 pointer-events-auto z-0 overflow-hidden select-none bg-gradient-to-b from-[#f8fafc] via-[#f1f5f9] to-[#e2e8f0]">
+      {/* 3D WebGL Canvas */}
+      <div ref={mountRef} className="absolute inset-0 w-full h-full cursor-grab active:cursor-grabbing" />
 
-          <h2 className="text-3xl sm:text-5xl font-chakra font-black tracking-tight text-white uppercase">
-            3D AUTONOMOUS COGNITIVE ENGINE
-          </h2>
+      {/* Futuristic Light Studio Ambience Glows */}
+      <div className="absolute top-1/4 left-1/2 -translate-x-1/2 w-[800px] h-[500px] bg-sky-200/35 rounded-full blur-3xl pointer-events-none" />
+      <div className="absolute top-1/3 left-1/4 w-[500px] h-[400px] bg-indigo-200/25 rounded-full blur-3xl pointer-events-none" />
 
-          <p className="text-slate-400 font-mono text-xs sm:text-sm">
-            Rotate in 360°, inspect real 3D neural nodes, and watch the interconnected data pipeline flow from Computer Vision to Silicon ML and Autonomous Synthesis.
-          </p>
-        </div>
-
-        {/* ========================================================================= */}
-        {/* 🎮 3D INTERACTIVE VIEWPORT CONTAINER                                       */}
-        {/* ========================================================================= */}
-        <div className="relative rounded-3xl overflow-hidden border border-cyan-500/30 bg-slate-950/90 shadow-[0_0_60px_rgba(6,182,212,0.18)] backdrop-blur-2xl">
-          
-          {/* Top HUD Controls Bar */}
-          <div className="relative z-20 flex flex-wrap items-center justify-between gap-3 p-4 bg-slate-900/90 border-b border-cyan-500/20 backdrop-blur-md">
-            
-            <div className="flex items-center gap-3">
-              <span className="text-xs font-chakra font-black text-cyan-300 tracking-wider flex items-center gap-2">
-                <span className="w-2.5 h-2.5 rounded-full bg-cyan-400 animate-pulse" />
-                <span>3D SIMULATION LIVE</span>
-              </span>
-              <span className="text-[11px] font-mono text-slate-400 hidden sm:inline">
-                {activeStage >= 0 ? `PHASE [0${activeStage + 1}/05] • ${currentStage.name}` : 'FULL 3D ORBIT VIEW'}
-              </span>
-            </div>
-
-            <div className="flex items-center gap-2">
-              <button
-                onClick={() => setIsPlaying(!isPlaying)}
-                className="px-3 py-1.5 rounded-xl bg-slate-800 hover:bg-slate-700 border border-cyan-500/30 text-white font-chakra font-bold text-xs flex items-center gap-1.5 transition-all shadow-sm"
-              >
-                {isPlaying ? <Pause className="w-3.5 h-3.5 text-cyan-400" /> : <Play className="w-3.5 h-3.5 text-emerald-400" />}
-                <span>{isPlaying ? 'PAUSE AUTO-TOUR' : 'RESUME AUTO-TOUR'}</span>
-              </button>
-
-              <button
-                onClick={() => {
-                  setActiveStage(-1);
-                  setIsPlaying(false);
-                }}
-                className={`px-3 py-1.5 rounded-xl border text-xs font-chakra font-bold flex items-center gap-1.5 transition-all ${
-                  activeStage === -1
-                    ? 'bg-cyan-600 text-white border-cyan-400 shadow-md shadow-cyan-500/30'
-                    : 'bg-slate-800 text-slate-300 border-slate-700 hover:border-slate-500'
-                }`}
-                title="View Entire 3D Pipeline"
-              >
-                <Eye className="w-3.5 h-3.5" />
-                <span>360° OVERVIEW</span>
-              </button>
-
-              <button
-                onClick={() => {
-                  setActiveStage(0);
-                  setProgress(0);
-                  setIsPlaying(true);
-                }}
-                className="p-2 rounded-xl bg-slate-800 hover:bg-slate-700 border border-slate-700 text-slate-300 transition-all"
-                title="Restart Tour from CV"
-              >
-                <RotateCcw className="w-3.5 h-3.5" />
-              </button>
-            </div>
-          </div>
-
-          {/* Actual 3D WebGL Canvas Mount */}
-          <div className="relative w-full h-[450px] sm:h-[580px] cursor-grab active:cursor-grabbing">
-            <div ref={mountRef} className="absolute inset-0 w-full h-full" />
-
-            {/* Floating 3D Interaction Guide Hint */}
-            <div className="absolute top-4 left-4 pointer-events-none z-10 flex items-center gap-2 px-3 py-1.5 rounded-xl bg-slate-900/80 border border-cyan-500/30 text-[11px] font-mono text-cyan-300 backdrop-blur-md shadow-lg">
-              <Activity className="w-3.5 h-3.5 text-cyan-400 animate-pulse" />
-              <span>DRAG TO ROTATE 3D • SCROLL TO ZOOM</span>
-            </div>
-
-            {/* Floating Sci-Fi Telemetry Panel (Linked to Active Stage) */}
-            {currentStage && (
-              <div className="absolute bottom-4 left-4 right-4 sm:right-auto sm:max-w-md pointer-events-auto z-10 p-4 rounded-2xl bg-slate-900/90 border border-cyan-500/40 backdrop-blur-xl shadow-2xl space-y-3">
-                <div className="flex items-center justify-between border-b border-slate-800 pb-2">
-                  <div className="flex items-center gap-2">
-                    <span className="w-2 h-2 rounded-full bg-cyan-400 animate-ping" />
-                    <span className="text-xs font-mono font-bold text-cyan-400 uppercase tracking-wider">
-                      PHASE {currentStage.number}: {currentStage.name}
-                    </span>
-                  </div>
-                  <span className="text-[10px] font-mono text-slate-400">
-                    {currentStage.tag}
-                  </span>
-                </div>
-
-                <p className="text-xs text-slate-300 font-mono leading-relaxed">
-                  {currentStage.details}
-                </p>
-
-                {/* Telemetry Metric Pills */}
-                <div className="grid grid-cols-2 gap-2 pt-1 font-mono text-[11px]">
-                  {Object.entries(currentStage.telemetry).map(([key, val]) => (
-                    <div key={key} className="p-2 rounded-xl bg-slate-950/80 border border-slate-800 flex flex-col">
-                      <span className="text-[9px] text-slate-400 uppercase">{key}</span>
-                      <span className="font-bold text-white truncate">{val}</span>
-                    </div>
-                  ))}
-                </div>
-              </div>
-            )}
-          </div>
-
-          {/* Bottom 5-Stage Interconnected Selector Deck */}
-          <div className="p-3 sm:p-4 bg-slate-950/95 border-t border-cyan-500/20 grid grid-cols-2 sm:grid-cols-5 gap-2.5">
-            {STAGES.map((stage, idx) => {
-              const isActive = idx === activeStage;
-              const isPast = idx < activeStage;
-              const Icon = stage.icon;
-
-              return (
-                <button
-                  key={stage.id}
-                  onClick={() => {
-                    setActiveStage(idx);
-                    setProgress(0);
-                    setIsPlaying(false);
-                  }}
-                  className={`text-left p-3 rounded-2xl transition-all relative overflow-hidden border ${
-                    isActive
-                      ? 'bg-gradient-to-b from-cyan-950/90 to-slate-900 border-cyan-400 shadow-[0_0_20px_rgba(6,182,212,0.3)] scale-[1.02]'
-                      : 'bg-slate-900/60 border-slate-800 hover:border-cyan-500/40 text-slate-400 hover:text-slate-200'
-                  }`}
-                >
-                  {/* Active Progress Line */}
-                  {isActive && isPlaying && (
-                    <div
-                      className="absolute top-0 left-0 bottom-0 bg-cyan-500/15 transition-all duration-100"
-                      style={{ width: `${progress}%` }}
-                    />
-                  )}
-
-                  <div className="flex items-center justify-between mb-1 relative z-10 font-mono text-[10px]">
-                    <span className={isActive ? 'text-cyan-400 font-bold' : 'text-slate-500'}>
-                      STAGE {stage.number}
-                    </span>
-                    <Icon className={`w-3.5 h-3.5 ${isActive ? 'text-cyan-400' : 'text-slate-500'}`} />
-                  </div>
-
-                  <div className={`text-xs font-chakra font-black tracking-wide truncate relative z-10 ${isActive ? 'text-white' : 'text-slate-300'}`}>
-                    {stage.name}
-                  </div>
-                </button>
-              );
-            })}
-          </div>
-
-        </div>
-
+      {/* Floating 360° Drag Interaction Pill Hint */}
+      <div className="absolute bottom-6 left-1/2 -translate-x-1/2 z-20 pointer-events-none flex items-center gap-2 px-4 py-2 rounded-full bg-white/85 backdrop-blur-xl border border-slate-200/90 text-xs font-mono font-bold text-slate-700 shadow-lg shadow-slate-200/60 select-none">
+        <Globe2 className="w-4 h-4 text-sky-600 animate-spin" style={{ animationDuration: '8s' }} />
+        <span>360° INTERACTIVE 3D AI GLOBE • DRAG TO ROTATE</span>
       </div>
-    </section>
+    </div>
   );
 }
