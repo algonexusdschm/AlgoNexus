@@ -481,8 +481,14 @@ export default function AiUniverse3D() {
   return (
     <div
       ref={mountRef}
-      className="fixed inset-0 pointer-events-auto z-0 overflow-hidden select-none bg-gradient-to-b from-slate-100 via-sky-50/50 to-slate-100"
+      className="fixed inset-0 pointer-events-auto z-0 overflow-hidden select-none bg-gradient-to-b from-slate-100 via-sky-50/40 to-slate-100"
       title="360° Drag & Orbit AI Neural Constellation"
-    />
+    >
+      {/* Layer 0: Futuristic Cyber-Atrium Backdrop with Subtle Parallax */}
+      <div 
+        className="absolute inset-0 bg-cover bg-center bg-no-repeat opacity-25 mix-blend-multiply pointer-events-none transition-transform duration-700 ease-out scale-105"
+        style={{ backgroundImage: "url('/images/edutech_cyber_atrium_2050.jpg')" }}
+      />
+    </div>
   );
 }
