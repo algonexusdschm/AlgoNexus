@@ -12,9 +12,9 @@ export default function Navbar({ onOpenRegister, onOpenAdmin }) {
           {/* Brand Logo */}
           <a href="#" className="flex items-center gap-3 group">
             <img
-              src="/techastra-logo.jpg"
+              src="/techastra-logo.png"
               alt="TechAstra Logo"
-              className="w-10 h-10 sm:w-12 sm:h-12 object-cover object-[center_28%] rounded-xl shadow-md border border-slate-200/90 group-hover:scale-105 transition-all bg-[#0f1218] shrink-0"
+              className="h-11 sm:h-13 w-auto max-h-12 object-contain group-hover:scale-105 transition-all drop-shadow-sm shrink-0"
             />
             <div>
               <div className="flex items-center gap-2">

@@ -42,9 +42,9 @@ export default function Footer({ onOpenRegister, onOpenAdmin }) {
           <div className="space-y-4 md:col-span-1">
             <div className="flex items-center gap-2.5">
               <img
-                src="/techastra-logo.jpg"
+                src="/techastra-logo.png"
                 alt="TechAstra Logo"
-                className="w-9 h-9 object-cover object-[center_28%] rounded-xl shadow-md border border-slate-200/90 bg-[#0f1218] shrink-0"
+                className="h-10 w-auto object-contain drop-shadow-sm shrink-0"
               />
               <span className="text-xl font-chakra font-black tracking-tight text-slate-900 uppercase">
                 TECH<span className="text-blue-600">ASTRA</span>
