@@ -41,9 +41,11 @@ export default function Footer({ onOpenRegister, onOpenAdmin }) {
           {/* Brand Info */}
           <div className="space-y-4 md:col-span-1">
             <div className="flex items-center gap-2.5">
-              <div className="w-9 h-9 rounded-xl bg-gradient-to-tr from-sky-600 to-indigo-600 flex items-center justify-center text-white shadow-md shadow-blue-500/20">
-                <BrainCircuit className="w-5 h-5" />
-              </div>
+              <img
+                src="/techastra-logo.jpg"
+                alt="TechAstra Logo"
+                className="w-9 h-9 object-cover object-[center_28%] rounded-xl shadow-md border border-slate-200/90 bg-[#0f1218] shrink-0"
+              />
               <span className="text-xl font-chakra font-black tracking-tight text-slate-900 uppercase">
                 TECH<span className="text-blue-600">ASTRA</span>
               </span>

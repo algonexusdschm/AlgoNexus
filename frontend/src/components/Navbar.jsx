@@ -11,9 +11,11 @@ export default function Navbar({ onOpenRegister, onOpenAdmin }) {
           
           {/* Brand Logo */}
           <a href="#" className="flex items-center gap-3 group">
-            <div className="w-10 h-10 bg-gradient-to-tr from-sky-600 to-indigo-600 rounded-xl p-2 shadow-md shadow-blue-500/20 group-hover:scale-105 transition-all flex items-center justify-center text-white">
-              <BrainCircuit className="w-6 h-6" />
-            </div>
+            <img
+              src="/techastra-logo.jpg"
+              alt="TechAstra Logo"
+              className="w-10 h-10 sm:w-12 sm:h-12 object-cover object-[center_28%] rounded-xl shadow-md border border-slate-200/90 group-hover:scale-105 transition-all bg-[#0f1218] shrink-0"
+            />
             <div>
               <div className="flex items-center gap-2">
                 <span className="text-xl sm:text-2xl font-chakra font-black tracking-tight text-slate-900 uppercase">
