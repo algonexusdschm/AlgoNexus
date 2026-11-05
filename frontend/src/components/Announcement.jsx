@@ -35,7 +35,7 @@ export default function Announcement({ onOpenRegister }) {
         </div>
 
         {/* Feature Highlight Card */}
-        <div className="p-8 sm:p-12 mb-12 relative overflow-hidden rounded-3xl bg-white/90 border border-slate-200/90 shadow-xl backdrop-blur-xl">
+        <div className="p-8 sm:p-12 mb-12 relative overflow-hidden rounded-3xl bg-white border border-slate-200/90 shadow-xl">
           
           <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-center relative z-10">
             <div className="lg:col-span-7 space-y-5">

@@ -33,12 +33,12 @@ export default function PricingSection({ onSelectTier }) {
             return (
               <div
                 key={tier.id}
-                className={`relative rounded-3xl p-8 flex flex-col justify-between transition-all duration-300 backdrop-blur-xl ${
+                className={`relative rounded-3xl p-8 flex flex-col justify-between transition-all duration-300 ${
                   isSquad
                     ? 'bg-white border-2 border-blue-500 shadow-2xl shadow-blue-500/15 md:-translate-y-3'
                     : isVIP
-                    ? 'bg-white/90 border border-purple-200 shadow-lg hover:shadow-xl hover:border-purple-400'
-                    : 'bg-white/90 border border-slate-200 shadow-lg hover:shadow-xl hover:border-blue-300'
+                    ? 'bg-white border border-purple-200 shadow-lg hover:shadow-xl hover:border-purple-400'
+                    : 'bg-white border border-slate-200 shadow-lg hover:shadow-xl hover:border-blue-300'
                 }`}
               >
                 {/* Popular Badge */}

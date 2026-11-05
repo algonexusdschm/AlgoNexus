@@ -45,7 +45,7 @@ export default function Hero({ onOpenRegister }) {
       <div className="relative z-10 w-full max-w-5xl mx-auto text-center space-y-6 pointer-events-auto">
         
         {/* Institutional Badge: CHM College & Data Science */}
-        <div className="inline-flex flex-col items-center justify-center px-6 sm:px-12 py-3 rounded-2xl bg-white/90 border border-slate-200/90 backdrop-blur-xl shadow-lg shadow-slate-200/50 max-w-2xl mx-auto space-y-1 select-none">
+        <div className="inline-flex flex-col items-center justify-center px-6 sm:px-12 py-3 rounded-2xl bg-white border border-slate-200/90 shadow-lg shadow-slate-200/50 max-w-2xl mx-auto space-y-1 select-none">
           <div className="font-space text-xs sm:text-sm tracking-[0.25em] text-slate-800 uppercase font-black">
             SMT. CHANDIBAI HIMATHMAL MANSUKHANI COLLEGE
           </div>
@@ -96,7 +96,7 @@ export default function Hero({ onOpenRegister }) {
       <div className="relative z-10 w-full max-w-5xl lg:max-w-6xl mx-auto pt-8 pointer-events-auto">
         <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 text-left">
           
-          <div className="p-4 sm:p-5 rounded-2xl bg-white/85 backdrop-blur-md border border-slate-200/90 shadow-md flex items-center gap-4 hover:shadow-lg transition-all">
+          <div className="p-4 sm:p-5 rounded-2xl bg-white border border-slate-200/90 shadow-md flex items-center gap-4 hover:shadow-lg transition-all">
             <div className="w-12 h-12 rounded-xl bg-blue-50 border border-blue-200 flex items-center justify-center text-blue-600 shrink-0">
               <Trophy className="w-6 h-6" />
             </div>
@@ -106,7 +106,7 @@ export default function Hero({ onOpenRegister }) {
             </div>
           </div>
 
-          <div className="p-4 sm:p-5 rounded-2xl bg-white/85 backdrop-blur-md border border-slate-200/90 shadow-md flex items-center gap-4 hover:shadow-lg transition-all">
+          <div className="p-4 sm:p-5 rounded-2xl bg-white border border-slate-200/90 shadow-md flex items-center gap-4 hover:shadow-lg transition-all">
             <div className="w-12 h-12 rounded-xl bg-purple-50 border border-purple-200 flex items-center justify-center text-purple-600 shrink-0">
               <Users className="w-6 h-6" />
             </div>
@@ -116,7 +116,7 @@ export default function Hero({ onOpenRegister }) {
             </div>
           </div>
 
-          <div className="p-4 sm:p-5 rounded-2xl bg-white/85 backdrop-blur-md border border-slate-200/90 shadow-md flex items-center gap-4 hover:shadow-lg transition-all">
+          <div className="p-4 sm:p-5 rounded-2xl bg-white border border-slate-200/90 shadow-md flex items-center gap-4 hover:shadow-lg transition-all">
             <div className="w-12 h-12 rounded-xl bg-sky-50 border border-sky-200 flex items-center justify-center text-sky-600 shrink-0">
               <ShieldCheck className="w-6 h-6" />
             </div>

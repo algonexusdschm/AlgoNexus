@@ -96,7 +96,7 @@ export default function Gallery() {
 
                 {/* Top Badges */}
                 <div className="absolute top-3 left-3 right-3 flex items-center justify-between">
-                  <span className="text-[10px] font-mono font-bold px-2.5 py-1 rounded-full bg-white/90 text-slate-800 shadow-sm backdrop-blur-md">
+                  <span className="text-[10px] font-mono font-bold px-2.5 py-1 rounded-full bg-white text-slate-800 shadow-sm">
                     {photo.category}
                   </span>
                   <span className="text-[10px] font-mono font-bold px-2 py-0.5 rounded-full bg-blue-600 text-white">

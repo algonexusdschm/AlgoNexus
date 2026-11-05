@@ -28,7 +28,7 @@ export default function FAQ() {
             return (
               <div
                 key={index}
-                className="bg-white/90 backdrop-blur-xl rounded-2xl overflow-hidden border border-slate-200 shadow-sm transition-all"
+                className="bg-white rounded-2xl overflow-hidden border border-slate-200 shadow-sm transition-all"
               >
                 <button
                   onClick={() => setOpenIndex(isOpen ? -1 : index)}

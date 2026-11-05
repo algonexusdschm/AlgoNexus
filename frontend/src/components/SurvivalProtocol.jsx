@@ -75,7 +75,7 @@ export default function SurvivalProtocol({ onOpenRegister }) {
             return (
               <div
                 key={track.id}
-                className="group relative p-6 rounded-3xl bg-white/85 hover:bg-white backdrop-blur-xl border border-slate-200/90 hover:border-blue-400 shadow-md hover:shadow-xl hover:-translate-y-1 transition-all duration-300 flex flex-col justify-between"
+                className="group relative p-6 rounded-3xl bg-white hover:bg-slate-50/90 border border-slate-200/90 hover:border-blue-400 shadow-md hover:shadow-xl hover:-translate-y-1 transition-all duration-300 flex flex-col justify-between"
               >
                 <div className="space-y-4">
                   {/* Top Badge & Node pill */}
@@ -132,7 +132,7 @@ export default function SurvivalProtocol({ onOpenRegister }) {
             {HACKATHON_STEPS.map((step) => (
               <div
                 key={step.step}
-                className="p-5 rounded-2xl bg-white/80 backdrop-blur-md border border-slate-200 shadow-sm space-y-3"
+                className="p-5 rounded-2xl bg-white border border-slate-200 shadow-sm space-y-3"
               >
                 <div className="text-2xl font-chakra font-black text-blue-600">
                   {step.step}

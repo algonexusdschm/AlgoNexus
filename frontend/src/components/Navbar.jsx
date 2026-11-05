@@ -5,7 +5,7 @@ export default function Navbar({ onOpenRegister, onOpenAdmin }) {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
 
   return (
-    <nav className="fixed top-0 left-0 right-0 z-50 bg-white/85 backdrop-blur-xl border-b border-slate-200/90 shadow-sm transition-all">
+    <nav className="fixed top-0 left-0 right-0 z-50 bg-white/95 border-b border-slate-200/90 shadow-sm transition-all">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex items-center justify-between h-20">
           
@@ -75,7 +75,7 @@ export default function Navbar({ onOpenRegister, onOpenAdmin }) {
 
       {/* Mobile Drawer */}
       {mobileMenuOpen && (
-        <div className="md:hidden bg-white/95 backdrop-blur-xl border-b border-slate-200 px-4 pt-3 pb-6 space-y-3 font-mono font-semibold text-xs text-slate-700">
+        <div className="md:hidden bg-white border-b border-slate-200 px-4 pt-3 pb-6 space-y-3 font-mono font-semibold text-xs text-slate-700">
           <a
             href="#tracks"
             onClick={() => setMobileMenuOpen(false)}
