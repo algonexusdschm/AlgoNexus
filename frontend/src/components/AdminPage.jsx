@@ -348,7 +348,7 @@ export default function AdminPage({ onBackToWebsite }) {
     
     const sanitize = (val) => {
       let str = String(val ?? '');
-      if (/^[=\+\-@]/.test(str)) {
+      if (/^[=+\-@\t\r]/.test(str)) {
         str = "'" + str;
       }
       return `"${str.replace(/"/g, '""')}"`;
@@ -356,27 +356,27 @@ export default function AdminPage({ onBackToWebsite }) {
 
     const rows = registrations.map(r => [
       sanitize(r.ticketId),
-      sanitize(r.attendee?.fullName || ''),
-      sanitize(r.attendee?.email || ''),
-      sanitize(r.attendee?.phone || ''),
-      sanitize(r.attendee?.college || ''),
-      sanitize(r.attendee?.branch || ''),
-      sanitize(r.attendee?.year || ''),
-      sanitize(r.passType || ''),
-      sanitize(r.attendee?.track || ''),
-      sanitize(r.paymentMethod || 'UPI'),
-      sanitize(r.utrNumber || r.paymentId || ''),
-      sanitize(r.paymentStatus || 'PENDING_VERIFICATION'),
-      r.amountPaid || 0,
-      r.checkedIn ? 'YES' : 'NO'
+      sanitize(r.attendee?.fullName),
+      sanitize(r.attendee?.email),
+      sanitize(r.attendee?.phone),
+      sanitize(r.attendee?.college),
+      sanitize(r.attendee?.branch),
+      sanitize(r.attendee?.year),
+      sanitize(r.passType),
+      sanitize(r.attendee?.track),
+      sanitize(r.paymentMethod),
+      sanitize(r.utrNumber || r.paymentId),
+      sanitize(r.paymentStatus),
+      sanitize(r.amountPaid),
+      sanitize(r.checkedIn ? 'Yes' : 'No')
     ]);
 
-    const csvContent = [headers.join(','), ...rows.map(e => e.join(','))].join('\r\n');
+    const csvContent = [headers.join(','), ...rows.map(row => row.join(','))].join('\n');
     const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
     const url = URL.createObjectURL(blob);
     const link = document.createElement('a');
     link.href = url;
-    link.setAttribute('download', `techastra_registrations_${new Date().toISOString().slice(0, 10)}.csv`);
+    link.download = `TechAstra_Registrations_${new Date().toISOString().slice(0, 10)}.csv`;
     document.body.appendChild(link);
     link.click();
     document.body.removeChild(link);
@@ -401,32 +401,32 @@ export default function AdminPage({ onBackToWebsite }) {
   // 1. Passcode Screen if Not Authenticated
   if (!isAdminAuthenticated) {
     return (
-      <div className="min-h-screen bg-[#070913] text-slate-100 flex items-center justify-center p-4">
-        <div className="max-w-md w-full glass-card p-8 rounded-3xl border border-cyan-500/30 shadow-2xl relative">
+      <div className="min-h-screen bg-[#f8fafc] text-slate-900 flex items-center justify-center p-4">
+        <div className="max-w-md w-full bg-white p-8 rounded-3xl border border-slate-200/90 shadow-xl relative">
           <div className="text-center mb-8">
-            <div className="w-14 h-14 mx-auto rounded-2xl bg-gradient-to-tr from-cyan-500 to-indigo-600 p-[1.5px] mb-4">
-              <div className="w-full h-full bg-[#0a0f24] rounded-2xl flex items-center justify-center">
-                <Lock className="w-6 h-6 text-cyan-400" />
+            <div className="w-14 h-14 mx-auto rounded-2xl bg-gradient-to-tr from-blue-600 to-indigo-600 p-[1.5px] mb-4 shadow-md shadow-blue-500/20">
+              <div className="w-full h-full bg-white rounded-2xl flex items-center justify-center">
+                <Lock className="w-6 h-6 text-blue-600" />
               </div>
             </div>
-            <h2 className="text-2xl font-black text-white">TechAstra Admin Console</h2>
-            <p className="text-xs text-slate-400 mt-1">
+            <h2 className="text-2xl font-black text-slate-900 font-chakra">TechAstra Admin Console</h2>
+            <p className="text-xs text-slate-500 mt-1">
               Event Organizers & Bank Details Configuration Portal
             </p>
           </div>
 
           {authError && (
-            <div className="mb-4 p-3 rounded-xl bg-rose-500/10 border border-rose-500/30 text-rose-300 text-xs flex items-center gap-2">
-              <AlertCircle className="w-4 h-4 shrink-0" />
+            <div className="mb-4 p-3 rounded-xl bg-rose-50 border border-rose-200 text-rose-700 text-xs flex items-center gap-2">
+              <AlertCircle className="w-4 h-4 shrink-0 text-rose-600" />
               <span>{authError}</span>
             </div>
           )}
 
           <form onSubmit={handleLogin} className="space-y-4">
             <div>
-              <label className="block text-xs font-semibold uppercase tracking-wider text-slate-300 mb-1.5 flex items-center justify-between">
+              <label className="block text-xs font-semibold uppercase tracking-wider text-slate-700 mb-1.5 flex items-center justify-between">
                 <span>Enter Passcode</span>
-                <span className="text-[10px] text-cyan-400 font-mono">Head or Member Key</span>
+                <span className="text-[10px] text-blue-600 font-mono font-bold">Head or Member Key</span>
               </label>
               <div className="relative">
                 <input
@@ -435,12 +435,12 @@ export default function AdminPage({ onBackToWebsite }) {
                   value={passcode}
                   onChange={(e) => setPasscode(e.target.value)}
                   required
-                  className="w-full pl-4 pr-11 py-3 rounded-xl bg-slate-900 border border-slate-700 text-white text-sm focus:outline-none focus:border-cyan-400 placeholder-slate-500 font-mono"
+                  className="w-full pl-4 pr-11 py-3 rounded-xl bg-slate-50 border border-slate-200 text-slate-900 text-sm focus:outline-none focus:bg-white focus:border-blue-500 focus:ring-2 focus:ring-blue-500/15 placeholder-slate-400 font-mono"
                 />
                 <button
                   type="button"
                   onClick={() => setShowLoginPass(!showLoginPass)}
-                  className="absolute right-3 top-1/2 -translate-y-1/2 p-1 text-slate-400 hover:text-white"
+                  className="absolute right-3 top-1/2 -translate-y-1/2 p-1 text-slate-400 hover:text-slate-700"
                   title={showLoginPass ? "Hide Passcode" : "Show Passcode"}
                 >
                   {showLoginPass ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
@@ -451,7 +451,7 @@ export default function AdminPage({ onBackToWebsite }) {
             <button
               type="submit"
               disabled={isLoggingIn}
-              className="w-full py-3.5 rounded-xl bg-gradient-to-r from-cyan-500 to-indigo-600 text-white font-bold text-sm shadow-lg shadow-cyan-500/25 hover:opacity-95 transition-all flex items-center justify-center gap-2 disabled:opacity-60 disabled:cursor-not-allowed"
+              className="w-full py-3.5 rounded-xl bg-gradient-to-r from-blue-600 via-indigo-600 to-sky-600 text-white font-bold text-sm shadow-lg shadow-blue-500/25 hover:opacity-95 transition-all flex items-center justify-center gap-2 disabled:opacity-60 disabled:cursor-not-allowed"
             >
               {isLoggingIn ? (
                 <>
@@ -467,16 +467,16 @@ export default function AdminPage({ onBackToWebsite }) {
             </button>
           </form>
 
-          {/* Secure Access Notice (Replaces Plaintext Credential Leak) */}
-          <div className="mt-5 p-3 rounded-xl bg-slate-900/60 border border-slate-800 text-[11px] text-slate-400 flex items-center justify-center gap-2 text-center">
-            <Shield className="w-4 h-4 text-cyan-400 shrink-0" />
+          {/* Secure Access Notice */}
+          <div className="mt-5 p-3 rounded-xl bg-slate-50 border border-slate-200 text-[11px] text-slate-600 flex items-center justify-center gap-2 text-center">
+            <Shield className="w-4 h-4 text-blue-600 shrink-0" />
             <span>Authorized access only. Enter your confidential committee passcode.</span>
           </div>
 
-          <div className="mt-6 pt-6 border-t border-slate-800 text-center">
+          <div className="mt-6 pt-6 border-t border-slate-200 text-center">
             <button
               onClick={onBackToWebsite}
-              className="text-xs text-slate-400 hover:text-white flex items-center justify-center gap-1.5 mx-auto"
+              className="text-xs text-slate-500 hover:text-slate-900 flex items-center justify-center gap-1.5 mx-auto font-medium"
             >
               <ArrowLeft className="w-3.5 h-3.5" />
               <span>Return to Public Event Website</span>
@@ -487,45 +487,45 @@ export default function AdminPage({ onBackToWebsite }) {
     );
   }
 
-  // 2. Full Admin Dashboard
+  // 2. Full Admin Dashboard (Clean Light TechAstra Console)
   return (
-    <div className="min-h-screen bg-[#070913] text-slate-100 flex flex-col">
+    <div className="min-h-screen bg-[#f8fafc] text-slate-900 flex flex-col">
       
       {/* Top Admin Bar */}
-      <header className="sticky top-0 z-40 bg-[#090d1f]/90 backdrop-blur-xl border-b border-white/10 px-4 sm:px-8 py-3.5 flex items-center justify-between">
+      <header className="sticky top-0 z-40 bg-white/95 backdrop-blur-xl border-b border-slate-200 px-4 sm:px-8 py-3.5 flex items-center justify-between shadow-sm">
         <div className="flex items-center gap-3">
-          <div className="w-9 h-9 rounded-xl bg-cyan-500/20 text-cyan-400 flex items-center justify-center">
+          <div className="w-9 h-9 rounded-2xl bg-blue-50 text-blue-600 border border-blue-200 flex items-center justify-center shadow-sm">
             <Shield className="w-5 h-5" />
           </div>
           <div>
             <div className="flex items-center gap-2">
-              <h1 className="text-base font-extrabold text-white tracking-wide">
-                TECH<span className="text-cyan-400">ASTRA</span> ADMIN
+              <h1 className="text-base font-extrabold text-slate-900 tracking-wide font-chakra">
+                TECH<span className="text-blue-600">ASTRA</span> ADMIN
               </h1>
-              <span className="text-[10px] font-mono px-2 py-0.5 rounded-full bg-emerald-500/20 text-emerald-400 font-bold border border-emerald-500/30">
+              <span className="text-[10px] font-mono px-2 py-0.5 rounded-full bg-blue-50 text-blue-700 font-bold border border-blue-200">
                 LIVE SYNCED
               </span>
             </div>
-            <p className="text-[10px] text-slate-400">Organizer Management & Payment Settings</p>
+            <p className="text-[10px] text-slate-500">Organizer Management & Payment Settings</p>
           </div>
         </div>
 
         <div className="flex items-center gap-3">
           {isHead ? (
-            <div className="hidden sm:flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-amber-500/15 border border-amber-500/40 text-amber-300 text-xs font-bold shadow-sm">
-              <Crown className="w-3.5 h-3.5 text-amber-400" />
+            <div className="hidden sm:flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-amber-50 border border-amber-200 text-amber-900 text-xs font-bold shadow-sm">
+              <Crown className="w-3.5 h-3.5 text-amber-600" />
               <span>EVENT HEAD (MASTER ADMIN)</span>
             </div>
           ) : (
-            <div className="hidden sm:flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-emerald-500/15 border border-emerald-500/40 text-emerald-300 text-xs font-bold shadow-sm">
-              <UserCheck className="w-3.5 h-3.5 text-emerald-400" />
+            <div className="hidden sm:flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-blue-50 border border-blue-200 text-blue-900 text-xs font-bold shadow-sm">
+              <UserCheck className="w-3.5 h-3.5 text-blue-600" />
               <span>{currentAdminUser?.name} ({currentAdminUser?.role})</span>
             </div>
           )}
 
           <button
             onClick={onBackToWebsite}
-            className="px-3.5 py-1.5 rounded-xl bg-cyan-500/10 hover:bg-cyan-500/20 text-cyan-300 border border-cyan-500/30 text-xs font-semibold flex items-center gap-1.5 transition-all"
+            className="px-3.5 py-1.5 rounded-xl bg-blue-50 hover:bg-blue-100 text-blue-700 border border-blue-200 text-xs font-semibold flex items-center gap-1.5 transition-all"
           >
             <span>View Public Website</span>
             <ExternalLink className="w-3.5 h-3.5" />
@@ -533,7 +533,7 @@ export default function AdminPage({ onBackToWebsite }) {
 
           <button
             onClick={logoutAdmin}
-            className="px-3 py-1.5 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-300 text-xs font-semibold transition-all"
+            className="px-3 py-1.5 rounded-xl bg-slate-100 hover:bg-slate-200 text-slate-700 text-xs font-semibold transition-all border border-slate-200"
             title="Lock Console"
           >
             Logout
@@ -546,57 +546,57 @@ export default function AdminPage({ onBackToWebsite }) {
         
         {/* Save Notification */}
         {saveSuccessMsg && (
-          <div className="p-4 rounded-2xl bg-emerald-500/20 border border-emerald-500/40 text-emerald-200 text-sm font-semibold flex items-center gap-2 shadow-lg shadow-emerald-950">
-            <Check className="w-5 h-5 text-emerald-400 shrink-0" />
+          <div className="p-4 rounded-2xl bg-blue-50 border border-blue-200 text-blue-900 text-sm font-semibold flex items-center gap-2 shadow-sm">
+            <Check className="w-5 h-5 text-blue-600 shrink-0" />
             <span>{saveSuccessMsg}</span>
           </div>
         )}
 
         {/* Member Action Notification */}
         {memberSuccessMsg && (
-          <div className="p-4 rounded-2xl bg-emerald-500/20 border border-emerald-500/40 text-emerald-200 text-sm font-semibold flex items-center gap-2 shadow-lg shadow-emerald-950">
-            <CheckCircle2 className="w-5 h-5 text-emerald-400 shrink-0" />
+          <div className="p-4 rounded-2xl bg-blue-50 border border-blue-200 text-blue-900 text-sm font-semibold flex items-center gap-2 shadow-sm">
+            <CheckCircle2 className="w-5 h-5 text-blue-600 shrink-0" />
             <span>{memberSuccessMsg}</span>
           </div>
         )}
 
         {/* Top Summary Metrics */}
         <div className="grid grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-4">
-          <div className="glass-card p-3.5 sm:p-4 rounded-2xl">
-            <div className="text-[11px] sm:text-xs text-slate-400">Total Registered Attendees</div>
-            <div className="text-2xl sm:text-3xl font-extrabold text-white mt-1 font-mono">{registrations.length}</div>
+          <div className="bg-white p-4 rounded-3xl border border-slate-200 shadow-sm">
+            <div className="text-[11px] sm:text-xs text-slate-500 font-medium">Total Registered Attendees</div>
+            <div className="text-2xl sm:text-3xl font-extrabold text-slate-900 mt-1 font-mono">{registrations.length}</div>
           </div>
 
-          <div className="glass-card p-3.5 sm:p-4 rounded-2xl">
-            <div className="text-[11px] sm:text-xs text-slate-400">Total Revenue Collected</div>
-            <div className="text-2xl sm:text-3xl font-extrabold text-emerald-400 mt-1 font-mono">
+          <div className="bg-white p-4 rounded-3xl border border-slate-200 shadow-sm">
+            <div className="text-[11px] sm:text-xs text-slate-500 font-medium">Total Revenue Collected</div>
+            <div className="text-2xl sm:text-3xl font-extrabold text-blue-600 mt-1 font-mono">
               ₹{totalRevenue.toLocaleString('en-IN')}
             </div>
           </div>
 
-          <div className="glass-card p-3.5 sm:p-4 rounded-2xl">
-            <div className="text-[11px] sm:text-xs text-slate-400">Gate Checked-in / Attendance</div>
-            <div className="text-2xl sm:text-3xl font-extrabold text-cyan-400 mt-1 font-mono">
+          <div className="bg-white p-4 rounded-3xl border border-slate-200 shadow-sm">
+            <div className="text-[11px] sm:text-xs text-slate-500 font-medium">Gate Checked-in / Attendance</div>
+            <div className="text-2xl sm:text-3xl font-extrabold text-indigo-600 mt-1 font-mono">
               {totalCheckedIn} / {registrations.length}
             </div>
           </div>
 
-          <div className="glass-card p-3.5 sm:p-4 rounded-2xl">
-            <div className="text-[11px] sm:text-xs text-slate-400">Organizing Committee Members</div>
-            <div className="text-2xl sm:text-3xl font-extrabold text-amber-400 mt-1 font-mono">
+          <div className="bg-white p-4 rounded-3xl border border-slate-200 shadow-sm">
+            <div className="text-[11px] sm:text-xs text-slate-500 font-medium">Organizing Committee Members</div>
+            <div className="text-2xl sm:text-3xl font-extrabold text-amber-600 mt-1 font-mono">
               {teamMembers.length}
             </div>
           </div>
         </div>
 
-        {/* Navigation Tabs (Responsive scroll for Mobile / Tablet / PC) */}
-        <div className="flex border-b border-white/10 gap-3 sm:gap-6 text-xs sm:text-sm font-bold overflow-x-auto pb-1">
+        {/* Navigation Tabs */}
+        <div className="flex border-b border-slate-200 gap-3 sm:gap-6 text-xs sm:text-sm font-bold overflow-x-auto pb-1">
           <button
             onClick={() => setActiveTab('payment-bank')}
             className={`pb-3 flex items-center gap-2 border-b-2 transition-all whitespace-nowrap shrink-0 ${
               activeTab === 'payment-bank'
-                ? 'border-cyan-400 text-cyan-300'
-                : 'border-transparent text-slate-400 hover:text-white'
+                ? 'border-blue-600 text-blue-600'
+                : 'border-transparent text-slate-500 hover:text-slate-900'
             }`}
           >
             <Building2 className="w-4 h-4 shrink-0" />
@@ -608,8 +608,8 @@ export default function AdminPage({ onBackToWebsite }) {
             onClick={() => setActiveTab('event-info')}
             className={`pb-3 flex items-center gap-2 border-b-2 transition-all whitespace-nowrap shrink-0 ${
               activeTab === 'event-info'
-                ? 'border-cyan-400 text-cyan-300'
-                : 'border-transparent text-slate-400 hover:text-white'
+                ? 'border-blue-600 text-blue-600'
+                : 'border-transparent text-slate-500 hover:text-slate-900'
             }`}
           >
             <Sparkles className="w-4 h-4 shrink-0" />
@@ -621,8 +621,8 @@ export default function AdminPage({ onBackToWebsite }) {
             onClick={() => setActiveTab('registrations')}
             className={`pb-3 flex items-center gap-2 border-b-2 transition-all whitespace-nowrap shrink-0 ${
               activeTab === 'registrations'
-                ? 'border-cyan-400 text-cyan-300'
-                : 'border-transparent text-slate-400 hover:text-white'
+                ? 'border-blue-600 text-blue-600'
+                : 'border-transparent text-slate-500 hover:text-slate-900'
             }`}
           >
             <Users className="w-4 h-4 shrink-0" />
@@ -634,15 +634,15 @@ export default function AdminPage({ onBackToWebsite }) {
             onClick={() => setActiveTab('team-members')}
             className={`pb-3 flex items-center gap-2 border-b-2 transition-all whitespace-nowrap shrink-0 ${
               activeTab === 'team-members'
-                ? 'border-amber-400 text-amber-300'
-                : 'border-transparent text-slate-400 hover:text-white'
+                ? 'border-amber-500 text-amber-600'
+                : 'border-transparent text-slate-500 hover:text-slate-900'
             }`}
           >
-            <Crown className="w-4 h-4 text-amber-400 shrink-0" />
+            <Crown className="w-4 h-4 text-amber-500 shrink-0" />
             <span className="hidden sm:inline">4. Team & Member Access ({teamMembers.length})</span>
             <span className="sm:hidden">4. Passcodes ({teamMembers.length})</span>
             {isHead && (
-              <span className="text-[10px] bg-amber-500/20 text-amber-300 px-1.5 py-0.5 rounded border border-amber-500/40 font-mono">
+              <span className="text-[10px] bg-amber-50 text-amber-800 px-1.5 py-0.5 rounded border border-amber-200 font-mono font-bold">
                 HEAD ONLY
               </span>
             )}
@@ -654,14 +654,14 @@ export default function AdminPage({ onBackToWebsite }) {
           <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start">
             
             {/* Form */}
-            <div className="lg:col-span-8 glass-card p-6 sm:p-8 rounded-3xl border border-white/10 space-y-6">
+            <div className="lg:col-span-8 bg-white p-6 sm:p-8 rounded-3xl border border-slate-200 shadow-sm space-y-6">
               
-              <div className="border-b border-white/5 pb-4">
-                <h3 className="text-xl font-bold text-white flex items-center gap-2">
-                  <QrCode className="w-5 h-5 text-cyan-400" />
+              <div className="border-b border-slate-100 pb-4">
+                <h3 className="text-xl font-bold text-slate-900 flex items-center gap-2 font-chakra">
+                  <QrCode className="w-5 h-5 text-blue-600" />
                   <span>College Payment Gateway & Bank Account Details</span>
                 </h3>
-                <p className="text-xs text-slate-400 mt-1">
+                <p className="text-xs text-slate-500 mt-1">
                   Upload your festival GPay / PhonePe QR code and bank account info. All changes automatically update the checkout modal on the main website!
                 </p>
               </div>
@@ -670,20 +670,20 @@ export default function AdminPage({ onBackToWebsite }) {
                 
                 {/* 1. QR Code Upload */}
                 <div className="space-y-2">
-                  <label className="block text-xs font-bold uppercase tracking-wider text-slate-300">
+                  <label className="block text-xs font-bold uppercase tracking-wider text-slate-700">
                     College Festival Google Pay / PhonePe QR Code Image *
                   </label>
 
                   <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 items-center">
-                    <div className="flex flex-col items-center justify-center p-4 rounded-2xl bg-white text-slate-900 border-2 border-dashed border-cyan-500/60 min-h-[190px]">
+                    <div className="flex flex-col items-center justify-center p-4 rounded-2xl bg-slate-50 text-slate-900 border-2 border-dashed border-blue-300 min-h-[190px]">
                       {paymentForm.qrCodeImage ? (
                         <>
                           <img
                             src={paymentForm.qrCodeImage}
                             alt="Uploaded College GPay QR Code"
-                            className="max-h-40 object-contain rounded-lg shadow-md"
+                            className="max-h-40 object-contain rounded-lg shadow-sm"
                           />
-                          <span className="text-[10px] text-emerald-700 font-bold mt-2">Active College QR Code ✓</span>
+                          <span className="text-[10px] text-blue-700 font-bold mt-2">Active College QR Code ✓</span>
                         </>
                       ) : (
                         <div className="text-center p-3">
@@ -695,10 +695,10 @@ export default function AdminPage({ onBackToWebsite }) {
                     </div>
 
                     <div className="space-y-2.5">
-                      <label className="flex flex-col items-center justify-center p-5 rounded-2xl bg-slate-900 border border-slate-700 hover:border-cyan-400 cursor-pointer text-center transition-all group">
-                        <Upload className="w-6 h-6 text-cyan-400 mb-1.5 group-hover:scale-110 transition-transform" />
-                        <span className="text-xs font-bold text-white">Upload New GPay QR Code</span>
-                        <span className="text-[10px] text-slate-400 mt-0.5">Supports PNG, JPG, JPEG</span>
+                      <label className="flex flex-col items-center justify-center p-5 rounded-2xl bg-slate-50 border border-slate-200 hover:border-blue-500 cursor-pointer text-center transition-all group">
+                        <Upload className="w-6 h-6 text-blue-600 mb-1.5 group-hover:scale-110 transition-transform" />
+                        <span className="text-xs font-bold text-slate-900">Upload New GPay QR Code</span>
+                        <span className="text-[10px] text-slate-500 mt-0.5">Supports PNG, JPG, JPEG</span>
                         <input
                           type="file"
                           accept="image/*"
@@ -711,9 +711,9 @@ export default function AdminPage({ onBackToWebsite }) {
                         <button
                           type="button"
                           onClick={() => setPaymentForm(prev => ({ ...prev, qrCodeImage: '' }))}
-                          className="w-full py-2 rounded-xl bg-rose-500/20 text-rose-300 hover:bg-rose-500/30 border border-rose-500/30 text-xs font-semibold flex items-center justify-center gap-1.5"
+                          className="w-full py-2 rounded-xl bg-rose-50 text-rose-700 hover:bg-rose-100 border border-rose-200 text-xs font-semibold flex items-center justify-center gap-1.5"
                         >
-                          <Trash2 className="w-3.5 h-3.5" />
+                          <Trash2 className="w-3.5 h-3.5 text-rose-600" />
                           <span>Remove Custom QR Image</span>
                         </button>
                       )}
@@ -724,7 +724,7 @@ export default function AdminPage({ onBackToWebsite }) {
                 {/* 2. UPI ID and Payee Name */}
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                   <div>
-                    <label className="block text-xs font-bold uppercase tracking-wider text-slate-300 mb-1">
+                    <label className="block text-xs font-bold uppercase tracking-wider text-slate-700 mb-1">
                       Official Festival UPI ID *
                     </label>
                     <input
@@ -733,13 +733,13 @@ export default function AdminPage({ onBackToWebsite }) {
                       onChange={(e) => setPaymentForm({ ...paymentForm, upiId: e.target.value })}
                       placeholder="e.g. 8010086323@fam"
                       required
-                      className="w-full px-3.5 py-2.5 rounded-xl bg-slate-900 border border-slate-700 text-white font-mono text-sm focus:outline-none focus:border-cyan-400"
+                      className="w-full px-3.5 py-2.5 rounded-xl bg-slate-50 border border-slate-200 text-slate-900 font-mono text-sm focus:outline-none focus:bg-white focus:border-blue-500"
                     />
                     <span className="text-[10px] text-slate-500 mt-1 block">Students will copy this for manual UPI transfer</span>
                   </div>
 
                   <div>
-                    <label className="block text-xs font-bold uppercase tracking-wider text-slate-300 mb-1">
+                    <label className="block text-xs font-bold uppercase tracking-wider text-slate-700 mb-1">
                       Account / Committee Name *
                     </label>
                     <input
@@ -748,22 +748,22 @@ export default function AdminPage({ onBackToWebsite }) {
                       onChange={(e) => setPaymentForm({ ...paymentForm, payeeName: e.target.value })}
                       placeholder="e.g. TechAstra 2026 Organizing Committee"
                       required
-                      className="w-full px-3.5 py-2.5 rounded-xl bg-slate-900 border border-slate-700 text-white text-sm focus:outline-none focus:border-cyan-400"
+                      className="w-full px-3.5 py-2.5 rounded-xl bg-slate-50 border border-slate-200 text-slate-900 text-sm focus:outline-none focus:bg-white focus:border-blue-500"
                     />
                     <span className="text-[10px] text-slate-500 mt-1 block">Appears on receipt as the receiving party</span>
                   </div>
                 </div>
 
-                {/* 3. Direct Bank Details (For Net Banking, IMPS, NEFT) */}
-                <div className="p-5 rounded-2xl bg-slate-900/80 border border-indigo-500/30 space-y-4">
-                  <div className="flex items-center gap-2 text-indigo-300 text-xs font-bold uppercase tracking-wider border-b border-indigo-500/20 pb-2">
-                    <Building2 className="w-4 h-4 text-cyan-400" />
+                {/* 3. Direct Bank Details */}
+                <div className="p-5 rounded-2xl bg-indigo-50/40 border border-indigo-200 space-y-4">
+                  <div className="flex items-center gap-2 text-indigo-900 text-xs font-bold uppercase tracking-wider border-b border-indigo-200/80 pb-2">
+                    <Building2 className="w-4 h-4 text-indigo-600" />
                     <span>College Bank Account Details (Shown in Net Banking Tab)</span>
                   </div>
 
                   <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                     <div>
-                      <label className="block text-xs text-slate-300 mb-1">Bank Name *</label>
+                      <label className="block text-xs font-semibold text-slate-700 mb-1">Bank Name *</label>
                       <input
                         type="text"
                         value={paymentForm.bankDetails.bankName}
@@ -773,12 +773,12 @@ export default function AdminPage({ onBackToWebsite }) {
                         })}
                         placeholder="e.g. State Bank of India"
                         required
-                        className="w-full px-3.5 py-2 rounded-xl bg-slate-950 border border-slate-800 text-white text-xs focus:outline-none focus:border-cyan-400"
+                        className="w-full px-3.5 py-2 rounded-xl bg-white border border-slate-200 text-slate-900 text-xs focus:outline-none focus:border-blue-500"
                       />
                     </div>
 
                     <div>
-                      <label className="block text-xs text-slate-300 mb-1">Bank Account Number *</label>
+                      <label className="block text-xs font-semibold text-slate-700 mb-1">Bank Account Number *</label>
                       <input
                         type="text"
                         value={paymentForm.bankDetails.accountNumber}
@@ -788,12 +788,12 @@ export default function AdminPage({ onBackToWebsite }) {
                         })}
                         placeholder="e.g. 41829019283"
                         required
-                        className="w-full px-3.5 py-2 rounded-xl bg-slate-950 border border-slate-800 text-white font-mono text-xs focus:outline-none focus:border-cyan-400"
+                        className="w-full px-3.5 py-2 rounded-xl bg-white border border-slate-200 text-slate-900 font-mono text-xs focus:outline-none focus:border-blue-500"
                       />
                     </div>
 
                     <div>
-                      <label className="block text-xs text-slate-300 mb-1">IFSC Code *</label>
+                      <label className="block text-xs font-semibold text-slate-700 mb-1">IFSC Code *</label>
                       <input
                         type="text"
                         value={paymentForm.bankDetails.ifscCode}
@@ -803,12 +803,12 @@ export default function AdminPage({ onBackToWebsite }) {
                         })}
                         placeholder="e.g. SBIN0001234"
                         required
-                        className="w-full px-3.5 py-2 rounded-xl bg-slate-950 border border-slate-800 text-white font-mono text-xs uppercase focus:outline-none focus:border-cyan-400"
+                        className="w-full px-3.5 py-2 rounded-xl bg-white border border-slate-200 text-slate-900 font-mono text-xs uppercase focus:outline-none focus:border-blue-500"
                       />
                     </div>
 
                     <div>
-                      <label className="block text-xs text-slate-300 mb-1">Account Holder Name *</label>
+                      <label className="block text-xs font-semibold text-slate-700 mb-1">Account Holder Name *</label>
                       <input
                         type="text"
                         value={paymentForm.bankDetails.accountHolder}
@@ -818,19 +818,19 @@ export default function AdminPage({ onBackToWebsite }) {
                         })}
                         placeholder="e.g. TechAstra Student Council"
                         required
-                        className="w-full px-3.5 py-2 rounded-xl bg-slate-950 border border-slate-800 text-white text-xs focus:outline-none focus:border-cyan-400"
+                        className="w-full px-3.5 py-2 rounded-xl bg-white border border-slate-200 text-slate-900 text-xs focus:outline-none focus:border-blue-500"
                       />
                     </div>
 
                     <div>
-                      <label className="block text-xs text-slate-300 mb-1">Account Type</label>
+                      <label className="block text-xs font-semibold text-slate-700 mb-1">Account Type</label>
                       <select
                         value={paymentForm.bankDetails.accountType}
                         onChange={(e) => setPaymentForm({
                           ...paymentForm,
                           bankDetails: { ...paymentForm.bankDetails, accountType: e.target.value }
                         })}
-                        className="w-full px-3.5 py-2 rounded-xl bg-slate-950 border border-slate-800 text-white text-xs focus:outline-none focus:border-cyan-400"
+                        className="w-full px-3.5 py-2 rounded-xl bg-white border border-slate-200 text-slate-900 text-xs focus:outline-none focus:border-blue-500"
                       >
                         <option>Current Account</option>
                         <option>Savings Account</option>
@@ -838,7 +838,7 @@ export default function AdminPage({ onBackToWebsite }) {
                     </div>
 
                     <div>
-                      <label className="block text-xs text-slate-300 mb-1">Branch Name</label>
+                      <label className="block text-xs font-semibold text-slate-700 mb-1">Branch Name</label>
                       <input
                         type="text"
                         value={paymentForm.bankDetails.branch}
@@ -847,7 +847,7 @@ export default function AdminPage({ onBackToWebsite }) {
                           bankDetails: { ...paymentForm.bankDetails, branch: e.target.value }
                         })}
                         placeholder="e.g. Campus Branch"
-                        className="w-full px-3.5 py-2 rounded-xl bg-slate-950 border border-slate-800 text-white text-xs focus:outline-none focus:border-cyan-400"
+                        className="w-full px-3.5 py-2 rounded-xl bg-white border border-slate-200 text-slate-900 text-xs focus:outline-none focus:border-blue-500"
                       />
                     </div>
                   </div>
@@ -855,14 +855,14 @@ export default function AdminPage({ onBackToWebsite }) {
 
                 {/* 4. Instructions */}
                 <div>
-                  <label className="block text-xs font-bold uppercase tracking-wider text-slate-300 mb-1">
+                  <label className="block text-xs font-bold uppercase tracking-wider text-slate-700 mb-1">
                     Student Instructions during Checkout
                   </label>
                   <textarea
                     rows={2}
                     value={paymentForm.instructions}
                     onChange={(e) => setPaymentForm({ ...paymentForm, instructions: e.target.value })}
-                    className="w-full px-3.5 py-2.5 rounded-xl bg-slate-900 border border-slate-700 text-white text-xs focus:outline-none focus:border-cyan-400"
+                    className="w-full px-3.5 py-2.5 rounded-xl bg-slate-50 border border-slate-200 text-slate-900 text-xs focus:outline-none focus:bg-white focus:border-blue-500"
                   />
                 </div>
 
@@ -870,7 +870,7 @@ export default function AdminPage({ onBackToWebsite }) {
                 <div>
                   <button
                     type="submit"
-                    className="w-full py-4 rounded-xl bg-gradient-to-r from-cyan-500 via-indigo-600 to-pink-600 text-white font-bold text-sm flex items-center justify-center gap-2 shadow-lg shadow-cyan-500/25 hover:opacity-95 transition-all"
+                    className="w-full py-3.5 rounded-xl bg-gradient-to-r from-blue-600 via-indigo-600 to-sky-600 text-white font-bold text-sm flex items-center justify-center gap-2 shadow-lg shadow-blue-500/25 hover:opacity-95 transition-all"
                   >
                     <Save className="w-4 h-4" />
                     <span>Save & Publish Payment Settings to Live Website</span>
@@ -881,37 +881,37 @@ export default function AdminPage({ onBackToWebsite }) {
             </div>
 
             {/* Live Preview Card */}
-            <div className="lg:col-span-4 glass-card p-6 rounded-3xl border border-cyan-500/30 space-y-4">
-              <h4 className="text-sm font-bold uppercase tracking-wider text-cyan-300 flex items-center gap-2">
-                <Eye className="w-4 h-4" />
+            <div className="lg:col-span-4 bg-white p-6 rounded-3xl border border-slate-200 shadow-sm space-y-4">
+              <h4 className="text-sm font-bold uppercase tracking-wider text-blue-700 flex items-center gap-2 font-chakra">
+                <Eye className="w-4 h-4 text-blue-600" />
                 <span>Live Student View Preview</span>
               </h4>
 
-              <div className="p-4 rounded-2xl bg-white text-slate-950 shadow-inner text-center">
+              <div className="p-4 rounded-2xl bg-slate-50 text-slate-900 border border-slate-200 shadow-inner text-center">
                 <span className="text-[10px] font-extrabold uppercase text-slate-500 block mb-1">Scan & Pay</span>
                 {paymentForm.qrCodeImage ? (
                   <img
                     src={paymentForm.qrCodeImage}
                     alt="Preview QR"
-                    className="w-36 h-36 mx-auto object-contain rounded"
+                    className="w-36 h-36 mx-auto object-contain rounded-lg shadow-sm"
                   />
                 ) : (
-                  <div className="w-36 h-36 mx-auto bg-slate-100 flex items-center justify-center rounded">
+                  <div className="w-36 h-36 mx-auto bg-white border border-slate-200 flex items-center justify-center rounded-lg">
                     <QrCode className="w-16 h-16 text-slate-400" />
                   </div>
                 )}
-                <div className="mt-2 text-xs font-bold text-indigo-700 font-mono">{paymentForm.upiId}</div>
+                <div className="mt-2 text-xs font-bold text-blue-700 font-mono">{paymentForm.upiId}</div>
               </div>
 
-              <div className="p-3.5 rounded-xl bg-slate-900 border border-slate-800 text-xs space-y-1.5">
-                <div className="text-[10px] uppercase font-bold text-slate-400">Net Banking Direct Details:</div>
-                <div className="text-white font-semibold">{paymentForm.bankDetails.bankName}</div>
-                <div className="text-slate-300 font-mono">A/C: {paymentForm.bankDetails.accountNumber}</div>
-                <div className="text-cyan-300 font-mono">IFSC: {paymentForm.bankDetails.ifscCode}</div>
-                <div className="text-slate-400 text-[11px]">Holder: {paymentForm.bankDetails.accountHolder}</div>
+              <div className="p-3.5 rounded-2xl bg-slate-50 border border-slate-200 text-xs space-y-1.5">
+                <div className="text-[10px] uppercase font-bold text-slate-500">Net Banking Direct Details:</div>
+                <div className="text-slate-900 font-semibold">{paymentForm.bankDetails.bankName}</div>
+                <div className="text-slate-700 font-mono">A/C: {paymentForm.bankDetails.accountNumber}</div>
+                <div className="text-blue-600 font-mono font-bold">IFSC: {paymentForm.bankDetails.ifscCode}</div>
+                <div className="text-slate-500 text-[11px]">Holder: {paymentForm.bankDetails.accountHolder}</div>
               </div>
 
-              <div className="text-[11px] text-slate-400">
+              <div className="text-[11px] text-slate-500 font-medium">
                 ✅ When saved, these details immediately reflect in the registration modal for all attendees.
               </div>
             </div>
@@ -921,13 +921,13 @@ export default function AdminPage({ onBackToWebsite }) {
 
         {/* TAB 2: EVENT & ANNOUNCEMENT INFO */}
         {activeTab === 'event-info' && (
-          <div className="max-w-3xl mx-auto glass-card p-6 sm:p-8 rounded-3xl border border-white/10 space-y-6">
-            <div className="border-b border-white/5 pb-4">
-              <h3 className="text-xl font-bold text-white flex items-center gap-2">
-                <Sparkles className="w-5 h-5 text-indigo-400" />
+          <div className="max-w-3xl mx-auto bg-white p-6 sm:p-8 rounded-3xl border border-slate-200 shadow-sm space-y-6">
+            <div className="border-b border-slate-100 pb-4">
+              <h3 className="text-xl font-bold text-slate-900 flex items-center gap-2 font-chakra">
+                <Sparkles className="w-5 h-5 text-indigo-600" />
                 <span>Event Announcements, Dates & Pass Pricing</span>
               </h3>
-              <p className="text-xs text-slate-400 mt-1">
+              <p className="text-xs text-slate-500 mt-1">
                 Update the official dates, countdown timer, venue, and pass prices on the public event website.
               </p>
             </div>
@@ -935,16 +935,16 @@ export default function AdminPage({ onBackToWebsite }) {
             <form onSubmit={handleSaveEventInfo} className="space-y-6">
               
               {/* TRIGGER TOGGLE: DATES TO BE ANNOUNCED SOON VS LIVE COUNTDOWN */}
-              <div className="p-4 sm:p-5 rounded-2xl bg-gradient-to-r from-slate-900 via-[#101736] to-slate-900 border-2 border-cyan-500/40 shadow-xl space-y-3">
+              <div className="p-4 sm:p-5 rounded-2xl bg-gradient-to-r from-blue-50/70 via-indigo-50/50 to-blue-50/70 border border-blue-200 shadow-sm space-y-3">
                 <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
                   <div>
                     <div className="flex items-center gap-2">
-                      <span className={`w-3 h-3 rounded-full ${eventForm.datesAnnounced ? 'bg-emerald-400 animate-pulse' : 'bg-amber-400 animate-pulse'}`} />
-                      <span className="text-sm font-bold text-white font-mono uppercase tracking-wider">
+                      <span className={`w-3 h-3 rounded-full ${eventForm.datesAnnounced ? 'bg-blue-600 animate-pulse' : 'bg-amber-500 animate-pulse'}`} />
+                      <span className="text-sm font-bold text-slate-900 font-mono uppercase tracking-wider">
                         {eventForm.datesAnnounced ? 'Countdown Status: Official Dates Announced (Live Countdown Active)' : 'Countdown Status: To Be Announced Soon'}
                       </span>
                     </div>
-                    <p className="text-xs text-slate-300 mt-1">
+                    <p className="text-xs text-slate-600 mt-1">
                       {eventForm.datesAnnounced 
                         ? 'Official dates are visible on the website and the live countdown clock is ticking.' 
                         : 'Website displays "Dates To Be Announced Soon" badge. The countdown clock stays on hold until you unlock dates.'}
@@ -962,10 +962,10 @@ export default function AdminPage({ onBackToWebsite }) {
                         dates: nextStatus ? (prev.dates === 'To Be Announced Soon' ? 'December 20 and 21' : prev.dates) : 'To Be Announced Soon'
                       }));
                     }}
-                    className={`px-5 py-3 rounded-xl font-bold text-xs flex items-center justify-center gap-2 border transition-all shadow-lg shrink-0 ${
+                    className={`px-5 py-3 rounded-xl font-bold text-xs flex items-center justify-center gap-2 border transition-all shadow-sm shrink-0 ${
                       eventForm.datesAnnounced
-                        ? 'bg-amber-500/20 text-amber-300 border-amber-500/50 hover:bg-amber-500/30'
-                        : 'bg-emerald-500/20 text-emerald-300 border-emerald-500/50 hover:bg-emerald-500/30'
+                        ? 'bg-amber-100 text-amber-900 border-amber-300 hover:bg-amber-200'
+                        : 'bg-blue-600 text-white border-blue-600 hover:bg-blue-700'
                     }`}
                   >
                     <span>{eventForm.datesAnnounced ? '⚡ Switch to "To Be Announced Soon"' : '🚀 Announce Dates & Start Live Countdown'}</span>
@@ -975,29 +975,29 @@ export default function AdminPage({ onBackToWebsite }) {
 
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                 <div>
-                  <label className="block text-xs font-bold uppercase text-slate-300 mb-1">Event Name</label>
+                  <label className="block text-xs font-bold uppercase text-slate-700 mb-1">Event Name</label>
                   <input
                     type="text"
                     value={eventForm.name}
                     onChange={(e) => setEventForm({ ...eventForm, name: e.target.value })}
-                    className="w-full px-3.5 py-2.5 rounded-xl bg-slate-900 border border-slate-700 text-white text-sm"
+                    className="w-full px-3.5 py-2.5 rounded-xl bg-slate-50 border border-slate-200 text-slate-900 text-sm focus:bg-white focus:border-blue-500"
                   />
                 </div>
 
                 <div>
-                  <label className="block text-xs font-bold uppercase text-slate-300 mb-1">Edition Tag</label>
+                  <label className="block text-xs font-bold uppercase text-slate-700 mb-1">Edition Tag</label>
                   <input
                     type="text"
                     value={eventForm.edition}
                     onChange={(e) => setEventForm({ ...eventForm, edition: e.target.value })}
-                    className="w-full px-3.5 py-2.5 rounded-xl bg-slate-900 border border-slate-700 text-white text-sm"
+                    className="w-full px-3.5 py-2.5 rounded-xl bg-slate-50 border border-slate-200 text-slate-900 text-sm focus:bg-white focus:border-blue-500"
                   />
                 </div>
 
                 <div>
-                  <label className="block text-xs font-bold uppercase text-slate-300 mb-1 flex items-center justify-between">
+                  <label className="block text-xs font-bold uppercase text-slate-700 mb-1 flex items-center justify-between">
                     <span>Event Dates (Display)</span>
-                    <span className={`text-[10px] font-mono px-1.5 py-0.5 rounded ${eventForm.datesAnnounced ? 'bg-emerald-500/20 text-emerald-300' : 'bg-amber-500/20 text-amber-300'}`}>
+                    <span className={`text-[10px] font-mono px-1.5 py-0.5 rounded ${eventForm.datesAnnounced ? 'bg-blue-50 text-blue-700' : 'bg-amber-50 text-amber-700'}`}>
                       {eventForm.datesAnnounced ? 'Announced' : 'TBA Soon'}
                     </span>
                   </label>
@@ -1009,16 +1009,16 @@ export default function AdminPage({ onBackToWebsite }) {
                     placeholder="e.g. December 20 and 21, 2026"
                     className={`w-full px-3.5 py-2.5 rounded-xl border text-sm ${
                       eventForm.datesAnnounced 
-                        ? 'bg-slate-900 border-slate-700 text-white' 
-                        : 'bg-slate-950 border-slate-800 text-slate-400 cursor-not-allowed'
+                        ? 'bg-slate-50 border-slate-200 text-slate-900 focus:bg-white focus:border-blue-500' 
+                        : 'bg-slate-100 border-slate-200 text-slate-400 cursor-not-allowed'
                     }`}
                   />
                 </div>
 
                 <div>
-                  <label className="block text-xs font-bold uppercase text-slate-300 mb-1 flex items-center justify-between">
+                  <label className="block text-xs font-bold uppercase text-slate-700 mb-1 flex items-center justify-between">
                     <span>Countdown Target (ISO)</span>
-                    <span className={`text-[10px] font-mono px-1.5 py-0.5 rounded ${eventForm.datesAnnounced ? 'bg-emerald-500/20 text-emerald-300' : 'bg-amber-500/20 text-amber-300'}`}>
+                    <span className={`text-[10px] font-mono px-1.5 py-0.5 rounded ${eventForm.datesAnnounced ? 'bg-blue-50 text-blue-700' : 'bg-amber-50 text-amber-700'}`}>
                       {eventForm.datesAnnounced ? 'Timer Active' : 'Timer Paused'}
                     </span>
                   </label>
@@ -1030,77 +1030,77 @@ export default function AdminPage({ onBackToWebsite }) {
                     placeholder="2026-12-20T09:00:00"
                     className={`w-full px-3.5 py-2.5 rounded-xl border font-mono text-xs ${
                       eventForm.datesAnnounced 
-                        ? 'bg-slate-900 border-slate-700 text-white' 
-                        : 'bg-slate-950 border-slate-800 text-slate-400 cursor-not-allowed'
+                        ? 'bg-slate-50 border-slate-200 text-slate-900 focus:bg-white focus:border-blue-500' 
+                        : 'bg-slate-100 border-slate-200 text-slate-400 cursor-not-allowed'
                     }`}
                   />
                 </div>
 
                 <div>
-                  <label className="block text-xs font-bold uppercase text-slate-300 mb-1">Venue / Location</label>
+                  <label className="block text-xs font-bold uppercase text-slate-700 mb-1">Venue / Location</label>
                   <input
                     type="text"
                     value={eventForm.venue}
                     onChange={(e) => setEventForm({ ...eventForm, venue: e.target.value })}
-                    className="w-full px-3.5 py-2.5 rounded-xl bg-slate-900 border border-slate-700 text-white text-sm"
+                    className="w-full px-3.5 py-2.5 rounded-xl bg-slate-50 border border-slate-200 text-slate-900 text-sm focus:bg-white focus:border-blue-500"
                   />
                 </div>
 
                 <div>
-                  <label className="block text-xs font-bold uppercase text-slate-300 mb-1">Prize Pool</label>
+                  <label className="block text-xs font-bold uppercase text-slate-700 mb-1">Prize Pool</label>
                   <input
                     type="text"
                     value={eventForm.prizePool}
                     onChange={(e) => setEventForm({ ...eventForm, prizePool: e.target.value })}
-                    className="w-full px-3.5 py-2.5 rounded-xl bg-slate-900 border border-slate-700 text-white text-sm"
+                    className="w-full px-3.5 py-2.5 rounded-xl bg-slate-50 border border-slate-200 text-slate-900 text-sm focus:bg-white focus:border-blue-500"
                   />
                 </div>
               </div>
 
               <div>
-                <label className="block text-xs font-bold uppercase text-slate-300 mb-1">Event Theme Tagline</label>
+                <label className="block text-xs font-bold uppercase text-slate-700 mb-1">Event Theme Tagline</label>
                 <input
                   type="text"
                   value={eventForm.tagline}
                   onChange={(e) => setEventForm({ ...eventForm, tagline: e.target.value })}
-                  className="w-full px-3.5 py-2.5 rounded-xl bg-slate-900 border border-slate-700 text-white text-sm"
+                  className="w-full px-3.5 py-2.5 rounded-xl bg-slate-50 border border-slate-200 text-slate-900 text-sm focus:bg-white focus:border-blue-500"
                 />
               </div>
 
               {/* Pass Pricing */}
-              <div className="p-5 rounded-2xl bg-slate-900/80 border border-slate-800 space-y-4">
-                <span className="text-xs font-bold uppercase tracking-wider text-cyan-300 block">
+              <div className="p-5 rounded-2xl bg-slate-50 border border-slate-200 space-y-4">
+                <span className="text-xs font-bold uppercase tracking-wider text-blue-700 block font-chakra">
                   Pass Registration Fees (₹ INR)
                 </span>
                 
                 <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
                   <div>
-                    <label className="block text-xs text-slate-400 mb-1">Solo Hacker Pass (₹)</label>
+                    <label className="block text-xs font-medium text-slate-600 mb-1">Solo Hacker Pass (₹)</label>
                     <input
                       type="number"
                       value={pricesForm.solo}
                       onChange={(e) => setPricesForm({ ...pricesForm, solo: e.target.value })}
-                      className="w-full px-3.5 py-2 rounded-xl bg-slate-950 border border-slate-800 text-white font-mono font-bold text-sm"
+                      className="w-full px-3.5 py-2 rounded-xl bg-white border border-slate-200 text-slate-900 font-mono font-bold text-sm focus:border-blue-500"
                     />
                   </div>
 
                   <div>
-                    <label className="block text-xs text-slate-400 mb-1">Hackathon Squad Pass (₹)</label>
+                    <label className="block text-xs font-medium text-slate-600 mb-1">Hackathon Squad Pass (₹)</label>
                     <input
                       type="number"
                       value={pricesForm.squad}
                       onChange={(e) => setPricesForm({ ...pricesForm, squad: e.target.value })}
-                      className="w-full px-3.5 py-2 rounded-xl bg-slate-950 border border-slate-800 text-white font-mono font-bold text-sm"
+                      className="w-full px-3.5 py-2 rounded-xl bg-white border border-slate-200 text-slate-900 font-mono font-bold text-sm focus:border-blue-500"
                     />
                   </div>
 
                   <div>
-                    <label className="block text-xs text-slate-400 mb-1">VIP Delegate Pass (₹)</label>
+                    <label className="block text-xs font-medium text-slate-600 mb-1">VIP Delegate Pass (₹)</label>
                     <input
                       type="number"
                       value={pricesForm.vip}
                       onChange={(e) => setPricesForm({ ...pricesForm, vip: e.target.value })}
-                      className="w-full px-3.5 py-2 rounded-xl bg-slate-950 border border-slate-800 text-white font-mono font-bold text-sm"
+                      className="w-full px-3.5 py-2 rounded-xl bg-white border border-slate-200 text-slate-900 font-mono font-bold text-sm focus:border-blue-500"
                     />
                   </div>
                 </div>
@@ -1108,7 +1108,7 @@ export default function AdminPage({ onBackToWebsite }) {
 
               <button
                 type="submit"
-                className="w-full py-4 rounded-xl bg-gradient-to-r from-indigo-500 to-cyan-500 text-white font-bold text-sm flex items-center justify-center gap-2 shadow-lg shadow-indigo-500/25 hover:opacity-95"
+                className="w-full py-3.5 rounded-xl bg-gradient-to-r from-blue-600 via-indigo-600 to-sky-600 text-white font-bold text-sm flex items-center justify-center gap-2 shadow-lg shadow-blue-500/25 hover:opacity-95"
               >
                 <Save className="w-4 h-4" />
                 <span>Save Event Announcements & Ticket Prices</span>
@@ -1123,9 +1123,9 @@ export default function AdminPage({ onBackToWebsite }) {
           <div className="space-y-6">
             
             {/* Quick Gate Desk Check-in Scanner */}
-            <div className="glass-card p-4 rounded-2xl flex flex-col sm:flex-row items-center gap-3">
-              <div className="flex items-center gap-2 text-cyan-300 text-xs font-bold uppercase tracking-wider shrink-0">
-                <QrCode className="w-4 h-4" />
+            <div className="bg-white p-4 rounded-2xl border border-slate-200 shadow-sm flex flex-col sm:flex-row items-center gap-3">
+              <div className="flex items-center gap-2 text-blue-700 text-xs font-bold uppercase tracking-wider shrink-0 font-chakra">
+                <QrCode className="w-4 h-4 text-blue-600" />
                 <span>Gate Desk Check-in Scanner:</span>
               </div>
               <input
@@ -1133,11 +1133,11 @@ export default function AdminPage({ onBackToWebsite }) {
                 placeholder="Enter or scan Ticket ID (e.g. TECH26-XXXX)"
                 value={manualTicketInput}
                 onChange={(e) => setManualTicketInput(e.target.value)}
-                className="flex-1 px-3.5 py-2 rounded-xl bg-slate-900 border border-slate-700 text-white text-xs font-mono"
+                className="flex-1 px-3.5 py-2 rounded-xl bg-slate-50 border border-slate-200 text-slate-900 text-xs font-mono focus:bg-white focus:border-blue-500"
               />
               <button
                 onClick={() => handleGateCheckIn(manualTicketInput)}
-                className="px-5 py-2 rounded-xl bg-cyan-500 text-slate-950 font-bold text-xs shrink-0 hover:bg-cyan-400 transition-colors"
+                className="px-5 py-2 rounded-xl bg-blue-600 text-white font-bold text-xs shrink-0 hover:bg-blue-700 transition-colors shadow-sm"
               >
                 Verify & Check In
               </button>
@@ -1145,7 +1145,7 @@ export default function AdminPage({ onBackToWebsite }) {
 
             {scanMessage && (
               <div className={`p-3 rounded-xl text-xs flex items-center justify-between ${
-                scanMessage.success ? 'bg-emerald-500/20 text-emerald-300 border border-emerald-500/30' : 'bg-rose-500/20 text-rose-300 border border-rose-500/30'
+                scanMessage.success ? 'bg-blue-50 text-blue-800 border border-blue-200' : 'bg-rose-50 text-rose-800 border border-rose-200'
               }`}>
                 <span>{scanMessage.text}</span>
                 <button onClick={() => setScanMessage(null)} className="underline ml-4">Dismiss</button>
@@ -1161,25 +1161,25 @@ export default function AdminPage({ onBackToWebsite }) {
                   placeholder="Search attendee, ticket ID, UTR, college..."
                   value={search}
                   onChange={(e) => setSearch(e.target.value)}
-                  className="w-full pl-9 pr-4 py-2.5 rounded-xl bg-slate-900 border border-slate-700 text-white text-xs placeholder-slate-500"
+                  className="w-full pl-9 pr-4 py-2.5 rounded-xl bg-white border border-slate-200 text-slate-900 text-xs placeholder-slate-400 shadow-sm focus:border-blue-500"
                 />
               </div>
 
               <button
                 onClick={exportToCSV}
                 disabled={registrations.length === 0}
-                className="px-4 py-2.5 rounded-xl bg-slate-800 hover:bg-slate-700 text-white text-xs font-semibold flex items-center gap-2 border border-slate-700 disabled:opacity-40"
+                className="px-4 py-2.5 rounded-xl bg-white hover:bg-slate-50 text-slate-700 text-xs font-semibold flex items-center gap-2 border border-slate-200 shadow-sm disabled:opacity-40"
               >
-                <Download className="w-3.5 h-3.5" />
+                <Download className="w-3.5 h-3.5 text-blue-600" />
                 <span>Export CSV for Gate Desk / Certificates</span>
               </button>
             </div>
 
             {/* Registrations Table */}
-            <div className="border border-white/5 rounded-2xl overflow-hidden bg-slate-950/60 shadow-xl">
+            <div className="border border-slate-200 rounded-2xl overflow-hidden bg-white shadow-sm">
               <div className="overflow-x-auto">
-                <table className="w-full text-left text-xs text-slate-300">
-                  <thead className="bg-slate-900 text-slate-400 uppercase tracking-wider font-mono">
+                <table className="w-full text-left text-xs text-slate-700">
+                  <thead className="bg-slate-50 text-slate-500 uppercase tracking-wider font-mono border-b border-slate-200">
                     <tr>
                       <th className="p-3.5">Ticket ID</th>
                       <th className="p-3.5">Attendee</th>
@@ -1192,62 +1192,62 @@ export default function AdminPage({ onBackToWebsite }) {
                       <th className="p-3.5">Action</th>
                     </tr>
                   </thead>
-                  <tbody className="divide-y divide-slate-800/60">
+                  <tbody className="divide-y divide-slate-100">
                     {filteredRegistrations.length === 0 ? (
                       <tr>
-                        <td colSpan="9" className="p-8 text-center text-slate-500">
+                        <td colSpan="9" className="p-8 text-center text-slate-400">
                           No registrations found. New registrations from the website will appear here live!
                         </td>
                       </tr>
                     ) : (
                       filteredRegistrations.map((reg) => (
-                        <tr key={reg.ticketId} className="hover:bg-slate-900/40">
-                          <td className="p-3.5 font-mono font-bold text-cyan-400">{reg.ticketId}</td>
+                        <tr key={reg.ticketId} className="hover:bg-slate-50/70 transition-colors">
+                          <td className="p-3.5 font-mono font-bold text-blue-600">{reg.ticketId}</td>
                           <td className="p-3.5">
-                            <div className="font-semibold text-white">{reg.attendee?.fullName || 'N/A'}</div>
-                            <div className="text-[11px] text-slate-400">{reg.attendee?.phone || ''}</div>
+                            <div className="font-semibold text-slate-900">{reg.attendee?.fullName || 'N/A'}</div>
+                            <div className="text-[11px] text-slate-500">{reg.attendee?.phone || ''}</div>
                           </td>
                           <td className="p-3.5">
-                            <div>{reg.attendee?.college || 'N/A'}</div>
-                            <div className="text-[10px] text-cyan-300">{reg.attendee?.track || ''}</div>
+                            <div className="text-slate-800 font-medium">{reg.attendee?.college || 'N/A'}</div>
+                            <div className="text-[10px] text-blue-600 font-medium">{reg.attendee?.track || ''}</div>
                           </td>
                           <td className="p-3.5">
-                            <span className="px-2 py-0.5 rounded bg-slate-800 text-indigo-300 font-semibold">
+                            <span className="px-2 py-0.5 rounded bg-blue-50 text-blue-700 font-semibold border border-blue-200">
                               {reg.passType}
                             </span>
-                            <div className="text-[10px] text-slate-400 mt-1">₹{reg.amountPaid} • {reg.paymentMethod || 'UPI'}</div>
+                            <div className="text-[10px] text-slate-500 mt-1 font-mono">₹{reg.amountPaid} • {reg.paymentMethod || 'UPI'}</div>
                           </td>
                           <td className="p-3.5 font-mono text-[11px]">
                             {reg.utrNumber ? (
                               <div>
                                 <span className="text-slate-400 block text-[9px] uppercase">UTR:</span>
-                                <span className="text-emerald-400 font-bold">{reg.utrNumber}</span>
+                                <span className="text-blue-700 font-bold">{reg.utrNumber}</span>
                               </div>
                             ) : (
-                              <span className="text-slate-500">{reg.paymentId || 'N/A'}</span>
+                              <span className="text-slate-400">{reg.paymentId || 'N/A'}</span>
                             )}
                           </td>
                           <td className="p-3.5">
                             {reg.paymentScreenshot ? (
                               <button
                                 onClick={() => setViewScreenshotModal(reg.paymentScreenshot)}
-                                className="px-2.5 py-1 rounded bg-indigo-600/30 text-indigo-300 hover:bg-indigo-600/50 border border-indigo-500/40 text-[10px] font-semibold flex items-center gap-1"
+                                className="px-2.5 py-1 rounded bg-blue-50 text-blue-700 hover:bg-blue-100 border border-blue-200 text-[10px] font-semibold flex items-center gap-1"
                               >
-                                <Eye className="w-3 h-3" />
+                                <Eye className="w-3 h-3 text-blue-600" />
                                 <span>Receipt</span>
                               </button>
                             ) : (
-                              <span className="text-slate-600 text-[10px]">No image</span>
+                              <span className="text-slate-400 text-[10px]">No image</span>
                             )}
                           </td>
                           <td className="p-3.5">
                             {reg.paymentStatus === 'PAID' ? (
-                              <span className="px-2.5 py-0.5 rounded-full bg-emerald-500/20 text-emerald-300 text-[10px] font-bold border border-emerald-500/30 flex items-center gap-1 w-fit">
+                              <span className="px-2.5 py-0.5 rounded-full bg-blue-50 text-blue-700 text-[10px] font-bold border border-blue-200 flex items-center gap-1 w-fit">
                                 <CheckCircle2 className="w-3 h-3" />
                                 <span>Verified</span>
                               </span>
                             ) : (
-                              <span className="px-2.5 py-0.5 rounded-full bg-amber-500/20 text-amber-300 text-[10px] font-bold border border-amber-500/30 flex items-center gap-1 w-fit">
+                              <span className="px-2.5 py-0.5 rounded-full bg-amber-50 text-amber-800 text-[10px] font-bold border border-amber-200 flex items-center gap-1 w-fit">
                                 <AlertCircle className="w-3 h-3" />
                                 <span>Pending</span>
                               </span>
@@ -1255,11 +1255,11 @@ export default function AdminPage({ onBackToWebsite }) {
                           </td>
                           <td className="p-3.5">
                             {reg.checkedIn ? (
-                              <span className="px-2.5 py-0.5 rounded-full bg-emerald-500/20 text-emerald-400 text-[10px] font-bold">
+                              <span className="px-2.5 py-0.5 rounded-full bg-emerald-50 text-emerald-700 text-[10px] font-bold border border-emerald-200">
                                 Checked In
                               </span>
                             ) : (
-                              <span className="px-2.5 py-0.5 rounded-full bg-slate-800 text-slate-400 text-[10px]">
+                              <span className="px-2.5 py-0.5 rounded-full bg-slate-100 text-slate-500 text-[10px]">
                                 Awaiting
                               </span>
                             )}
@@ -1269,7 +1269,7 @@ export default function AdminPage({ onBackToWebsite }) {
                               {reg.paymentStatus !== 'PAID' && (
                                 <button
                                   onClick={() => handleVerifyAttendeePayment(reg.ticketId)}
-                                  className="px-2.5 py-1 rounded bg-emerald-600/30 text-emerald-300 hover:bg-emerald-600/60 border border-emerald-500/40 text-[10px] font-bold flex items-center gap-1 transition-all"
+                                  className="px-2.5 py-1 rounded bg-blue-600 text-white hover:bg-blue-700 text-[10px] font-bold flex items-center gap-1 transition-all shadow-sm"
                                   title="Approve and verify participant payment"
                                 >
                                   <Check className="w-3 h-3" />
@@ -1279,7 +1279,7 @@ export default function AdminPage({ onBackToWebsite }) {
                               {!reg.checkedIn && (
                                 <button
                                   onClick={() => handleGateCheckIn(reg.ticketId)}
-                                  className="px-3 py-1 rounded bg-cyan-600/30 text-cyan-300 hover:bg-cyan-600/60 border border-cyan-500/40 text-[10px] font-semibold transition-all"
+                                  className="px-3 py-1 rounded bg-slate-100 hover:bg-slate-200 text-slate-700 text-[10px] font-semibold transition-all border border-slate-200"
                                 >
                                   Check In
                                 </button>
@@ -1302,20 +1302,20 @@ export default function AdminPage({ onBackToWebsite }) {
           <div className="space-y-6">
             
             {/* Header & Control Bar */}
-            <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 p-6 glass-card rounded-3xl border border-amber-500/30 bg-gradient-to-r from-amber-500/5 via-slate-900/40 to-cyan-500/5">
+            <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 p-6 bg-white rounded-3xl border border-slate-200 shadow-sm">
               <div>
                 <div className="flex items-center gap-2.5">
-                  <div className="w-9 h-9 rounded-xl bg-amber-500/20 text-amber-400 flex items-center justify-center border border-amber-500/30">
+                  <div className="w-9 h-9 rounded-2xl bg-amber-50 text-amber-600 flex items-center justify-center border border-amber-200 shadow-sm">
                     <Crown className="w-5 h-5" />
                   </div>
                   <div>
-                    <h3 className="text-xl font-bold text-white flex items-center gap-2">
+                    <h3 className="text-xl font-bold text-slate-900 flex items-center gap-2 font-chakra">
                       <span>Organizing Committee & Member Access</span>
-                      <span className="text-xs px-2.5 py-0.5 rounded-full bg-amber-500/20 text-amber-300 font-mono border border-amber-500/40">
+                      <span className="text-xs px-2.5 py-0.5 rounded-full bg-amber-50 text-amber-800 font-mono font-bold border border-amber-200">
                         {teamMembers.length} Members
                       </span>
                     </h3>
-                    <p className="text-xs text-slate-400 mt-0.5">
+                    <p className="text-xs text-slate-500 mt-0.5">
                       Event Head controls administrative delegation, creates team passcodes, and manages member permissions.
                     </p>
                   </div>
@@ -1327,7 +1327,7 @@ export default function AdminPage({ onBackToWebsite }) {
                 <div className="flex items-center gap-2.5 w-full sm:w-auto">
                   <button
                     onClick={() => setIsAddMemberModalOpen(true)}
-                    className="flex-1 sm:flex-none px-4 py-2.5 rounded-xl bg-gradient-to-r from-emerald-500 to-emerald-400 text-slate-950 text-xs flex items-center justify-center gap-2 shadow-[0_0_15px_rgba(16,185,129,0.35)] font-bold hover:brightness-110 transition-all"
+                    className="flex-1 sm:flex-none px-4 py-2.5 rounded-xl bg-gradient-to-r from-blue-600 to-indigo-600 text-white text-xs flex items-center justify-center gap-2 shadow-md shadow-blue-500/20 font-bold hover:brightness-105 transition-all"
                   >
                     <UserPlus className="w-4 h-4" />
                     <span>+ Add Committee Member</span>
@@ -1335,68 +1335,66 @@ export default function AdminPage({ onBackToWebsite }) {
 
                   <button
                     onClick={() => setIsHeadPasscodeModalOpen(true)}
-                    className="px-3.5 py-2.5 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-200 border border-slate-700 text-xs font-semibold flex items-center gap-1.5 transition-all"
+                    className="px-3.5 py-2.5 rounded-xl bg-slate-100 hover:bg-slate-200 text-slate-700 border border-slate-200 text-xs font-semibold flex items-center gap-1.5 transition-all"
                     title="Change Event Head Master Key"
                   >
-                    <Key className="w-3.5 h-3.5 text-amber-400" />
+                    <Key className="w-3.5 h-3.5 text-amber-600" />
                     <span className="hidden md:inline">Master Key</span>
                   </button>
                 </div>
               ) : (
-                <div className="p-2.5 rounded-xl bg-slate-800/80 border border-slate-700 text-slate-300 text-xs flex items-center gap-2">
-                  <ShieldAlert className="w-4 h-4 text-amber-400 shrink-0" />
+                <div className="p-2.5 rounded-xl bg-slate-50 border border-slate-200 text-slate-700 text-xs flex items-center gap-2">
+                  <ShieldAlert className="w-4 h-4 text-amber-600 shrink-0" />
                   <span>Logged in as <b>{currentAdminUser?.name}</b>. Only the Event Head can add or modify member passcodes.</span>
                 </div>
               )}
             </div>
 
             {/* Event Head Master Admin Showcase Card */}
-            <div className="p-6 rounded-3xl border-2 border-amber-500/40 bg-gradient-to-br from-[#1a160d] via-[#121624] to-[#0a0e1c] shadow-2xl relative overflow-hidden">
-              <div className="absolute top-0 right-0 w-64 h-64 bg-amber-500/10 rounded-full blur-3xl pointer-events-none -mr-16 -mt-16" />
-              
+            <div className="p-6 rounded-3xl border-2 border-amber-300 bg-gradient-to-br from-amber-50/70 via-white to-blue-50/50 shadow-sm relative overflow-hidden">
               <div className="flex flex-col md:flex-row items-start md:items-center justify-between gap-6 relative z-10">
                 <div className="flex items-center gap-4">
-                  <div className="w-14 h-14 rounded-2xl bg-gradient-to-tr from-amber-500 to-amber-300 p-[2px] shadow-lg shadow-amber-500/20">
-                    <div className="w-full h-full bg-[#121624] rounded-2xl flex items-center justify-center">
-                      <Crown className="w-7 h-7 text-amber-400 animate-pulse" />
+                  <div className="w-14 h-14 rounded-2xl bg-gradient-to-tr from-amber-400 to-amber-200 p-[2px] shadow-md shadow-amber-500/10">
+                    <div className="w-full h-full bg-white rounded-2xl flex items-center justify-center">
+                      <Crown className="w-7 h-7 text-amber-600" />
                     </div>
                   </div>
                   <div>
                     <div className="flex items-center gap-2.5">
-                      <h4 className="text-lg font-black text-white">Event Head (Lead Organizer)</h4>
-                      <span className="px-2.5 py-0.5 rounded-full bg-amber-500/20 text-amber-300 text-[10px] font-extrabold uppercase tracking-wider border border-amber-500/40">
+                      <h4 className="text-lg font-black text-slate-900 font-chakra">Event Head (Lead Organizer)</h4>
+                      <span className="px-2.5 py-0.5 rounded-full bg-amber-100 text-amber-900 text-[10px] font-extrabold uppercase tracking-wider border border-amber-300 font-mono">
                         MASTER ADMINISTRATOR
                       </span>
                     </div>
-                    <p className="text-xs text-slate-400 mt-1">
+                    <p className="text-xs text-slate-600 mt-1">
                       Full supreme authority over Bank Details, QR Codes, Event Announcement, Ticket Pricing, Registrations & Team Members.
                     </p>
                   </div>
                 </div>
 
                 {/* Master Passcode Display */}
-                <div className="flex items-center gap-3 bg-black/40 p-3 rounded-2xl border border-amber-500/30">
+                <div className="flex items-center gap-3 bg-white p-3 rounded-2xl border border-amber-200 shadow-sm">
                   <div>
-                    <div className="text-[10px] text-amber-400 uppercase font-mono font-bold">Master Passcode</div>
-                    <div className="text-sm font-mono font-black text-white mt-0.5 tracking-wider">
+                    <div className="text-[10px] text-amber-700 uppercase font-mono font-bold">Master Passcode</div>
+                    <div className="text-sm font-mono font-black text-slate-900 mt-0.5 tracking-wider">
                       {revealedPasscodes['head-master'] ? (headPasscode || 'head2026') : '••••••••'}
                     </div>
                   </div>
 
-                  <div className="flex items-center gap-1 border-l border-white/10 pl-2">
+                  <div className="flex items-center gap-1 border-l border-slate-200 pl-2">
                     <button
                       onClick={() => togglePasscodeReveal('head-master')}
-                      className="p-1.5 rounded-lg bg-slate-800 hover:bg-slate-700 text-slate-300"
+                      className="p-1.5 rounded-lg bg-slate-100 hover:bg-slate-200 text-slate-600"
                       title={revealedPasscodes['head-master'] ? 'Hide' : 'Reveal'}
                     >
                       {revealedPasscodes['head-master'] ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
                     </button>
                     <button
                       onClick={() => handleCopyPasscode('head-master', headPasscode || 'head2026')}
-                      className="p-1.5 rounded-lg bg-slate-800 hover:bg-slate-700 text-slate-300 flex items-center gap-1"
+                      className="p-1.5 rounded-lg bg-slate-100 hover:bg-slate-200 text-slate-600 flex items-center gap-1"
                       title="Copy Master Key"
                     >
-                      {copiedId === 'head-master' ? <Check className="w-4 h-4 text-emerald-400" /> : <Copy className="w-4 h-4" />}
+                      {copiedId === 'head-master' ? <Check className="w-4 h-4 text-blue-600" /> : <Copy className="w-4 h-4" />}
                     </button>
                   </div>
                 </div>
@@ -1406,48 +1404,48 @@ export default function AdminPage({ onBackToWebsite }) {
             {/* Committee Members Grid */}
             <div>
               <div className="flex items-center justify-between mb-4">
-                <h4 className="text-sm font-bold uppercase tracking-wider text-slate-300 flex items-center gap-2">
-                  <Users className="w-4 h-4 text-cyan-400" />
+                <h4 className="text-sm font-bold uppercase tracking-wider text-slate-700 flex items-center gap-2 font-chakra">
+                  <Users className="w-4 h-4 text-blue-600" />
                   <span>Committee Members & Designated Leads ({teamMembers.filter(m => !m.isEventHead).length})</span>
                 </h4>
-                <span className="text-xs text-slate-500">Each member logs in with their unique passcode</span>
+                <span className="text-xs text-slate-500 font-medium">Each member logs in with their unique passcode</span>
               </div>
 
               <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
                 {teamMembers.filter(m => !m.isEventHead).map((member) => (
                   <div
                     key={member.id}
-                    className="glass-card p-5 rounded-2xl border border-white/10 hover:border-cyan-500/40 transition-all flex flex-col justify-between space-y-4 relative group"
+                    className="bg-white p-5 rounded-2xl border border-slate-200 shadow-sm hover:border-blue-300 hover:shadow-md transition-all flex flex-col justify-between space-y-4 text-slate-900"
                   >
                     <div>
                       {/* Top Info */}
                       <div className="flex items-start justify-between gap-3">
                         <div className="flex items-center gap-3">
-                          <div className="w-10 h-10 rounded-xl bg-gradient-to-tr from-cyan-500/20 to-indigo-500/20 border border-cyan-500/30 text-cyan-300 flex items-center justify-center font-bold text-sm font-mono">
+                          <div className="w-10 h-10 rounded-2xl bg-blue-50 border border-blue-200 text-blue-700 flex items-center justify-center font-bold text-sm font-mono shadow-sm">
                             {member.name.charAt(0)}
                           </div>
                           <div>
-                            <h5 className="text-sm font-extrabold text-white">{member.name}</h5>
-                            <span className="text-[11px] text-cyan-300 font-medium block">{member.role}</span>
+                            <h5 className="text-sm font-extrabold text-slate-900">{member.name}</h5>
+                            <span className="text-[11px] text-blue-600 font-medium block">{member.role}</span>
                           </div>
                         </div>
 
-                        <span className="px-2 py-0.5 rounded-full bg-emerald-500/20 text-emerald-300 text-[10px] font-bold border border-emerald-500/30">
+                        <span className="px-2 py-0.5 rounded-full bg-blue-50 text-blue-700 text-[10px] font-bold border border-blue-200">
                           {member.status || 'Active'}
                         </span>
                       </div>
 
                       {member.email && (
-                        <p className="text-[11px] text-slate-400 mt-2 truncate font-mono">
+                        <p className="text-[11px] text-slate-500 mt-2 truncate font-mono">
                           {member.email}
                         </p>
                       )}
 
                       {/* Passcode Box */}
-                      <div className="mt-4 p-2.5 rounded-xl bg-slate-950/70 border border-slate-800 flex items-center justify-between">
+                      <div className="mt-4 p-2.5 rounded-xl bg-slate-50 border border-slate-200 flex items-center justify-between">
                         <div>
-                          <div className="text-[9px] uppercase font-mono text-slate-400">Login Passcode</div>
-                          <div className="text-xs font-mono font-bold text-white mt-0.5 tracking-wider">
+                          <div className="text-[9px] uppercase font-mono text-slate-500 font-bold">Login Passcode</div>
+                          <div className="text-xs font-mono font-bold text-slate-900 mt-0.5 tracking-wider">
                             {revealedPasscodes[member.id] ? member.passcode : '••••••••'}
                           </div>
                         </div>
@@ -1455,29 +1453,29 @@ export default function AdminPage({ onBackToWebsite }) {
                         <div className="flex items-center gap-1">
                           <button
                             onClick={() => togglePasscodeReveal(member.id)}
-                            className="p-1.5 rounded-lg bg-slate-800 hover:bg-slate-700 text-slate-300 text-xs"
+                            className="p-1.5 rounded-lg bg-white hover:bg-slate-100 text-slate-600 text-xs border border-slate-200"
                             title={revealedPasscodes[member.id] ? 'Hide' : 'Reveal'}
                           >
                             {revealedPasscodes[member.id] ? <EyeOff className="w-3.5 h-3.5" /> : <Eye className="w-3.5 h-3.5" />}
                           </button>
                           <button
                             onClick={() => handleCopyPasscode(member.id, member.passcode)}
-                            className="p-1.5 rounded-lg bg-slate-800 hover:bg-slate-700 text-slate-300 text-xs flex items-center gap-1"
+                            className="p-1.5 rounded-lg bg-white hover:bg-slate-100 text-slate-600 text-xs flex items-center gap-1 border border-slate-200"
                             title="Copy Passcode"
                           >
-                            {copiedId === member.id ? <Check className="w-3.5 h-3.5 text-emerald-400" /> : <Copy className="w-3.5 h-3.5" />}
+                            {copiedId === member.id ? <Check className="w-3.5 h-3.5 text-blue-600" /> : <Copy className="w-3.5 h-3.5" />}
                           </button>
                         </div>
                       </div>
 
                       {/* Permissions Pills */}
                       <div className="mt-3">
-                        <div className="text-[9px] uppercase font-mono text-slate-500 mb-1.5">Permissions Granted</div>
+                        <div className="text-[9px] uppercase font-mono text-slate-400 mb-1.5 font-bold">Permissions Granted</div>
                         <div className="flex flex-wrap gap-1">
                           {member.permissions?.map((perm) => (
                             <span
                               key={perm}
-                              className="px-2 py-0.5 rounded-md bg-slate-800/80 border border-slate-700 text-[10px] text-slate-300 font-medium"
+                              className="px-2 py-0.5 rounded-md bg-slate-100 border border-slate-200 text-[10px] text-slate-700 font-medium"
                             >
                               {perm === 'registrations' && '📋 Registrations & UTR'}
                               {perm === 'checkin' && '🎟️ Gate Check-In'}
@@ -1491,13 +1489,13 @@ export default function AdminPage({ onBackToWebsite }) {
                     </div>
 
                     {/* Footer / Remove Action */}
-                    <div className="pt-3 border-t border-white/5 flex items-center justify-between text-[11px] text-slate-500">
+                    <div className="pt-3 border-t border-slate-100 flex items-center justify-between text-[11px] text-slate-400">
                       <span>Added: {member.addedAt || '2026'}</span>
                       {isHead && (
                         <div className="flex items-center gap-1.5">
                           <button
                             onClick={() => handleOpenEditMember(member)}
-                            className="text-cyan-400 hover:text-cyan-300 flex items-center gap-1 transition-all text-xs font-semibold px-2 py-1 rounded-lg hover:bg-cyan-500/10"
+                            className="text-blue-600 hover:text-blue-700 flex items-center gap-1 transition-all text-xs font-semibold px-2 py-1 rounded-lg hover:bg-blue-50"
                             title="Edit Member or Passcode"
                           >
                             <Edit2 className="w-3.5 h-3.5" />
@@ -1505,7 +1503,7 @@ export default function AdminPage({ onBackToWebsite }) {
                           </button>
                           <button
                             onClick={() => handleRemoveMember(member.id, member.name)}
-                            className="text-rose-400 hover:text-rose-300 flex items-center gap-1 transition-all text-xs font-semibold px-2 py-1 rounded-lg hover:bg-rose-500/10"
+                            className="text-rose-600 hover:text-rose-700 flex items-center gap-1 transition-all text-xs font-semibold px-2 py-1 rounded-lg hover:bg-rose-50"
                           >
                             <Trash2 className="w-3.5 h-3.5" />
                             <span>Revoke</span>
@@ -1525,21 +1523,21 @@ export default function AdminPage({ onBackToWebsite }) {
 
       {/* MODAL 1: ADD COMMITTEE MEMBER */}
       {isAddMemberModalOpen && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/85 backdrop-blur-md p-4">
-          <div className="relative max-w-lg w-full glass-card p-6 sm:p-8 rounded-3xl border-2 border-emerald-500/40 shadow-2xl space-y-6">
-            <div className="flex items-center justify-between border-b border-white/10 pb-4">
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-slate-900/60 backdrop-blur-sm p-4">
+          <div className="relative max-w-lg w-full bg-white p-6 sm:p-8 rounded-3xl border border-slate-200 shadow-2xl space-y-6 text-slate-900">
+            <div className="flex items-center justify-between border-b border-slate-100 pb-4">
               <div className="flex items-center gap-2.5">
-                <div className="w-9 h-9 rounded-xl bg-emerald-500/20 text-emerald-400 flex items-center justify-center">
+                <div className="w-9 h-9 rounded-2xl bg-blue-50 text-blue-600 flex items-center justify-center border border-blue-200">
                   <UserPlus className="w-5 h-5" />
                 </div>
                 <div>
-                  <h4 className="text-base font-bold text-white">Add Committee Member</h4>
-                  <p className="text-[11px] text-slate-400">Create access key for an organizing team member</p>
+                  <h4 className="text-base font-bold text-slate-900 font-chakra">Add Committee Member</h4>
+                  <p className="text-[11px] text-slate-500">Create access key for an organizing team member</p>
                 </div>
               </div>
               <button
                 onClick={() => setIsAddMemberModalOpen(false)}
-                className="p-1.5 rounded-full bg-slate-800 text-slate-400 hover:text-white"
+                className="p-1.5 rounded-full bg-slate-100 text-slate-500 hover:text-slate-900"
               >
                 ✕
               </button>
@@ -1547,7 +1545,7 @@ export default function AdminPage({ onBackToWebsite }) {
 
             <form onSubmit={handleCreateMember} className="space-y-4">
               <div>
-                <label className="block text-xs font-semibold text-slate-300 mb-1">
+                <label className="block text-xs font-semibold text-slate-700 mb-1">
                   Member Full Name *
                 </label>
                 <input
@@ -1556,32 +1554,32 @@ export default function AdminPage({ onBackToWebsite }) {
                   required
                   value={newMemberForm.name}
                   onChange={(e) => setNewMemberForm({ ...newMemberForm, name: e.target.value })}
-                  className="w-full px-3.5 py-2.5 rounded-xl bg-slate-900 border border-slate-700 text-white text-xs focus:outline-none focus:border-emerald-400"
+                  className="w-full px-3.5 py-2.5 rounded-xl bg-slate-50 border border-slate-200 text-slate-900 text-xs focus:outline-none focus:bg-white focus:border-blue-500"
                 />
               </div>
 
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                 <div>
-                  <label className="block text-xs font-semibold text-slate-300 mb-1">
+                  <label className="block text-xs font-semibold text-slate-700 mb-1">
                     College Email / ID
                   </label>
                   <input
                     type="text"
-                    placeholder="e.g. algonexusdschm@gmail.com"
+                    placeholder="e.g. member@chmcollege.edu"
                     value={newMemberForm.email}
                     onChange={(e) => setNewMemberForm({ ...newMemberForm, email: e.target.value })}
-                    className="w-full px-3.5 py-2.5 rounded-xl bg-slate-900 border border-slate-700 text-white text-xs focus:outline-none focus:border-emerald-400"
+                    className="w-full px-3.5 py-2.5 rounded-xl bg-slate-50 border border-slate-200 text-slate-900 text-xs focus:outline-none focus:bg-white focus:border-blue-500"
                   />
                 </div>
 
                 <div>
-                  <label className="block text-xs font-semibold text-slate-300 mb-1">
+                  <label className="block text-xs font-semibold text-slate-700 mb-1">
                     Committee Role *
                   </label>
                   <select
                     value={newMemberForm.role}
                     onChange={(e) => setNewMemberForm({ ...newMemberForm, role: e.target.value })}
-                    className="w-full px-3.5 py-2.5 rounded-xl bg-slate-900 border border-slate-700 text-white text-xs focus:outline-none focus:border-emerald-400"
+                    className="w-full px-3.5 py-2.5 rounded-xl bg-slate-50 border border-slate-200 text-slate-900 text-xs focus:outline-none focus:bg-white focus:border-blue-500"
                   >
                     <option value="Registration & Verification Lead">Registration & Verification Lead</option>
                     <option value="Finance & Accounts Coordinator">Finance & Accounts Coordinator</option>
@@ -1596,13 +1594,13 @@ export default function AdminPage({ onBackToWebsite }) {
 
               <div>
                 <div className="flex items-center justify-between mb-1">
-                  <label className="text-xs font-semibold text-slate-300">
+                  <label className="text-xs font-semibold text-slate-700">
                     Member Login Passcode
                   </label>
                   <button
                     type="button"
                     onClick={handleGenerateRandomPasscode}
-                    className="text-[11px] text-cyan-400 hover:underline flex items-center gap-1 font-mono"
+                    className="text-[11px] text-blue-600 hover:underline flex items-center gap-1 font-mono font-bold"
                   >
                     <span>🎲 Auto-Generate</span>
                   </button>
@@ -1613,12 +1611,12 @@ export default function AdminPage({ onBackToWebsite }) {
                     placeholder="Enter passcode or click Auto-Generate"
                     value={newMemberForm.passcode}
                     onChange={(e) => setNewMemberForm({ ...newMemberForm, passcode: e.target.value })}
-                    className="w-full pl-3.5 pr-10 py-2.5 rounded-xl bg-slate-900 border border-slate-700 text-white text-xs font-mono focus:outline-none focus:border-emerald-400 placeholder-slate-500"
+                    className="w-full pl-3.5 pr-10 py-2.5 rounded-xl bg-slate-50 border border-slate-200 text-slate-900 text-xs font-mono focus:outline-none focus:bg-white focus:border-blue-500 placeholder-slate-400"
                   />
                   <button
                     type="button"
                     onClick={() => setShowNewMemberPass(!showNewMemberPass)}
-                    className="absolute right-3 top-1/2 -translate-y-1/2 p-1 text-slate-400 hover:text-white"
+                    className="absolute right-3 top-1/2 -translate-y-1/2 p-1 text-slate-400 hover:text-slate-700"
                     title={showNewMemberPass ? "Hide Passcode" : "Show Passcode"}
                   >
                     {showNewMemberPass ? <EyeOff className="w-3.5 h-3.5" /> : <Eye className="w-3.5 h-3.5" />}
@@ -1627,11 +1625,11 @@ export default function AdminPage({ onBackToWebsite }) {
               </div>
 
               <div>
-                <label className="block text-xs font-semibold text-slate-300 mb-2">
+                <label className="block text-xs font-semibold text-slate-700 mb-2">
                   Module Permissions
                 </label>
-                <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 text-xs text-slate-300">
-                  <label className="flex items-center gap-2 p-2.5 rounded-xl bg-slate-900/60 border border-slate-800 cursor-pointer">
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 text-xs text-slate-700">
+                  <label className="flex items-center gap-2 p-2.5 rounded-xl bg-slate-50 border border-slate-200 cursor-pointer hover:bg-slate-100">
                     <input
                       type="checkbox"
                       checked={newMemberForm.permissions.includes('registrations')}
@@ -1641,12 +1639,12 @@ export default function AdminPage({ onBackToWebsite }) {
                           : newMemberForm.permissions.filter(p => p !== 'registrations');
                         setNewMemberForm({ ...newMemberForm, permissions: next });
                       }}
-                      className="rounded text-emerald-500"
+                      className="rounded text-blue-600"
                     />
                     <span>📋 Registrations & UTR Desk</span>
                   </label>
 
-                  <label className="flex items-center gap-2 p-2.5 rounded-xl bg-slate-900/60 border border-slate-800 cursor-pointer">
+                  <label className="flex items-center gap-2 p-2.5 rounded-xl bg-slate-50 border border-slate-200 cursor-pointer hover:bg-slate-100">
                     <input
                       type="checkbox"
                       checked={newMemberForm.permissions.includes('checkin')}
@@ -1656,12 +1654,12 @@ export default function AdminPage({ onBackToWebsite }) {
                           : newMemberForm.permissions.filter(p => p !== 'checkin');
                         setNewMemberForm({ ...newMemberForm, permissions: next });
                       }}
-                      className="rounded text-emerald-500"
+                      className="rounded text-blue-600"
                     />
                     <span>🎟️ Gate Check-In & Scanner</span>
                   </label>
 
-                  <label className="flex items-center gap-2 p-2.5 rounded-xl bg-slate-900/60 border border-slate-800 cursor-pointer">
+                  <label className="flex items-center gap-2 p-2.5 rounded-xl bg-slate-50 border border-slate-200 cursor-pointer hover:bg-slate-100">
                     <input
                       type="checkbox"
                       checked={newMemberForm.permissions.includes('payment-bank')}
@@ -1671,12 +1669,12 @@ export default function AdminPage({ onBackToWebsite }) {
                           : newMemberForm.permissions.filter(p => p !== 'payment-bank');
                         setNewMemberForm({ ...newMemberForm, permissions: next });
                       }}
-                      className="rounded text-emerald-500"
+                      className="rounded text-blue-600"
                     />
                     <span>🏛️ College Bank & QR Code</span>
                   </label>
 
-                  <label className="flex items-center gap-2 p-2.5 rounded-xl bg-slate-900/60 border border-slate-800 cursor-pointer">
+                  <label className="flex items-center gap-2 p-2.5 rounded-xl bg-slate-50 border border-slate-200 cursor-pointer hover:bg-slate-100">
                     <input
                       type="checkbox"
                       checked={newMemberForm.permissions.includes('event-info')}
@@ -1686,24 +1684,24 @@ export default function AdminPage({ onBackToWebsite }) {
                           : newMemberForm.permissions.filter(p => p !== 'event-info');
                         setNewMemberForm({ ...newMemberForm, permissions: next });
                       }}
-                      className="rounded text-emerald-500"
+                      className="rounded text-blue-600"
                     />
                     <span>✨ Event Dates & Prices</span>
                   </label>
                 </div>
               </div>
 
-              <div className="pt-4 border-t border-white/10 flex items-center justify-end gap-3">
+              <div className="pt-4 border-t border-slate-100 flex items-center justify-end gap-3">
                 <button
                   type="button"
                   onClick={() => setIsAddMemberModalOpen(false)}
-                  className="px-4 py-2 rounded-xl bg-slate-800 text-slate-300 text-xs font-semibold hover:bg-slate-700"
+                  className="px-4 py-2 rounded-xl bg-slate-100 text-slate-600 text-xs font-semibold hover:bg-slate-200"
                 >
                   Cancel
                 </button>
                 <button
                   type="submit"
-                  className="px-5 py-2.5 rounded-xl bg-gradient-to-r from-emerald-500 to-emerald-400 text-slate-950 text-xs font-bold shadow-[0_0_15px_rgba(16,185,129,0.35)] flex items-center gap-1.5 hover:brightness-110 transition-all"
+                  className="px-5 py-2.5 rounded-xl bg-blue-600 text-white text-xs font-bold shadow-md shadow-blue-500/20 flex items-center gap-1.5 hover:bg-blue-700 transition-all"
                 >
                   <UserPlus className="w-4 h-4" />
                   <span>Create Member & Grant Access</span>
@@ -1716,36 +1714,36 @@ export default function AdminPage({ onBackToWebsite }) {
 
       {/* MODAL 2: CHANGE EVENT HEAD MASTER PASSCODE */}
       {isHeadPasscodeModalOpen && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/85 backdrop-blur-md p-4">
-          <div className="relative max-w-md w-full glass-card p-6 sm:p-8 rounded-3xl border-2 border-amber-500/40 shadow-2xl space-y-5">
-            <div className="flex items-center justify-between border-b border-white/10 pb-4">
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-slate-900/60 backdrop-blur-sm p-4">
+          <div className="relative max-w-md w-full bg-white p-6 sm:p-8 rounded-3xl border border-slate-200 shadow-2xl space-y-5 text-slate-900">
+            <div className="flex items-center justify-between border-b border-slate-100 pb-4">
               <div className="flex items-center gap-2.5">
-                <div className="w-9 h-9 rounded-xl bg-amber-500/20 text-amber-400 flex items-center justify-center">
+                <div className="w-9 h-9 rounded-2xl bg-amber-50 text-amber-600 flex items-center justify-center border border-amber-200">
                   <Key className="w-5 h-5" />
                 </div>
                 <div>
-                  <h4 className="text-base font-bold text-white">Change Master Passcode</h4>
-                  <p className="text-[11px] text-slate-400">Update Event Head supreme access key</p>
+                  <h4 className="text-base font-bold text-slate-900 font-chakra">Change Master Passcode</h4>
+                  <p className="text-[11px] text-slate-500">Update Event Head supreme access key</p>
                 </div>
               </div>
               <button
                 onClick={() => setIsHeadPasscodeModalOpen(false)}
-                className="p-1.5 rounded-full bg-slate-800 text-slate-400 hover:text-white"
+                className="p-1.5 rounded-full bg-slate-100 text-slate-500 hover:text-slate-900"
               >
                 ✕
               </button>
             </div>
 
             {masterPasscodeSuccess && (
-              <div className="p-3 rounded-xl bg-emerald-500/20 border border-emerald-500/40 text-emerald-200 text-xs font-semibold flex items-center gap-2">
-                <Check className="w-4 h-4 text-emerald-400" />
+              <div className="p-3 rounded-xl bg-blue-50 border border-blue-200 text-blue-900 text-xs font-semibold flex items-center gap-2">
+                <Check className="w-4 h-4 text-blue-600" />
                 <span>{masterPasscodeSuccess}</span>
               </div>
             )}
 
             <form onSubmit={handleSaveMasterPasscode} className="space-y-4">
               <div>
-                <label className="block text-xs font-semibold text-slate-300 mb-1">
+                <label className="block text-xs font-semibold text-slate-700 mb-1">
                   New Master Passcode *
                 </label>
                 <div className="relative">
@@ -1755,12 +1753,12 @@ export default function AdminPage({ onBackToWebsite }) {
                     required
                     value={newMasterPasscode}
                     onChange={(e) => setNewMasterPasscode(e.target.value)}
-                    className="w-full pl-4 pr-11 py-2.5 rounded-xl bg-slate-900 border border-slate-700 text-white text-xs font-mono focus:outline-none focus:border-amber-400"
+                    className="w-full pl-4 pr-11 py-2.5 rounded-xl bg-slate-50 border border-slate-200 text-slate-900 text-xs font-mono focus:outline-none focus:bg-white focus:border-amber-500"
                   />
                   <button
                     type="button"
                     onClick={() => setShowNewMasterPass(!showNewMasterPass)}
-                    className="absolute right-3 top-1/2 -translate-y-1/2 p-1 text-slate-400 hover:text-white"
+                    className="absolute right-3 top-1/2 -translate-y-1/2 p-1 text-slate-400 hover:text-slate-700"
                     title={showNewMasterPass ? "Hide Passcode" : "Show Passcode"}
                   >
                     {showNewMasterPass ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
@@ -1769,17 +1767,17 @@ export default function AdminPage({ onBackToWebsite }) {
                 <span className="text-[10px] text-slate-500 mt-1 block">🔒 Encrypted and synchronized across all devices (phone, laptop, tablet).</span>
               </div>
 
-              <div className="pt-3 border-t border-white/10 flex items-center justify-end gap-3">
+              <div className="pt-3 border-t border-slate-100 flex items-center justify-end gap-3">
                 <button
                   type="button"
                   onClick={() => setIsHeadPasscodeModalOpen(false)}
-                  className="px-4 py-2 rounded-xl bg-slate-800 text-slate-300 text-xs font-semibold hover:bg-slate-700"
+                  className="px-4 py-2 rounded-xl bg-slate-100 text-slate-600 text-xs font-semibold hover:bg-slate-200"
                 >
                   Cancel
                 </button>
                 <button
                   type="submit"
-                  className="px-5 py-2.5 rounded-xl bg-gradient-to-r from-amber-500 to-amber-600 text-slate-950 text-xs font-black shadow-lg shadow-amber-950 flex items-center gap-1.5"
+                  className="px-5 py-2.5 rounded-xl bg-gradient-to-r from-amber-500 to-amber-600 text-white text-xs font-bold shadow-md shadow-amber-500/20 flex items-center gap-1.5 hover:from-amber-400 hover:to-amber-500"
                 >
                   <Save className="w-4 h-4" />
                   <span>Update Master Key</span>
@@ -1792,21 +1790,21 @@ export default function AdminPage({ onBackToWebsite }) {
 
       {/* MODAL 3: EDIT COMMITTEE MEMBER */}
       {editingMember && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/85 backdrop-blur-md p-4">
-          <div className="relative max-w-lg w-full glass-card p-6 sm:p-8 rounded-3xl border-2 border-cyan-500/40 shadow-2xl space-y-6">
-            <div className="flex items-center justify-between border-b border-white/10 pb-4">
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-slate-900/60 backdrop-blur-sm p-4">
+          <div className="relative max-w-lg w-full bg-white p-6 sm:p-8 rounded-3xl border border-slate-200 shadow-2xl space-y-6 text-slate-900">
+            <div className="flex items-center justify-between border-b border-slate-100 pb-4">
               <div className="flex items-center gap-2.5">
-                <div className="w-9 h-9 rounded-xl bg-cyan-500/20 text-cyan-400 flex items-center justify-center">
+                <div className="w-9 h-9 rounded-2xl bg-blue-50 text-blue-600 flex items-center justify-center border border-blue-200">
                   <Edit2 className="w-5 h-5" />
                 </div>
                 <div>
-                  <h4 className="text-base font-bold text-white">Edit Committee Member</h4>
-                  <p className="text-[11px] text-slate-400">Update member role, passcode, and module permissions</p>
+                  <h4 className="text-base font-bold text-slate-900 font-chakra">Edit Committee Member</h4>
+                  <p className="text-[11px] text-slate-500">Update member role, passcode, and module permissions</p>
                 </div>
               </div>
               <button
                 onClick={() => setEditingMember(null)}
-                className="p-1.5 rounded-full bg-slate-800 text-slate-400 hover:text-white"
+                className="p-1.5 rounded-full bg-slate-100 text-slate-500 hover:text-slate-900"
               >
                 ✕
               </button>
@@ -1814,7 +1812,7 @@ export default function AdminPage({ onBackToWebsite }) {
 
             <form onSubmit={handleSaveEditMember} className="space-y-4">
               <div>
-                <label className="block text-xs font-semibold text-slate-300 mb-1">
+                <label className="block text-xs font-semibold text-slate-700 mb-1">
                   Full Name *
                 </label>
                 <input
@@ -1822,31 +1820,31 @@ export default function AdminPage({ onBackToWebsite }) {
                   required
                   value={editMemberForm.name}
                   onChange={(e) => setEditMemberForm({ ...editMemberForm, name: e.target.value })}
-                  className="w-full px-3.5 py-2.5 rounded-xl bg-slate-900 border border-slate-700 text-white text-xs focus:outline-none focus:border-cyan-400"
+                  className="w-full px-3.5 py-2.5 rounded-xl bg-slate-50 border border-slate-200 text-slate-900 text-xs focus:outline-none focus:bg-white focus:border-blue-500"
                 />
               </div>
 
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                 <div>
-                  <label className="block text-xs font-semibold text-slate-300 mb-1">
+                  <label className="block text-xs font-semibold text-slate-700 mb-1">
                     College Email / ID
                   </label>
                   <input
                     type="text"
                     value={editMemberForm.email}
                     onChange={(e) => setEditMemberForm({ ...editMemberForm, email: e.target.value })}
-                    className="w-full px-3.5 py-2.5 rounded-xl bg-slate-900 border border-slate-700 text-white text-xs focus:outline-none focus:border-cyan-400"
+                    className="w-full px-3.5 py-2.5 rounded-xl bg-slate-50 border border-slate-200 text-slate-900 text-xs focus:outline-none focus:bg-white focus:border-blue-500"
                   />
                 </div>
 
                 <div>
-                  <label className="block text-xs font-semibold text-slate-300 mb-1">
+                  <label className="block text-xs font-semibold text-slate-700 mb-1">
                     Committee Role *
                   </label>
                   <select
                     value={editMemberForm.role}
                     onChange={(e) => setEditMemberForm({ ...editMemberForm, role: e.target.value })}
-                    className="w-full px-3.5 py-2.5 rounded-xl bg-slate-900 border border-slate-700 text-white text-xs focus:outline-none focus:border-cyan-400"
+                    className="w-full px-3.5 py-2.5 rounded-xl bg-slate-50 border border-slate-200 text-slate-900 text-xs focus:outline-none focus:bg-white focus:border-blue-500"
                   >
                     <option value="Registration & Verification Lead">Registration & Verification Lead</option>
                     <option value="Finance & Accounts Coordinator">Finance & Accounts Coordinator</option>
@@ -1860,7 +1858,7 @@ export default function AdminPage({ onBackToWebsite }) {
               </div>
 
               <div>
-                <label className="block text-xs font-semibold text-slate-300 mb-1">
+                <label className="block text-xs font-semibold text-slate-700 mb-1">
                   Member Login Passcode *
                 </label>
                 <div className="relative">
@@ -1869,12 +1867,12 @@ export default function AdminPage({ onBackToWebsite }) {
                     required
                     value={editMemberForm.passcode}
                     onChange={(e) => setEditMemberForm({ ...editMemberForm, passcode: e.target.value })}
-                    className="w-full pl-3.5 pr-10 py-2.5 rounded-xl bg-slate-900 border border-slate-700 text-white text-xs font-mono focus:outline-none focus:border-cyan-400"
+                    className="w-full pl-3.5 pr-10 py-2.5 rounded-xl bg-slate-50 border border-slate-200 text-slate-900 text-xs font-mono focus:outline-none focus:bg-white focus:border-blue-500"
                   />
                   <button
                     type="button"
                     onClick={() => setShowEditMemberPass(!showEditMemberPass)}
-                    className="absolute right-3 top-1/2 -translate-y-1/2 p-1 text-slate-400 hover:text-white"
+                    className="absolute right-3 top-1/2 -translate-y-1/2 p-1 text-slate-400 hover:text-slate-700"
                   >
                     {showEditMemberPass ? <EyeOff className="w-3.5 h-3.5" /> : <Eye className="w-3.5 h-3.5" />}
                   </button>
@@ -1882,11 +1880,11 @@ export default function AdminPage({ onBackToWebsite }) {
               </div>
 
               <div>
-                <label className="block text-xs font-semibold text-slate-300 mb-2">
+                <label className="block text-xs font-semibold text-slate-700 mb-2">
                   Module Permissions
                 </label>
-                <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 text-xs text-slate-300">
-                  <label className="flex items-center gap-2 p-2.5 rounded-xl bg-slate-900/60 border border-slate-800 cursor-pointer">
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 text-xs text-slate-700">
+                  <label className="flex items-center gap-2 p-2.5 rounded-xl bg-slate-50 border border-slate-200 cursor-pointer hover:bg-slate-100">
                     <input
                       type="checkbox"
                       checked={editMemberForm.permissions.includes('registrations')}
@@ -1896,12 +1894,12 @@ export default function AdminPage({ onBackToWebsite }) {
                           : editMemberForm.permissions.filter(p => p !== 'registrations');
                         setEditMemberForm({ ...editMemberForm, permissions: next });
                       }}
-                      className="rounded text-cyan-500"
+                      className="rounded text-blue-600"
                     />
                     <span>📋 Registrations & UTR Desk</span>
                   </label>
 
-                  <label className="flex items-center gap-2 p-2.5 rounded-xl bg-slate-900/60 border border-slate-800 cursor-pointer">
+                  <label className="flex items-center gap-2 p-2.5 rounded-xl bg-slate-50 border border-slate-200 cursor-pointer hover:bg-slate-100">
                     <input
                       type="checkbox"
                       checked={editMemberForm.permissions.includes('checkin')}
@@ -1911,12 +1909,12 @@ export default function AdminPage({ onBackToWebsite }) {
                           : editMemberForm.permissions.filter(p => p !== 'checkin');
                         setEditMemberForm({ ...editMemberForm, permissions: next });
                       }}
-                      className="rounded text-cyan-500"
+                      className="rounded text-blue-600"
                     />
                     <span>🎟️ Gate Check-In & Scanner</span>
                   </label>
 
-                  <label className="flex items-center gap-2 p-2.5 rounded-xl bg-slate-900/60 border border-slate-800 cursor-pointer">
+                  <label className="flex items-center gap-2 p-2.5 rounded-xl bg-slate-50 border border-slate-200 cursor-pointer hover:bg-slate-100">
                     <input
                       type="checkbox"
                       checked={editMemberForm.permissions.includes('payment-bank')}
@@ -1926,12 +1924,12 @@ export default function AdminPage({ onBackToWebsite }) {
                           : editMemberForm.permissions.filter(p => p !== 'payment-bank');
                         setEditMemberForm({ ...editMemberForm, permissions: next });
                       }}
-                      className="rounded text-cyan-500"
+                      className="rounded text-blue-600"
                     />
                     <span>🏛️ College Bank & QR Code</span>
                   </label>
 
-                  <label className="flex items-center gap-2 p-2.5 rounded-xl bg-slate-900/60 border border-slate-800 cursor-pointer">
+                  <label className="flex items-center gap-2 p-2.5 rounded-xl bg-slate-50 border border-slate-200 cursor-pointer hover:bg-slate-100">
                     <input
                       type="checkbox"
                       checked={editMemberForm.permissions.includes('event-info')}
@@ -1941,24 +1939,24 @@ export default function AdminPage({ onBackToWebsite }) {
                           : editMemberForm.permissions.filter(p => p !== 'event-info');
                         setEditMemberForm({ ...editMemberForm, permissions: next });
                       }}
-                      className="rounded text-cyan-500"
+                      className="rounded text-blue-600"
                     />
                     <span>✨ Event Dates & Prices</span>
                   </label>
                 </div>
               </div>
 
-              <div className="pt-4 border-t border-white/10 flex items-center justify-end gap-3">
+              <div className="pt-4 border-t border-slate-100 flex items-center justify-end gap-3">
                 <button
                   type="button"
                   onClick={() => setEditingMember(null)}
-                  className="px-4 py-2 rounded-xl bg-slate-800 text-slate-300 text-xs font-semibold hover:bg-slate-700"
+                  className="px-4 py-2 rounded-xl bg-slate-100 text-slate-600 text-xs font-semibold hover:bg-slate-200"
                 >
                   Cancel
                 </button>
                 <button
                   type="submit"
-                  className="px-5 py-2.5 rounded-xl bg-cyan-500 hover:bg-cyan-400 text-slate-950 font-bold text-xs shadow-lg shadow-cyan-950 flex items-center gap-1.5"
+                  className="px-5 py-2.5 rounded-xl bg-blue-600 hover:bg-blue-700 text-white font-bold text-xs shadow-md shadow-blue-500/20 flex items-center gap-1.5"
                 >
                   <Save className="w-4 h-4" />
                   <span>Save Member Changes</span>
@@ -1971,19 +1969,19 @@ export default function AdminPage({ onBackToWebsite }) {
 
       {/* Screenshot Modal */}
       {viewScreenshotModal && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/90 backdrop-blur-md p-4">
-          <div className="relative max-w-lg w-full bg-slate-900 p-4 rounded-3xl border border-white/10 flex flex-col items-center">
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-slate-900/60 backdrop-blur-sm p-4">
+          <div className="relative max-w-lg w-full bg-white p-5 rounded-3xl border border-slate-200 shadow-2xl flex flex-col items-center text-slate-900">
             <button
               onClick={() => setViewScreenshotModal(null)}
-              className="absolute top-4 right-4 p-2 rounded-full bg-slate-800 text-white hover:bg-slate-700"
+              className="absolute top-4 right-4 p-2 rounded-full bg-slate-100 text-slate-500 hover:text-slate-900"
             >
               ✕
             </button>
-            <h4 className="text-xs font-bold uppercase text-slate-300 mb-3">Participant Payment Receipt Screenshot</h4>
+            <h4 className="text-xs font-bold uppercase text-slate-700 mb-3 font-mono">Participant Payment Receipt Screenshot</h4>
             <img
               src={viewScreenshotModal}
               alt="Payment Receipt"
-              className="max-h-[70vh] object-contain rounded-xl border border-slate-800"
+              className="max-h-[70vh] object-contain rounded-xl border border-slate-200 shadow-sm"
             />
           </div>
         </div>
