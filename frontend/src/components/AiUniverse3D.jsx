@@ -2,14 +2,13 @@ import React, { useRef, useEffect } from 'react';
 import * as THREE from 'three';
 
 /**
- * AiUniverse3D: High-Density High-Definition Color-Calibrated TechAstra Universe
+ * AiUniverse3D: High-Density Cobalt & Gold TechAstra Neural Universe
  * 
  * Color Architecture (High-Contrast White Studio Palette):
- * - Radiant Solar Gold (#f59e0b, #fbbf24) - Official TechAstra Astra Emblem Ring & Beacons
- * - Electric Cyan (#00b4d8, #0284c7) - Global Equator & AI Apex Nucleus
- * - Deep Sapphire Cobalt (#1d4ed8, #2563eb) - Meridian Latitudes & RAG Memory Lattice
- * - Neon Indigo (#4f46e5, #6366f1) - Machine Learning Tensor Weights
- * - Synaptic Imperial Violet (#7c3aed, #8b5cf6) - NLP Attention Networks & Counter-Orbit Ring
+ * - Radiant Solar Gold (#f59e0b, #fbbf24, #d97706) - Official TechAstra Astra Emblem Ring, Firing Synapses & Beacons
+ * - Royal Cobalt & Sapphire Blue (#1d4ed8, #2563eb, #3b82f6) - Structural Axons, Meridian Latitudes & Tensor Networks
+ * - Luminous Champagne Highlight (#fef08a) - Firing Synapse Terminals
+ * - Deep Sapphire (#1e40af) - Volumetric Atmospheric Depth
  * 
  * Performance:
  * - Rock-solid 30 FPS throttle
@@ -19,15 +18,15 @@ import * as THREE from 'three';
  * - Complete memory cleanup on unmount
  */
 
-// 5 Core Tech Pillars of TechAstra with Dense Satellite Constellations
+// 5 Core Tech Pillars of TechAstra with Dense Satellite Constellations in Cobalt & Gold
 const TECH_PILLARS = [
   {
     id: 'ai',
     name: 'AI CORE',
     sub: 'Artificial Intelligence',
     pos: [0, 4.8, 0.6],
-    color: '#0284c7', // Electric Cyan
-    accentColor: '#f59e0b', // Solar Gold Highlight
+    color: '#f59e0b', // Radiant Solar Gold Apex
+    accentColor: '#2563eb', // Royal Cobalt Ring
     geo: 'icosahedron',
     radius: 1.15,
     nodes: 160
@@ -37,8 +36,8 @@ const TECH_PILLARS = [
     name: 'CV ENGINE',
     sub: 'Computer Vision',
     pos: [-8.6, 1.8, 1.8],
-    color: '#0ea5e9', // Optical Azure
-    accentColor: '#0284c7',
+    color: '#2563eb', // Royal Cobalt
+    accentColor: '#fbbf24', // Amber Gold Ring
     geo: 'octahedron',
     radius: 0.9,
     nodes: 130
@@ -48,8 +47,8 @@ const TECH_PILLARS = [
     name: 'RAG MEMORY',
     sub: 'Vector Retrieval',
     pos: [8.6, 2.0, -1.6],
-    color: '#2563eb', // Royal Cobalt
-    accentColor: '#3b82f6',
+    color: '#1d4ed8', // Deep Sapphire Cobalt
+    accentColor: '#f59e0b', // Solar Gold Ring
     geo: 'octahedron',
     radius: 0.9,
     nodes: 130
@@ -59,8 +58,8 @@ const TECH_PILLARS = [
     name: 'NLP SYNAPSE',
     sub: 'Natural Language',
     pos: [6.6, -3.8, 1.8],
-    color: '#8b5cf6', // Synaptic Violet
-    accentColor: '#a855f7',
+    color: '#fbbf24', // Luminous Amber Gold
+    accentColor: '#1d4ed8', // Deep Cobalt Ring
     geo: 'tetrahedron',
     radius: 0.8,
     nodes: 120
@@ -70,20 +69,20 @@ const TECH_PILLARS = [
     name: 'ML WEIGHTS',
     sub: 'Machine Learning',
     pos: [-6.6, -3.8, -1.4],
-    color: '#6366f1', // Neural Indigo
-    accentColor: '#818cf8',
+    color: '#3b82f6', // Electric Azure Cobalt
+    accentColor: '#f59e0b', // Solar Gold Ring
     geo: 'tetrahedron',
     radius: 0.8,
     nodes: 120
   }
 ];
 
-// Peripheral Widescreen Wings
+// Peripheral Widescreen Wings in Cobalt & Gold
 const WIDESCREEN_EDGES = [
-  { id: 'edge_west', pos: [-15.5, -0.6, -2.0], color: '#38bdf8', nodes: 85 },
-  { id: 'edge_east', pos: [15.5, -0.4, -2.0], color: '#818cf8', nodes: 85 },
-  { id: 'horizon_nw', pos: [-9.0, 5.6, -1.8], color: '#0284c7', nodes: 65 },
-  { id: 'horizon_ne', pos: [9.0, 5.8, -1.8], color: '#7c3aed', nodes: 65 }
+  { id: 'edge_west', pos: [-15.5, -0.6, -2.0], color: '#2563eb', nodes: 85 }, // Cobalt
+  { id: 'edge_east', pos: [15.5, -0.4, -2.0], color: '#f59e0b', nodes: 85 }, // Gold
+  { id: 'horizon_nw', pos: [-9.0, 5.6, -1.8], color: '#1d4ed8', nodes: 65 }, // Sapphire
+  { id: 'horizon_ne', pos: [9.0, 5.8, -1.8], color: '#fbbf24', nodes: 65 }  // Amber Gold
 ];
 
 export default function AiUniverse3D() {
@@ -149,17 +148,23 @@ export default function AiUniverse3D() {
     // --- 4. Central World / Globe ("Astra Global Network") ---
     const GLOBE_RADIUS = 3.6;
 
-    // 4a. High-Contrast Latitude & Longitude Meridians
+    // 4a. High-Contrast Latitude & Longitude Meridians in Cobalt & Gold
     const primeMeridianMat = register(new THREE.LineBasicMaterial({
-      color: 0x0284c7, // Vibrant Electric Cyan
+      color: 0x2563eb, // Royal Cobalt Blue
       transparent: true,
-      opacity: 0.65
+      opacity: 0.68
     }));
 
     const secondaryMeridianMat = register(new THREE.LineBasicMaterial({
       color: 0x1d4ed8, // Deep Sapphire Cobalt
       transparent: true,
       opacity: 0.38
+    }));
+
+    const goldEquatorMat = register(new THREE.LineBasicMaterial({
+      color: 0xf59e0b, // Radiant Solar Gold Equator
+      transparent: true,
+      opacity: 0.85
     }));
 
     // Longitude circular meridians
@@ -198,32 +203,34 @@ export default function AiUniverse3D() {
       }
       const latGeo = register(new THREE.BufferGeometry().setFromPoints(circlePts));
       const isEquator = Math.abs(y) < 0.01;
-      const latLine = new THREE.Line(latGeo, isEquator ? primeMeridianMat : secondaryMeridianMat);
+      const latLine = new THREE.Line(latGeo, isEquator ? goldEquatorMat : secondaryMeridianMat);
       globeGroup.add(latLine);
     });
 
-    // 4b. Inner Cyber Heart Core (Volumetric substance)
+    // 4b. Inner Cyber Heart Core (Radiant Gold Icosahedron)
     const innerCoreGeo = register(new THREE.IcosahedronGeometry(1.5, 1));
     const innerCoreMat = register(new THREE.MeshBasicMaterial({
-      color: 0x2563eb,
+      color: 0xf59e0b, // Solar Gold Core
       wireframe: true,
       transparent: true,
-      opacity: 0.45
+      opacity: 0.50
     }));
     const innerCoreMesh = new THREE.Mesh(innerCoreGeo, innerCoreMat);
     globeGroup.add(innerCoreMesh);
 
-    // 4c. Dense Fibonacci Global Network Dots (Four Vibrant Cyber Jewels)
+    // 4c. Dense Fibonacci Global Network Dots in Rich Cobalt & Gold Palette
     const globePointsCount = 650;
     const globePositions = [];
     const globeColors = [];
     const globeVectors = [];
     
-    const palette = [
-      new THREE.Color(0x0284c7), // Electric Cyan
+    const cobaltGoldPalette = [
+      new THREE.Color(0x1d4ed8), // Deep Royal Cobalt
       new THREE.Color(0xf59e0b), // Radiant Solar Gold
-      new THREE.Color(0x2563eb), // Cobalt Blue
-      new THREE.Color(0x8b5cf6)  // Synaptic Violet
+      new THREE.Color(0x2563eb), // Vibrant Cobalt Blue
+      new THREE.Color(0xfbbf24), // Luminous Astra Amber Gold
+      new THREE.Color(0x3b82f6), // Electric Azure Sapphire
+      new THREE.Color(0xd97706)  // Burnished Imperial Gold
     ];
 
     const phiGolden = Math.PI * (3 - Math.sqrt(5));
@@ -238,7 +245,7 @@ export default function AiUniverse3D() {
 
       globePositions.push(x, posY, z);
       globeVectors.push(new THREE.Vector3(x, posY, z));
-      const col = palette[i % palette.length];
+      const col = cobaltGoldPalette[i % cobaltGoldPalette.length];
       globeColors.push(col.r, col.g, col.b);
     }
 
@@ -250,24 +257,24 @@ export default function AiUniverse3D() {
       size: 0.17,
       vertexColors: true,
       transparent: true,
-      opacity: 0.92
+      opacity: 0.94
     }));
     const globePoints = new THREE.Points(globePtsGeo, globePtsMat);
     globeGroup.add(globePoints);
 
-    // 4d. Dense Global Surface Synaptic Net (LineSegments connecting nearby globe surface nodes)
+    // 4d. Dense Global Surface Synaptic Net in Cobalt & Gold
     const globeLinePositions = [];
     const globeLineColors = [];
     for (let i = 0; i < globePointsCount; i++) {
       const p1 = globeVectors[i];
-      const col1 = palette[i % palette.length];
+      const col1 = cobaltGoldPalette[i % cobaltGoldPalette.length];
       let links = 0;
       for (let j = i + 1; j < globePointsCount; j++) {
         const p2 = globeVectors[j];
         const dist = p1.distanceTo(p2);
         if (dist < 1.05) {
           globeLinePositions.push(p1.x, p1.y, p1.z, p2.x, p2.y, p2.z);
-          const col2 = palette[j % palette.length];
+          const col2 = cobaltGoldPalette[j % cobaltGoldPalette.length];
           globeLineColors.push(col1.r, col1.g, col1.b, col2.r, col2.g, col2.b);
           links++;
           if (links >= 3) break;
@@ -281,12 +288,12 @@ export default function AiUniverse3D() {
     const globeLineMat = register(new THREE.LineBasicMaterial({
       vertexColors: true,
       transparent: true,
-      opacity: 0.35
+      opacity: 0.36
     }));
     const globeSynapseMesh = new THREE.LineSegments(globeLineGeo, globeLineMat);
     globeGroup.add(globeSynapseMesh);
 
-    // --- 5. "Astra" Celestial Orbital Rings (Vibrant Gold & Cyan) ---
+    // --- 5. "Astra" Celestial Orbital Rings (Vibrant Gold & Cobalt) ---
     // Celestial Ring 1: Primary Diagonal Astra Ring (Rich Radiant Solar Gold)
     const ring1Pts = [];
     const RING1_RADIUS = 5.8;
@@ -302,7 +309,7 @@ export default function AiUniverse3D() {
     const ring1Mat = register(new THREE.LineBasicMaterial({
       color: 0xf59e0b, // Radiant Solar Gold
       transparent: true,
-      opacity: 0.80
+      opacity: 0.85
     }));
     const astraRing1 = new THREE.Line(ring1Geo, ring1Mat);
     astraRing1.rotation.x = 0.58;
@@ -326,7 +333,7 @@ export default function AiUniverse3D() {
     beaconGeo.setAttribute('position', new THREE.Float32BufferAttribute(beaconPts, 3));
     beaconGeo.setAttribute('color', new THREE.Float32BufferAttribute(beaconCols, 3));
     const beaconMat = register(new THREE.PointsMaterial({
-      size: 0.32,
+      size: 0.34,
       vertexColors: true,
       transparent: true,
       opacity: 0.95
@@ -334,7 +341,7 @@ export default function AiUniverse3D() {
     const astraBeacons = new THREE.Points(beaconGeo, beaconMat);
     astraRing1.add(astraBeacons);
 
-    // Celestial Ring 2: Secondary Counter-Orbit Ring (Luminous Cyan)
+    // Celestial Ring 2: Secondary Counter-Orbit Ring (Royal Cobalt Sapphire)
     const ring2Pts = [];
     const RING2_RADIUS = 6.6;
     for (let s = 0; s <= 80; s++) {
@@ -347,16 +354,16 @@ export default function AiUniverse3D() {
     }
     const ring2Geo = register(new THREE.BufferGeometry().setFromPoints(ring2Pts));
     const ring2Mat = register(new THREE.LineBasicMaterial({
-      color: 0x0ea5e9, // Electric Cyan Accent
+      color: 0x2563eb, // Royal Cobalt Blue
       transparent: true,
-      opacity: 0.60
+      opacity: 0.65
     }));
     const astraRing2 = new THREE.Line(ring2Geo, ring2Mat);
     astraRing2.rotation.x = -0.45;
     astraRing2.rotation.z = 0.40;
     astraRingsGroup.add(astraRing2);
 
-    // Celestial Ring 3: Concentric Equatorial Synaptic Ring
+    // Celestial Ring 3: Concentric Equatorial Synaptic Ring (Warm Amber Gold)
     const ring3Pts = [];
     const RING3_RADIUS = 5.0;
     for (let s = 0; s <= 64; s++) {
@@ -369,14 +376,14 @@ export default function AiUniverse3D() {
     }
     const ring3Geo = register(new THREE.BufferGeometry().setFromPoints(ring3Pts));
     const ring3Mat = register(new THREE.LineBasicMaterial({
-      color: 0x8b5cf6, // Synaptic Violet
+      color: 0xd97706, // Imperial Amber Gold
       transparent: true,
-      opacity: 0.42
+      opacity: 0.48
     }));
     const astraRing3 = new THREE.Line(ring3Geo, ring3Mat);
     astraRingsGroup.add(astraRing3);
 
-    // --- 6. The 5 Core Tech Pillars (AI, CV, ML, NLP, RAG) with Dense Synaptic Clouds ---
+    // --- 6. The 5 Core Tech Pillars (AI, CV, ML, NLP, RAG) in Cobalt & Gold ---
     const pillarMeshes = [];
     const techNodePositions = [];
     const techNodeColors = [];
@@ -405,7 +412,7 @@ export default function AiUniverse3D() {
         color: pillar.color,
         wireframe: true,
         transparent: true,
-        opacity: 0.90
+        opacity: 0.92
       }));
       const coreMesh = new THREE.Mesh(coreGeo, coreMat);
       coreMesh.scale.setScalar(pillar.radius);
@@ -416,7 +423,7 @@ export default function AiUniverse3D() {
         color: pillar.color,
         side: THREE.DoubleSide,
         transparent: true,
-        opacity: 0.55
+        opacity: 0.58
       }));
       const haloMesh = new THREE.Mesh(haloRingGeo, haloMat);
       haloMesh.scale.setScalar(pillar.radius * 1.15);
@@ -427,7 +434,7 @@ export default function AiUniverse3D() {
         color: pillar.accentColor || pillar.color,
         side: THREE.DoubleSide,
         transparent: true,
-        opacity: 0.30
+        opacity: 0.35
       }));
       const outerHaloMesh = new THREE.Mesh(outerHaloGeo, outerHaloMat);
       outerHaloMesh.scale.setScalar(pillar.radius * 1.25);
@@ -436,7 +443,7 @@ export default function AiUniverse3D() {
       techConstellationGroup.add(pillarGroup);
       pillarMeshes.push({ coreMesh, haloMesh, outerHaloMesh, center, color });
 
-      // Ultra-Dense Satellite Cloud
+      // Ultra-Dense Satellite Cloud in Cobalt & Gold
       const clusterVectorList = [];
       for (let i = 0; i < pillar.nodes; i++) {
         const u = Math.random();
@@ -482,7 +489,7 @@ export default function AiUniverse3D() {
         const beamMat = register(new THREE.LineBasicMaterial({
           color: pillar.color,
           transparent: true,
-          opacity: b === 0 ? 0.60 : 0.30
+          opacity: b === 0 ? 0.65 : 0.32
         }));
         const beam = new THREE.Line(beamGeo, beamMat);
         techConstellationGroup.add(beam);
@@ -523,28 +530,35 @@ export default function AiUniverse3D() {
       }
     });
 
-    // --- 8. Ambient Inter-Pillar Synaptic Starfield (Deep Neural Space) ---
+    // --- 8. Ambient Inter-Pillar Synaptic Starfield (Cobalt & Gold Deep Space) ---
     const ambientCount = 260;
     const ambientVectors = [];
-    const ambientCol = new THREE.Color(0x38bdf8);
+    const ambientColorsPalette = [
+      new THREE.Color(0xf59e0b), // Solar Gold
+      new THREE.Color(0x2563eb), // Royal Cobalt
+      new THREE.Color(0xfbbf24), // Amber Gold
+      new THREE.Color(0x1d4ed8)  // Deep Sapphire
+    ];
+
     for (let i = 0; i < ambientCount; i++) {
       const x = (Math.random() - 0.5) * 28;
       const y = (Math.random() - 0.5) * 16;
       const z = (Math.random() - 0.5) * 8 - 1.0;
+      const col = ambientColorsPalette[i % ambientColorsPalette.length];
       techNodePositions.push(x, y, z);
-      techNodeColors.push(ambientCol.r, ambientCol.g, ambientCol.b);
-      ambientVectors.push(new THREE.Vector3(x, y, z));
+      techNodeColors.push(col.r, col.g, col.b);
+      ambientVectors.push({ pos: new THREE.Vector3(x, y, z), col });
     }
 
     // Connect ambient nodes if in close proximity
     for (let i = 0; i < ambientVectors.length; i++) {
-      const p1 = ambientVectors[i];
+      const { pos: p1, col: c1 } = ambientVectors[i];
       let links = 0;
       for (let j = i + 1; j < ambientVectors.length; j++) {
-        const p2 = ambientVectors[j];
+        const { pos: p2, col: c2 } = ambientVectors[j];
         if (p1.distanceTo(p2) < 2.0) {
           denseSynapseLinePos.push(p1.x, p1.y, p1.z, p2.x, p2.y, p2.z);
-          denseSynapseLineCol.push(ambientCol.r, ambientCol.g, ambientCol.b, ambientCol.r, ambientCol.g, ambientCol.b);
+          denseSynapseLineCol.push(c1.r, c1.g, c1.b, c2.r, c2.g, c2.b);
           links++;
           if (links >= 2) break;
         }
@@ -560,7 +574,7 @@ export default function AiUniverse3D() {
       size: 0.16,
       vertexColors: true,
       transparent: true,
-      opacity: 0.88
+      opacity: 0.90
     }));
     const techPoints = new THREE.Points(techPtsGeo, techPtsMat);
     techConstellationGroup.add(techPoints);
@@ -572,12 +586,12 @@ export default function AiUniverse3D() {
     const denseSynapseMat = register(new THREE.LineBasicMaterial({
       vertexColors: true,
       transparent: true,
-      opacity: 0.38
+      opacity: 0.40
     }));
     const denseSynapseMesh = new THREE.LineSegments(denseSynapseGeo, denseSynapseMat);
     techConstellationGroup.add(denseSynapseMesh);
 
-    // --- 9. Complete Interconnected Synaptic Axon Highways (K5 Dense Network) ---
+    // --- 9. Complete Interconnected Synaptic Axon Highways (K5 Dense Network in Cobalt & Gold) ---
     const allPositionsMap = {
       ai: new THREE.Vector3(...TECH_PILLARS[0].pos),
       cv: new THREE.Vector3(...TECH_PILLARS[1].pos),
@@ -591,34 +605,34 @@ export default function AiUniverse3D() {
     };
 
     const highwayPairs = [
-      // Outer Pentagon loop
-      { from: 'cv', to: 'ai', color: 0x0ea5e9 },
-      { from: 'ai', to: 'rag', color: 0x2563eb },
-      { from: 'rag', to: 'nlp', color: 0x8b5cf6 },
-      { from: 'nlp', to: 'ml', color: 0x6366f1 },
-      { from: 'ml', to: 'cv', color: 0x0284c7 },
+      // Outer Pentagon loop alternating Cobalt & Gold
+      { from: 'cv', to: 'ai', color: 0xf59e0b, secondColor: 0x2563eb }, // Gold / Cobalt
+      { from: 'ai', to: 'rag', color: 0x2563eb, secondColor: 0xfbbf24 }, // Cobalt / Amber
+      { from: 'rag', to: 'nlp', color: 0xf59e0b, secondColor: 0x1d4ed8 }, // Gold / Sapphire
+      { from: 'nlp', to: 'ml', color: 0x1d4ed8, secondColor: 0xf59e0b }, // Sapphire / Gold
+      { from: 'ml', to: 'cv', color: 0xfbbf24, secondColor: 0x2563eb }, // Amber / Cobalt
       // Inner Complete Star Cross-Connections
-      { from: 'cv', to: 'rag', color: 0x0ea5e9 },
-      { from: 'ml', to: 'ai', color: 0x6366f1 },
-      { from: 'nlp', to: 'ai', color: 0x8b5cf6 },
-      { from: 'cv', to: 'nlp', color: 0x0284c7 },
-      { from: 'ml', to: 'rag', color: 0x6366f1 },
+      { from: 'cv', to: 'rag', color: 0xf59e0b, secondColor: 0x1d4ed8 },
+      { from: 'ml', to: 'ai', color: 0x2563eb, secondColor: 0xfbbf24 },
+      { from: 'nlp', to: 'ai', color: 0xfbbf24, secondColor: 0x2563eb },
+      { from: 'cv', to: 'nlp', color: 0x1d4ed8, secondColor: 0xf59e0b },
+      { from: 'ml', to: 'rag', color: 0xf59e0b, secondColor: 0x2563eb },
       // Peripheral Highway Extensions
-      { from: 'cv', to: 'edge_west', color: 0x38bdf8 },
-      { from: 'rag', to: 'edge_east', color: 0x818cf8 },
-      { from: 'ai', to: 'horizon_nw', color: 0x0284c7 },
-      { from: 'ai', to: 'horizon_ne', color: 0x7c3aed },
-      { from: 'edge_west', to: 'ml', color: 0x38bdf8 },
-      { from: 'edge_east', to: 'nlp', color: 0x818cf8 }
+      { from: 'cv', to: 'edge_west', color: 0x2563eb, secondColor: 0xf59e0b },
+      { from: 'rag', to: 'edge_east', color: 0xf59e0b, secondColor: 0x2563eb },
+      { from: 'ai', to: 'horizon_nw', color: 0x1d4ed8, secondColor: 0xfbbf24 },
+      { from: 'ai', to: 'horizon_ne', color: 0xfbbf24, secondColor: 0x1d4ed8 },
+      { from: 'edge_west', to: 'ml', color: 0x2563eb, secondColor: 0xf59e0b },
+      { from: 'edge_east', to: 'nlp', color: 0xf59e0b, secondColor: 0x2563eb }
     ];
 
-    // Render multi-strand braided highways
-    highwayPairs.forEach(({ from, to, color }) => {
+    // Render multi-strand braided highways in Cobalt & Gold dual-helix
+    highwayPairs.forEach(({ from, to, color, secondColor }) => {
       const pA = allPositionsMap[from];
       const pB = allPositionsMap[to];
       if (!pA || !pB) return;
 
-      // Primary High-Arch Curve
+      // Primary High-Arch Curve (First Color)
       const mid1 = pA.clone().add(pB).multiplyScalar(0.5);
       mid1.z += 1.8;
       const curve1 = new THREE.QuadraticBezierCurve3(pA, mid1, pB);
@@ -627,12 +641,12 @@ export default function AiUniverse3D() {
       const lineMat1 = register(new THREE.LineBasicMaterial({
         color,
         transparent: true,
-        opacity: 0.58
+        opacity: 0.60
       }));
       const line1 = new THREE.Line(lineGeo1, lineMat1);
       techConstellationGroup.add(line1);
 
-      // Secondary Braided Parallel Strand (giving thick neural axon appearance)
+      // Secondary Braided Parallel Strand (Second Color - Creating Cobalt & Gold Duo)
       const mid2 = pA.clone().add(pB).multiplyScalar(0.5);
       mid2.z += 1.3;
       mid2.y += 0.35;
@@ -640,9 +654,9 @@ export default function AiUniverse3D() {
       const pts2 = curve2.getPoints(24);
       const lineGeo2 = register(new THREE.BufferGeometry().setFromPoints(pts2));
       const lineMat2 = register(new THREE.LineBasicMaterial({
-        color,
+        color: secondColor,
         transparent: true,
-        opacity: 0.32
+        opacity: 0.38
       }));
       const line2 = new THREE.Line(lineGeo2, lineMat2);
       techConstellationGroup.add(line2);
@@ -903,16 +917,16 @@ export default function AiUniverse3D() {
         className="absolute inset-0 w-full h-full cursor-grab active:cursor-grabbing" 
       />
 
-      {/* Multi-Spectral Atmospheric Glows (Rich Gold & Cyan Cyber Ambience) */}
+      {/* Multi-Spectral Atmospheric Glows (Rich Cobalt & Gold Cyber Ambience) */}
       <div 
         className="absolute inset-0 pointer-events-none"
         style={{
           background: `
-            radial-gradient(circle 750px at 50% 32%, rgba(2, 132, 199, 0.14) 0%, transparent 70%),
-            radial-gradient(circle 600px at 50% 36%, rgba(245, 158, 11, 0.12) 0%, transparent 65%),
-            radial-gradient(circle 550px at 18% 45%, rgba(99, 102, 241, 0.09) 0%, transparent 65%),
-            radial-gradient(circle 550px at 82% 45%, rgba(37, 99, 235, 0.09) 0%, transparent 65%),
-            radial-gradient(circle 450px at 50% 70%, rgba(139, 92, 246, 0.08) 0%, transparent 65%)
+            radial-gradient(circle 750px at 50% 32%, rgba(37, 99, 235, 0.12) 0%, transparent 70%),
+            radial-gradient(circle 650px at 50% 36%, rgba(245, 158, 11, 0.13) 0%, transparent 65%),
+            radial-gradient(circle 550px at 18% 45%, rgba(29, 78, 216, 0.09) 0%, transparent 65%),
+            radial-gradient(circle 550px at 82% 45%, rgba(251, 191, 36, 0.09) 0%, transparent 65%),
+            radial-gradient(circle 450px at 50% 70%, rgba(245, 158, 11, 0.07) 0%, transparent 65%)
           `
         }}
       />
