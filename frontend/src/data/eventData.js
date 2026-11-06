@@ -32,8 +32,8 @@ export const EVENT_DETAILS = {
     role: "Course Co-ordinator, Department of Data Science"
   },
   teachers: [
-    { name: "Ms. Kalyani Patil", role: "Assistant Professor, Department of Data Science" },
     { name: "Ms. Razia Khan", role: "Assistant Professor, Department of Data Science" },
+    { name: "Ms. Kalyani Patil", role: "Assistant Professor, Department of Data Science" },
     { name: "Mr. Anshul Chimnani", role: "Assistant Professor, Department of Data Science" }
   ]
 };
@@ -55,17 +55,17 @@ export const FACULTY_COMMITTEE = [
   },
   {
     role: "Teacher",
-    name: "Ms. Kalyani Patil",
-    dept: "Department of Data Science",
-    badge: "Teacher",
-    accent: "sky"
-  },
-  {
-    role: "Teacher",
     name: "Ms. Razia Khan",
     dept: "Department of Data Science",
     badge: "Teacher",
     accent: "indigo"
+  },
+  {
+    role: "Teacher",
+    name: "Ms. Kalyani Patil",
+    dept: "Department of Data Science",
+    badge: "Teacher",
+    accent: "sky"
   },
   {
     role: "Teacher",
@@ -263,6 +263,6 @@ export const FAQ_LIST = [
   },
   {
     q: "Where is the venue and how do I contact the organizing committee?",
-    a: "TechAstra 2026 is hosted on-campus at Smt. Chandibai Himathmal Mansukhani College, organized by the Department of Data Science under Club Data Decoder. Under the leadership of Principal Dr. Manju Lalwani Pathak, Course Co-ordinator Dr. Shiji Johnson, and Teachers Ms. Kalyani Patil, Ms. Razia Khan, and Mr. Anshul Chimnani. Reach out via email at algonexusdschm@gmail.com or mobile at +91 80100 86323."
+    a: "TechAstra 2026 is hosted on-campus at Smt. Chandibai Himathmal Mansukhani College, organized by the Department of Data Science under Club Data Decoder. Under the leadership of Principal Dr. Manju Lalwani Pathak, Course Co-ordinator Dr. Shiji Johnson, and Teachers Ms. Razia Khan, Ms. Kalyani Patil, and Mr. Anshul Chimnani. Reach out via email at algonexusdschm@gmail.com or mobile at +91 80100 86323."
   }
 ];
