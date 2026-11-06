@@ -2,7 +2,7 @@ import React, { useRef, useEffect } from 'react';
 import * as THREE from 'three';
 
 /**
- * AiUniverse3D: High-Definition Color-Calibrated TechAstra Universe
+ * AiUniverse3D: High-Density High-Definition Color-Calibrated TechAstra Universe
  * 
  * Color Architecture (High-Contrast White Studio Palette):
  * - Radiant Solar Gold (#f59e0b, #fbbf24) - Official TechAstra Astra Emblem Ring & Beacons
@@ -15,10 +15,11 @@ import * as THREE from 'three';
  * - Rock-solid 30 FPS throttle
  * - Opaque canvas (alpha: false, background: #fcfdfd) with zero compositor blur passes
  * - Smooth scroll-driven camera choreography across all 5 waypoints
+ * - Consolidated BufferGeometry line segments (under 25 draw calls total)
  * - Complete memory cleanup on unmount
  */
 
-// 5 Core Tech Pillars of TechAstra
+// 5 Core Tech Pillars of TechAstra with Dense Satellite Constellations
 const TECH_PILLARS = [
   {
     id: 'ai',
@@ -29,7 +30,7 @@ const TECH_PILLARS = [
     accentColor: '#f59e0b', // Solar Gold Highlight
     geo: 'icosahedron',
     radius: 1.15,
-    nodes: 55
+    nodes: 160
   },
   {
     id: 'cv',
@@ -40,7 +41,7 @@ const TECH_PILLARS = [
     accentColor: '#0284c7',
     geo: 'octahedron',
     radius: 0.9,
-    nodes: 45
+    nodes: 130
   },
   {
     id: 'rag',
@@ -51,7 +52,7 @@ const TECH_PILLARS = [
     accentColor: '#3b82f6',
     geo: 'octahedron',
     radius: 0.9,
-    nodes: 45
+    nodes: 130
   },
   {
     id: 'nlp',
@@ -62,7 +63,7 @@ const TECH_PILLARS = [
     accentColor: '#a855f7',
     geo: 'tetrahedron',
     radius: 0.8,
-    nodes: 40
+    nodes: 120
   },
   {
     id: 'ml',
@@ -73,16 +74,16 @@ const TECH_PILLARS = [
     accentColor: '#818cf8',
     geo: 'tetrahedron',
     radius: 0.8,
-    nodes: 40
+    nodes: 120
   }
 ];
 
 // Peripheral Widescreen Wings
 const WIDESCREEN_EDGES = [
-  { id: 'edge_west', pos: [-15.5, -0.6, -2.0], color: '#38bdf8', nodes: 35 },
-  { id: 'edge_east', pos: [15.5, -0.4, -2.0], color: '#818cf8', nodes: 35 },
-  { id: 'horizon_nw', pos: [-9.0, 5.6, -1.8], color: '#0284c7', nodes: 25 },
-  { id: 'horizon_ne', pos: [9.0, 5.8, -1.8], color: '#7c3aed', nodes: 25 }
+  { id: 'edge_west', pos: [-15.5, -0.6, -2.0], color: '#38bdf8', nodes: 85 },
+  { id: 'edge_east', pos: [15.5, -0.4, -2.0], color: '#818cf8', nodes: 85 },
+  { id: 'horizon_nw', pos: [-9.0, 5.6, -1.8], color: '#0284c7', nodes: 65 },
+  { id: 'horizon_ne', pos: [9.0, 5.8, -1.8], color: '#7c3aed', nodes: 65 }
 ];
 
 export default function AiUniverse3D() {
@@ -106,7 +107,6 @@ export default function AiUniverse3D() {
     // --- 1. Scene & Crisp Studio White Canvas ---
     const scene = new THREE.Scene();
     scene.background = new THREE.Color(0xfcfdfd);
-    // Subtle atmospheric depth without washing out foreground elements
     scene.fog = new THREE.FogExp2(0xfcfdfd, 0.005);
 
     const camera = new THREE.PerspectiveCamera(
@@ -163,7 +163,7 @@ export default function AiUniverse3D() {
     }));
 
     // Longitude circular meridians
-    const meridianCount = 8;
+    const meridianCount = 10;
     for (let m = 0; m < meridianCount; m++) {
       const circlePts = [];
       const segs = 64;
@@ -176,15 +176,15 @@ export default function AiUniverse3D() {
         ));
       }
       const mGeo = register(new THREE.BufferGeometry().setFromPoints(circlePts));
-      const mat = (m === 0 || m === 4) ? primeMeridianMat : secondaryMeridianMat;
+      const mat = (m === 0 || m === 5) ? primeMeridianMat : secondaryMeridianMat;
       const mLine = new THREE.Line(mGeo, mat);
       mLine.rotation.y = (m / meridianCount) * Math.PI;
       globeGroup.add(mLine);
     }
 
     // Latitude horizontal rings
-    const latLevels = [-2.6, -1.8, -0.9, 0, 0.9, 1.8, 2.6];
-    latLevels.forEach((y, idx) => {
+    const latLevels = [-2.8, -2.1, -1.4, -0.7, 0, 0.7, 1.4, 2.1, 2.8];
+    latLevels.forEach((y) => {
       const r = Math.sqrt(Math.max(0.1, GLOBE_RADIUS * GLOBE_RADIUS - y * y));
       const circlePts = [];
       const segs = 64;
@@ -197,14 +197,13 @@ export default function AiUniverse3D() {
         ));
       }
       const latGeo = register(new THREE.BufferGeometry().setFromPoints(circlePts));
-      // Equator is highlighted with prime cyan
       const isEquator = Math.abs(y) < 0.01;
       const latLine = new THREE.Line(latGeo, isEquator ? primeMeridianMat : secondaryMeridianMat);
       globeGroup.add(latLine);
     });
 
-    // 4b. Inner Cyber Heart Core (Gives the globe volumetric substance)
-    const innerCoreGeo = register(new THREE.IcosahedronGeometry(1.4, 1));
+    // 4b. Inner Cyber Heart Core (Volumetric substance)
+    const innerCoreGeo = register(new THREE.IcosahedronGeometry(1.5, 1));
     const innerCoreMat = register(new THREE.MeshBasicMaterial({
       color: 0x2563eb,
       wireframe: true,
@@ -214,10 +213,11 @@ export default function AiUniverse3D() {
     const innerCoreMesh = new THREE.Mesh(innerCoreGeo, innerCoreMat);
     globeGroup.add(innerCoreMesh);
 
-    // 4c. Fibonacci Global Network Dots (Four Vibrant Cyber Jewels)
-    const globePointsCount = 280;
+    // 4c. Dense Fibonacci Global Network Dots (Four Vibrant Cyber Jewels)
+    const globePointsCount = 650;
     const globePositions = [];
     const globeColors = [];
+    const globeVectors = [];
     
     const palette = [
       new THREE.Color(0x0284c7), // Electric Cyan
@@ -237,6 +237,7 @@ export default function AiUniverse3D() {
       const posY = y * GLOBE_RADIUS;
 
       globePositions.push(x, posY, z);
+      globeVectors.push(new THREE.Vector3(x, posY, z));
       const col = palette[i % palette.length];
       globeColors.push(col.r, col.g, col.b);
     }
@@ -246,13 +247,44 @@ export default function AiUniverse3D() {
     globePtsGeo.setAttribute('color', new THREE.Float32BufferAttribute(globeColors, 3));
 
     const globePtsMat = register(new THREE.PointsMaterial({
-      size: 0.18,
+      size: 0.17,
       vertexColors: true,
       transparent: true,
       opacity: 0.92
     }));
     const globePoints = new THREE.Points(globePtsGeo, globePtsMat);
     globeGroup.add(globePoints);
+
+    // 4d. Dense Global Surface Synaptic Net (LineSegments connecting nearby globe surface nodes)
+    const globeLinePositions = [];
+    const globeLineColors = [];
+    for (let i = 0; i < globePointsCount; i++) {
+      const p1 = globeVectors[i];
+      const col1 = palette[i % palette.length];
+      let links = 0;
+      for (let j = i + 1; j < globePointsCount; j++) {
+        const p2 = globeVectors[j];
+        const dist = p1.distanceTo(p2);
+        if (dist < 1.05) {
+          globeLinePositions.push(p1.x, p1.y, p1.z, p2.x, p2.y, p2.z);
+          const col2 = palette[j % palette.length];
+          globeLineColors.push(col1.r, col1.g, col1.b, col2.r, col2.g, col2.b);
+          links++;
+          if (links >= 3) break;
+        }
+      }
+    }
+
+    const globeLineGeo = register(new THREE.BufferGeometry());
+    globeLineGeo.setAttribute('position', new THREE.Float32BufferAttribute(globeLinePositions, 3));
+    globeLineGeo.setAttribute('color', new THREE.Float32BufferAttribute(globeLineColors, 3));
+    const globeLineMat = register(new THREE.LineBasicMaterial({
+      vertexColors: true,
+      transparent: true,
+      opacity: 0.35
+    }));
+    const globeSynapseMesh = new THREE.LineSegments(globeLineGeo, globeLineMat);
+    globeGroup.add(globeSynapseMesh);
 
     // --- 5. "Astra" Celestial Orbital Rings (Vibrant Gold & Cyan) ---
     // Celestial Ring 1: Primary Diagonal Astra Ring (Rich Radiant Solar Gold)
@@ -277,12 +309,12 @@ export default function AiUniverse3D() {
     astraRing1.rotation.z = -0.32;
     astraRingsGroup.add(astraRing1);
 
-    // Golden Astra Orbit Beacons (6 jewel-like stars gliding along the ring)
+    // Golden Astra Orbit Beacons (8 jewel-like stars gliding along the ring)
     const beaconPts = [];
     const beaconCols = [];
     const goldCol = new THREE.Color(0xfbbf24);
-    for (let k = 0; k < 6; k++) {
-      const angle = (k / 6) * Math.PI * 2;
+    for (let k = 0; k < 8; k++) {
+      const angle = (k / 8) * Math.PI * 2;
       beaconPts.push(
         Math.cos(angle) * RING1_RADIUS,
         0,
@@ -344,10 +376,12 @@ export default function AiUniverse3D() {
     const astraRing3 = new THREE.Line(ring3Geo, ring3Mat);
     astraRingsGroup.add(astraRing3);
 
-    // --- 6. The 5 Core Tech Pillars (AI, CV, ML, NLP, RAG) ---
+    // --- 6. The 5 Core Tech Pillars (AI, CV, ML, NLP, RAG) with Dense Synaptic Clouds ---
     const pillarMeshes = [];
     const techNodePositions = [];
     const techNodeColors = [];
+    const denseSynapseLinePos = [];
+    const denseSynapseLineCol = [];
 
     const icosaGeo = register(new THREE.IcosahedronGeometry(1.0, 1));
     const octaGeo = register(new THREE.OctahedronGeometry(0.8, 0));
@@ -402,13 +436,14 @@ export default function AiUniverse3D() {
       techConstellationGroup.add(pillarGroup);
       pillarMeshes.push({ coreMesh, haloMesh, outerHaloMesh, center, color });
 
-      // Vibrant satellite cloud
+      // Ultra-Dense Satellite Cloud
+      const clusterVectorList = [];
       for (let i = 0; i < pillar.nodes; i++) {
         const u = Math.random();
         const v = Math.random();
         const theta = u * 2.0 * Math.PI;
         const phi = Math.acos(2.0 * v - 1.0);
-        const r = Math.cbrt(Math.random()) * 2.3;
+        const r = Math.cbrt(Math.random()) * 2.7;
 
         const sinPhi = Math.sin(phi);
         const x = center.x + r * sinPhi * Math.cos(theta);
@@ -417,37 +452,106 @@ export default function AiUniverse3D() {
 
         techNodePositions.push(x, y, z);
         techNodeColors.push(color.r, color.g, color.b);
+        clusterVectorList.push(new THREE.Vector3(x, y, z));
       }
 
-      // High-Contrast Ray Beam to Globe Center
-      const beamPts = [center, new THREE.Vector3(center.x * 0.35, center.y * 0.35, center.z * 0.35)];
-      const beamGeo = register(new THREE.BufferGeometry().setFromPoints(beamPts));
-      const beamMat = register(new THREE.LineBasicMaterial({
-        color: pillar.color,
-        transparent: true,
-        opacity: 0.50
-      }));
-      const beam = new THREE.Line(beamGeo, beamMat);
-      techConstellationGroup.add(beam);
+      // Intra-cluster Synaptic Axon Connections
+      const clusterLen = clusterVectorList.length;
+      for (let a = 0; a < clusterLen; a++) {
+        const ptA = clusterVectorList[a];
+        let links = 0;
+        for (let b = a + 1; b < clusterLen; b++) {
+          const ptB = clusterVectorList[b];
+          if (ptA.distanceTo(ptB) < 1.30) {
+            denseSynapseLinePos.push(ptA.x, ptA.y, ptA.z, ptB.x, ptB.y, ptB.z);
+            denseSynapseLineCol.push(color.r, color.g, color.b, color.r, color.g, color.b);
+            links++;
+            if (links >= 3) break;
+          }
+        }
+      }
+
+      // Multi-Ray Data Beams to Globe Center (3 braided lines per pillar)
+      for (let b = -1; b <= 1; b++) {
+        const offset = b * 0.22;
+        const beamPts = [
+          new THREE.Vector3(center.x + offset, center.y + offset * 0.5, center.z),
+          new THREE.Vector3(center.x * 0.35, center.y * 0.35, center.z * 0.35)
+        ];
+        const beamGeo = register(new THREE.BufferGeometry().setFromPoints(beamPts));
+        const beamMat = register(new THREE.LineBasicMaterial({
+          color: pillar.color,
+          transparent: true,
+          opacity: b === 0 ? 0.60 : 0.30
+        }));
+        const beam = new THREE.Line(beamGeo, beamMat);
+        techConstellationGroup.add(beam);
+      }
     });
 
-    // --- 7. Widescreen Peripheral Wings ---
+    // --- 7. Widescreen Peripheral Wings with Synaptic Sub-Networks ---
     WIDESCREEN_EDGES.forEach((edge) => {
       const center = new THREE.Vector3(...edge.pos);
       const color = new THREE.Color(edge.color);
+      const edgeVectorList = [];
 
       for (let i = 0; i < edge.nodes; i++) {
-        const r = Math.random() * 2.0;
+        const r = Math.random() * 2.8;
         const theta = Math.random() * Math.PI * 2;
         const x = center.x + Math.cos(theta) * r;
-        const y = center.y + (Math.random() - 0.5) * 2.0;
+        const y = center.y + (Math.random() - 0.5) * 2.6;
         const z = center.z + Math.sin(theta) * r;
 
         techNodePositions.push(x, y, z);
         techNodeColors.push(color.r, color.g, color.b);
+        edgeVectorList.push(new THREE.Vector3(x, y, z));
+      }
+
+      // Connect peripheral nodes into a network
+      for (let i = 0; i < edgeVectorList.length; i++) {
+        const p1 = edgeVectorList[i];
+        let links = 0;
+        for (let j = i + 1; j < edgeVectorList.length; j++) {
+          const p2 = edgeVectorList[j];
+          if (p1.distanceTo(p2) < 1.45) {
+            denseSynapseLinePos.push(p1.x, p1.y, p1.z, p2.x, p2.y, p2.z);
+            denseSynapseLineCol.push(color.r, color.g, color.b, color.r, color.g, color.b);
+            links++;
+            if (links >= 2) break;
+          }
+        }
       }
     });
 
+    // --- 8. Ambient Inter-Pillar Synaptic Starfield (Deep Neural Space) ---
+    const ambientCount = 260;
+    const ambientVectors = [];
+    const ambientCol = new THREE.Color(0x38bdf8);
+    for (let i = 0; i < ambientCount; i++) {
+      const x = (Math.random() - 0.5) * 28;
+      const y = (Math.random() - 0.5) * 16;
+      const z = (Math.random() - 0.5) * 8 - 1.0;
+      techNodePositions.push(x, y, z);
+      techNodeColors.push(ambientCol.r, ambientCol.g, ambientCol.b);
+      ambientVectors.push(new THREE.Vector3(x, y, z));
+    }
+
+    // Connect ambient nodes if in close proximity
+    for (let i = 0; i < ambientVectors.length; i++) {
+      const p1 = ambientVectors[i];
+      let links = 0;
+      for (let j = i + 1; j < ambientVectors.length; j++) {
+        const p2 = ambientVectors[j];
+        if (p1.distanceTo(p2) < 2.0) {
+          denseSynapseLinePos.push(p1.x, p1.y, p1.z, p2.x, p2.y, p2.z);
+          denseSynapseLineCol.push(ambientCol.r, ambientCol.g, ambientCol.b, ambientCol.r, ambientCol.g, ambientCol.b);
+          links++;
+          if (links >= 2) break;
+        }
+      }
+    }
+
+    // Master Points Render
     const techPtsGeo = register(new THREE.BufferGeometry());
     techPtsGeo.setAttribute('position', new THREE.Float32BufferAttribute(techNodePositions, 3));
     techPtsGeo.setAttribute('color', new THREE.Float32BufferAttribute(techNodeColors, 3));
@@ -461,20 +565,19 @@ export default function AiUniverse3D() {
     const techPoints = new THREE.Points(techPtsGeo, techPtsMat);
     techConstellationGroup.add(techPoints);
 
-    // --- 8. Synaptic Axon Highways Between AI, CV, ML, NLP, RAG ---
-    const highwayPairs = [
-      { from: 'cv', to: 'ai', color: 0x0ea5e9 },
-      { from: 'ai', to: 'rag', color: 0x2563eb },
-      { from: 'rag', to: 'nlp', color: 0x8b5cf6 },
-      { from: 'nlp', to: 'ml', color: 0x6366f1 },
-      { from: 'ml', to: 'cv', color: 0x0284c7 },
-      { from: 'cv', to: 'rag', color: 0x0ea5e9 },
-      { from: 'ml', to: 'ai', color: 0x6366f1 },
-      { from: 'nlp', to: 'ai', color: 0x8b5cf6 },
-      { from: 'cv', to: 'edge_west', color: 0x38bdf8 },
-      { from: 'rag', to: 'edge_east', color: 0x818cf8 }
-    ];
+    // Master Dense Synapse Lines Render (Consolidated into single draw call!)
+    const denseSynapseGeo = register(new THREE.BufferGeometry());
+    denseSynapseGeo.setAttribute('position', new THREE.Float32BufferAttribute(denseSynapseLinePos, 3));
+    denseSynapseGeo.setAttribute('color', new THREE.Float32BufferAttribute(denseSynapseLineCol, 3));
+    const denseSynapseMat = register(new THREE.LineBasicMaterial({
+      vertexColors: true,
+      transparent: true,
+      opacity: 0.38
+    }));
+    const denseSynapseMesh = new THREE.LineSegments(denseSynapseGeo, denseSynapseMat);
+    techConstellationGroup.add(denseSynapseMesh);
 
+    // --- 9. Complete Interconnected Synaptic Axon Highways (K5 Dense Network) ---
     const allPositionsMap = {
       ai: new THREE.Vector3(...TECH_PILLARS[0].pos),
       cv: new THREE.Vector3(...TECH_PILLARS[1].pos),
@@ -482,30 +585,70 @@ export default function AiUniverse3D() {
       nlp: new THREE.Vector3(...TECH_PILLARS[3].pos),
       ml: new THREE.Vector3(...TECH_PILLARS[4].pos),
       edge_west: new THREE.Vector3(...WIDESCREEN_EDGES[0].pos),
-      edge_east: new THREE.Vector3(...WIDESCREEN_EDGES[1].pos)
+      edge_east: new THREE.Vector3(...WIDESCREEN_EDGES[1].pos),
+      horizon_nw: new THREE.Vector3(...WIDESCREEN_EDGES[2].pos),
+      horizon_ne: new THREE.Vector3(...WIDESCREEN_EDGES[3].pos)
     };
 
+    const highwayPairs = [
+      // Outer Pentagon loop
+      { from: 'cv', to: 'ai', color: 0x0ea5e9 },
+      { from: 'ai', to: 'rag', color: 0x2563eb },
+      { from: 'rag', to: 'nlp', color: 0x8b5cf6 },
+      { from: 'nlp', to: 'ml', color: 0x6366f1 },
+      { from: 'ml', to: 'cv', color: 0x0284c7 },
+      // Inner Complete Star Cross-Connections
+      { from: 'cv', to: 'rag', color: 0x0ea5e9 },
+      { from: 'ml', to: 'ai', color: 0x6366f1 },
+      { from: 'nlp', to: 'ai', color: 0x8b5cf6 },
+      { from: 'cv', to: 'nlp', color: 0x0284c7 },
+      { from: 'ml', to: 'rag', color: 0x6366f1 },
+      // Peripheral Highway Extensions
+      { from: 'cv', to: 'edge_west', color: 0x38bdf8 },
+      { from: 'rag', to: 'edge_east', color: 0x818cf8 },
+      { from: 'ai', to: 'horizon_nw', color: 0x0284c7 },
+      { from: 'ai', to: 'horizon_ne', color: 0x7c3aed },
+      { from: 'edge_west', to: 'ml', color: 0x38bdf8 },
+      { from: 'edge_east', to: 'nlp', color: 0x818cf8 }
+    ];
+
+    // Render multi-strand braided highways
     highwayPairs.forEach(({ from, to, color }) => {
       const pA = allPositionsMap[from];
       const pB = allPositionsMap[to];
       if (!pA || !pB) return;
 
-      const mid = pA.clone().add(pB).multiplyScalar(0.5);
-      mid.z += 1.8;
-
-      const curve = new THREE.QuadraticBezierCurve3(pA, mid, pB);
-      const pts = curve.getPoints(28);
-      const lineGeo = register(new THREE.BufferGeometry().setFromPoints(pts));
-      const lineMat = register(new THREE.LineBasicMaterial({
+      // Primary High-Arch Curve
+      const mid1 = pA.clone().add(pB).multiplyScalar(0.5);
+      mid1.z += 1.8;
+      const curve1 = new THREE.QuadraticBezierCurve3(pA, mid1, pB);
+      const pts1 = curve1.getPoints(32);
+      const lineGeo1 = register(new THREE.BufferGeometry().setFromPoints(pts1));
+      const lineMat1 = register(new THREE.LineBasicMaterial({
         color,
         transparent: true,
-        opacity: 0.52
+        opacity: 0.58
       }));
-      const line = new THREE.Line(lineGeo, lineMat);
-      techConstellationGroup.add(line);
+      const line1 = new THREE.Line(lineGeo1, lineMat1);
+      techConstellationGroup.add(line1);
+
+      // Secondary Braided Parallel Strand (giving thick neural axon appearance)
+      const mid2 = pA.clone().add(pB).multiplyScalar(0.5);
+      mid2.z += 1.3;
+      mid2.y += 0.35;
+      const curve2 = new THREE.QuadraticBezierCurve3(pA, mid2, pB);
+      const pts2 = curve2.getPoints(24);
+      const lineGeo2 = register(new THREE.BufferGeometry().setFromPoints(pts2));
+      const lineMat2 = register(new THREE.LineBasicMaterial({
+        color,
+        transparent: true,
+        opacity: 0.32
+      }));
+      const line2 = new THREE.Line(lineGeo2, lineMat2);
+      techConstellationGroup.add(line2);
     });
 
-    // --- 9. Cinematic Scroll Waypoints Choreography ---
+    // --- 10. Cinematic Scroll Waypoints Choreography ---
     const BASE_Z = isMobile ? 18.5 : 14.2;
 
     const SCROLL_WAYPOINTS = [
@@ -588,7 +731,7 @@ export default function AiUniverse3D() {
       return SCROLL_WAYPOINTS[SCROLL_WAYPOINTS.length - 1];
     };
 
-    // --- 10. Live Scroll & 360° Drag State ---
+    // --- 11. Live Scroll & 360° Drag State ---
     let currentScrollProgress = 0;
     let targetScrollProgress = 0;
 
@@ -663,7 +806,7 @@ export default function AiUniverse3D() {
     };
     window.addEventListener('resize', onResize);
 
-    // --- 11. Controlled 30 FPS Render Loop ---
+    // --- 12. Controlled 30 FPS Render Loop ---
     let animId;
     let lastTime = 0;
     const FRAME_INTERVAL = 1000 / 30; // 30 FPS cap
