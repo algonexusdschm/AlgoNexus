@@ -22,6 +22,7 @@ export default function RegistrationModal({
   const { paymentSettings, pricingTiers, addRegistration } = useEvent();
   const [selectedTier, setSelectedTier] = useState(initialTier || pricingTiers[0]);
   const [step, setStep] = useState(1); // 1: Attendee Info, 2: UPI Payment
+  const [isOpeningSoon, setIsOpeningSoon] = useState(true);
   const [loading, setLoading] = useState(false);
   const [loadingStage, setLoadingStage] = useState('');
   const [uploadingImage, setUploadingImage] = useState(false);
@@ -50,6 +51,13 @@ export default function RegistrationModal({
 
   // 10-Minute live fintech countdown timer
   const [timeLeft, setTimeLeft] = useState(600); // 10 minutes = 600s
+
+  // Reset blur / opening soon state on fresh modal open
+  useEffect(() => {
+    if (isOpen) {
+      setIsOpeningSoon(true);
+    }
+  }, [isOpen]);
 
   useEffect(() => {
     if (step !== 2) return;
@@ -580,7 +588,7 @@ export default function RegistrationModal({
             )}
             <button
               onClick={onClose}
-              className="p-2 rounded-xl bg-slate-100 hover:bg-slate-200 border border-slate-200 text-slate-500 hover:text-slate-900 transition-all"
+              className="p-2 rounded-xl bg-slate-100 hover:bg-slate-200 border border-slate-200 text-slate-500 hover:text-slate-900 transition-all relative z-40 cursor-pointer"
               title="Close"
             >
               <X className="w-5 h-5" />
@@ -605,7 +613,9 @@ export default function RegistrationModal({
         )}
 
         {/* Modal Body */}
-        <div className="p-4 sm:p-6 overflow-y-auto flex-1">
+        <div className={`p-4 sm:p-6 overflow-y-auto flex-1 transition-all duration-300 ${
+          isOpeningSoon ? 'filter blur-[7px] opacity-40 select-none pointer-events-none' : ''
+        }`}>
           {step === 1 ? (
             <form onSubmit={handleNext} className="space-y-4">
               
@@ -1310,6 +1320,50 @@ export default function RegistrationModal({
             </div>
           )}
         </div>
+
+        {/* Registration Opening Soon Frosted Blur Overlay */}
+        {isOpeningSoon && (
+          <div className="absolute inset-x-0 bottom-0 top-[73px] z-30 flex flex-col items-center justify-center p-4 sm:p-8 bg-white/75 backdrop-blur-md transition-all animate-in fade-in duration-200">
+            <div className="w-full max-w-md p-6 sm:p-8 rounded-3xl bg-white/95 border-2 border-blue-500 shadow-2xl text-center space-y-4">
+              <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-blue-50 border border-blue-200 text-blue-700 text-xs font-mono font-bold tracking-wider uppercase shadow-sm">
+                <Sparkles className="w-4 h-4 text-blue-600 animate-pulse" />
+                <span>TECHASTRA 2026 REGISTRATIONS</span>
+              </div>
+
+              <h3 className="text-2xl sm:text-4xl font-chakra font-black tracking-tight text-slate-900 uppercase">
+                REGISTRATION OPENING SOON
+              </h3>
+
+              <p className="text-xs sm:text-sm text-slate-600 font-mono leading-relaxed max-w-sm mx-auto">
+                Delegate pass bookings, hackathon squad slot allocations, and payment settlements will go live shortly once official dates are announced.
+              </p>
+
+              <div className="p-3 rounded-2xl bg-amber-50 border border-amber-200 text-[11px] font-mono text-amber-900 flex items-center justify-center gap-2">
+                <Clock className="w-4 h-4 text-amber-600 shrink-0" />
+                <span>Slots will be allocated on a first-come, first-served basis.</span>
+              </div>
+
+              <div className="pt-2 flex flex-col sm:flex-row items-center justify-center gap-2.5">
+                <button
+                  type="button"
+                  onClick={onClose}
+                  className="w-full sm:w-auto px-6 py-3 rounded-xl bg-slate-900 hover:bg-slate-800 text-white font-chakra text-xs font-bold tracking-wider uppercase shadow-md transition-all cursor-pointer"
+                >
+                  GOT IT / RETURN TO SITE
+                </button>
+
+                <button
+                  type="button"
+                  onClick={() => setIsOpeningSoon(false)}
+                  className="w-full sm:w-auto px-4 py-3 rounded-xl bg-slate-100 hover:bg-slate-200 text-slate-600 hover:text-slate-900 text-xs font-mono font-semibold transition-all cursor-pointer"
+                  title="Preview form for organizer testing"
+                >
+                  Preview Form (Demo)
+                </button>
+              </div>
+            </div>
+          </div>
+        )}
 
       </div>
 

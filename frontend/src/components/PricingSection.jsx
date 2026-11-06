@@ -111,10 +111,15 @@ export default function PricingSection({ onSelectTier }) {
                 Official passes, early-bird rates, and squad registration slots will be announced soon. Stay tuned!
               </p>
               <div className="pt-2 flex flex-wrap items-center justify-center gap-3">
-                <span className="px-5 py-2.5 rounded-xl bg-slate-900 text-white font-chakra text-xs font-bold tracking-wider uppercase inline-flex items-center gap-2 shadow-md">
-                  <span className="w-2 h-2 rounded-full bg-amber-400 animate-ping" />
-                  <span>REGISTRATIONS OPENING SHORTLY</span>
-                </span>
+                <button
+                  type="button"
+                  onClick={() => onSelectTier(pricingTiers[0])}
+                  className="px-6 py-3 rounded-2xl bg-gradient-to-r from-sky-600 via-blue-600 to-indigo-600 hover:from-sky-500 hover:to-indigo-500 text-white font-chakra text-xs font-bold tracking-wider uppercase inline-flex items-center gap-2 shadow-lg shadow-blue-500/25 cursor-pointer transition-all hover:scale-105 active:scale-95"
+                >
+                  <span className="w-2 h-2 rounded-full bg-amber-300 animate-ping" />
+                  <span>VIEW PASS & REGISTRATION STATUS</span>
+                  <ArrowRight className="w-3.5 h-3.5" />
+                </button>
               </div>
             </div>
           </div>
