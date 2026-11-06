@@ -1343,22 +1343,13 @@ export default function RegistrationModal({
                 <span>Slots will be allocated on a first-come, first-served basis.</span>
               </div>
 
-              <div className="pt-2 flex flex-col sm:flex-row items-center justify-center gap-2.5">
+              <div className="pt-2 flex items-center justify-center">
                 <button
                   type="button"
                   onClick={onClose}
-                  className="w-full sm:w-auto px-6 py-3 rounded-xl bg-slate-900 hover:bg-slate-800 text-white font-chakra text-xs font-bold tracking-wider uppercase shadow-md transition-all cursor-pointer"
+                  className="w-full sm:w-auto px-8 py-3.5 rounded-2xl bg-slate-900 hover:bg-slate-800 text-white font-chakra text-xs font-bold tracking-wider uppercase shadow-lg transition-all cursor-pointer"
                 >
                   GOT IT / RETURN TO SITE
-                </button>
-
-                <button
-                  type="button"
-                  onClick={() => setIsOpeningSoon(false)}
-                  className="w-full sm:w-auto px-4 py-3 rounded-xl bg-slate-100 hover:bg-slate-200 text-slate-600 hover:text-slate-900 text-xs font-mono font-semibold transition-all cursor-pointer"
-                  title="Preview form for organizer testing"
-                >
-                  Preview Form (Demo)
                 </button>
               </div>
             </div>
