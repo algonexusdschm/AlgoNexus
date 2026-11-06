@@ -8,6 +8,7 @@ import PricingSection from './components/PricingSection';
 import FAQ from './components/FAQ';
 import Footer from './components/Footer';
 import AiUniverse3D from './components/AiUniverse3D';
+import ScrollRadar from './components/ScrollRadar';
 import { EventProvider, useEvent } from './context/EventContext';
 
 // Lazy-loaded heavy modules for optimal initial load speed
@@ -116,7 +117,10 @@ function MainEventApp() {
       {/* 1. Global 3D Interactive AI Globe with White Studio Background */}
       <AiUniverse3D />
 
-      {/* 2. Top Navbar with Admin Portal Trigger */}
+      {/* 2. Interactive 3D Orbital Sector Scroll HUD */}
+      <ScrollRadar />
+
+      {/* 3. Top Navbar with Admin Portal Trigger */}
       <Navbar
         onOpenRegister={() => handleOpenRegister(pricingTiers[0])}
         onOpenAdmin={navigateToAdmin}

@@ -2,20 +2,22 @@ import React, { useRef, useEffect } from 'react';
 import * as THREE from 'three';
 
 /**
- * AiUniverse3D: "TechAstra" Celestial World & Tech Constellation
+ * AiUniverse3D: Fully Scroll-Driven "TechAstra" 3D Celestial Universe
  * 
- * Concept:
- * - Central "World / Globe" representing Global EduTech intelligence & Indian innovation
- * - "Astra" Celestial Orbital Rings (inspired by the TechAstra celestial weapon & planetary orbit emblem)
- * - 5 Interconnected Core Tech Pillars orbiting the World:
- *     1. AI  (Artificial Intelligence Apex Core)
- *     2. CV  (Computer Vision & Spatial Perception)
- *     3. ML  (Machine Learning & Neural Plasticity)
- *     4. NLP (Natural Language Processing & Attention)
- *     5. RAG (Retrieval-Augmented Generation & Vector Memory)
- * - Peripheral data highways spanning the full widescreen laptop display (edge-to-edge)
- * - Interactive 360° drag rotation + cursor parallax
- * - Strict Ultra-Low Resource Performance (< 5-8% CPU/GPU, 30 FPS, opaque canvas, DPR=1)
+ * Scroll-Choreographed Architecture:
+ * - The entire 3D scene responds and transforms continuously as you scroll the page
+ * - Waypoint 0 (Hero): Master frontal view of the TechAstra World Globe & 5 Tech Pillars
+ * - Waypoint 1 (AI Tracks): Swoop into the 5 Tech Pillars (AI, CV, ML, NLP, RAG) with glowing highways
+ * - Waypoint 2 (Roadmap): High-angle tactical orbital view looking down at the world network
+ * - Waypoint 3 (Announcement/Gallery): Sweeping 180° rotation revealing the global nodes & golden Astra orbit ring
+ * - Waypoint 4 (Passes/FAQ/Footer): Grand wide-angle cosmic pull-back framing the horizon
+ * 
+ * Performance:
+ * - Ultra-low CPU/GPU (< 5-8% usage)
+ * - 30 FPS throttle
+ * - Opaque canvas (alpha: false, background: #f8fafc) for direct hardware scanout
+ * - Capped DPR = 1.0
+ * - Disposes memory cleanly on unmount
  */
 
 // 5 Core Tech Pillars of TechAstra
@@ -89,7 +91,7 @@ export default function AiUniverse3D() {
 
     const isMobile = window.innerWidth < 768;
 
-    // Disposables registry to guarantee complete memory cleanup
+    // Disposables registry
     const disposables = [];
     const register = (item) => {
       if (item && typeof item.dispose === 'function') {
@@ -98,10 +100,10 @@ export default function AiUniverse3D() {
       return item;
     };
 
-    // --- 1. Scene & Opaque Background (Zero Alpha Compositing Overhead) ---
+    // --- 1. Scene & Opaque Canvas ---
     const scene = new THREE.Scene();
     scene.background = new THREE.Color(0xf8fafc);
-    scene.fog = new THREE.FogExp2(0xf8fafc, 0.011);
+    scene.fog = new THREE.FogExp2(0xf8fafc, 0.010);
 
     const camera = new THREE.PerspectiveCamera(
       52,
@@ -109,13 +111,13 @@ export default function AiUniverse3D() {
       0.1,
       1000
     );
-    // Framed for widescreen laptop viewport
-    camera.position.set(0, 0, isMobile ? 18.5 : 14.2);
+    const initialCamZ = isMobile ? 18.5 : 14.2;
+    camera.position.set(0, 0, initialCamZ);
 
-    // --- 2. Low-Overhead WebGLRenderer ---
+    // --- 2. Low-Overhead Renderer ---
     const renderer = new THREE.WebGLRenderer({
-      antialias: false, // Off for zero multi-sampling GPU cost
-      alpha: false,     // Opaque direct hardware scanout
+      antialias: false,
+      alpha: false,
       powerPreference: 'low-power',
       precision: 'mediump',
       stencil: false,
@@ -124,10 +126,10 @@ export default function AiUniverse3D() {
     register(renderer);
 
     renderer.setSize(window.innerWidth, window.innerHeight);
-    renderer.setPixelRatio(1.0); // Capped to 1.0 (avoids 4K fill-rate thrashing)
+    renderer.setPixelRatio(1.0);
     container.appendChild(renderer.domElement);
 
-    // --- 3. Master Hierarchy Groups ---
+    // --- 3. Master Groups ---
     const rootGroup = new THREE.Group();
     scene.add(rootGroup);
 
@@ -140,10 +142,9 @@ export default function AiUniverse3D() {
     const techConstellationGroup = new THREE.Group();
     rootGroup.add(techConstellationGroup);
 
-    // --- 4. Central World / Globe ("Astra Global Network") ---
+    // --- 4. Central World / Globe ---
     const GLOBE_RADIUS = 3.6;
 
-    // 4a. Globe Latitude & Longitude Wireframe Meridians
     const meridianMat = register(new THREE.LineBasicMaterial({
       color: 0x0284c7,
       transparent: true,
@@ -188,7 +189,7 @@ export default function AiUniverse3D() {
       globeGroup.add(latLine);
     });
 
-    // 4b. Fibonacci Sphere Global Dot-Matrix (Connected World Hubs)
+    // Fibonacci Sphere Global Dot-Matrix
     const globePointsCount = 260;
     const globePositions = [];
     const globeColors = [];
@@ -196,9 +197,9 @@ export default function AiUniverse3D() {
     const blueCol = new THREE.Color(0x2563eb);
     const purpleCol = new THREE.Color(0x8b5cf6);
 
-    const phiGolden = Math.PI * (3 - Math.sqrt(5)); // Golden angle
+    const phiGolden = Math.PI * (3 - Math.sqrt(5));
     for (let i = 0; i < globePointsCount; i++) {
-      const y = 1 - (i / (globePointsCount - 1)) * 2; // From 1 to -1
+      const y = 1 - (i / (globePointsCount - 1)) * 2;
       const radiusAtY = Math.sqrt(1 - y * y);
       const theta = phiGolden * i;
 
@@ -224,8 +225,8 @@ export default function AiUniverse3D() {
     const globePoints = new THREE.Points(globePtsGeo, globePtsMat);
     globeGroup.add(globePoints);
 
-    // --- 5. "Astra" Celestial Orbital Rings (Emblem Inspiration) ---
-    // Celestial Orbital Ring 1: Primary Diagonal Astra Ring (Tilted 36° like the logo emblem)
+    // --- 5. "Astra" Celestial Orbital Rings ---
+    // Celestial Orbital Ring 1: Primary Diagonal Astra Ring (Golden from logo emblem)
     const ring1Pts = [];
     const RING1_RADIUS = 5.8;
     for (let s = 0; s <= 64; s++) {
@@ -238,7 +239,7 @@ export default function AiUniverse3D() {
     }
     const ring1Geo = register(new THREE.BufferGeometry().setFromPoints(ring1Pts));
     const ring1Mat = register(new THREE.LineBasicMaterial({
-      color: 0xd97706, // Celestial Golden Astra Hue (from logo emblem)
+      color: 0xd97706,
       transparent: true,
       opacity: 0.45
     }));
@@ -260,7 +261,7 @@ export default function AiUniverse3D() {
     }
     const ring2Geo = register(new THREE.BufferGeometry().setFromPoints(ring2Pts));
     const ring2Mat = register(new THREE.LineBasicMaterial({
-      color: 0x0ea5e9, // Electric Cyan Accent
+      color: 0x0ea5e9,
       transparent: true,
       opacity: 0.35
     }));
@@ -274,7 +275,6 @@ export default function AiUniverse3D() {
     const techNodePositions = [];
     const techNodeColors = [];
 
-    // Shared Geometries
     const icosaGeo = register(new THREE.IcosahedronGeometry(1.0, 1));
     const octaGeo = register(new THREE.OctahedronGeometry(0.8, 0));
     const tetraGeo = register(new THREE.TetrahedronGeometry(0.75, 0));
@@ -287,7 +287,6 @@ export default function AiUniverse3D() {
       const pillarGroup = new THREE.Group();
       pillarGroup.position.copy(center);
 
-      // Core Geometric Astra Node
       let coreGeo = octaGeo;
       if (pillar.geo === 'icosahedron') coreGeo = icosaGeo;
       else if (pillar.geo === 'tetrahedron') coreGeo = tetraGeo;
@@ -302,7 +301,6 @@ export default function AiUniverse3D() {
       coreMesh.scale.setScalar(pillar.radius);
       pillarGroup.add(coreMesh);
 
-      // Orbiting Halo Ring
       const haloMat = register(new THREE.MeshBasicMaterial({
         color: pillar.color,
         side: THREE.DoubleSide,
@@ -316,7 +314,6 @@ export default function AiUniverse3D() {
       techConstellationGroup.add(pillarGroup);
       pillarMeshes.push({ coreMesh, haloMesh, center, color });
 
-      // Scatter satellite data points for this tech node
       for (let i = 0; i < pillar.nodes; i++) {
         const u = Math.random();
         const v = Math.random();
@@ -333,7 +330,7 @@ export default function AiUniverse3D() {
         techNodeColors.push(color.r, color.g, color.b);
       }
 
-      // 3D Celestial Ray connecting Tech Pillar to Globe Center
+      // Connecting Ray to Globe Center
       const beamPts = [center, new THREE.Vector3(center.x * 0.4, center.y * 0.4, center.z * 0.4)];
       const beamGeo = register(new THREE.BufferGeometry().setFromPoints(beamPts));
       const beamMat = register(new THREE.LineBasicMaterial({
@@ -345,7 +342,7 @@ export default function AiUniverse3D() {
       techConstellationGroup.add(beam);
     });
 
-    // --- 7. Widescreen Peripheral Wings (Fills Laptop Screen Width) ---
+    // --- 7. Widescreen Peripheral Wings ---
     WIDESCREEN_EDGES.forEach((edge) => {
       const center = new THREE.Vector3(...edge.pos);
       const color = new THREE.Color(edge.color);
@@ -362,7 +359,6 @@ export default function AiUniverse3D() {
       }
     });
 
-    // Tech Point Cloud Buffer
     const techPtsGeo = register(new THREE.BufferGeometry());
     techPtsGeo.setAttribute('position', new THREE.Float32BufferAttribute(techNodePositions, 3));
     techPtsGeo.setAttribute('color', new THREE.Float32BufferAttribute(techNodeColors, 3));
@@ -376,7 +372,7 @@ export default function AiUniverse3D() {
     const techPoints = new THREE.Points(techPtsGeo, techPtsMat);
     techConstellationGroup.add(techPoints);
 
-    // --- 8. Great Synaptic Axon Highways Between AI, CV, ML, NLP, RAG ---
+    // --- 8. Synaptic Axon Highways Between AI, CV, ML, NLP, RAG ---
     const highwayPairs = [
       { from: 'cv', to: 'ai', color: 0x0ea5e9 },
       { from: 'ai', to: 'rag', color: 0x2563eb },
@@ -386,7 +382,6 @@ export default function AiUniverse3D() {
       { from: 'cv', to: 'rag', color: 0x0ea5e9 },
       { from: 'ml', to: 'ai', color: 0x6366f1 },
       { from: 'nlp', to: 'ai', color: 0x8b5cf6 },
-      // Edge connections
       { from: 'cv', to: 'edge_west', color: 0x38bdf8 },
       { from: 'rag', to: 'edge_east', color: 0x818cf8 }
     ];
@@ -407,7 +402,7 @@ export default function AiUniverse3D() {
       if (!pA || !pB) return;
 
       const mid = pA.clone().add(pB).multiplyScalar(0.5);
-      mid.z += 1.6; // Arch outward around the globe
+      mid.z += 1.6;
 
       const curve = new THREE.QuadraticBezierCurve3(pA, mid, pB);
       const pts = curve.getPoints(24);
@@ -421,9 +416,109 @@ export default function AiUniverse3D() {
       techConstellationGroup.add(line);
     });
 
-    // --- 9. Interactive 360° Drag & Touch Controls ---
-    let targetRotY = 0;
-    let targetRotX = 0;
+    // --- 9. Cinematic Scroll Waypoints Choreography ---
+    // Defines exact 3D camera & planetary orientation across the entire page journey
+    const BASE_Z = isMobile ? 18.5 : 14.2;
+
+    const SCROLL_WAYPOINTS = [
+      // 0. Hero (Top): Frontal Master View of Globe & 5 Pillars
+      {
+        p: 0.00,
+        camX: 0.0,
+        camY: 0.0,
+        camZ: BASE_Z,
+        rotY: 0.0,
+        rotX: 0.0,
+        globeRotY: 0.0,
+        ringsTilt: 0.0
+      },
+      // 1. AI Challenge Tracks: Swoop into the 5 Pillars (CV, ML, AI, RAG, NLP)
+      {
+        p: 0.22,
+        camX: isMobile ? -1.0 : -3.2,
+        camY: 1.6,
+        camZ: BASE_Z - 2.4,
+        rotY: 0.85,
+        rotX: 0.16,
+        globeRotY: 0.8,
+        ringsTilt: 0.25
+      },
+      // 2. 48-Hour Innovation Roadmap: Tactical High-Angle Planetary Network
+      {
+        p: 0.44,
+        camX: isMobile ? 1.0 : 2.5,
+        camY: 4.0,
+        camZ: BASE_Z - 1.8,
+        rotY: 1.85,
+        rotX: -0.32,
+        globeRotY: 1.6,
+        ringsTilt: -0.2
+      },
+      // 3. National Announcement & Memories: Sweeping 180° Orbital View
+      {
+        p: 0.70,
+        camX: isMobile ? -1.0 : 3.8,
+        camY: -1.4,
+        camZ: BASE_Z - 0.8,
+        rotY: 3.14,
+        rotX: 0.14,
+        globeRotY: 2.8,
+        ringsTilt: 0.4
+      },
+      // 4. Passes & FAQ / Footer: Wide Horizon Cosmic Pullback
+      {
+        p: 1.00,
+        camX: 0.0,
+        camY: -2.0,
+        camZ: BASE_Z + 1.6,
+        rotY: 4.4,
+        rotX: -0.10,
+        globeRotY: 4.2,
+        ringsTilt: 0.0
+      }
+    ];
+
+    // Smoothstep interpolation between waypoints
+    const getChoreographyAt = (progress) => {
+      const p = Math.max(0, Math.min(1, progress));
+      for (let i = 0; i < SCROLL_WAYPOINTS.length - 1; i++) {
+        const w1 = SCROLL_WAYPOINTS[i];
+        const w2 = SCROLL_WAYPOINTS[i + 1];
+        if (p >= w1.p && p <= w2.p) {
+          const t = (p - w1.p) / (w2.p - w1.p);
+          const ease = t * t * (3 - 2 * t); // Smoothstep easing
+          return {
+            camX: w1.camX + (w2.camX - w1.camX) * ease,
+            camY: w1.camY + (w2.camY - w1.camY) * ease,
+            camZ: w1.camZ + (w2.camZ - w1.camZ) * ease,
+            rotY: w1.rotY + (w2.rotY - w1.rotY) * ease,
+            rotX: w1.rotX + (w2.rotX - w1.rotX) * ease,
+            globeRotY: w1.globeRotY + (w2.globeRotY - w1.globeRotY) * ease,
+            ringsTilt: w1.ringsTilt + (w2.ringsTilt - w1.ringsTilt) * ease
+          };
+        }
+      }
+      return SCROLL_WAYPOINTS[SCROLL_WAYPOINTS.length - 1];
+    };
+
+    // --- 10. Live Scroll & 360° Drag State ---
+    let currentScrollProgress = 0;
+    let targetScrollProgress = 0;
+
+    const onScroll = () => {
+      const docHeight = document.documentElement.scrollHeight - window.innerHeight;
+      if (docHeight > 0) {
+        targetScrollProgress = Math.min(Math.max((window.scrollY || window.pageYOffset) / docHeight, 0), 1);
+      }
+    };
+    window.addEventListener('scroll', onScroll, { passive: true });
+    onScroll(); // Initialize
+
+    // 360° Drag & Cursor Interaction
+    let dragRotY = 0;
+    let dragRotX = 0;
+    let targetDragRotY = 0;
+    let targetDragRotX = 0;
     let isDragging = false;
     let prevX = 0;
     let prevY = 0;
@@ -446,8 +541,8 @@ export default function AiUniverse3D() {
       if (isDragging) {
         const dx = clientX - prevX;
         const dy = clientY - prevY;
-        targetRotY += dx * 0.0035;
-        targetRotX += dy * 0.0035;
+        targetDragRotY += dx * 0.0035;
+        targetDragRotX += dy * 0.0035;
         prevX = clientX;
         prevY = clientY;
       }
@@ -464,22 +559,14 @@ export default function AiUniverse3D() {
     window.addEventListener('touchmove', onPointerMove, { passive: true });
     window.addEventListener('touchend', onPointerUp);
 
-    // Scroll throttle: completely stop rendering when scrolled past hero
-    let isScrolledPastHero = false;
-    const onScroll = () => {
-      const scrollY = window.scrollY || window.pageYOffset;
-      isScrolledPastHero = scrollY > 1200;
-    };
-    window.addEventListener('scroll', onScroll, { passive: true });
-
-    // Page Visibility: zero CPU/GPU when backgrounded
+    // Page Visibility API
     let isTabVisible = !document.hidden;
     const onVisibilityChange = () => {
       isTabVisible = !document.hidden;
     };
     document.addEventListener('visibilitychange', onVisibilityChange);
 
-    // Debounced Resize
+    // Resize
     let resizeTimer;
     const onResize = () => {
       clearTimeout(resizeTimer);
@@ -487,21 +574,22 @@ export default function AiUniverse3D() {
         camera.aspect = window.innerWidth / window.innerHeight;
         camera.updateProjectionMatrix();
         renderer.setSize(window.innerWidth, window.innerHeight);
+        onScroll();
       }, 150);
     };
     window.addEventListener('resize', onResize);
 
-    // --- 10. Controlled 30 FPS Render Loop (Rock-Solid < 5-8% CPU/GPU) ---
+    // --- 11. Controlled 30 FPS Render Loop (Continuous Scroll-Driven World) ---
     let animId;
     let lastTime = 0;
-    const FRAME_INTERVAL = 1000 / 30; // Strictly 30 FPS (33.3ms)
+    const FRAME_INTERVAL = 1000 / 30; // 30 FPS cap (33.3ms)
     let elapsed = 0;
 
     const animate = (timestamp) => {
       animId = requestAnimationFrame(animate);
 
-      // Zero-load bypass when hidden or scrolled away
-      if (!isTabVisible || isScrolledPastHero) {
+      // Pause rendering only when tab is hidden to save power
+      if (!isTabVisible) {
         return;
       }
 
@@ -511,23 +599,35 @@ export default function AiUniverse3D() {
       }
       lastTime = timestamp - (elapsedDelta % FRAME_INTERVAL);
 
-      const delta = 0.033; // Fixed step
+      const delta = 0.033;
       elapsed += delta;
 
-      // Smooth auto-rotation
-      if (!isDragging) {
-        targetRotY += 0.0025;
-      }
+      // Smooth scroll interpolation
+      currentScrollProgress += (targetScrollProgress - currentScrollProgress) * 0.08;
+      const choreo = getChoreographyAt(currentScrollProgress);
 
-      // Smooth camera/root inertia
-      rootGroup.rotation.y += (targetRotY + mouseX * 0.08 - rootGroup.rotation.y) * 0.05;
-      rootGroup.rotation.x += (targetRotX + mouseY * 0.04 - rootGroup.rotation.x) * 0.05;
+      // Smooth user drag inertia
+      dragRotY += (targetDragRotY - dragRotY) * 0.06;
+      dragRotX += (targetDragRotX - dragRotX) * 0.06;
 
-      // Independent Gentle Globe & Astra Ring Spin
-      globeGroup.rotation.y += 0.003;
+      // Target camera position dictated by scroll progress
+      camera.position.x += (choreo.camX - camera.position.x) * 0.08;
+      camera.position.y += (choreo.camY - camera.position.y) * 0.08;
+      camera.position.z += (choreo.camZ - camera.position.z) * 0.08;
+
+      // Master root rotation combining scroll choreography + user drag + mouse parallax
+      const targetGroupRotY = choreo.rotY + dragRotY + mouseX * 0.06;
+      const targetGroupRotX = choreo.rotX + dragRotX + mouseY * 0.03;
+
+      rootGroup.rotation.y += (targetGroupRotY - rootGroup.rotation.y) * 0.06;
+      rootGroup.rotation.x += (targetGroupRotX - rootGroup.rotation.x) * 0.06;
+
+      // Independent continuous planetary spin
+      globeGroup.rotation.y += 0.0025;
       astraRingsGroup.rotation.y -= 0.0018;
+      astraRingsGroup.rotation.z = -0.32 + choreo.ringsTilt;
 
-      // Spin Tech Pillar Cores & Halos
+      // Spin individual Tech Pillar Cores & Halos
       const pLen = pillarMeshes.length;
       for (let i = 0; i < pLen; i++) {
         const item = pillarMeshes[i];
@@ -577,7 +677,7 @@ export default function AiUniverse3D() {
         className="absolute inset-0 w-full h-full cursor-grab active:cursor-grabbing" 
       />
 
-      {/* Zero-Cost Static Gradient Glows (Matching TechAstra Golden & Cyan Palette) */}
+      {/* Static Zero-Cost Ambient Gradient Glows */}
       <div 
         className="absolute inset-0 pointer-events-none"
         style={{

@@ -36,7 +36,7 @@ export default function Hero({ onOpenRegister }) {
   }, [eventSettings.targetDate]);
 
   return (
-    <section className="relative min-h-screen flex flex-col justify-between items-center pt-24 pb-8 sm:pb-12 px-4 sm:px-6 lg:px-8 overflow-hidden bg-transparent pointer-events-none w-full max-w-7xl mx-auto">
+    <section id="hero" className="relative min-h-screen flex flex-col justify-between items-center pt-24 pb-8 sm:pb-12 px-4 sm:px-6 lg:px-8 overflow-hidden bg-transparent pointer-events-none w-full max-w-7xl mx-auto">
       
       {/* Spacer to balance top margin */}
       <div className="h-2" />
