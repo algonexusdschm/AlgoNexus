@@ -10,23 +10,23 @@ export default function Navbar({ onOpenRegister, onOpenAdmin }) {
         <div className="flex items-center justify-between h-20">
           
           {/* Brand Logo */}
-          <a href="#" className="flex items-center gap-3 group">
+          <a href="#" className="flex items-center gap-2 sm:gap-3 group min-w-0">
             <img
               src="/techastra-logo.png"
               alt="TechAstra Logo"
-              className="h-11 sm:h-13 w-auto max-h-12 object-contain group-hover:scale-105 transition-all drop-shadow-sm shrink-0"
+              className="h-9 sm:h-12 w-auto object-contain group-hover:scale-105 transition-all drop-shadow-sm shrink-0"
             />
-            <div>
-              <div className="flex items-center gap-2">
-                <span className="text-xl sm:text-2xl font-chakra font-black tracking-tight text-slate-900 uppercase">
+            <div className="min-w-0">
+              <div className="flex items-center gap-1.5 sm:gap-2">
+                <span className="text-lg sm:text-2xl font-chakra font-black tracking-tight text-slate-900 uppercase truncate">
                   TECH<span className="text-blue-600">ASTRA</span>
                 </span>
-                <span className="text-[10px] font-mono font-bold px-2 py-0.5 bg-blue-50 text-blue-700 border border-blue-200 rounded-full">
+                <span className="text-[9px] sm:text-[10px] font-mono font-bold px-1.5 sm:px-2 py-0.5 bg-blue-50 text-blue-700 border border-blue-200 rounded-full shrink-0">
                   2026
                 </span>
               </div>
-              <p className="text-[10px] text-slate-500 tracking-wider uppercase font-mono">
-                <span className="text-blue-600 font-bold">Data Decoders</span> • Dept. of Data Science • CHM College
+              <p className="text-[9px] sm:text-[10px] text-slate-500 tracking-wider uppercase font-mono truncate">
+                <span className="text-blue-600 font-bold">Data Decoders</span> • Dept. of Data Science
               </p>
             </div>
           </a>

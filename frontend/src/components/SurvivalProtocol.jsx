@@ -69,52 +69,77 @@ export default function SurvivalProtocol({ onOpenRegister }) {
           </p>
         </div>
 
-        {/* 5 Connected Node Cards Grid */}
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-          {EVENT_TRACKS.map((track) => {
-            return (
-              <div
-                key={track.id}
-                className="group relative p-6 rounded-3xl bg-white hover:bg-slate-50/90 border border-slate-200/90 hover:border-blue-400 shadow-md hover:shadow-xl hover:-translate-y-1 transition-all duration-300 flex flex-col justify-between"
-              >
-                <div className="space-y-4">
-                  {/* Top Badge & Node pill */}
-                  <div className="flex items-center justify-between">
-                    <span className="px-3 py-1 rounded-full text-xs font-mono font-extrabold bg-slate-900 text-white tracking-wider">
-                      {track.node}
-                    </span>
-                    <span className="text-[11px] font-mono font-bold text-blue-600 bg-blue-50 px-2.5 py-0.5 rounded-full border border-blue-200">
-                      {track.badge}
-                    </span>
+        {/* Relative Container for Blurred Tracks + Announcing Soon Overlay */}
+        <div className="relative">
+          {/* Blurred Background Cards */}
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 filter blur-[7px] opacity-60 select-none pointer-events-none scale-[0.99] transition-all">
+            {EVENT_TRACKS.map((track) => {
+              return (
+                <div
+                  key={track.id}
+                  className="group relative p-6 rounded-3xl bg-white hover:bg-slate-50/90 border border-slate-200/90 hover:border-blue-400 shadow-md hover:shadow-xl hover:-translate-y-1 transition-all duration-300 flex flex-col justify-between"
+                >
+                  <div className="space-y-4">
+                    {/* Top Badge & Node pill */}
+                    <div className="flex items-center justify-between">
+                      <span className="px-3 py-1 rounded-full text-xs font-mono font-extrabold bg-slate-900 text-white tracking-wider">
+                        {track.node}
+                      </span>
+                      <span className="text-[11px] font-mono font-bold text-blue-600 bg-blue-50 px-2.5 py-0.5 rounded-full border border-blue-200">
+                        {track.badge}
+                      </span>
+                    </div>
+
+                    {/* Title & Desc */}
+                    <div>
+                      <h3 className="text-lg font-chakra font-bold text-slate-900 group-hover:text-blue-600 transition-colors">
+                        {track.name}
+                      </h3>
+                      <p className="text-xs text-slate-600 mt-2 font-mono leading-relaxed">
+                        {track.desc}
+                      </p>
+                    </div>
                   </div>
 
-                  {/* Title & Desc */}
-                  <div>
-                    <h3 className="text-lg font-chakra font-bold text-slate-900 group-hover:text-blue-600 transition-colors">
-                      {track.name}
-                    </h3>
-                    <p className="text-xs text-slate-600 mt-2 font-mono leading-relaxed">
-                      {track.desc}
-                    </p>
+                  {/* Prize Footer (No Green!) */}
+                  <div className="pt-5 mt-4 border-t border-slate-100 flex items-center justify-between">
+                    <span className="text-xs font-mono font-bold text-blue-700 bg-blue-50 px-2.5 py-1 rounded-lg border border-blue-200">
+                      {track.prize}
+                    </span>
+                    <button
+                      onClick={() => onOpenRegister()}
+                      className="text-xs font-bold text-slate-900 group-hover:text-blue-600 flex items-center gap-1 font-chakra transition-colors cursor-pointer"
+                    >
+                      <span>Register</span>
+                      <ArrowRight className="w-3.5 h-3.5 group-hover:translate-x-1 transition-transform" />
+                    </button>
                   </div>
                 </div>
+              );
+            })}
+          </div>
 
-                {/* Prize Footer (No Green!) */}
-                <div className="pt-5 mt-4 border-t border-slate-100 flex items-center justify-between">
-                  <span className="text-xs font-mono font-bold text-blue-700 bg-blue-50 px-2.5 py-1 rounded-lg border border-blue-200">
-                    {track.prize}
-                  </span>
-                  <button
-                    onClick={() => onOpenRegister()}
-                    className="text-xs font-bold text-slate-900 group-hover:text-blue-600 flex items-center gap-1 font-chakra transition-colors cursor-pointer"
-                  >
-                    <span>Register</span>
-                    <ArrowRight className="w-3.5 h-3.5 group-hover:translate-x-1 transition-transform" />
-                  </button>
-                </div>
+          {/* Floating "Announcing Soon" Holographic Card */}
+          <div className="absolute inset-0 flex flex-col items-center justify-center p-4 z-20">
+            <div className="w-full max-w-lg p-6 sm:p-10 rounded-3xl bg-white/95 border-2 border-blue-500 shadow-2xl text-center space-y-4">
+              <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-blue-50 border border-blue-200 text-blue-700 text-xs font-mono font-bold tracking-wider uppercase">
+                <BrainCircuit className="w-4 h-4 text-blue-600 animate-pulse" />
+                <span>CHALLENGE PROBLEM STATEMENTS</span>
               </div>
-            );
-          })}
+              <h3 className="text-3xl sm:text-5xl font-chakra font-black tracking-tight text-slate-900 uppercase">
+                ANNOUNCING SOON
+              </h3>
+              <p className="text-xs sm:text-sm text-slate-600 font-mono leading-relaxed max-w-md mx-auto">
+                Detailed problem statements, datasets, and rubric criteria across AI, CV, ML, NLP, and RAG will be announced soon.
+              </p>
+              <div className="pt-2 flex flex-wrap items-center justify-center gap-3">
+                <span className="px-5 py-2.5 rounded-xl bg-slate-900 text-white font-chakra text-xs font-bold tracking-wider uppercase inline-flex items-center gap-2 shadow-md">
+                  <span className="w-2 h-2 rounded-full bg-sky-400 animate-ping" />
+                  <span>TRACKS & REPO REVEAL ON LAUNCH</span>
+                </span>
+              </div>
+            </div>
+          </div>
         </div>
 
         {/* Hackathon Journey Timeline Steps */}
