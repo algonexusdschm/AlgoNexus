@@ -2,22 +2,20 @@ import React, { useRef, useEffect } from 'react';
 import * as THREE from 'three';
 
 /**
- * AiUniverse3D: Fully Scroll-Driven "TechAstra" 3D Celestial Universe
+ * AiUniverse3D: High-Definition Color-Calibrated TechAstra Universe
  * 
- * Scroll-Choreographed Architecture:
- * - The entire 3D scene responds and transforms continuously as you scroll the page
- * - Waypoint 0 (Hero): Master frontal view of the TechAstra World Globe & 5 Tech Pillars
- * - Waypoint 1 (AI Tracks): Swoop into the 5 Tech Pillars (AI, CV, ML, NLP, RAG) with glowing highways
- * - Waypoint 2 (Roadmap): High-angle tactical orbital view looking down at the world network
- * - Waypoint 3 (Announcement/Gallery): Sweeping 180° rotation revealing the global nodes & golden Astra orbit ring
- * - Waypoint 4 (Passes/FAQ/Footer): Grand wide-angle cosmic pull-back framing the horizon
+ * Color Architecture (High-Contrast White Studio Palette):
+ * - Radiant Solar Gold (#f59e0b, #fbbf24) - Official TechAstra Astra Emblem Ring & Beacons
+ * - Electric Cyan (#00b4d8, #0284c7) - Global Equator & AI Apex Nucleus
+ * - Deep Sapphire Cobalt (#1d4ed8, #2563eb) - Meridian Latitudes & RAG Memory Lattice
+ * - Neon Indigo (#4f46e5, #6366f1) - Machine Learning Tensor Weights
+ * - Synaptic Imperial Violet (#7c3aed, #8b5cf6) - NLP Attention Networks & Counter-Orbit Ring
  * 
  * Performance:
- * - Ultra-low CPU/GPU (< 5-8% usage)
- * - 30 FPS throttle
- * - Opaque canvas (alpha: false, background: #f8fafc) for direct hardware scanout
- * - Capped DPR = 1.0
- * - Disposes memory cleanly on unmount
+ * - Rock-solid 30 FPS throttle
+ * - Opaque canvas (alpha: false, background: #fcfdfd) with zero compositor blur passes
+ * - Smooth scroll-driven camera choreography across all 5 waypoints
+ * - Complete memory cleanup on unmount
  */
 
 // 5 Core Tech Pillars of TechAstra
@@ -26,60 +24,65 @@ const TECH_PILLARS = [
     id: 'ai',
     name: 'AI CORE',
     sub: 'Artificial Intelligence',
-    pos: [0, 4.6, 0.5],
+    pos: [0, 4.8, 0.6],
     color: '#0284c7', // Electric Cyan
+    accentColor: '#f59e0b', // Solar Gold Highlight
     geo: 'icosahedron',
-    radius: 1.1,
-    nodes: 50
+    radius: 1.15,
+    nodes: 55
   },
   {
     id: 'cv',
     name: 'CV ENGINE',
     sub: 'Computer Vision',
-    pos: [-8.4, 1.6, 1.8],
-    color: '#0ea5e9', // Sky Blue
+    pos: [-8.6, 1.8, 1.8],
+    color: '#0ea5e9', // Optical Azure
+    accentColor: '#0284c7',
     geo: 'octahedron',
-    radius: 0.85,
-    nodes: 40
+    radius: 0.9,
+    nodes: 45
   },
   {
     id: 'rag',
     name: 'RAG MEMORY',
     sub: 'Vector Retrieval',
-    pos: [8.4, 1.8, -1.6],
-    color: '#2563eb', // Cobalt Blue
+    pos: [8.6, 2.0, -1.6],
+    color: '#2563eb', // Royal Cobalt
+    accentColor: '#3b82f6',
     geo: 'octahedron',
-    radius: 0.85,
-    nodes: 40
+    radius: 0.9,
+    nodes: 45
   },
   {
     id: 'nlp',
     name: 'NLP SYNAPSE',
     sub: 'Natural Language',
-    pos: [6.4, -3.8, 1.8],
+    pos: [6.6, -3.8, 1.8],
     color: '#8b5cf6', // Synaptic Violet
+    accentColor: '#a855f7',
     geo: 'tetrahedron',
-    radius: 0.75,
-    nodes: 35
+    radius: 0.8,
+    nodes: 40
   },
   {
     id: 'ml',
     name: 'ML WEIGHTS',
     sub: 'Machine Learning',
-    pos: [-6.4, -3.8, -1.4],
-    color: '#6366f1', // Indigo Neural
+    pos: [-6.6, -3.8, -1.4],
+    color: '#6366f1', // Neural Indigo
+    accentColor: '#818cf8',
     geo: 'tetrahedron',
-    radius: 0.75,
-    nodes: 35
+    radius: 0.8,
+    nodes: 40
   }
 ];
 
-// Peripheral Widescreen Wings (Ensures full laptop edge-to-edge constellation)
+// Peripheral Widescreen Wings
 const WIDESCREEN_EDGES = [
-  { id: 'edge_west', pos: [-15.2, -0.6, -2.0], color: '#38bdf8', nodes: 35 },
-  { id: 'edge_east', pos: [15.2, -0.4, -2.0], color: '#818cf8', nodes: 35 },
-  { id: 'horizon_nw', pos: [-8.8, 5.5, -1.8], color: '#0284c7', nodes: 25 },
-  { id: 'horizon_ne', pos: [8.8, 5.6, -1.8], color: '#7c3aed', nodes: 25 }
+  { id: 'edge_west', pos: [-15.5, -0.6, -2.0], color: '#38bdf8', nodes: 35 },
+  { id: 'edge_east', pos: [15.5, -0.4, -2.0], color: '#818cf8', nodes: 35 },
+  { id: 'horizon_nw', pos: [-9.0, 5.6, -1.8], color: '#0284c7', nodes: 25 },
+  { id: 'horizon_ne', pos: [9.0, 5.8, -1.8], color: '#7c3aed', nodes: 25 }
 ];
 
 export default function AiUniverse3D() {
@@ -100,10 +103,11 @@ export default function AiUniverse3D() {
       return item;
     };
 
-    // --- 1. Scene & Opaque Canvas ---
+    // --- 1. Scene & Crisp Studio White Canvas ---
     const scene = new THREE.Scene();
-    scene.background = new THREE.Color(0xf8fafc);
-    scene.fog = new THREE.FogExp2(0xf8fafc, 0.010);
+    scene.background = new THREE.Color(0xfcfdfd);
+    // Subtle atmospheric depth without washing out foreground elements
+    scene.fog = new THREE.FogExp2(0xfcfdfd, 0.005);
 
     const camera = new THREE.PerspectiveCamera(
       52,
@@ -114,7 +118,7 @@ export default function AiUniverse3D() {
     const initialCamZ = isMobile ? 18.5 : 14.2;
     camera.position.set(0, 0, initialCamZ);
 
-    // --- 2. Low-Overhead Renderer ---
+    // --- 2. Low-Overhead WebGLRenderer ---
     const renderer = new THREE.WebGLRenderer({
       antialias: false,
       alpha: false,
@@ -129,7 +133,7 @@ export default function AiUniverse3D() {
     renderer.setPixelRatio(1.0);
     container.appendChild(renderer.domElement);
 
-    // --- 3. Master Groups ---
+    // --- 3. Master Hierarchy Groups ---
     const rootGroup = new THREE.Group();
     scene.add(rootGroup);
 
@@ -142,20 +146,27 @@ export default function AiUniverse3D() {
     const techConstellationGroup = new THREE.Group();
     rootGroup.add(techConstellationGroup);
 
-    // --- 4. Central World / Globe ---
+    // --- 4. Central World / Globe ("Astra Global Network") ---
     const GLOBE_RADIUS = 3.6;
 
-    const meridianMat = register(new THREE.LineBasicMaterial({
-      color: 0x0284c7,
+    // 4a. High-Contrast Latitude & Longitude Meridians
+    const primeMeridianMat = register(new THREE.LineBasicMaterial({
+      color: 0x0284c7, // Vibrant Electric Cyan
       transparent: true,
-      opacity: 0.22
+      opacity: 0.65
+    }));
+
+    const secondaryMeridianMat = register(new THREE.LineBasicMaterial({
+      color: 0x1d4ed8, // Deep Sapphire Cobalt
+      transparent: true,
+      opacity: 0.38
     }));
 
     // Longitude circular meridians
-    const meridianCount = 6;
+    const meridianCount = 8;
     for (let m = 0; m < meridianCount; m++) {
       const circlePts = [];
-      const segs = 48;
+      const segs = 64;
       for (let s = 0; s <= segs; s++) {
         const theta = (s / segs) * Math.PI * 2;
         circlePts.push(new THREE.Vector3(
@@ -165,17 +176,18 @@ export default function AiUniverse3D() {
         ));
       }
       const mGeo = register(new THREE.BufferGeometry().setFromPoints(circlePts));
-      const mLine = new THREE.Line(mGeo, meridianMat);
+      const mat = (m === 0 || m === 4) ? primeMeridianMat : secondaryMeridianMat;
+      const mLine = new THREE.Line(mGeo, mat);
       mLine.rotation.y = (m / meridianCount) * Math.PI;
       globeGroup.add(mLine);
     }
 
     // Latitude horizontal rings
-    const latLevels = [-2.4, -1.2, 0, 1.2, 2.4];
-    latLevels.forEach((y) => {
+    const latLevels = [-2.6, -1.8, -0.9, 0, 0.9, 1.8, 2.6];
+    latLevels.forEach((y, idx) => {
       const r = Math.sqrt(Math.max(0.1, GLOBE_RADIUS * GLOBE_RADIUS - y * y));
       const circlePts = [];
-      const segs = 48;
+      const segs = 64;
       for (let s = 0; s <= segs; s++) {
         const theta = (s / segs) * Math.PI * 2;
         circlePts.push(new THREE.Vector3(
@@ -185,17 +197,34 @@ export default function AiUniverse3D() {
         ));
       }
       const latGeo = register(new THREE.BufferGeometry().setFromPoints(circlePts));
-      const latLine = new THREE.Line(latGeo, meridianMat);
+      // Equator is highlighted with prime cyan
+      const isEquator = Math.abs(y) < 0.01;
+      const latLine = new THREE.Line(latGeo, isEquator ? primeMeridianMat : secondaryMeridianMat);
       globeGroup.add(latLine);
     });
 
-    // Fibonacci Sphere Global Dot-Matrix
-    const globePointsCount = 260;
+    // 4b. Inner Cyber Heart Core (Gives the globe volumetric substance)
+    const innerCoreGeo = register(new THREE.IcosahedronGeometry(1.4, 1));
+    const innerCoreMat = register(new THREE.MeshBasicMaterial({
+      color: 0x2563eb,
+      wireframe: true,
+      transparent: true,
+      opacity: 0.45
+    }));
+    const innerCoreMesh = new THREE.Mesh(innerCoreGeo, innerCoreMat);
+    globeGroup.add(innerCoreMesh);
+
+    // 4c. Fibonacci Global Network Dots (Four Vibrant Cyber Jewels)
+    const globePointsCount = 280;
     const globePositions = [];
     const globeColors = [];
-    const cyanCol = new THREE.Color(0x0284c7);
-    const blueCol = new THREE.Color(0x2563eb);
-    const purpleCol = new THREE.Color(0x8b5cf6);
+    
+    const palette = [
+      new THREE.Color(0x0284c7), // Electric Cyan
+      new THREE.Color(0xf59e0b), // Radiant Solar Gold
+      new THREE.Color(0x2563eb), // Cobalt Blue
+      new THREE.Color(0x8b5cf6)  // Synaptic Violet
+    ];
 
     const phiGolden = Math.PI * (3 - Math.sqrt(5));
     for (let i = 0; i < globePointsCount; i++) {
@@ -208,7 +237,7 @@ export default function AiUniverse3D() {
       const posY = y * GLOBE_RADIUS;
 
       globePositions.push(x, posY, z);
-      const col = (i % 3 === 0) ? cyanCol : (i % 3 === 1 ? blueCol : purpleCol);
+      const col = palette[i % palette.length];
       globeColors.push(col.r, col.g, col.b);
     }
 
@@ -217,20 +246,20 @@ export default function AiUniverse3D() {
     globePtsGeo.setAttribute('color', new THREE.Float32BufferAttribute(globeColors, 3));
 
     const globePtsMat = register(new THREE.PointsMaterial({
-      size: 0.16,
+      size: 0.18,
       vertexColors: true,
       transparent: true,
-      opacity: 0.85
+      opacity: 0.92
     }));
     const globePoints = new THREE.Points(globePtsGeo, globePtsMat);
     globeGroup.add(globePoints);
 
-    // --- 5. "Astra" Celestial Orbital Rings ---
-    // Celestial Orbital Ring 1: Primary Diagonal Astra Ring (Golden from logo emblem)
+    // --- 5. "Astra" Celestial Orbital Rings (Vibrant Gold & Cyan) ---
+    // Celestial Ring 1: Primary Diagonal Astra Ring (Rich Radiant Solar Gold)
     const ring1Pts = [];
     const RING1_RADIUS = 5.8;
-    for (let s = 0; s <= 64; s++) {
-      const theta = (s / 64) * Math.PI * 2;
+    for (let s = 0; s <= 80; s++) {
+      const theta = (s / 80) * Math.PI * 2;
       ring1Pts.push(new THREE.Vector3(
         Math.cos(theta) * RING1_RADIUS,
         0,
@@ -239,20 +268,45 @@ export default function AiUniverse3D() {
     }
     const ring1Geo = register(new THREE.BufferGeometry().setFromPoints(ring1Pts));
     const ring1Mat = register(new THREE.LineBasicMaterial({
-      color: 0xd97706,
+      color: 0xf59e0b, // Radiant Solar Gold
       transparent: true,
-      opacity: 0.45
+      opacity: 0.80
     }));
     const astraRing1 = new THREE.Line(ring1Geo, ring1Mat);
     astraRing1.rotation.x = 0.58;
     astraRing1.rotation.z = -0.32;
     astraRingsGroup.add(astraRing1);
 
-    // Celestial Orbital Ring 2: Secondary Counter-Orbit Ring
+    // Golden Astra Orbit Beacons (6 jewel-like stars gliding along the ring)
+    const beaconPts = [];
+    const beaconCols = [];
+    const goldCol = new THREE.Color(0xfbbf24);
+    for (let k = 0; k < 6; k++) {
+      const angle = (k / 6) * Math.PI * 2;
+      beaconPts.push(
+        Math.cos(angle) * RING1_RADIUS,
+        0,
+        Math.sin(angle) * (RING1_RADIUS * 0.92)
+      );
+      beaconCols.push(goldCol.r, goldCol.g, goldCol.b);
+    }
+    const beaconGeo = register(new THREE.BufferGeometry());
+    beaconGeo.setAttribute('position', new THREE.Float32BufferAttribute(beaconPts, 3));
+    beaconGeo.setAttribute('color', new THREE.Float32BufferAttribute(beaconCols, 3));
+    const beaconMat = register(new THREE.PointsMaterial({
+      size: 0.32,
+      vertexColors: true,
+      transparent: true,
+      opacity: 0.95
+    }));
+    const astraBeacons = new THREE.Points(beaconGeo, beaconMat);
+    astraRing1.add(astraBeacons);
+
+    // Celestial Ring 2: Secondary Counter-Orbit Ring (Luminous Cyan)
     const ring2Pts = [];
     const RING2_RADIUS = 6.6;
-    for (let s = 0; s <= 64; s++) {
-      const theta = (s / 64) * Math.PI * 2;
+    for (let s = 0; s <= 80; s++) {
+      const theta = (s / 80) * Math.PI * 2;
       ring2Pts.push(new THREE.Vector3(
         Math.cos(theta) * RING2_RADIUS,
         0,
@@ -261,14 +315,34 @@ export default function AiUniverse3D() {
     }
     const ring2Geo = register(new THREE.BufferGeometry().setFromPoints(ring2Pts));
     const ring2Mat = register(new THREE.LineBasicMaterial({
-      color: 0x0ea5e9,
+      color: 0x0ea5e9, // Electric Cyan Accent
       transparent: true,
-      opacity: 0.35
+      opacity: 0.60
     }));
     const astraRing2 = new THREE.Line(ring2Geo, ring2Mat);
     astraRing2.rotation.x = -0.45;
     astraRing2.rotation.z = 0.40;
     astraRingsGroup.add(astraRing2);
+
+    // Celestial Ring 3: Concentric Equatorial Synaptic Ring
+    const ring3Pts = [];
+    const RING3_RADIUS = 5.0;
+    for (let s = 0; s <= 64; s++) {
+      const theta = (s / 64) * Math.PI * 2;
+      ring3Pts.push(new THREE.Vector3(
+        Math.cos(theta) * RING3_RADIUS,
+        0,
+        Math.sin(theta) * RING3_RADIUS
+      ));
+    }
+    const ring3Geo = register(new THREE.BufferGeometry().setFromPoints(ring3Pts));
+    const ring3Mat = register(new THREE.LineBasicMaterial({
+      color: 0x8b5cf6, // Synaptic Violet
+      transparent: true,
+      opacity: 0.42
+    }));
+    const astraRing3 = new THREE.Line(ring3Geo, ring3Mat);
+    astraRingsGroup.add(astraRing3);
 
     // --- 6. The 5 Core Tech Pillars (AI, CV, ML, NLP, RAG) ---
     const pillarMeshes = [];
@@ -278,7 +352,8 @@ export default function AiUniverse3D() {
     const icosaGeo = register(new THREE.IcosahedronGeometry(1.0, 1));
     const octaGeo = register(new THREE.OctahedronGeometry(0.8, 0));
     const tetraGeo = register(new THREE.TetrahedronGeometry(0.75, 0));
-    const haloRingGeo = register(new THREE.RingGeometry(0.9, 1.05, 20));
+    const haloRingGeo = register(new THREE.RingGeometry(0.9, 1.05, 24));
+    const outerHaloGeo = register(new THREE.RingGeometry(1.2, 1.28, 24));
 
     TECH_PILLARS.forEach((pillar) => {
       const center = new THREE.Vector3(...pillar.pos);
@@ -291,35 +366,49 @@ export default function AiUniverse3D() {
       if (pillar.geo === 'icosahedron') coreGeo = icosaGeo;
       else if (pillar.geo === 'tetrahedron') coreGeo = tetraGeo;
 
+      // Vivid Geometric Core Mesh
       const coreMat = register(new THREE.MeshBasicMaterial({
         color: pillar.color,
         wireframe: true,
         transparent: true,
-        opacity: 0.85
+        opacity: 0.90
       }));
       const coreMesh = new THREE.Mesh(coreGeo, coreMat);
       coreMesh.scale.setScalar(pillar.radius);
       pillarGroup.add(coreMesh);
 
+      // Primary Luminous Halo Ring
       const haloMat = register(new THREE.MeshBasicMaterial({
         color: pillar.color,
         side: THREE.DoubleSide,
         transparent: true,
-        opacity: 0.45
+        opacity: 0.55
       }));
       const haloMesh = new THREE.Mesh(haloRingGeo, haloMat);
       haloMesh.scale.setScalar(pillar.radius * 1.15);
       pillarGroup.add(haloMesh);
 
-      techConstellationGroup.add(pillarGroup);
-      pillarMeshes.push({ coreMesh, haloMesh, center, color });
+      // Secondary Concentric Outer Orbit Halo
+      const outerHaloMat = register(new THREE.MeshBasicMaterial({
+        color: pillar.accentColor || pillar.color,
+        side: THREE.DoubleSide,
+        transparent: true,
+        opacity: 0.30
+      }));
+      const outerHaloMesh = new THREE.Mesh(outerHaloGeo, outerHaloMat);
+      outerHaloMesh.scale.setScalar(pillar.radius * 1.25);
+      pillarGroup.add(outerHaloMesh);
 
+      techConstellationGroup.add(pillarGroup);
+      pillarMeshes.push({ coreMesh, haloMesh, outerHaloMesh, center, color });
+
+      // Vibrant satellite cloud
       for (let i = 0; i < pillar.nodes; i++) {
         const u = Math.random();
         const v = Math.random();
         const theta = u * 2.0 * Math.PI;
         const phi = Math.acos(2.0 * v - 1.0);
-        const r = Math.cbrt(Math.random()) * 2.2;
+        const r = Math.cbrt(Math.random()) * 2.3;
 
         const sinPhi = Math.sin(phi);
         const x = center.x + r * sinPhi * Math.cos(theta);
@@ -330,13 +419,13 @@ export default function AiUniverse3D() {
         techNodeColors.push(color.r, color.g, color.b);
       }
 
-      // Connecting Ray to Globe Center
-      const beamPts = [center, new THREE.Vector3(center.x * 0.4, center.y * 0.4, center.z * 0.4)];
+      // High-Contrast Ray Beam to Globe Center
+      const beamPts = [center, new THREE.Vector3(center.x * 0.35, center.y * 0.35, center.z * 0.35)];
       const beamGeo = register(new THREE.BufferGeometry().setFromPoints(beamPts));
       const beamMat = register(new THREE.LineBasicMaterial({
         color: pillar.color,
         transparent: true,
-        opacity: 0.35
+        opacity: 0.50
       }));
       const beam = new THREE.Line(beamGeo, beamMat);
       techConstellationGroup.add(beam);
@@ -364,10 +453,10 @@ export default function AiUniverse3D() {
     techPtsGeo.setAttribute('color', new THREE.Float32BufferAttribute(techNodeColors, 3));
 
     const techPtsMat = register(new THREE.PointsMaterial({
-      size: 0.14,
+      size: 0.16,
       vertexColors: true,
       transparent: true,
-      opacity: 0.8
+      opacity: 0.88
     }));
     const techPoints = new THREE.Points(techPtsGeo, techPtsMat);
     techConstellationGroup.add(techPoints);
@@ -402,22 +491,21 @@ export default function AiUniverse3D() {
       if (!pA || !pB) return;
 
       const mid = pA.clone().add(pB).multiplyScalar(0.5);
-      mid.z += 1.6;
+      mid.z += 1.8;
 
       const curve = new THREE.QuadraticBezierCurve3(pA, mid, pB);
-      const pts = curve.getPoints(24);
+      const pts = curve.getPoints(28);
       const lineGeo = register(new THREE.BufferGeometry().setFromPoints(pts));
       const lineMat = register(new THREE.LineBasicMaterial({
         color,
         transparent: true,
-        opacity: 0.38
+        opacity: 0.52
       }));
       const line = new THREE.Line(lineGeo, lineMat);
       techConstellationGroup.add(line);
     });
 
     // --- 9. Cinematic Scroll Waypoints Choreography ---
-    // Defines exact 3D camera & planetary orientation across the entire page journey
     const BASE_Z = isMobile ? 18.5 : 14.2;
 
     const SCROLL_WAYPOINTS = [
@@ -478,7 +566,6 @@ export default function AiUniverse3D() {
       }
     ];
 
-    // Smoothstep interpolation between waypoints
     const getChoreographyAt = (progress) => {
       const p = Math.max(0, Math.min(1, progress));
       for (let i = 0; i < SCROLL_WAYPOINTS.length - 1; i++) {
@@ -486,7 +573,7 @@ export default function AiUniverse3D() {
         const w2 = SCROLL_WAYPOINTS[i + 1];
         if (p >= w1.p && p <= w2.p) {
           const t = (p - w1.p) / (w2.p - w1.p);
-          const ease = t * t * (3 - 2 * t); // Smoothstep easing
+          const ease = t * t * (3 - 2 * t);
           return {
             camX: w1.camX + (w2.camX - w1.camX) * ease,
             camY: w1.camY + (w2.camY - w1.camY) * ease,
@@ -512,9 +599,8 @@ export default function AiUniverse3D() {
       }
     };
     window.addEventListener('scroll', onScroll, { passive: true });
-    onScroll(); // Initialize
+    onScroll();
 
-    // 360° Drag & Cursor Interaction
     let dragRotY = 0;
     let dragRotX = 0;
     let targetDragRotY = 0;
@@ -559,14 +645,12 @@ export default function AiUniverse3D() {
     window.addEventListener('touchmove', onPointerMove, { passive: true });
     window.addEventListener('touchend', onPointerUp);
 
-    // Page Visibility API
     let isTabVisible = !document.hidden;
     const onVisibilityChange = () => {
       isTabVisible = !document.hidden;
     };
     document.addEventListener('visibilitychange', onVisibilityChange);
 
-    // Resize
     let resizeTimer;
     const onResize = () => {
       clearTimeout(resizeTimer);
@@ -579,16 +663,15 @@ export default function AiUniverse3D() {
     };
     window.addEventListener('resize', onResize);
 
-    // --- 11. Controlled 30 FPS Render Loop (Continuous Scroll-Driven World) ---
+    // --- 11. Controlled 30 FPS Render Loop ---
     let animId;
     let lastTime = 0;
-    const FRAME_INTERVAL = 1000 / 30; // 30 FPS cap (33.3ms)
+    const FRAME_INTERVAL = 1000 / 30; // 30 FPS cap
     let elapsed = 0;
 
     const animate = (timestamp) => {
       animId = requestAnimationFrame(animate);
 
-      // Pause rendering only when tab is hidden to save power
       if (!isTabVisible) {
         return;
       }
@@ -602,20 +685,16 @@ export default function AiUniverse3D() {
       const delta = 0.033;
       elapsed += delta;
 
-      // Smooth scroll interpolation
       currentScrollProgress += (targetScrollProgress - currentScrollProgress) * 0.08;
       const choreo = getChoreographyAt(currentScrollProgress);
 
-      // Smooth user drag inertia
       dragRotY += (targetDragRotY - dragRotY) * 0.06;
       dragRotX += (targetDragRotX - dragRotX) * 0.06;
 
-      // Target camera position dictated by scroll progress
       camera.position.x += (choreo.camX - camera.position.x) * 0.08;
       camera.position.y += (choreo.camY - camera.position.y) * 0.08;
       camera.position.z += (choreo.camZ - camera.position.z) * 0.08;
 
-      // Master root rotation combining scroll choreography + user drag + mouse parallax
       const targetGroupRotY = choreo.rotY + dragRotY + mouseX * 0.06;
       const targetGroupRotX = choreo.rotX + dragRotX + mouseY * 0.03;
 
@@ -623,8 +702,9 @@ export default function AiUniverse3D() {
       rootGroup.rotation.x += (targetGroupRotX - rootGroup.rotation.x) * 0.06;
 
       // Independent continuous planetary spin
-      globeGroup.rotation.y += 0.0025;
-      astraRingsGroup.rotation.y -= 0.0018;
+      globeGroup.rotation.y += 0.0028;
+      innerCoreMesh.rotation.y -= 0.0035;
+      astraRingsGroup.rotation.y -= 0.0020;
       astraRingsGroup.rotation.z = -0.32 + choreo.ringsTilt;
 
       // Spin individual Tech Pillar Cores & Halos
@@ -635,6 +715,10 @@ export default function AiUniverse3D() {
         item.coreMesh.rotation.x = elapsed * 0.35 + i;
         const s = 1.0 + Math.sin(elapsed * 2.8 + i) * 0.12;
         item.haloMesh.scale.set(s, s, 1);
+        if (item.outerHaloMesh) {
+          const sOuter = 1.0 + Math.cos(elapsed * 2.2 + i) * 0.10;
+          item.outerHaloMesh.scale.set(sOuter, sOuter, 1);
+        }
       }
 
       renderer.render(scene, camera);
@@ -642,7 +726,6 @@ export default function AiUniverse3D() {
 
     animId = requestAnimationFrame(animate);
 
-    // Cleanup & Disposals
     return () => {
       cancelAnimationFrame(animId);
       clearTimeout(resizeTimer);
@@ -670,22 +753,23 @@ export default function AiUniverse3D() {
   }, []);
 
   return (
-    <div className="fixed inset-0 pointer-events-auto z-0 overflow-hidden select-none bg-[#f8fafc]">
+    <div className="fixed inset-0 pointer-events-auto z-0 overflow-hidden select-none bg-[#fcfdfd]">
       {/* 3D WebGL Canvas */}
       <div 
         ref={mountRef} 
         className="absolute inset-0 w-full h-full cursor-grab active:cursor-grabbing" 
       />
 
-      {/* Static Zero-Cost Ambient Gradient Glows */}
+      {/* Multi-Spectral Atmospheric Glows (Rich Gold & Cyan Cyber Ambience) */}
       <div 
         className="absolute inset-0 pointer-events-none"
         style={{
           background: `
-            radial-gradient(circle 650px at 50% 35%, rgba(14, 165, 233, 0.09) 0%, transparent 70%),
-            radial-gradient(circle 500px at 50% 38%, rgba(217, 119, 6, 0.05) 0%, transparent 65%),
-            radial-gradient(circle 500px at 15% 45%, rgba(99, 102, 241, 0.05) 0%, transparent 65%),
-            radial-gradient(circle 500px at 85% 45%, rgba(37, 99, 235, 0.05) 0%, transparent 65%)
+            radial-gradient(circle 750px at 50% 32%, rgba(2, 132, 199, 0.14) 0%, transparent 70%),
+            radial-gradient(circle 600px at 50% 36%, rgba(245, 158, 11, 0.12) 0%, transparent 65%),
+            radial-gradient(circle 550px at 18% 45%, rgba(99, 102, 241, 0.09) 0%, transparent 65%),
+            radial-gradient(circle 550px at 82% 45%, rgba(37, 99, 235, 0.09) 0%, transparent 65%),
+            radial-gradient(circle 450px at 50% 70%, rgba(139, 92, 246, 0.08) 0%, transparent 65%)
           `
         }}
       />

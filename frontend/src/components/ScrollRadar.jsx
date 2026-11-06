@@ -55,18 +55,18 @@ export default function ScrollRadar() {
   return (
     <aside aria-label="3D Orbital Sector Navigation" className="fixed right-4 sm:right-6 top-1/2 -translate-y-1/2 z-40 hidden lg:flex flex-col items-end gap-3 select-none pointer-events-auto">
       {/* Active Sector Holographic Tag */}
-      <div className="flex items-center gap-2 px-3 py-1.5 rounded-full bg-white/95 border border-slate-200/90 shadow-md text-slate-800 font-mono text-[10px] font-bold tracking-wider transition-all">
-        <span className="w-2 h-2 rounded-full bg-sky-500 animate-pulse shrink-0" />
-        <span className="text-slate-900">{currentSectorObj.name}</span>
-        <span className="text-sky-600 font-black pl-1">{scrollProgress}%</span>
+      <div className="flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-white/95 border border-slate-200/90 shadow-md text-slate-800 font-mono text-[10px] font-bold tracking-wider transition-all">
+        <span className="w-2 h-2 rounded-full bg-gradient-to-r from-amber-400 to-sky-500 animate-pulse shrink-0" />
+        <span className="text-slate-900 font-black">{currentSectorObj.name}</span>
+        <span className="text-transparent bg-clip-text bg-gradient-to-r from-sky-600 to-amber-600 font-black pl-1">{scrollProgress}%</span>
       </div>
 
       {/* Vertical Waypoint Track */}
-      <div className="relative py-3 px-2 rounded-2xl bg-white/90 border border-slate-200/90 shadow-md flex flex-col items-center gap-3">
+      <div className="relative py-3 px-2 rounded-2xl bg-white/95 border border-slate-200/90 shadow-md flex flex-col items-center gap-3">
         {/* Progress Fill Bar */}
         <div className="absolute left-1/2 -translate-x-1/2 top-3 bottom-3 w-[2px] bg-slate-200 -z-0">
           <div 
-            className="w-full bg-gradient-to-b from-sky-500 via-blue-600 to-indigo-600 transition-all duration-150"
+            className="w-full bg-gradient-to-b from-sky-500 via-amber-400 to-indigo-600 transition-all duration-150 rounded-full"
             style={{ height: `${scrollProgress}%` }}
           />
         </div>
@@ -84,13 +84,13 @@ export default function ScrollRadar() {
               <span 
                 className={`block rounded-full transition-all duration-300 ${
                   isActive 
-                    ? 'w-3.5 h-3.5 bg-blue-600 ring-4 ring-blue-100 shadow-md scale-110' 
+                    ? 'w-3.5 h-3.5 bg-gradient-to-tr from-sky-500 to-blue-600 ring-4 ring-sky-100 shadow-md scale-110' 
                     : 'w-2 h-2 bg-slate-300 hover:bg-slate-400 group-hover:scale-125'
                 }`}
               />
 
               {/* Hover Tooltip Label */}
-              <span className="absolute right-7 px-2.5 py-1 rounded-md bg-slate-900 text-white font-mono text-[9px] font-semibold tracking-wider whitespace-nowrap opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none shadow-lg">
+              <span className="absolute right-7 px-2.5 py-1 rounded-md bg-slate-900 text-white font-mono text-[9px] font-semibold tracking-wider whitespace-nowrap opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none shadow-lg border border-slate-700">
                 {sector.name}
               </span>
             </button>
