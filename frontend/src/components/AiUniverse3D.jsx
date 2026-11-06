@@ -626,6 +626,9 @@ export default function AiUniverse3D() {
       { from: 'edge_east', to: 'nlp', color: 0xf59e0b, secondColor: 0x2563eb }
     ];
 
+    // Master curves registry for live data packet transfer
+    const allTransferCurves = [];
+
     // Render multi-strand braided highways in Cobalt & Gold dual-helix
     highwayPairs.forEach(({ from, to, color, secondColor }) => {
       const pA = allPositionsMap[from];
@@ -636,6 +639,8 @@ export default function AiUniverse3D() {
       const mid1 = pA.clone().add(pB).multiplyScalar(0.5);
       mid1.z += 1.8;
       const curve1 = new THREE.QuadraticBezierCurve3(pA, mid1, pB);
+      allTransferCurves.push(curve1);
+
       const pts1 = curve1.getPoints(32);
       const lineGeo1 = register(new THREE.BufferGeometry().setFromPoints(pts1));
       const lineMat1 = register(new THREE.LineBasicMaterial({
@@ -651,6 +656,8 @@ export default function AiUniverse3D() {
       mid2.z += 1.3;
       mid2.y += 0.35;
       const curve2 = new THREE.QuadraticBezierCurve3(pA, mid2, pB);
+      allTransferCurves.push(curve2);
+
       const pts2 = curve2.getPoints(24);
       const lineGeo2 = register(new THREE.BufferGeometry().setFromPoints(pts2));
       const lineMat2 = register(new THREE.LineBasicMaterial({
@@ -661,6 +668,62 @@ export default function AiUniverse3D() {
       const line2 = new THREE.Line(lineGeo2, lineMat2);
       techConstellationGroup.add(line2);
     });
+
+    // Radial data transmission paths between the 5 pillars and central globe
+    TECH_PILLARS.forEach((pillar) => {
+      const center = new THREE.Vector3(...pillar.pos);
+      const globeTarget = new THREE.Vector3(center.x * 0.35, center.y * 0.35, center.z * 0.35);
+      allTransferCurves.push(new THREE.LineCurve3(center, globeTarget));
+      allTransferCurves.push(new THREE.LineCurve3(globeTarget, center));
+    });
+
+    // --- 10. Live Synaptic Data Packet Transfer System (Photons & Neural Signals) ---
+    const DATA_PACKET_COUNT = 80;
+    const packetPositions = new Float32Array(DATA_PACKET_COUNT * 3);
+    const packetColors = new Float32Array(DATA_PACKET_COUNT * 3);
+
+    const goldPhotonCol = new THREE.Color(0xfbbf24); // Radiant Solar Gold
+    const cobaltPhotonCol = new THREE.Color(0x38bdf8); // High-luminance Cyan/Cobalt
+    const whitePhotonCol = new THREE.Color(0xffffff); // Pure Luminous White Core
+
+    const packetsState = [];
+    for (let i = 0; i < DATA_PACKET_COUNT; i++) {
+      const curveIdx = i % allTransferCurves.length;
+      const t = Math.random();
+      const speed = 0.005 + Math.random() * 0.008;
+      const curve = allTransferCurves[curveIdx];
+      const pt = curve.getPoint(t);
+
+      packetPositions[i * 3] = pt.x;
+      packetPositions[i * 3 + 1] = pt.y;
+      packetPositions[i * 3 + 2] = pt.z;
+
+      const col = (i % 3 === 0) ? whitePhotonCol : (i % 3 === 1) ? goldPhotonCol : cobaltPhotonCol;
+      packetColors[i * 3] = col.r;
+      packetColors[i * 3 + 1] = col.g;
+      packetColors[i * 3 + 2] = col.b;
+
+      packetsState.push({
+        curveIdx,
+        t,
+        speed,
+        isReversed: Math.random() > 0.5
+      });
+    }
+
+    const packetGeo = register(new THREE.BufferGeometry());
+    const packetPosAttr = new THREE.BufferAttribute(packetPositions, 3);
+    packetGeo.setAttribute('position', packetPosAttr);
+    packetGeo.setAttribute('color', new THREE.BufferAttribute(packetColors, 3));
+
+    const packetMat = register(new THREE.PointsMaterial({
+      size: 0.35,
+      vertexColors: true,
+      transparent: true,
+      opacity: 0.96
+    }));
+    const dataPacketsMesh = new THREE.Points(packetGeo, packetMat);
+    techConstellationGroup.add(dataPacketsMesh);
 
     // --- 10. Cinematic Scroll Waypoints Choreography ---
     const BASE_Z = isMobile ? 18.5 : 14.2;
@@ -876,6 +939,26 @@ export default function AiUniverse3D() {
           const sOuter = 1.0 + Math.cos(elapsed * 2.2 + i) * 0.10;
           item.outerHaloMesh.scale.set(sOuter, sOuter, 1);
         }
+      }
+
+      // Animate flowing neural data packets across the network
+      const tCurvesLen = allTransferCurves.length;
+      if (tCurvesLen > 0) {
+        for (let i = 0; i < DATA_PACKET_COUNT; i++) {
+          const pState = packetsState[i];
+          pState.t += pState.speed;
+          if (pState.t >= 1.0) {
+            pState.t = 0;
+            pState.curveIdx = Math.floor(Math.random() * tCurvesLen);
+          }
+          const activeCurve = allTransferCurves[pState.curveIdx];
+          if (activeCurve) {
+            const sampleT = pState.isReversed ? (1.0 - pState.t) : pState.t;
+            const pos = activeCurve.getPoint(sampleT);
+            packetPosAttr.setXYZ(i, pos.x, pos.y, pos.z);
+          }
+        }
+        packetPosAttr.needsUpdate = true;
       }
 
       renderer.render(scene, camera);
