@@ -20,11 +20,16 @@ export const EVENT_DETAILS = {
   participantsExpected: "300+ Innovators & Hackers",
   collegesExpected: "80+ Universities Across India",
   
-  // Faculty Leadership & Organizing Committee
+  // College & Department Leadership
+  principal: {
+    title: "Principal",
+    name: "Dr. Manju Lalwani Pathak",
+    college: "Smt. Chandibai Himathmal Mansukhani College"
+  },
   coordinator: {
-    title: "Event Co-ordinator",
+    title: "Course Co-ordinator",
     name: "Dr. Shiji Johnson",
-    role: "Head & Co-ordinator, Department of Data Science"
+    role: "Course Co-ordinator, Department of Data Science"
   },
   teachers: [
     { name: "Ms. Kalyani Patil", role: "Assistant Professor, Department of Data Science" },
@@ -35,10 +40,17 @@ export const EVENT_DETAILS = {
 
 export const FACULTY_COMMITTEE = [
   {
-    role: "Event Co-ordinator",
+    role: "Principal",
+    name: "Dr. Manju Lalwani Pathak",
+    dept: "Smt. CHM College",
+    badge: "Principal",
+    accent: "amber"
+  },
+  {
+    role: "Course Co-ordinator",
     name: "Dr. Shiji Johnson",
     dept: "Department of Data Science",
-    badge: "Co-ordinator",
+    badge: "Course Co-ordinator",
     accent: "blue"
   },
   {
@@ -251,6 +263,6 @@ export const FAQ_LIST = [
   },
   {
     q: "Where is the venue and how do I contact the organizing committee?",
-    a: "TechAstra 2026 is hosted on-campus at Smt. Chandibai Himathmal Mansukhani College, organized by the Department of Data Science under Club Data Decoder. Under the leadership of Co-ordinator Dr. Shiji Johnson and Faculty Mentors Ms. Kalyani Patil, Ms. Razia Khan, and Mr. Anshul Chimnani. Reach out via email at algonexusdschm@gmail.com or mobile at +91 80100 86323."
+    a: "TechAstra 2026 is hosted on-campus at Smt. Chandibai Himathmal Mansukhani College, organized by the Department of Data Science under Club Data Decoder. Under the leadership of Principal Dr. Manju Lalwani Pathak, Course Co-ordinator Dr. Shiji Johnson, and Teachers Ms. Kalyani Patil, Ms. Razia Khan, and Mr. Anshul Chimnani. Reach out via email at algonexusdschm@gmail.com or mobile at +91 80100 86323."
   }
 ];

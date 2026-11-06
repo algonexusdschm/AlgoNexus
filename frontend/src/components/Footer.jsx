@@ -16,7 +16,7 @@ export default function Footer({ onOpenRegister, onOpenAdmin }) {
             <div className="flex items-center gap-2">
               <GraduationCap className="w-5 h-5 text-blue-600" />
               <span className="font-chakra font-black text-slate-900 tracking-wider uppercase text-xs">
-                DEPARTMENT FACULTY COORDINATION & TEACHERS
+                COLLEGE LEADERSHIP, COURSE COORDINATION & TEACHERS
               </span>
             </div>
             <span className="text-[10px] font-mono font-bold text-blue-700 bg-blue-100/60 px-2.5 py-0.5 rounded-full">
@@ -24,7 +24,7 @@ export default function Footer({ onOpenRegister, onOpenAdmin }) {
             </span>
           </div>
 
-          <div className="grid grid-cols-1 sm:grid-cols-4 gap-4">
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-4">
             {FACULTY_COMMITTEE.map((fac, idx) => (
               <div key={idx} className="space-y-0.5 font-mono">
                 <span className="text-[10px] font-bold text-blue-600 block">{fac.role}</span>
@@ -51,7 +51,7 @@ export default function Footer({ onOpenRegister, onOpenAdmin }) {
               </span>
             </div>
             <p className="text-xs text-slate-600 leading-relaxed font-mono">
-              Organized by <strong className="text-slate-900 font-semibold">Club Data Decoder</strong> & the <strong className="text-slate-900 font-semibold">Department of Data Science</strong> at Smt. Chandibai Himathmal Mansukhani College. Under the leadership of Co-ordinator Dr. Shiji Johnson and Teachers.
+              Organized by <strong className="text-slate-900 font-semibold">Club Data Decoder</strong> & the <strong className="text-slate-900 font-semibold">Department of Data Science</strong> at Smt. Chandibai Himathmal Mansukhani College. Under the leadership of Principal Dr. Manju Lalwani Pathak, Course Co-ordinator Dr. Shiji Johnson, and Teachers.
             </p>
             <div className="flex items-center gap-2 pt-1 font-mono">
               <span className="px-2.5 py-1 rounded-full bg-blue-50 border border-blue-200 text-[10px] text-blue-700 font-bold tracking-wider flex items-center gap-1.5">
@@ -126,7 +126,7 @@ export default function Footer({ onOpenRegister, onOpenAdmin }) {
         {/* Bottom Bar */}
         <div className="pt-8 border-t border-slate-200 flex flex-col sm:flex-row items-center justify-between gap-4 text-xs font-mono text-slate-500">
           <p>© 2026 TechAstra • Department of Data Science • Smt. CHM College. All rights reserved.</p>
-          <p>Guided by Event Co-ordinator Dr. Shiji Johnson & Teachers</p>
+          <p>Under the Guidance of Principal Dr. Manju Lalwani Pathak • Course Co-ordinator Dr. Shiji Johnson & Teachers</p>
         </div>
 
       </div>
