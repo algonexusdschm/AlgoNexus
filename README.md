@@ -47,7 +47,7 @@
 Double-click [`start.bat`](start.bat) in the root folder.
 It automatically launches both the backend and frontend at **[http://localhost:5000](http://localhost:5000)**!
 
-### Option B: Terminal Command
+### Option B: Terminal Commands
 ```bash
 # Start backend (serves both API and frontend build on port 5000)
 cd backend
