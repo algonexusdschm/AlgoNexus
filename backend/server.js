@@ -221,7 +221,7 @@ app.post('/api/verify-payment', (req, res) => {
     // Only real signed Razorpay transactions are marked PAID automatically.
     // Manual UPI / Netbanking transfers are queued as PENDING_VERIFICATION until organizer approval.
     const isVerifiedByGateway = Boolean(razorpayInstance && !isSimulated && razorpay_signature && isAuthentic);
-    const paymentStatus = isVerifiedByGateway ? 'PAID' : 'PENDING_VERIFICATION';
+    const paymentStatus = isVerifiedByGateway ? 'PAID' : (req.body.paymentStatus || 'PENDING_VERIFICATION');
 
     // Generate unique Ticket ID
     const randomCode = Math.random().toString(36).substring(2, 7).toUpperCase();

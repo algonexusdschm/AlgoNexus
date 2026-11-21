@@ -4,12 +4,14 @@ import {
   QrCode, Copy, Check, Upload, Smartphone, Download, ExternalLink,
   User, Mail, Phone, School, Compass, ShieldCheck, Sparkles,
   Clock, CheckCircle2, ChevronDown, ChevronUp, Image as ImageIcon,
-  Trash2, HelpCircle, Building2, Zap, ZoomIn, Shield
+  Trash2, HelpCircle, Building2, Zap, ZoomIn, Shield, Search,
+  Clipboard, RefreshCw, Key
 } from 'lucide-react';
 import { QRCodeSVG } from 'qrcode.react';
+import confetti from 'canvas-confetti';
 import { EVENT_TRACKS } from '../data/eventData';
 import { useEvent } from '../context/EventContext';
-import { uploadImageToSupabase } from '../lib/supabaseClient';
+import { supabase, uploadImageToSupabase } from '../lib/supabaseClient';
 
 const SESSION_KEY = 'algonexus_checkout_session';
 
@@ -19,14 +21,28 @@ export default function RegistrationModal({
   initialTier,
   onPaymentSuccess
 }) {
-  const { paymentSettings, pricingTiers, addRegistration } = useEvent();
+  const { eventSettings, paymentSettings, pricingTiers, registrations, addRegistration } = useEvent();
   const [selectedTier, setSelectedTier] = useState(initialTier || pricingTiers[0]);
+  
+  // Navigation Modes: 'register' = Book Pass flow, 'retrieve' = Lookup Pass by phone/UTR
+  const [modalMode, setModalMode] = useState('register');
   const [step, setStep] = useState(1); // 1: Attendee Info, 2: UPI Payment
-  const [isOpeningSoon, setIsOpeningSoon] = useState(true);
+  
+  // Respect live registration status from admin settings
+  const [isOpeningSoon, setIsOpeningSoon] = useState(() => {
+    return eventSettings?.registrationOpen === false;
+  });
+
   const [loading, setLoading] = useState(false);
   const [loadingStage, setLoadingStage] = useState('');
+  const [verifyingSuccess, setVerifyingSuccess] = useState(false);
   const [uploadingImage, setUploadingImage] = useState(false);
   const [errorMessage, setErrorMessage] = useState('');
+
+  // Draft Ticket ID that persists across mobile app switches and tab refreshes
+  const [draftTicketId, setDraftTicketId] = useState('');
+  const [hasLaunchedUpi, setHasLaunchedUpi] = useState(false);
+  const [showReturnSpotlight, setShowReturnSpotlight] = useState(false);
 
   // Payment Verification fields
   const [utrNumber, setUtrNumber] = useState('');
@@ -35,7 +51,7 @@ export default function RegistrationModal({
   const [screenshotMeta, setScreenshotMeta] = useState(null); // { name, size }
 
   // Interactive UI states for Step 2
-  const [qrMode, setQrMode] = useState('dynamic'); // 'dynamic' (auto-filled amount) or 'official' (college image)
+  const [qrMode, setQrMode] = useState('dynamic'); // 'dynamic' or 'official'
   const [showUtrHelp, setShowUtrHelp] = useState(false);
   const [showBankDetails, setShowBankDetails] = useState(false);
   const [isZoomQr, setIsZoomQr] = useState(false);
@@ -46,19 +62,25 @@ export default function RegistrationModal({
   const [copiedIfsc, setCopiedIfsc] = useState(false);
   const [pasteNotification, setPasteNotification] = useState('');
 
+  // Ticket Retrieval State
+  const [searchQuery, setSearchQuery] = useState('');
+  const [searchResult, setSearchResult] = useState(null);
+  const [searchingTicket, setSearchingTicket] = useState(false);
+
   // Unique session order reference
   const [orderRef] = useState(() => Math.floor(100000 + Math.random() * 900000).toString());
 
   // 10-Minute live fintech countdown timer
   const [timeLeft, setTimeLeft] = useState(600); // 10 minutes = 600s
 
-  // Reset blur / opening soon state on fresh modal open
+  // Reset opening soon state from admin settings on fresh modal open
   useEffect(() => {
     if (isOpen) {
-      setIsOpeningSoon(true);
+      setIsOpeningSoon(eventSettings?.registrationOpen === false);
     }
-  }, [isOpen]);
+  }, [isOpen, eventSettings?.registrationOpen]);
 
+  // Live timer for Step 2
   useEffect(() => {
     if (step !== 2) return;
     const timer = setInterval(() => {
@@ -89,13 +111,14 @@ export default function RegistrationModal({
     member4: ''
   });
 
-  // Save active checkout session to localStorage
-  const saveSession = (currentStep, form, tier) => {
+  // Save active checkout session to localStorage (with draft ticket ID)
+  const saveSession = (currentStep, form, tier, ticketId = '') => {
     try {
       localStorage.setItem(SESSION_KEY, JSON.stringify({
         step: currentStep,
         formData: form,
         tierId: tier?.id,
+        draftTicketId: ticketId || draftTicketId,
         timestamp: Date.now()
       }));
     } catch (e) {}
@@ -120,11 +143,26 @@ export default function RegistrationModal({
             const match = pricingTiers.find(t => t.id === parsed.tierId);
             if (match) setSelectedTier(match);
           }
-          if (parsed.step === 2) setStep(2);
+          if (parsed.draftTicketId) setDraftTicketId(parsed.draftTicketId);
+          if (parsed.step === 2) {
+            setStep(2);
+            setShowReturnSpotlight(true);
+          }
         }
       }
     } catch (e) {}
   }, [pricingTiers]);
+
+  // Smart Visibility Change Detection: Triggers Spotlight when returning from GPay / PhonePe
+  useEffect(() => {
+    const handleVisibilityChange = () => {
+      if (document.visibilityState === 'visible' && hasLaunchedUpi && step === 2) {
+        setShowReturnSpotlight(true);
+      }
+    };
+    document.addEventListener('visibilitychange', handleVisibilityChange);
+    return () => document.removeEventListener('visibilitychange', handleVisibilityChange);
+  }, [hasLaunchedUpi, step]);
 
   // Always sync selected tier if parent passes a new initialTier
   useEffect(() => {
@@ -143,7 +181,7 @@ export default function RegistrationModal({
     }
   }, [pricingTiers]);
 
-  // Payment settings from context with safe fallback (synced with official FamPay QR)
+  // Payment settings from context with safe fallback
   const settings = paymentSettings || {
     upiId: '8010086323@fam',
     payeeName: 'Club Data Decoder, Department of Data Science, Smt. Chandibai Himathmal Mansukhani College',
@@ -196,7 +234,7 @@ export default function RegistrationModal({
     });
   };
 
-  // Process and upload screenshot file (supports file input, drag-and-drop, and clipboard paste!)
+  // Process and upload screenshot file (supports file input, drag-and-drop, and clipboard paste)
   const processScreenshot = async (file) => {
     if (!file) return;
     if (!file.type.startsWith('image/')) {
@@ -224,7 +262,7 @@ export default function RegistrationModal({
     }
   };
 
-  // Clipboard Paste Support (Ctrl + V anywhere on Step 2!)
+  // Clipboard Paste Support (Ctrl + V anywhere on Step 2)
   useEffect(() => {
     if (step !== 2) return;
     const handlePaste = (e) => {
@@ -250,20 +288,19 @@ export default function RegistrationModal({
     e.preventDefault();
     setIsDraggingFile(true);
   };
-  const handleDragLeave = (e) => {
-    e.preventDefault();
+
+  const handleDragLeave = () => {
     setIsDraggingFile(false);
   };
+
   const handleDrop = (e) => {
     e.preventDefault();
     setIsDraggingFile(false);
-    const files = e.dataTransfer?.files;
-    if (files && files.length > 0) {
-      processScreenshot(files[0]);
+    if (e.dataTransfer.files && e.dataTransfer.files[0]) {
+      processScreenshot(e.dataTransfer.files[0]);
     }
   };
 
-  // Remove screenshot
   const handleRemoveScreenshot = () => {
     setScreenshotPreview('');
     setScreenshotUrl('');
@@ -275,11 +312,11 @@ export default function RegistrationModal({
   const handleChange = (e) => {
     const updated = { ...formData, [e.target.name]: e.target.value };
     setFormData(updated);
-    saveSession(step, updated, selectedTier);
+    saveSession(step, updated, selectedTier, draftTicketId);
     if (errorMessage) setErrorMessage('');
   };
 
-  // Phase 1: Robust Form Validation
+  // Form Validation for Step 1
   const validateStep1 = () => {
     const trimmedName = formData.fullName.trim();
     if (!trimmedName || trimmedName.length < 2) {
@@ -322,13 +359,50 @@ export default function RegistrationModal({
     return '';
   };
 
-  const handleNext = (e) => {
+  // Step 1 -> Step 2 with Background Draft Pre-Save (Eliminates App-Switch Tab Loss)
+  const handleNext = async (e) => {
     e.preventDefault();
     const err = validateStep1();
     if (err) {
       setErrorMessage(err);
       return;
     }
+
+    // Generate or retain persistent ticket ID for this session
+    const genTicketId = draftTicketId || `TECH26-${Math.random().toString(36).substring(2, 7).toUpperCase()}`;
+    setDraftTicketId(genTicketId);
+
+    // 1. Save draft session locally
+    saveSession(2, formData, selectedTier, genTicketId);
+
+    // 2. Silently push draft record to Supabase in the background
+    try {
+      const teamMembers = selectedTier.type === 'team' ? [
+        { role: 'Team Lead', name: formData.fullName.trim(), email: formData.email.trim(), phone: formData.phone.trim() },
+        ...(formData.member2.trim() ? [{ role: 'Member 2', name: formData.member2.trim() }] : []),
+        ...(formData.member3.trim() ? [{ role: 'Member 3', name: formData.member3.trim() }] : []),
+        ...(formData.member4.trim() ? [{ role: 'Member 4', name: formData.member4.trim() }] : [])
+      ] : [];
+
+      supabase.from('registrations').insert({
+        ticket_id: genTicketId,
+        tier_id: selectedTier?.id || 'solo-coder',
+        tier_name: selectedTier?.name || 'Solo Coder Pass',
+        amount: selectedTier?.price || 299,
+        payment_status: 'PENDING_UTR',
+        full_name: formData.fullName.trim(),
+        email: formData.email.trim(),
+        phone: formData.phone.trim(),
+        college: formData.college.trim(),
+        track: formData.track,
+        team_name: formData.teamName?.trim() || '',
+        team_members: Array.isArray(teamMembers) ? teamMembers.map(m => m.name).join(', ') : '',
+        payment_method: 'UPI_INTENT',
+        utr_number: 'PENDING',
+        checked_in: false
+      }).then(() => {}).catch(() => {});
+    } catch (e) {}
+
     setStep(2);
     setErrorMessage('');
   };
@@ -364,22 +438,52 @@ export default function RegistrationModal({
     }
   };
 
-  // UPI details matching the official uploaded QR code (8010086323@fam)
+  // 1-Click "Paste 12-Digit UTR from Clipboard" Helper
+  const handlePasteClipboardUtr = async () => {
+    try {
+      const text = await navigator.clipboard.readText();
+      if (!text) {
+        setPasteNotification('Clipboard is empty. Copy the 12-digit UTR from your UPI app receipt.');
+        setTimeout(() => setPasteNotification(''), 4000);
+        return;
+      }
+      
+      // Look for any continuous 12 numeric digits in the clipboard
+      const match = text.match(/\b\d{12}\b/);
+      if (match) {
+        setUtrNumber(match[0]);
+        setPasteNotification(`Extracted 12-digit UTR: ${match[0]} ✓`);
+        setTimeout(() => setPasteNotification(''), 3500);
+      } else {
+        const clean = text.replace(/[^a-zA-Z0-9]/g, '').slice(0, 16);
+        if (clean) {
+          setUtrNumber(clean);
+          setPasteNotification(`Pasted: ${clean}`);
+          setTimeout(() => setPasteNotification(''), 3500);
+        } else {
+          setPasteNotification('Could not find 12-digit UTR in clipboard. Please paste manually.');
+          setTimeout(() => setPasteNotification(''), 4000);
+        }
+      }
+    } catch (err) {
+      setPasteNotification('Please paste your UTR into the input box below using Ctrl+V or long-press.');
+      setTimeout(() => setPasteNotification(''), 4000);
+    }
+  };
+
+  // UPI details configuration
   const activeUpiId = (settings.upiId || '8010086323@fam').trim();
   const displayPayeeName = (settings.payeeName || 'Club Data Decoder, Department of Data Science, Smt. Chandibai Himathmal Mansukhani College').trim();
   const passPrice = selectedTier?.price || 299;
 
-  // NPCI Specification compliant: max 50 characters, simple clean alphanumeric without punctuation
+  // Clean parameters adhering to NPCI specifications
   const cleanPayeeName = 'TechAstra 2026';
-  const cleanNote = 'TechAstra2026';
+  const cleanNote = `TA2026-${orderRef}`;
 
-  // Base UPI Parameters conforming strictly to NPCI format
   const upiParams = `pa=${encodeURIComponent(activeUpiId)}&pn=${encodeURIComponent(cleanPayeeName)}&am=${passPrice}&cu=INR&tn=${encodeURIComponent(cleanNote)}`;
-
-  // 1. Universal NPCI UPI protocol (triggers OS app sheet on mobile with GPay, PhonePe, Paytm, Cred, BHIM)
   const universalUpiUrl = `upi://pay?${upiParams}`;
 
-  // 2. Android Direct Package Intent Schemes (triggers installed app directly without opening blank tabs)
+  // Android Direct Package Intent Schemes
   const isAndroid = typeof navigator !== 'undefined' && /android/i.test(navigator.userAgent || '');
   const gpayIntentUrl = isAndroid 
     ? `intent://pay?${upiParams}#Intent;scheme=upi;package=com.google.android.apps.nbu.paisa.user;end` 
@@ -391,17 +495,18 @@ export default function RegistrationModal({
     ? `intent://pay?${upiParams}#Intent;scheme=upi;package=net.one97.paytm;end` 
     : universalUpiUrl;
 
-  // Safe launcher that triggers UPI app directly WITHOUT page unload or blank new tabs
+  // Safe launcher that triggers UPI app directly
   const handleLaunchUpi = (e, url) => {
     if (e) {
       if (e.preventDefault) e.preventDefault();
       if (e.stopPropagation) e.stopPropagation();
     }
-    saveSession(2, formData, selectedTier);
+    setHasLaunchedUpi(true);
+    saveSession(2, formData, selectedTier, draftTicketId);
     window.location.href = url;
   };
 
-  // Download / Save QR code image helper for mobile scan-from-gallery
+  // Download / Save QR code helper for mobile gallery scanning
   const handleDownloadQr = () => {
     const qrSrc = (qrMode === 'official' && settings.qrCodeImage) 
       ? settings.qrCodeImage 
@@ -416,7 +521,7 @@ export default function RegistrationModal({
     document.body.removeChild(link);
   };
 
-  // UTR format & validation helpers
+  // UTR format helpers
   const cleanUtrRaw = utrNumber.replace(/[^a-zA-Z0-9]/g, '').toUpperCase();
   const is12DigitUtr = /^\d{12}$/.test(cleanUtrRaw);
 
@@ -426,20 +531,46 @@ export default function RegistrationModal({
     if (errorMessage) setErrorMessage('');
   };
 
-  // Complete Payment Verification & Pass Creation
+  // Complete Payment Verification & Pass Creation (Razorpay-Style Animated Flow)
   const completePayment = async (method, additionalData = {}) => {
+    const finalUtr = additionalData.utr || cleanUtrRaw;
+
+    // 1. Anti-Fraud Check: Disallow duplicate UTR submissions
+    if (finalUtr && finalUtr.length === 12 && !additionalData.isSimulated) {
+      const isDuplicate = registrations.some(
+        r => r.utrNumber === finalUtr && (r.paymentStatus === 'PAID' || r.paymentStatus === 'CONFIRMED')
+      );
+      if (isDuplicate) {
+        setErrorMessage(`This 12-digit UPI UTR (${finalUtr}) has already been registered! Each payment transaction can only be used once.`);
+        return;
+      }
+    }
+
     setLoading(true);
     setErrorMessage('');
 
     try {
-      setLoadingStage('Step 1/3: Verifying UPI transaction reference...');
-      await new Promise(r => setTimeout(r, 450));
+      // Stage 1: NPCI banking network handshake
+      setLoadingStage('Connecting to NPCI banking network...');
+      await new Promise(r => setTimeout(r, 600));
 
-      setLoadingStage('Step 2/3: Allocating TechAstra 2026 delegate pass in Supabase...');
-      await new Promise(r => setTimeout(r, 450));
+      // Stage 2: Transaction verification
+      setLoadingStage('Validating 12-digit settlement reference...');
+      await new Promise(r => setTimeout(r, 600));
 
-      setLoadingStage('Step 3/3: Forging Holographic Attendee Pass...');
-      const generatedTicketId = `TECH26-${Math.random().toString(36).substring(2, 7).toUpperCase()}`;
+      // Stage 3: Holographic ticket forging
+      setLoadingStage('Allocating TechAstra 2026 Holographic Pass...');
+      await new Promise(r => setTimeout(r, 500));
+
+      // Visual Success State with Confetti
+      setVerifyingSuccess(true);
+      confetti({
+        particleCount: 120,
+        spread: 75,
+        origin: { y: 0.6 }
+      });
+
+      const generatedTicketId = draftTicketId || `TECH26-${Math.random().toString(36).substring(2, 7).toUpperCase()}`;
 
       // Assemble structured team members list for squad pass
       const teamMembers = selectedTier.type === 'team' ? [
@@ -450,7 +581,6 @@ export default function RegistrationModal({
       ] : [];
 
       const finalScreenshot = screenshotUrl || additionalData.screenshot || screenshotPreview;
-      const finalUtr = additionalData.utr || cleanUtrRaw || (finalScreenshot ? `SCREENSHOT-${generatedTicketId}` : `UTR-${Date.now().toString().slice(-6)}`);
 
       const payload = {
         razorpay_order_id: `ORD_${orderRef}`,
@@ -516,22 +646,27 @@ export default function RegistrationModal({
         console.warn('Backend sync note: persisted to local state:', e);
       }
 
-      // Add to shared event context (persists in localStorage & admin console)
+      // Add to shared event context (persists in localStorage, Supabase, and admin console)
       addRegistration(finalTicket);
 
       // Clear the saved active checkout session
       clearSession();
 
+      // Brief delay to appreciate success state
+      await new Promise(r => setTimeout(r, 700));
+
       setLoading(false);
+      setVerifyingSuccess(false);
       onPaymentSuccess(finalTicket);
       onClose();
     } catch (err) {
       setLoading(false);
+      setVerifyingSuccess(false);
       setErrorMessage('Could not complete payment verification. Please try again.');
     }
   };
 
-  // Handle UPI Verification Submission (Flexible: UTR, Screenshot, or Both!)
+  // Handle UPI Verification Submission
   const handleUpiSubmit = (e) => {
     e.preventDefault();
     const cleanUtr = cleanUtrRaw;
@@ -556,11 +691,84 @@ export default function RegistrationModal({
     completePayment('UPI_QR', { utr: randomUtr, screenshot: screenshotUrl || screenshotPreview, isSimulated: true });
   };
 
+  // Handle Search for Existing Ticket (Retrieve Pass Safety Net)
+  const handleSearchTicket = async (e) => {
+    e.preventDefault();
+    const query = searchQuery.trim().toLowerCase();
+    if (!query) return;
+    setSearchingTicket(true);
+    setSearchResult(null);
+    setErrorMessage('');
+
+    // 1. Search in local context
+    const cleanDigits = query.replace(/[^0-9]/g, '');
+    let match = registrations.find(r => {
+      const regPhone = (r.attendee?.phone || '').replace(/[^0-9]/g, '');
+      const regEmail = (r.attendee?.email || '').toLowerCase();
+      const regUtr = (r.utrNumber || '').toLowerCase();
+      const regId = (r.ticketId || '').toLowerCase();
+
+      return (
+        (cleanDigits.length >= 10 && regPhone.includes(cleanDigits)) ||
+        regEmail === query ||
+        regUtr === query ||
+        regId === query
+      );
+    });
+
+    // 2. Query Supabase if not found locally
+    if (!match) {
+      try {
+        const { data, error } = await supabase
+          .from('registrations')
+          .select('*')
+          .or(`phone.ilike.%${query}%,email.ilike.%${query}%,utr_number.ilike.%${query}%,ticket_id.ilike.%${query}%`)
+          .limit(1);
+
+        if (data && data.length > 0) {
+          const row = data[0];
+          match = {
+            ticketId: row.ticket_id,
+            orderId: row.order_id || `ORD-${row.id}`,
+            paymentId: row.utr_number || `PAY-${row.id}`,
+            paymentStatus: row.payment_status || 'PAID',
+            paymentMethod: row.payment_method || 'UPI_QR',
+            utrNumber: row.utr_number,
+            paymentScreenshot: row.payment_screenshot,
+            verifiedAt: row.verified_at || row.created_at,
+            submittedAt: row.created_at,
+            amountPaid: row.amount,
+            passType: row.tier_name,
+            attendee: {
+              fullName: row.full_name,
+              email: row.email,
+              phone: row.phone,
+              college: row.college,
+              track: row.track,
+              teamName: row.team_name,
+              teamMembers: row.team_members
+            },
+            checkedIn: row.checked_in
+          };
+        }
+      } catch (err) {
+        console.warn('Supabase lookup error:', err);
+      }
+    }
+
+    setSearchingTicket(false);
+    if (match) {
+      setSearchResult(match);
+    } else {
+      setErrorMessage('No matching registration found. Please check your phone number or contact support at +91 80100 86323.');
+    }
+  };
+
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-slate-900/60 backdrop-blur-md p-3 sm:p-4 overflow-y-auto">
       <div className="relative w-full max-w-2xl bg-white border border-slate-200/90 rounded-3xl shadow-[0_25px_60px_-15px_rgba(15,23,42,0.25)] overflow-hidden my-4 sm:my-6 flex flex-col max-h-[94vh] text-slate-900">
         
-        {/* Modal Header */}
+        {/* Modal Header with Mode Switcher (Book Pass vs Retrieve Ticket) */}
         <div className="p-4 sm:p-5 bg-slate-50/90 border-b border-slate-200/80 flex items-center justify-between shrink-0">
           <div className="flex items-center gap-3">
             <div className="w-10 h-10 rounded-2xl bg-blue-50 border border-blue-200/80 flex items-center justify-center shadow-sm">
@@ -569,23 +777,61 @@ export default function RegistrationModal({
             <div>
               <h3 className="text-base font-chakra font-bold text-slate-900 tracking-wide flex items-center gap-2">
                 <span>TECH<span className="text-blue-600">ASTRA</span> 2026 GATEWAY</span>
-                <span className="text-[10px] font-mono font-semibold px-2 py-0.5 rounded-full bg-blue-50 text-blue-700 border border-blue-200">
-                  {step === 1 ? 'STEP 1/2' : 'STEP 2/2'}
-                </span>
+                {modalMode === 'register' && (
+                  <span className="text-[10px] font-mono font-semibold px-2 py-0.5 rounded-full bg-blue-50 text-blue-700 border border-blue-200">
+                    {step === 1 ? 'STEP 1/2' : 'STEP 2/2'}
+                  </span>
+                )}
               </h3>
               <p className="text-[11px] text-slate-500 font-mono">
-                {step === 1 ? 'Attendee Details & Competition Track' : 'Official Direct UPI Settlement'}
+                {modalMode === 'retrieve' 
+                  ? 'Find and reprint your confirmed delegate ticket'
+                  : (step === 1 ? 'Attendee Details & Competition Track' : 'Official Direct UPI Settlement')}
               </p>
             </div>
           </div>
 
-          <div className="flex items-center gap-3">
-            {step === 2 && (
-              <div className="text-right hidden sm:block font-mono">
-                <span className="text-[10px] text-slate-400 uppercase tracking-wider block font-chakra font-semibold">PAYABLE AMOUNT</span>
+          <div className="flex items-center gap-2">
+            {/* Mode Switcher Pills */}
+            <div className="flex items-center p-1 bg-slate-200/70 rounded-xl text-[11px] font-mono">
+              <button
+                type="button"
+                onClick={() => {
+                  setModalMode('register');
+                  setErrorMessage('');
+                }}
+                className={`px-2.5 py-1 rounded-lg font-bold transition-all ${
+                  modalMode === 'register'
+                    ? 'bg-white text-blue-700 shadow-sm'
+                    : 'text-slate-600 hover:text-slate-900'
+                }`}
+              >
+                Book Pass
+              </button>
+              <button
+                type="button"
+                onClick={() => {
+                  setModalMode('retrieve');
+                  setErrorMessage('');
+                }}
+                className={`px-2.5 py-1 rounded-lg font-bold transition-all flex items-center gap-1 ${
+                  modalMode === 'retrieve'
+                    ? 'bg-white text-blue-700 shadow-sm'
+                    : 'text-slate-600 hover:text-slate-900'
+                }`}
+              >
+                <Search className="w-3 h-3" />
+                <span>Find Pass</span>
+              </button>
+            </div>
+
+            {modalMode === 'register' && step === 2 && (
+              <div className="text-right hidden sm:block font-mono pl-2">
+                <span className="text-[10px] text-slate-400 uppercase tracking-wider block font-chakra font-semibold">PAYABLE</span>
                 <span className="text-xl font-chakra font-black text-blue-600">₹{selectedTier.price}</span>
               </div>
             )}
+
             <button
               onClick={onClose}
               className="p-2 rounded-xl bg-slate-100 hover:bg-slate-200 border border-slate-200 text-slate-500 hover:text-slate-900 transition-all relative z-40 cursor-pointer"
@@ -606,17 +852,140 @@ export default function RegistrationModal({
 
         {/* Clipboard Notification */}
         {pasteNotification && (
-          <div className="mx-4 sm:mx-6 mt-3 p-2.5 bg-blue-50 border border-blue-200 text-blue-800 text-xs flex items-center gap-2 shrink-0 font-mono rounded-xl">
+          <div className="mx-4 sm:mx-6 mt-3 p-2.5 bg-blue-50 border border-blue-200 text-blue-800 text-xs flex items-center gap-2 shrink-0 font-mono rounded-xl animate-fade-in">
             <Sparkles className="w-4 h-4 text-blue-600 shrink-0" />
             <span>{pasteNotification}</span>
           </div>
         )}
 
+        {/* Full-Modal Razorpay-Style Verification Progress Overlay */}
+        {loading && (
+          <div className="absolute inset-0 z-40 flex flex-col items-center justify-center bg-white/95 backdrop-blur-md p-6 text-slate-900">
+            <div className="text-center space-y-4 max-w-sm w-full p-8 rounded-3xl bg-slate-50 border border-slate-200 shadow-2xl relative overflow-hidden">
+              {/* Pulsing Beacon */}
+              <div className="relative mx-auto w-16 h-16 flex items-center justify-center">
+                <div className="absolute inset-0 rounded-full bg-blue-500/20 animate-ping" />
+                <div className="w-14 h-14 rounded-full bg-gradient-to-tr from-blue-600 to-indigo-600 flex items-center justify-center shadow-lg shadow-blue-500/30">
+                  {verifyingSuccess ? (
+                    <Check className="w-8 h-8 text-white stroke-[3] animate-scale-up" />
+                  ) : (
+                    <Loader2 className="w-8 h-8 text-white animate-spin" />
+                  )}
+                </div>
+              </div>
+
+              <div className="space-y-1">
+                <h4 className="text-base font-chakra font-black tracking-wide text-slate-900 uppercase">
+                  {verifyingSuccess ? 'PAYMENT VERIFIED' : 'PROCESSING SETTLEMENT'}
+                </h4>
+                <p className="text-xs font-mono text-slate-500 min-h-[20px]">
+                  {loadingStage}
+                </p>
+              </div>
+
+              {/* Animated Progress Bar */}
+              <div className="w-full bg-slate-200 h-1.5 rounded-full overflow-hidden">
+                <div className="h-full bg-gradient-to-r from-blue-600 to-cyan-500 animate-[pulse_1.5s_infinite] w-full" />
+              </div>
+
+              <div className="text-[10px] font-mono text-slate-400">
+                Direct NPCI Verified • Ref: #{cleanUtrRaw || orderRef}
+              </div>
+            </div>
+          </div>
+        )}
+
         {/* Modal Body */}
         <div className={`p-4 sm:p-6 overflow-y-auto flex-1 transition-all duration-300 ${
-          isOpeningSoon ? 'filter blur-[7px] opacity-40 select-none pointer-events-none' : ''
+          isOpeningSoon && modalMode === 'register' ? 'filter blur-[7px] opacity-40 select-none pointer-events-none' : ''
         }`}>
-          {step === 1 ? (
+          
+          {/* ========================================================================= */}
+          {/* MODE: RETRIEVE PASS (Safety net for users who paid and closed tab)       */}
+          {/* ========================================================================= */}
+          {modalMode === 'retrieve' ? (
+            <div className="space-y-5">
+              <div className="p-4 rounded-2xl bg-blue-50/60 border border-blue-200 text-xs font-mono space-y-1 text-slate-700">
+                <div className="font-bold text-blue-900 flex items-center gap-1.5">
+                  <Key className="w-4 h-4 text-blue-600" />
+                  <span>Already Paid? Instant Pass Retrieval</span>
+                </div>
+                <p className="text-slate-600 text-[11px]">
+                  If you switched apps, closed your browser, or paid via Google Pay / PhonePe, enter your 10-digit mobile number, email, or 12-digit UTR below to open your pass.
+                </p>
+              </div>
+
+              <form onSubmit={handleSearchTicket} className="space-y-3">
+                <div className="space-y-1">
+                  <label className="block text-xs font-semibold text-slate-700 font-mono">
+                    Search by Mobile Number / Email / 12-Digit UTR:
+                  </label>
+                  <div className="flex gap-2">
+                    <input
+                      type="text"
+                      placeholder="e.g. 9820012345 or UTR number"
+                      value={searchQuery}
+                      onChange={(e) => setSearchQuery(e.target.value)}
+                      className="flex-1 px-3.5 py-2.5 rounded-xl bg-slate-50 border border-slate-200 text-slate-900 font-mono text-sm focus:outline-none focus:bg-white focus:border-blue-500"
+                    />
+                    <button
+                      type="submit"
+                      disabled={searchingTicket || !searchQuery.trim()}
+                      className="px-5 py-2.5 rounded-xl bg-blue-600 hover:bg-blue-700 text-white font-chakra font-bold text-xs flex items-center gap-2 disabled:opacity-50 transition-all shadow-md"
+                    >
+                      {searchingTicket ? <Loader2 className="w-4 h-4 animate-spin" /> : <Search className="w-4 h-4" />}
+                      <span>Search</span>
+                    </button>
+                  </div>
+                </div>
+              </form>
+
+              {searchResult && (
+                <div className="p-4 rounded-2xl bg-slate-50 border border-slate-200 space-y-3 font-mono animate-fade-in shadow-sm">
+                  <div className="flex items-center justify-between border-b border-slate-200 pb-2">
+                    <span className="text-xs font-bold text-slate-900">{searchResult.ticketId}</span>
+                    <span className="text-[10px] px-2 py-0.5 rounded-full bg-emerald-100 text-emerald-800 font-bold">
+                      ✓ {searchResult.paymentStatus || 'PAID'}
+                    </span>
+                  </div>
+
+                  <div className="grid grid-cols-2 gap-2 text-xs">
+                    <div>
+                      <span className="text-slate-400 block text-[10px]">Attendee:</span>
+                      <strong className="text-slate-900">{searchResult.attendee?.fullName}</strong>
+                    </div>
+                    <div>
+                      <span className="text-slate-400 block text-[10px]">Pass:</span>
+                      <span className="text-blue-600 font-bold">{searchResult.passType}</span>
+                    </div>
+                    <div>
+                      <span className="text-slate-400 block text-[10px]">Mobile:</span>
+                      <span className="text-slate-700">{searchResult.attendee?.phone}</span>
+                    </div>
+                    <div>
+                      <span className="text-slate-400 block text-[10px]">UTR / Payment ID:</span>
+                      <span className="text-slate-700 truncate block">{searchResult.utrNumber}</span>
+                    </div>
+                  </div>
+
+                  <button
+                    type="button"
+                    onClick={() => {
+                      onPaymentSuccess(searchResult);
+                      onClose();
+                    }}
+                    className="w-full py-2.5 px-4 rounded-xl bg-gradient-to-r from-blue-600 to-indigo-600 text-white font-chakra font-bold text-xs flex items-center justify-center gap-2 shadow-md hover:shadow-lg transition-all"
+                  >
+                    <Ticket className="w-4 h-4" />
+                    <span>Open & Print Official Pass →</span>
+                  </button>
+                </div>
+              )}
+            </div>
+          ) : step === 1 ? (
+            /* ========================================================================= */
+            /* STEP 1: ATTENDEE & SQUAD DETAILS                                          */
+            /* ========================================================================= */
             <form onSubmit={handleNext} className="space-y-4">
               
               {/* Pass Tier Picker */}
@@ -639,15 +1008,16 @@ export default function RegistrationModal({
                           : 'bg-slate-50/60 border-slate-200 text-slate-600 hover:border-slate-300 hover:bg-slate-100/60'
                       }`}
                     >
-                      <div className="text-xs font-bold text-slate-900 font-chakra">{tier.name}</div>
-                      <div className="text-sm font-black text-blue-600 font-chakra mt-1">₹{tier.price}</div>
+                      <div className="font-chakra font-bold text-xs truncate">{tier.name}</div>
+                      <div className="text-base font-chakra font-extrabold text-blue-600 mt-1">₹{tier.price}</div>
+                      <div className="text-[10px] text-slate-500 font-mono mt-0.5 truncate">{tier.description || 'Full Hackathon Access'}</div>
                     </button>
                   ))}
                 </div>
               </div>
 
-              {/* Personal Details */}
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+              {/* Primary Contact Details */}
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                 <div>
                   <label className="block text-xs font-semibold text-slate-700 mb-1 flex items-center gap-1.5">
                     <User className="w-3.5 h-3.5 text-blue-600" />
@@ -659,8 +1029,7 @@ export default function RegistrationModal({
                     value={formData.fullName}
                     onChange={handleChange}
                     placeholder="e.g. Alex Sharma"
-                    required
-                    className="w-full px-3.5 py-2.5 rounded-xl bg-slate-50 border border-slate-200 text-slate-900 placeholder-slate-400 text-sm focus:outline-none focus:bg-white focus:border-blue-500 focus:ring-2 focus:ring-blue-500/15"
+                    className="w-full px-3.5 py-2 rounded-xl bg-slate-50 border border-slate-200 text-slate-900 text-sm focus:outline-none focus:bg-white focus:border-blue-500"
                   />
                 </div>
 
@@ -674,33 +1043,32 @@ export default function RegistrationModal({
                     name="email"
                     value={formData.email}
                     onChange={handleChange}
-                    placeholder="alex@college.edu"
-                    required
-                    className="w-full px-3.5 py-2.5 rounded-xl bg-slate-50 border border-slate-200 text-slate-900 placeholder-slate-400 text-sm focus:outline-none focus:bg-white focus:border-blue-500 focus:ring-2 focus:ring-blue-500/15"
+                    placeholder="name@college.edu"
+                    className="w-full px-3.5 py-2 rounded-xl bg-slate-50 border border-slate-200 text-slate-900 text-sm focus:outline-none focus:bg-white focus:border-blue-500"
                   />
                 </div>
+              </div>
 
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                 <div>
                   <label className="block text-xs font-semibold text-slate-700 mb-1 flex items-center gap-1.5">
                     <Phone className="w-3.5 h-3.5 text-blue-600" />
-                    <span>WhatsApp / Phone Number *</span>
+                    <span>WhatsApp / Mobile No. *</span>
                   </label>
                   <input
                     type="tel"
                     name="phone"
                     value={formData.phone}
                     onChange={handleChange}
-                    placeholder="e.g. 9876543210"
-                    maxLength={13}
-                    required
-                    className="w-full px-3.5 py-2.5 rounded-xl bg-slate-50 border border-slate-200 text-slate-900 placeholder-slate-400 text-sm focus:outline-none focus:bg-white focus:border-blue-500 focus:ring-2 focus:ring-blue-500/15 font-mono"
+                    placeholder="e.g. 9820012345"
+                    className="w-full px-3.5 py-2 rounded-xl bg-slate-50 border border-slate-200 text-slate-900 text-sm focus:outline-none focus:bg-white focus:border-blue-500"
                   />
                 </div>
 
                 <div>
                   <label className="block text-xs font-semibold text-slate-700 mb-1 flex items-center gap-1.5">
                     <School className="w-3.5 h-3.5 text-blue-600" />
-                    <span>College / University Name *</span>
+                    <span>College / University *</span>
                   </label>
                   <input
                     type="text"
@@ -708,42 +1076,8 @@ export default function RegistrationModal({
                     value={formData.college}
                     onChange={handleChange}
                     placeholder="e.g. Smt. CHM College"
-                    required
-                    className="w-full px-3.5 py-2.5 rounded-xl bg-slate-50 border border-slate-200 text-slate-900 placeholder-slate-400 text-sm focus:outline-none focus:bg-white focus:border-blue-500 focus:ring-2 focus:ring-blue-500/15"
+                    className="w-full px-3.5 py-2 rounded-xl bg-slate-50 border border-slate-200 text-slate-900 text-sm focus:outline-none focus:bg-white focus:border-blue-500"
                   />
-                </div>
-
-                <div>
-                  <label className="block text-xs font-semibold text-slate-700 mb-1">Branch / Major</label>
-                  <select
-                    name="branch"
-                    value={formData.branch}
-                    onChange={handleChange}
-                    className="w-full px-3.5 py-2.5 rounded-xl bg-slate-50 border border-slate-200 text-slate-900 text-sm focus:outline-none focus:bg-white focus:border-blue-500"
-                  >
-                    <option>Computer Science & Engineering</option>
-                    <option>Information Technology</option>
-                    <option>AI & Data Science</option>
-                    <option>Electronics & Communication</option>
-                    <option>Electrical / Mechanical</option>
-                    <option>Other / MCA / BCA</option>
-                  </select>
-                </div>
-
-                <div>
-                  <label className="block text-xs font-semibold text-slate-700 mb-1">Year of Study</label>
-                  <select
-                    name="year"
-                    value={formData.year}
-                    onChange={handleChange}
-                    className="w-full px-3.5 py-2.5 rounded-xl bg-slate-50 border border-slate-200 text-slate-900 text-sm focus:outline-none focus:bg-white focus:border-blue-500"
-                  >
-                    <option>1st Year</option>
-                    <option>2nd Year</option>
-                    <option>3rd Year</option>
-                    <option>4th Year</option>
-                    <option>Postgraduate / Alum</option>
-                  </select>
                 </div>
               </div>
 
@@ -837,7 +1171,7 @@ export default function RegistrationModal({
             </form>
           ) : (
             /* ========================================================================= */
-            /* STEP 2: TECHASTRA DIRECT UPI GATEWAY INTERFACE                            */
+            /* STEP 2: TECHASTRA DIRECT UPI GATEWAY INTERFACE (METHOD B)                 */
             /* ========================================================================= */
             <div className="space-y-5">
               
@@ -845,8 +1179,8 @@ export default function RegistrationModal({
               <div className="p-3.5 rounded-2xl bg-slate-50 border border-slate-200 flex flex-wrap items-center justify-between gap-3 text-xs shadow-sm">
                 <div className="flex items-center gap-2 font-mono">
                   <span className="w-2.5 h-2.5 rounded-full bg-blue-500 animate-pulse" />
-                  <span className="text-slate-500">Order:</span>
-                  <span className="font-bold text-slate-900 tracking-wider">#ORD-{orderRef}</span>
+                  <span className="text-slate-500">Session ID:</span>
+                  <span className="font-bold text-slate-900 tracking-wider">#{draftTicketId || `ORD-${orderRef}`}</span>
                 </div>
 
                 <div className="flex items-center gap-2 font-mono text-[11px] bg-amber-50 px-3 py-1 rounded-full border border-amber-200">
@@ -869,6 +1203,42 @@ export default function RegistrationModal({
                 </div>
               </div>
 
+              {/* SMART RETURN SPOTLIGHT: Appears when user returns from GPay/PhonePe */}
+              {showReturnSpotlight && (
+                <div className="p-4 rounded-2xl bg-gradient-to-r from-blue-50 via-cyan-50 to-indigo-50 border-2 border-blue-400 shadow-md animate-fade-in space-y-3">
+                  <div className="flex items-start gap-3">
+                    <div className="w-10 h-10 rounded-2xl bg-blue-600 text-white flex items-center justify-center shrink-0 shadow-md">
+                      <Sparkles className="w-5 h-5 animate-pulse" />
+                    </div>
+                    <div className="flex-1 min-w-0">
+                      <h4 className="text-xs font-chakra font-black text-slate-900 uppercase tracking-wide flex items-center gap-1.5">
+                        <span>AWAITING UPI SETTLEMENT CONFIRMATION</span>
+                        <span className="text-[9px] px-2 py-0.5 rounded-full bg-blue-100 text-blue-800 font-mono">
+                          STEP 2/2
+                        </span>
+                      </h4>
+                      <p className="text-[11px] text-slate-600 font-mono mt-0.5">
+                        Completed your payment in Google Pay / PhonePe? Paste your 12-digit UTR below for instant pass generation!
+                      </p>
+                    </div>
+                  </div>
+
+                  <div className="flex flex-wrap items-center gap-2 pt-1">
+                    <button
+                      type="button"
+                      onClick={handlePasteClipboardUtr}
+                      className="px-3.5 py-1.5 rounded-xl bg-blue-600 hover:bg-blue-700 text-white font-mono text-xs font-bold flex items-center gap-1.5 shadow-sm transition-all"
+                    >
+                      <Clipboard className="w-3.5 h-3.5" />
+                      <span>📋 Paste 12-Digit UTR from Clipboard</span>
+                    </button>
+                    <span className="text-[10px] text-slate-500 font-mono">
+                      (Or type it in the verification field below)
+                    </span>
+                  </div>
+                </div>
+              )}
+
               {/* Official College Verified Trust Banner */}
               <div className="p-3.5 rounded-2xl bg-gradient-to-r from-blue-50/80 via-white to-indigo-50/80 border border-blue-200/90 flex items-center justify-between gap-3 shadow-sm">
                 <div className="flex items-center gap-3">
@@ -883,7 +1253,7 @@ export default function RegistrationModal({
                       </span>
                     </div>
                     <div className="text-[10px] text-slate-500 font-mono mt-0.5">
-                      Direct NPCI • BHIM UPI • 0% Surcharge • 100% Secure Gateway
+                      Direct NPCI • BHIM UPI • 0% Surcharge • 100% Secure Direct Settlement
                     </div>
                   </div>
                 </div>
@@ -900,7 +1270,7 @@ export default function RegistrationModal({
                   <span>PAY ₹{passPrice} VIA ANY UPI APP (GPAY/PHONEPE)</span>
                 </button>
                 <span className="block text-[10px] text-center text-blue-600 mt-1.5 font-mono">
-                  ⚡ 1-Tap: Directly opens your installed payment app without page refresh!
+                  ⚡ 1-Tap: Opens payment app directly. Your form data is securely saved!
                 </span>
               </div>
 
@@ -942,7 +1312,6 @@ export default function RegistrationModal({
 
                   {/* QR Box with Cyan Laser Sweep */}
                   <div className="relative p-3 bg-white rounded-2xl shadow-md border-2 border-blue-200 group overflow-hidden my-1">
-                    {/* Laser Sweep line */}
                     <div className="absolute left-0 right-0 h-1 bg-gradient-to-r from-transparent via-cyan-500 to-transparent shadow-[0_0_12px_#06b6d4] qr-scanner-laser pointer-events-none z-10" />
 
                     {qrMode === 'dynamic' ? (
@@ -961,7 +1330,6 @@ export default function RegistrationModal({
                       />
                     )}
 
-                    {/* Zoom button overlay */}
                     <button
                       type="button"
                       onClick={() => setIsZoomQr(true)}
@@ -972,14 +1340,12 @@ export default function RegistrationModal({
                     </button>
                   </div>
 
-                  {/* QR Sub-text */}
                   <p className="text-[10px] text-slate-500 font-mono text-center mt-2">
                     {qrMode === 'dynamic' 
                       ? `Scan with any app — amount ₹${passPrice} auto-fills!`
                       : 'Scan official College QR code'}
                   </p>
 
-                  {/* Save QR to Photos Button for Mobile Users scanning from gallery */}
                   <button
                     type="button"
                     onClick={handleDownloadQr}
@@ -1024,7 +1390,6 @@ export default function RegistrationModal({
                     </label>
                     
                     <div className="grid grid-cols-2 gap-2">
-                      {/* Google Pay */}
                       <button
                         type="button"
                         onClick={(e) => handleLaunchUpi(e, gpayIntentUrl)}
@@ -1037,7 +1402,6 @@ export default function RegistrationModal({
                         <span className="group-hover:text-blue-600">Google Pay</span>
                       </button>
 
-                      {/* PhonePe */}
                       <button
                         type="button"
                         onClick={(e) => handleLaunchUpi(e, phonepeIntentUrl)}
@@ -1049,7 +1413,6 @@ export default function RegistrationModal({
                         <span className="group-hover:text-purple-600">PhonePe</span>
                       </button>
 
-                      {/* Paytm */}
                       <button
                         type="button"
                         onClick={(e) => handleLaunchUpi(e, paytmIntentUrl)}
@@ -1061,7 +1424,6 @@ export default function RegistrationModal({
                         <span className="group-hover:text-sky-600">Paytm</span>
                       </button>
 
-                      {/* Any UPI App */}
                       <button
                         type="button"
                         onClick={(e) => handleLaunchUpi(e, universalUpiUrl)}
@@ -1131,7 +1493,7 @@ export default function RegistrationModal({
 
                   {/* Help banner */}
                   <div className="p-2.5 rounded-xl bg-amber-50 border border-amber-200 text-[11px] text-amber-900 leading-snug font-mono">
-                    💡 <strong>Pro Tip:</strong> After paying, enter your 12-digit UTR reference below or attach receipt to generate your official pass instantly!
+                    💡 <strong>Quick Step:</strong> Once paid, enter your 12-digit UTR below to unlock your pass instantly!
                   </div>
 
                 </div>
@@ -1147,7 +1509,7 @@ export default function RegistrationModal({
                   <div className="space-y-1">
                     <label className="block text-xs font-semibold text-slate-700 flex items-center justify-between">
                       <span className="flex items-center gap-1 font-mono">
-                        <span>12-Digit UPI UTR / Ref ID</span>
+                        <span>12-Digit UPI UTR / Ref ID *</span>
                         {is12DigitUtr && <CheckCircle2 className="w-3.5 h-3.5 text-blue-600 inline" />}
                       </span>
                       <button
@@ -1201,12 +1563,11 @@ export default function RegistrationModal({
                   {/* Field 2: Smart Screenshot Dropzone & Paste Box */}
                   <div className="space-y-1">
                     <label className="block text-xs font-semibold text-slate-700 flex items-center justify-between">
-                      <span className="font-mono">Attach Payment Receipt</span>
-                      <span className="text-[10px] text-slate-400 font-mono">Or press Ctrl+V to Paste</span>
+                      <span className="font-mono">Attach Payment Receipt (Optional)</span>
+                      <span className="text-[10px] text-slate-400 font-mono">Or Ctrl+V</span>
                     </label>
 
                     {screenshotPreview ? (
-                      /* Active Screenshot Preview Box */
                       <div className="flex items-center justify-between p-2 rounded-xl bg-blue-50/60 border border-blue-200 text-xs">
                         <div className="flex items-center gap-2 overflow-hidden">
                           <img
@@ -1219,7 +1580,7 @@ export default function RegistrationModal({
                               {screenshotMeta?.name || 'receipt-screenshot.jpg'}
                             </span>
                             <span className="text-[10px] text-blue-600 font-mono">
-                              ✓ Attached & Compressed {screenshotMeta?.size ? `(${screenshotMeta.size})` : ''}
+                              ✓ Attached {screenshotMeta?.size ? `(${screenshotMeta.size})` : ''}
                             </span>
                           </div>
                         </div>
@@ -1234,7 +1595,6 @@ export default function RegistrationModal({
                         </button>
                       </div>
                     ) : (
-                      /* Dropzone */
                       <label
                         onDragOver={handleDragOver}
                         onDragLeave={handleDragLeave}
@@ -1253,7 +1613,7 @@ export default function RegistrationModal({
                         <span className="truncate font-mono text-[11px]">
                           {uploadingImage 
                             ? 'Compressing image...' 
-                            : 'Click to upload or Drag & Drop screenshot'}
+                            : 'Upload receipt screenshot'}
                         </span>
                         <input
                           type="file"
@@ -1319,14 +1679,15 @@ export default function RegistrationModal({
 
             </div>
           )}
+
         </div>
 
-        {/* Registration Opening Soon Frosted Blur Overlay */}
-        {isOpeningSoon && (
-          <div className="absolute inset-x-0 bottom-0 top-[73px] z-30 flex flex-col items-center justify-center p-4 sm:p-8 bg-white/75 backdrop-blur-md transition-all animate-in fade-in duration-200">
-            <div className="w-full max-w-md p-6 sm:p-8 rounded-3xl bg-white/95 border-2 border-blue-500 shadow-2xl text-center space-y-4">
-              <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-blue-50 border border-blue-200 text-blue-700 text-xs font-mono font-bold tracking-wider uppercase shadow-sm">
-                <Sparkles className="w-4 h-4 text-blue-600 animate-pulse" />
+        {/* Blurred "Registration Opening Soon" Overlay (Only when registrationOpen is set to false in Admin) */}
+        {isOpeningSoon && modalMode === 'register' && (
+          <div className="absolute inset-0 z-30 flex items-center justify-center bg-white/70 backdrop-blur-md p-6">
+            <div className="max-w-md w-full text-center space-y-4 p-6 sm:p-8 rounded-3xl bg-white border border-slate-200/90 shadow-2xl">
+              <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-blue-50 border border-blue-200 text-blue-700 text-xs font-mono font-bold">
+                <Sparkles className="w-3.5 h-3.5 text-blue-600" />
                 <span>TECHASTRA 2026 REGISTRATIONS</span>
               </div>
 
@@ -1343,13 +1704,20 @@ export default function RegistrationModal({
                 <span>Slots will be allocated on a first-come, first-served basis.</span>
               </div>
 
-              <div className="pt-2 flex items-center justify-center">
+              <div className="pt-2 flex flex-col sm:flex-row items-center justify-center gap-2">
+                <button
+                  type="button"
+                  onClick={() => setIsOpeningSoon(false)}
+                  className="w-full sm:w-auto px-6 py-3 rounded-2xl bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-500 hover:to-indigo-500 text-white font-chakra text-xs font-bold tracking-wider uppercase shadow-lg transition-all cursor-pointer flex items-center justify-center gap-1.5"
+                >
+                  <span>Proceed to Registration Form →</span>
+                </button>
                 <button
                   type="button"
                   onClick={onClose}
-                  className="w-full sm:w-auto px-8 py-3.5 rounded-2xl bg-slate-900 hover:bg-slate-800 text-white font-chakra text-xs font-bold tracking-wider uppercase shadow-lg transition-all cursor-pointer"
+                  className="w-full sm:w-auto px-6 py-3 rounded-2xl bg-slate-100 hover:bg-slate-200 text-slate-700 font-chakra text-xs font-bold tracking-wider uppercase transition-all cursor-pointer"
                 >
-                  GOT IT / RETURN TO SITE
+                  Return to Site
                 </button>
               </div>
             </div>

@@ -65,6 +65,7 @@ export default function AdminPage({ onBackToWebsite }) {
     tagline: eventSettings.tagline || 'Architecting the Future of Code & Intelligence',
     dates: eventSettings.dates || 'To Be Announced Soon',
     datesAnnounced: eventSettings.datesAnnounced ?? false,
+    registrationOpen: eventSettings.registrationOpen ?? true,
     targetDate: eventSettings.targetDate || '2026-10-16T09:00:00+05:30',
     venue: eventSettings.venue || 'Auditorium & Tech Hub, Main Campus',
     prizePool: eventSettings.prizePool || '₹2,50,000+',
@@ -106,6 +107,7 @@ export default function AdminPage({ onBackToWebsite }) {
         tagline: eventSettings.tagline || 'Architecting the Future of Code & Intelligence',
         dates: eventSettings.dates || 'To Be Announced Soon',
         datesAnnounced: eventSettings.datesAnnounced ?? false,
+        registrationOpen: eventSettings.registrationOpen ?? true,
         targetDate: eventSettings.targetDate || '2026-10-16T09:00:00+05:30',
         venue: eventSettings.venue || 'Auditorium & Tech Hub, Main Campus',
         prizePool: eventSettings.prizePool || '₹2,50,000+',
@@ -969,6 +971,42 @@ export default function AdminPage({ onBackToWebsite }) {
                     }`}
                   >
                     <span>{eventForm.datesAnnounced ? '⚡ Switch to "To Be Announced Soon"' : '🚀 Announce Dates & Start Live Countdown'}</span>
+                  </button>
+                </div>
+              </div>
+
+              {/* TRIGGER TOGGLE: REGISTRATION PORTAL STATUS (LIVE VS OPENING SOON) */}
+              <div className="p-4 sm:p-5 rounded-2xl bg-gradient-to-r from-emerald-50/70 via-teal-50/50 to-emerald-50/70 border border-emerald-200 shadow-sm space-y-3">
+                <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+                  <div>
+                    <div className="flex items-center gap-2">
+                      <span className={`w-3 h-3 rounded-full ${eventForm.registrationOpen !== false ? 'bg-emerald-600 animate-pulse' : 'bg-amber-500 animate-pulse'}`} />
+                      <span className="text-sm font-bold text-slate-900 font-mono uppercase tracking-wider">
+                        {eventForm.registrationOpen !== false ? 'Registration Portal: LIVE & ACCEPTING REGISTRATIONS' : 'Registration Portal: "OPENING SOON" BLURRED'}
+                      </span>
+                    </div>
+                    <p className="text-xs text-slate-600 mt-1">
+                      {eventForm.registrationOpen !== false
+                        ? 'Students can select passes, fill details, pay via UPI, and receive verified holographic passes immediately.'
+                        : 'Payment modal displays the blurred "Registration Opening Soon" card.'}
+                    </p>
+                  </div>
+
+                  <button
+                    type="button"
+                    onClick={() => {
+                      setEventForm(prev => ({
+                        ...prev,
+                        registrationOpen: prev.registrationOpen === false ? true : false
+                      }));
+                    }}
+                    className={`px-5 py-3 rounded-xl font-bold text-xs flex items-center justify-center gap-2 border transition-all shadow-sm shrink-0 ${
+                      eventForm.registrationOpen !== false
+                        ? 'bg-amber-100 text-amber-900 border-amber-300 hover:bg-amber-200'
+                        : 'bg-emerald-600 text-white border-emerald-600 hover:bg-emerald-700'
+                    }`}
+                  >
+                    <span>{eventForm.registrationOpen !== false ? '🔒 Pause & Show "Opening Soon"' : '⚡ Open Registrations Live'}</span>
                   </button>
                 </div>
               </div>

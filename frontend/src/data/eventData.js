@@ -7,6 +7,7 @@ export const EVENT_DETAILS = {
   edition: "Flagship National Edition",
   dates: "To Be Announced Soon",
   datesAnnounced: false,
+  registrationOpen: true,
   targetDate: "2026-10-16T09:00:00+05:30",
   venue: "Smt. Chandibai Himathmal Mansukhani College",
   location: "Smt. Chandibai Himathmal Mansukhani College, Ulhasnagar, Maharashtra",
