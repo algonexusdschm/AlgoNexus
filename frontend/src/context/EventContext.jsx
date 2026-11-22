@@ -715,7 +715,7 @@ export function EventProvider({ children }) {
           utrNumber: registrationToSave.utrNumber,
           paymentScreenshot: finalReceiptImage,
           bankName: registrationToSave.bankName,
-          isSimulated: true
+          isSimulated: false
         })
       });
     } catch (err) {}

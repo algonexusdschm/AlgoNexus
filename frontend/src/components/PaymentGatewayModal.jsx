@@ -80,7 +80,7 @@ export default function PaymentGatewayModal({
         utrNumber: additionalData.utr || utrNumber,
         paymentScreenshot: additionalData.screenshot || screenshotPreview,
         bankName: additionalData.bank || selectedBank,
-        isSimulated: true
+        isSimulated: false
       };
 
       const res = await fetch('/api/verify-payment', {
@@ -134,12 +134,6 @@ export default function PaymentGatewayModal({
     completePayment('UPI_QR', { utr: utrNumber.trim(), screenshot: screenshotPreview });
   };
 
-  // Demo auto-fill helper for test user
-  const handleAutoFillUpi = () => {
-    const randomUtr = Math.floor(100000000000 + Math.random() * 900000000000).toString();
-    setUtrNumber(randomUtr);
-    completePayment('UPI_QR', { utr: randomUtr });
-  };
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/85 backdrop-blur-md p-4 overflow-y-auto">
@@ -358,13 +352,9 @@ export default function PaymentGatewayModal({
 
                 {/* Action Buttons */}
                 <div className="flex flex-col sm:flex-row items-center justify-between gap-3 pt-2">
-                  <button
-                    type="button"
-                    onClick={handleAutoFillUpi}
-                    className="text-xs text-cyan-400 hover:underline py-1"
-                  >
-                    ⚡ Test Click: Simulate Instant Verification
-                  </button>
+                  <div className="text-[11px] font-mono text-slate-500">
+                    🔒 Official Direct UPI Settlement • 100% Verified Pass
+                  </div>
 
                   <button
                     type="submit"

@@ -672,12 +672,6 @@ export default function RegistrationModal({
     });
   };
 
-  // Auto-fill test simulation helper
-  const handleAutoFillUpi = () => {
-    const randomUtr = Math.floor(100000000000 + Math.random() * 900000000000).toString();
-    setUtrNumber(randomUtr);
-    completePayment('UPI_QR', { utr: randomUtr, screenshot: screenshotUrl || screenshotPreview, isSimulated: true });
-  };
 
   // Handle Search for Existing Ticket (Retrieve Pass Safety Net)
   const handleSearchTicket = async (e) => {
@@ -1591,14 +1585,9 @@ export default function RegistrationModal({
 
                 {/* Submit Action Bar */}
                 <div className="flex flex-col sm:flex-row items-center justify-between gap-3 pt-2">
-                  <button
-                    type="button"
-                    onClick={handleAutoFillUpi}
-                    className="text-xs text-blue-600 hover:underline py-1 font-mono flex items-center gap-1.5"
-                  >
-                    <Zap className="w-3.5 h-3.5 text-blue-600" />
-                    <span>⚡ Simulate Instant Test Pass (Demo)</span>
-                  </button>
+                  <div className="text-[11px] font-mono text-slate-500">
+                    🔒 Official Direct UPI Settlement • 100% Verified Pass
+                  </div>
 
                   <div className="flex items-center gap-2 w-full sm:w-auto">
                     <button
