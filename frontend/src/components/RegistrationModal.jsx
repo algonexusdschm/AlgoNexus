@@ -5,7 +5,7 @@ import {
   User, Mail, Phone, School, Compass, ShieldCheck, Sparkles,
   Clock, CheckCircle2, ChevronDown, ChevronUp, Image as ImageIcon,
   Trash2, HelpCircle, Building2, Zap, ZoomIn, Shield, Search,
-  Clipboard, RefreshCw, Key
+  Clipboard, RefreshCw, Key, MessageSquare
 } from 'lucide-react';
 import { QRCodeSVG } from 'qrcode.react';
 import confetti from 'canvas-confetti';
@@ -33,6 +33,7 @@ export default function RegistrationModal({
   const [verifyingSuccess, setVerifyingSuccess] = useState(false);
   const [uploadingImage, setUploadingImage] = useState(false);
   const [errorMessage, setErrorMessage] = useState('');
+  const [submittedTicket, setSubmittedTicket] = useState(null);
 
   // Draft Ticket ID that persists across mobile app switches and tab refreshes
   const [draftTicketId, setDraftTicketId] = useState('');
@@ -538,25 +539,17 @@ export default function RegistrationModal({
     setErrorMessage('');
 
     try {
-      // Stage 1: NPCI banking network handshake
-      setLoadingStage('Connecting to NPCI banking network...');
+      // Stage 1: Submission
+      setLoadingStage('Submitting registration details...');
       await new Promise(r => setTimeout(r, 600));
 
-      // Stage 2: Transaction verification
-      setLoadingStage('Validating 12-digit settlement reference...');
+      // Stage 2: Transaction submission
+      setLoadingStage('Securing payment proof & 12-digit UTR reference...');
       await new Promise(r => setTimeout(r, 600));
 
-      // Stage 3: Holographic ticket forging
-      setLoadingStage('Allocating TechAstra 2026 Holographic Pass...');
+      // Stage 3: Allocation
+      setLoadingStage('Allocating TechAstra 2026 Reference ID...');
       await new Promise(r => setTimeout(r, 500));
-
-      // Visual Success State with Confetti
-      setVerifyingSuccess(true);
-      confetti({
-        particleCount: 120,
-        spread: 75,
-        origin: { y: 0.6 }
-      });
 
       const generatedTicketId = draftTicketId || `TECH26-${Math.random().toString(36).substring(2, 7).toUpperCase()}`;
 
@@ -573,7 +566,7 @@ export default function RegistrationModal({
       const payload = {
         razorpay_order_id: `ORD_${orderRef}`,
         razorpay_payment_id: finalUtr,
-        paymentStatus: 'PAID',
+        paymentStatus: 'PENDING_VERIFICATION',
         registrationData: {
           ...formData,
           fullName: formData.fullName.trim(),
@@ -596,12 +589,12 @@ export default function RegistrationModal({
         ticketId: generatedTicketId,
         orderId: payload.razorpay_order_id,
         paymentId: payload.razorpay_payment_id,
-        paymentStatus: 'PAID',
+        paymentStatus: 'PENDING_VERIFICATION',
         paymentMethod: method,
         utrNumber: payload.utrNumber,
         paymentScreenshot: payload.paymentScreenshot,
         bankName: payload.bankName,
-        verifiedAt: new Date().toISOString(),
+        verifiedAt: null,
         submittedAt: new Date().toISOString(),
         amountPaid: selectedTier.price,
         passType: selectedTier.name,
@@ -627,7 +620,10 @@ export default function RegistrationModal({
         if (res.ok) {
           const data = await res.json();
           if (data && data.success && data.ticket) {
-            finalTicket = data.ticket;
+            finalTicket = {
+              ...data.ticket,
+              paymentStatus: data.ticket.paymentStatus || 'PENDING_VERIFICATION'
+            };
           }
         }
       } catch (e) {
@@ -640,17 +636,13 @@ export default function RegistrationModal({
       // Clear the saved active checkout session
       clearSession();
 
-      // Brief delay to appreciate success state
-      await new Promise(r => setTimeout(r, 700));
-
       setLoading(false);
       setVerifyingSuccess(false);
-      onPaymentSuccess(finalTicket);
-      onClose();
+      setSubmittedTicket(finalTicket);
     } catch (err) {
       setLoading(false);
       setVerifyingSuccess(false);
-      setErrorMessage('Could not complete payment verification. Please try again.');
+      setErrorMessage('Could not complete payment submission. Please try again.');
     }
   };
 
@@ -742,7 +734,7 @@ export default function RegistrationModal({
     if (match) {
       setSearchResult(match);
     } else {
-      setErrorMessage('No matching registration found. Please check your phone number or contact support at +91 80100 86323.');
+      setErrorMessage('No matching registration found. Please check your phone number or contact support at +91 9604449724.');
     }
   };
 
@@ -858,7 +850,7 @@ export default function RegistrationModal({
 
               <div className="space-y-1">
                 <h4 className="text-base font-chakra font-black tracking-wide text-slate-900 uppercase">
-                  {verifyingSuccess ? 'PAYMENT VERIFIED' : 'PROCESSING SETTLEMENT'}
+                  SUBMITTING REGISTRATION
                 </h4>
                 <p className="text-xs font-mono text-slate-500 min-h-[20px]">
                   {loadingStage}
@@ -871,7 +863,7 @@ export default function RegistrationModal({
               </div>
 
               <div className="text-[10px] font-mono text-slate-400">
-                Direct NPCI Verified • Ref: #{cleanUtrRaw || orderRef}
+                Official Submission • Ref: #{cleanUtrRaw || orderRef}
               </div>
             </div>
           </div>
@@ -881,9 +873,130 @@ export default function RegistrationModal({
         <div className="p-4 sm:p-6 overflow-y-auto flex-1 transition-all duration-300">
           
           {/* ========================================================================= */}
-          {/* MODE: RETRIEVE PASS (Safety net for users who paid and closed tab)       */}
+          {/* SUBMISSION COMPLETE VIEW (Awaiting Organizer Verification & Pass Delivery) */}
           {/* ========================================================================= */}
-          {modalMode === 'retrieve' ? (
+          {submittedTicket ? (
+            <div className="space-y-6 py-2 animate-fade-in">
+              {/* Top Status Icon & Heading */}
+              <div className="text-center space-y-3">
+                <div className="w-16 h-16 mx-auto rounded-3xl bg-blue-50 border border-blue-200/80 flex items-center justify-center shadow-md shadow-blue-500/10">
+                  <Clock className="w-8 h-8 text-blue-600 animate-pulse" />
+                </div>
+                <div>
+                  <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-amber-50 border border-amber-200 text-amber-800 text-xs font-mono font-bold mb-2">
+                    <span>⏳ Registration & Payment Submitted</span>
+                  </div>
+                  <h3 className="text-xl sm:text-2xl font-chakra font-black tracking-wide text-slate-900 uppercase">
+                    Details Received Successfully!
+                  </h3>
+                  <div className="mt-3 p-4 rounded-2xl bg-amber-50/70 border border-amber-200 text-amber-950 text-xs sm:text-sm font-medium leading-relaxed max-w-lg mx-auto">
+                    <p>
+                      📢 <strong>Notice:</strong> Your pass will be verified by the organizing team and shared soon on your registered <strong>Email ID</strong> or <strong>WhatsApp number</strong>.
+                    </p>
+                  </div>
+                </div>
+              </div>
+
+              {/* Attendee & Transaction Reference Card */}
+              <div className="p-4 sm:p-5 rounded-2xl bg-slate-50 border border-slate-200 text-xs font-mono space-y-3">
+                <div className="flex items-center justify-between border-b border-slate-200 pb-2.5">
+                  <span className="text-[10px] text-slate-400 uppercase font-bold">Registration Reference:</span>
+                  <div className="flex items-center gap-2">
+                    <span className="font-bold text-blue-700 text-sm font-mono">{submittedTicket.ticketId}</span>
+                    <button
+                      type="button"
+                      onClick={() => {
+                        navigator.clipboard?.writeText(submittedTicket.ticketId);
+                        setPasteNotification('Ticket ID copied to clipboard!');
+                        setTimeout(() => setPasteNotification(''), 2500);
+                      }}
+                      className="p-1 rounded hover:bg-slate-200 text-slate-500"
+                      title="Copy Ticket ID"
+                    >
+                      <Copy className="w-3.5 h-3.5" />
+                    </button>
+                  </div>
+                </div>
+
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 text-xs">
+                  <div>
+                    <span className="text-slate-400 block text-[10px] uppercase">Leader / Attendee:</span>
+                    <span className="font-bold text-slate-800">{submittedTicket.attendee?.fullName}</span>
+                  </div>
+                  <div>
+                    <span className="text-slate-400 block text-[10px] uppercase">Team Squad:</span>
+                    <span className="font-bold text-blue-600">{submittedTicket.attendee?.teamName || 'Solo / Squad'}</span>
+                  </div>
+                  <div>
+                    <span className="text-slate-400 block text-[10px] uppercase">Pass Delivery Email:</span>
+                    <span className="font-semibold text-slate-800 break-all">{submittedTicket.attendee?.email || 'N/A'}</span>
+                  </div>
+                  <div>
+                    <span className="text-slate-400 block text-[10px] uppercase">Pass Delivery WhatsApp:</span>
+                    <span className="font-semibold text-slate-800">{submittedTicket.attendee?.phone || 'N/A'}</span>
+                  </div>
+                  <div>
+                    <span className="text-slate-400 block text-[10px] uppercase">Registration Amount:</span>
+                    <span className="font-bold text-slate-800 font-mono">₹{submittedTicket.amountPaid} (Squad Pass)</span>
+                  </div>
+                  <div>
+                    <span className="text-slate-400 block text-[10px] uppercase">12-Digit UTR Ref:</span>
+                    <span className="font-mono text-slate-700 truncate block">{submittedTicket.utrNumber}</span>
+                  </div>
+                </div>
+              </div>
+
+              {/* Dedicated Contact & Helpline Card (+91 9604449724) */}
+              <div className="p-4 sm:p-5 rounded-2xl bg-gradient-to-r from-blue-50/90 via-white to-indigo-50/90 border border-blue-200 shadow-sm space-y-3">
+                <div className="flex items-start gap-3">
+                  <div className="w-10 h-10 rounded-xl bg-blue-100 text-blue-700 flex items-center justify-center shrink-0">
+                    <Phone className="w-5 h-5" />
+                  </div>
+                  <div>
+                    <h4 className="text-xs font-bold font-chakra uppercase tracking-wider text-slate-900">
+                      Pass Queries & Helpline Support
+                    </h4>
+                    <p className="text-[11px] text-slate-600 mt-0.5">
+                      In case of any problem or pass-related queries, please contact our student coordinator:
+                    </p>
+                    <div className="text-base sm:text-lg font-chakra font-black text-blue-700 mt-1">
+                      📞 +91 9604449724
+                    </div>
+                  </div>
+                </div>
+
+                <div className="flex flex-col sm:flex-row items-center gap-2 pt-1 font-mono text-xs">
+                  <a
+                    href="tel:+919604449724"
+                    className="w-full sm:w-1/2 py-2.5 px-4 rounded-xl bg-white hover:bg-slate-50 border border-blue-200 text-blue-700 font-bold flex items-center justify-center gap-2 shadow-sm transition-all"
+                  >
+                    <Phone className="w-3.5 h-3.5" />
+                    <span>Call Helpline</span>
+                  </a>
+                  <a
+                    href={`https://wa.me/919604449724?text=${encodeURIComponent(`Hi, I have submitted my registration for TechAstra 2026.\nTicket ID: ${submittedTicket.ticketId}\nName: ${submittedTicket.attendee?.fullName}\nUTR: ${submittedTicket.utrNumber}\n\nPlease verify and share my pass.`)}`}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="w-full sm:w-1/2 py-2.5 px-4 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white font-bold flex items-center justify-center gap-2 shadow-sm transition-all"
+                  >
+                    <MessageSquare className="w-3.5 h-3.5" />
+                    <span>WhatsApp Queries</span>
+                  </a>
+                </div>
+              </div>
+
+              {/* Close Button */}
+              <div className="pt-2">
+                <button
+                  type="button"
+                  onClick={onClose}
+                  className="w-full py-3.5 rounded-2xl bg-gradient-to-r from-blue-600 to-indigo-600 text-white font-chakra font-bold text-xs uppercase shadow-lg shadow-blue-500/25 hover:brightness-105 transition-all cursor-pointer"
+                >
+                  Done & Close Gateway
+                </button>
+              </div>
+            </div>
+          ) : modalMode === 'retrieve' ? (
             <div className="space-y-5">
               <div className="p-4 rounded-2xl bg-blue-50/60 border border-blue-200 text-xs font-mono space-y-1 text-slate-700">
                 <div className="font-bold text-blue-900 flex items-center gap-1.5">
@@ -924,8 +1037,12 @@ export default function RegistrationModal({
                 <div className="p-4 rounded-2xl bg-slate-50 border border-slate-200 space-y-3 font-mono animate-fade-in shadow-sm">
                   <div className="flex items-center justify-between border-b border-slate-200 pb-2">
                     <span className="text-xs font-bold text-slate-900">{searchResult.ticketId}</span>
-                    <span className="text-[10px] px-2 py-0.5 rounded-full bg-emerald-100 text-emerald-800 font-bold">
-                      ✓ {searchResult.paymentStatus || 'PAID'}
+                    <span className={`text-[10px] px-2 py-0.5 rounded-full font-bold ${
+                      searchResult.paymentStatus === 'PAID'
+                        ? 'bg-emerald-100 text-emerald-800'
+                        : 'bg-amber-100 text-amber-800'
+                    }`}>
+                      {searchResult.paymentStatus === 'PAID' ? '✓ VERIFIED PASS' : '⏳ PENDING VERIFICATION'}
                     </span>
                   </div>
 
@@ -948,17 +1065,42 @@ export default function RegistrationModal({
                     </div>
                   </div>
 
-                  <button
-                    type="button"
-                    onClick={() => {
-                      onPaymentSuccess(searchResult);
-                      onClose();
-                    }}
-                    className="w-full py-2.5 px-4 rounded-xl bg-gradient-to-r from-blue-600 to-indigo-600 text-white font-chakra font-bold text-xs flex items-center justify-center gap-2 shadow-md hover:shadow-lg transition-all"
-                  >
-                    <Ticket className="w-4 h-4" />
-                    <span>Open & Print Official Pass →</span>
-                  </button>
+                  {searchResult.paymentStatus === 'PAID' ? (
+                    <button
+                      type="button"
+                      onClick={() => {
+                        onPaymentSuccess(searchResult);
+                        onClose();
+                      }}
+                      className="w-full py-2.5 px-4 rounded-xl bg-gradient-to-r from-blue-600 to-indigo-600 text-white font-chakra font-bold text-xs flex items-center justify-center gap-2 shadow-md hover:shadow-lg transition-all cursor-pointer"
+                    >
+                      <Ticket className="w-4 h-4" />
+                      <span>Open & Print Official Pass →</span>
+                    </button>
+                  ) : (
+                    <div className="space-y-2 pt-1">
+                      <div className="p-3 rounded-xl bg-amber-50 border border-amber-200 text-amber-900 text-xs">
+                        <p className="font-bold">Pass verification in progress:</p>
+                        <p className="text-[11px] text-amber-800 mt-0.5">
+                          Your pass will be shared soon on your registered email or WhatsApp number once verified by the organizers.
+                        </p>
+                      </div>
+                      <div className="p-3 bg-white rounded-xl border border-slate-200 flex items-center justify-between text-xs">
+                        <div>
+                          <span className="text-[10px] text-slate-400 block">Queries Helpline:</span>
+                          <span className="font-bold text-slate-800">+91 9604449724</span>
+                        </div>
+                        <div className="flex items-center gap-1.5">
+                          <a href="tel:+919604449724" className="px-2.5 py-1 rounded bg-slate-100 hover:bg-slate-200 text-slate-700 font-bold text-[11px]">
+                            Call
+                          </a>
+                          <a href="https://wa.me/919604449724" target="_blank" rel="noopener noreferrer" className="px-2.5 py-1 rounded bg-emerald-600 text-white font-bold text-[11px]">
+                            WhatsApp
+                          </a>
+                        </div>
+                      </div>
+                    </div>
+                  )}
                 </div>
               )}
             </div>
@@ -1586,7 +1728,7 @@ export default function RegistrationModal({
                 {/* Submit Action Bar */}
                 <div className="flex flex-col sm:flex-row items-center justify-between gap-3 pt-2">
                   <div className="text-[11px] font-mono text-slate-500">
-                    🔒 Official Direct UPI Settlement • 100% Verified Pass
+                    🔒 Official Direct UPI Settlement • Pass verified & shared by organizers
                   </div>
 
                   <div className="flex items-center gap-2 w-full sm:w-auto">
@@ -1596,7 +1738,7 @@ export default function RegistrationModal({
                         setStep(1);
                         if (errorMessage) setErrorMessage('');
                       }}
-                      className="px-4 py-2.5 rounded-xl bg-slate-100 hover:bg-slate-200 text-slate-700 text-xs font-semibold"
+                      className="px-4 py-2.5 rounded-xl bg-slate-100 hover:bg-slate-200 text-slate-700 text-xs font-semibold cursor-pointer"
                     >
                       Back
                     </button>
@@ -1604,20 +1746,33 @@ export default function RegistrationModal({
                     <button
                       type="submit"
                       disabled={loading || uploadingImage}
-                      className="flex-1 sm:flex-initial px-6 py-2.5 rounded-xl bg-gradient-to-r from-blue-600 via-indigo-600 to-sky-600 hover:from-blue-500 hover:to-sky-500 text-white font-bold text-xs flex items-center justify-center gap-2 shadow-lg shadow-blue-500/25 disabled:opacity-50 transition-all font-chakra tracking-wide"
+                      className="flex-1 sm:flex-initial px-6 py-2.5 rounded-xl bg-gradient-to-r from-blue-600 via-indigo-600 to-sky-600 hover:from-blue-500 hover:to-sky-500 text-white font-bold text-xs flex items-center justify-center gap-2 shadow-lg shadow-blue-500/25 disabled:opacity-50 transition-all font-chakra tracking-wide cursor-pointer"
                     >
                       {loading ? (
                         <>
                           <Loader2 className="w-4 h-4 animate-spin text-white" />
-                          <span>{loadingStage || 'Verifying...'}</span>
+                          <span>{loadingStage || 'Submitting...'}</span>
                         </>
                       ) : (
                         <>
-                          <CheckCircle2 className="w-4 h-4 text-white" />
-                          <span>CONFIRM & FORGE E-TICKET</span>
+                          <ArrowRight className="w-4 h-4 text-white" />
+                          <span>SUBMIT PAYMENT FOR VERIFICATION</span>
                         </>
                       )}
                     </button>
+                  </div>
+                </div>
+
+                {/* Helpline Notice */}
+                <div className="p-3 bg-slate-50 rounded-xl border border-slate-200 text-xs font-mono text-slate-600 flex flex-col sm:flex-row items-center justify-between gap-2">
+                  <div className="flex items-center gap-2">
+                    <Phone className="w-3.5 h-3.5 text-blue-600 shrink-0" />
+                    <span>Pass Helpline & Queries: <strong className="text-slate-900">+91 9604449724</strong></span>
+                  </div>
+                  <div className="flex items-center gap-2">
+                    <a href="tel:+919604449724" className="text-blue-600 hover:underline font-bold">Call</a>
+                    <span>•</span>
+                    <a href="https://wa.me/919604449724" target="_blank" rel="noopener noreferrer" className="text-emerald-600 hover:underline font-bold">WhatsApp</a>
                   </div>
                 </div>
 

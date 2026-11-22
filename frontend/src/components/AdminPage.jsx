@@ -3,9 +3,11 @@ import {
   Shield, Lock, Unlock, QrCode, Building2, Upload, Check, RefreshCw, 
   Download, Search, Eye, AlertCircle, Save, ExternalLink, ArrowLeft, 
   Users, IndianRupee, Calendar, MapPin, Sparkles, Trophy, Trash2, Copy,
-  Crown, UserPlus, UserCheck, Key, EyeOff, UserX, CheckCircle2, ShieldAlert, Edit2
+  Crown, UserPlus, UserCheck, Key, EyeOff, UserX, CheckCircle2, ShieldAlert, Edit2,
+  Ticket, Phone, Mail, MessageSquare
 } from 'lucide-react';
 import { useEvent } from '../context/EventContext';
+import TicketModal from './TicketModal';
 
 export default function AdminPage({ onBackToWebsite }) {
   const { 
@@ -128,6 +130,7 @@ export default function AdminPage({ onBackToWebsite }) {
   const [manualTicketInput, setManualTicketInput] = useState('');
   const [scanMessage, setScanMessage] = useState(null);
   const [viewScreenshotModal, setViewScreenshotModal] = useState(null);
+  const [selectedTicketForPass, setSelectedTicketForPass] = useState(null);
 
   // Member Management State
   const [isAddMemberModalOpen, setIsAddMemberModalOpen] = useState(false);
@@ -333,6 +336,20 @@ export default function AdminPage({ onBackToWebsite }) {
     setTimeout(() => setScanMessage(null), 3500);
   };
 
+  // Generate & View Official Delegate Pass (Organizer Function)
+  const handleGeneratePass = async (reg) => {
+    if (!reg) return;
+    let ticketToDisplay = { ...reg };
+    if (reg.paymentStatus !== 'PAID') {
+      await verifyRegistrationPayment(reg.ticketId);
+      ticketToDisplay.paymentStatus = 'PAID';
+      ticketToDisplay.verifiedAt = new Date().toISOString();
+      setScanMessage({ success: true, text: `Payment Approved & Official Pass Generated for ${reg.ticketId.toUpperCase()}!` });
+      setTimeout(() => setScanMessage(null), 3500);
+    }
+    setSelectedTicketForPass(ticketToDisplay);
+  };
+
   // CSV Export with Blob and formula sanitization
   const exportToCSV = () => {
     if (registrations.length === 0) {
@@ -388,6 +405,8 @@ export default function AdminPage({ onBackToWebsite }) {
       r.ticketId?.toLowerCase().includes(q) ||
       r.attendee?.fullName?.toLowerCase().includes(q) ||
       r.attendee?.email?.toLowerCase().includes(q) ||
+      r.attendee?.phone?.toLowerCase().includes(q) ||
+      r.attendee?.teamName?.toLowerCase().includes(q) ||
       r.attendee?.college?.toLowerCase().includes(q) ||
       (r.utrNumber && r.utrNumber.toLowerCase().includes(q))
     );
@@ -1194,7 +1213,7 @@ export default function AdminPage({ onBackToWebsite }) {
                   <thead className="bg-slate-50 text-slate-500 uppercase tracking-wider font-mono border-b border-slate-200">
                     <tr>
                       <th className="p-3.5">Ticket ID</th>
-                      <th className="p-3.5">Attendee</th>
+                      <th className="p-3.5">Attendee (Name, Email & Mobile)</th>
                       <th className="p-3.5">College & Track</th>
                       <th className="p-3.5">Pass & Method</th>
                       <th className="p-3.5">Payment / UTR</th>
@@ -1216,8 +1235,38 @@ export default function AdminPage({ onBackToWebsite }) {
                         <tr key={reg.ticketId} className="hover:bg-slate-50/70 transition-colors">
                           <td className="p-3.5 font-mono font-bold text-blue-600">{reg.ticketId}</td>
                           <td className="p-3.5">
-                            <div className="font-semibold text-slate-900">{reg.attendee?.fullName || 'N/A'}</div>
-                            <div className="text-[11px] text-slate-500">{reg.attendee?.phone || ''}</div>
+                            <div className="font-semibold text-slate-900 flex items-center gap-1.5">
+                              <span>{reg.attendee?.fullName || 'N/A'}</span>
+                              {reg.attendee?.teamName && (
+                                <span className="text-[10px] px-1.5 py-0.5 rounded bg-indigo-50 text-indigo-700 font-mono">
+                                  {reg.attendee.teamName}
+                                </span>
+                              )}
+                            </div>
+                            <div className="text-[11px] text-blue-600 font-mono mt-1 flex items-center gap-1">
+                              <Mail className="w-3 h-3 text-blue-500 shrink-0" />
+                              <a href={`mailto:${reg.attendee?.email}`} className="hover:underline truncate max-w-[200px] inline-block font-medium">
+                                {reg.attendee?.email || 'N/A'}
+                              </a>
+                            </div>
+                            <div className="text-[11px] text-slate-700 font-mono mt-0.5 flex items-center gap-1 flex-wrap">
+                              <Phone className="w-3 h-3 text-slate-400 shrink-0" />
+                              <a href={`tel:${reg.attendee?.phone}`} className="hover:underline font-bold text-slate-800">
+                                {reg.attendee?.phone || 'N/A'}
+                              </a>
+                              {reg.attendee?.phone && (
+                                <a
+                                  href={`https://wa.me/91${reg.attendee?.phone.replace(/[^0-9]/g, '').slice(-10)}?text=${encodeURIComponent(`Hello ${reg.attendee?.fullName}, regarding your TechAstra 2026 pass (Ticket ID: ${reg.ticketId}):`)}`}
+                                  target="_blank"
+                                  rel="noopener noreferrer"
+                                  className="ml-1 px-1.5 py-0.5 rounded bg-emerald-50 hover:bg-emerald-100 text-emerald-700 font-bold text-[10px] border border-emerald-200 inline-flex items-center gap-1"
+                                  title="Chat with participant on WhatsApp"
+                                >
+                                  <MessageSquare className="w-2.5 h-2.5 text-emerald-600" />
+                                  <span>WhatsApp</span>
+                                </a>
+                              )}
+                            </div>
                           </td>
                           <td className="p-3.5">
                             <div className="text-slate-800 font-medium">{reg.attendee?.college || 'N/A'}</div>
@@ -1243,7 +1292,7 @@ export default function AdminPage({ onBackToWebsite }) {
                             {reg.paymentScreenshot ? (
                               <button
                                 onClick={() => setViewScreenshotModal(reg.paymentScreenshot)}
-                                className="px-2.5 py-1 rounded bg-blue-50 text-blue-700 hover:bg-blue-100 border border-blue-200 text-[10px] font-semibold flex items-center gap-1"
+                                className="px-2.5 py-1 rounded bg-blue-50 text-blue-700 hover:bg-blue-100 border border-blue-200 text-[10px] font-semibold flex items-center gap-1 cursor-pointer"
                               >
                                 <Eye className="w-3 h-3 text-blue-600" />
                                 <span>Receipt</span>
@@ -1278,20 +1327,30 @@ export default function AdminPage({ onBackToWebsite }) {
                           </td>
                           <td className="p-3.5">
                             <div className="flex items-center gap-1.5 flex-wrap">
+                              <button
+                                onClick={() => handleGeneratePass(reg)}
+                                className="px-2.5 py-1.5 rounded-lg bg-gradient-to-r from-blue-600 via-indigo-600 to-sky-600 hover:opacity-95 text-white text-[10px] font-bold flex items-center gap-1 transition-all shadow-sm cursor-pointer"
+                                title="Generate and view official delegate pass with QR code"
+                              >
+                                <Ticket className="w-3 h-3 text-white" />
+                                <span>{reg.paymentStatus === 'PAID' ? 'View Pass' : 'Generate Pass'}</span>
+                              </button>
+
                               {reg.paymentStatus !== 'PAID' && (
                                 <button
                                   onClick={() => handleVerifyAttendeePayment(reg.ticketId)}
-                                  className="px-2.5 py-1 rounded bg-blue-600 text-white hover:bg-blue-700 text-[10px] font-bold flex items-center gap-1 transition-all shadow-sm"
-                                  title="Approve and verify participant payment"
+                                  className="px-2.5 py-1.5 rounded-lg bg-emerald-600 text-white hover:bg-emerald-700 text-[10px] font-bold flex items-center gap-1 transition-all shadow-sm cursor-pointer"
+                                  title="Approve participant payment"
                                 >
                                   <Check className="w-3 h-3" />
                                   <span>Approve</span>
                                 </button>
                               )}
+
                               {!reg.checkedIn && (
                                 <button
                                   onClick={() => handleGateCheckIn(reg.ticketId)}
-                                  className="px-3 py-1 rounded bg-slate-100 hover:bg-slate-200 text-slate-700 text-[10px] font-semibold transition-all border border-slate-200"
+                                  className="px-2.5 py-1.5 rounded-lg bg-slate-100 hover:bg-slate-200 text-slate-700 text-[10px] font-semibold transition-all border border-slate-200 cursor-pointer"
                                 >
                                   Check In
                                 </button>
@@ -1985,7 +2044,7 @@ export default function AdminPage({ onBackToWebsite }) {
           <div className="relative max-w-lg w-full bg-white p-5 rounded-3xl border border-slate-200 shadow-2xl flex flex-col items-center text-slate-900">
             <button
               onClick={() => setViewScreenshotModal(null)}
-              className="absolute top-4 right-4 p-2 rounded-full bg-slate-100 text-slate-500 hover:text-slate-900"
+              className="absolute top-4 right-4 p-2 rounded-full bg-slate-100 text-slate-500 hover:text-slate-900 cursor-pointer"
             >
               ✕
             </button>
@@ -1997,6 +2056,15 @@ export default function AdminPage({ onBackToWebsite }) {
             />
           </div>
         </div>
+      )}
+
+      {/* Generated Delegate Pass Modal */}
+      {selectedTicketForPass && (
+        <TicketModal
+          ticket={selectedTicketForPass}
+          isOpen={Boolean(selectedTicketForPass)}
+          onClose={() => setSelectedTicketForPass(null)}
+        />
       )}
 
     </div>

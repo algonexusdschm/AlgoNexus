@@ -15,7 +15,8 @@ export const EVENT_DETAILS = {
   department: "Department of Data Science",
   club: "Club Data Decoder",
   email: "algonexusdschm@gmail.com",
-  phone: "+91 80100 86323",
+  phone: "+91 9604449724",
+  helpline: "+91 9604449724",
   organizers: "Club Data Decoder, Department of Data Science, Smt. Chandibai Himathmal Mansukhani College",
   prizePool: "₹1,00,000",
   participantsExpected: "300+ Innovators & Hackers",
@@ -232,6 +233,6 @@ export const FAQ_LIST = [
   },
   {
     q: "Where is the venue and how do I contact the organizing committee?",
-    a: "TechAstra 2026 is hosted on-campus at Smt. Chandibai Himathmal Mansukhani College, organized by the Department of Data Science under Club Data Decoder. Under the leadership of Principal Dr. Manju Lalwani Pathak, Course Co-ordinator Dr. Shiji Johnson, and Teachers Ms. Razia Khan, Ms. Kalyani Patil, and Mr. Anshul Chimnani. Reach out via email at algonexusdschm@gmail.com or mobile at +91 80100 86323."
+    a: "TechAstra 2026 is hosted on-campus at Smt. Chandibai Himathmal Mansukhani College, organized by the Department of Data Science under Club Data Decoder. Under the leadership of Principal Dr. Manju Lalwani Pathak, Course Co-ordinator Dr. Shiji Johnson, and Teachers Ms. Razia Khan, Ms. Kalyani Patil, and Mr. Anshul Chimnani. Reach out via email at algonexusdschm@gmail.com or mobile at +91 9604449724."
   }
 ];
