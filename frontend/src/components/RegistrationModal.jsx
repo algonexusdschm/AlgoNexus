@@ -27,11 +27,6 @@ export default function RegistrationModal({
   // Navigation Modes: 'register' = Book Pass flow, 'retrieve' = Lookup Pass by phone/UTR
   const [modalMode, setModalMode] = useState('register');
   const [step, setStep] = useState(1); // 1: Attendee Info, 2: UPI Payment
-  
-  // Respect live registration status from admin settings
-  const [isOpeningSoon, setIsOpeningSoon] = useState(() => {
-    return eventSettings?.registrationOpen === false;
-  });
 
   const [loading, setLoading] = useState(false);
   const [loadingStage, setLoadingStage] = useState('');
@@ -72,13 +67,6 @@ export default function RegistrationModal({
 
   // 10-Minute live fintech countdown timer
   const [timeLeft, setTimeLeft] = useState(600); // 10 minutes = 600s
-
-  // Reset opening soon state from admin settings on fresh modal open
-  useEffect(() => {
-    if (isOpen) {
-      setIsOpeningSoon(eventSettings?.registrationOpen === false);
-    }
-  }, [isOpen, eventSettings?.registrationOpen]);
 
   // Live timer for Step 2
   useEffect(() => {
@@ -388,7 +376,7 @@ export default function RegistrationModal({
         ticket_id: genTicketId,
         tier_id: selectedTier?.id || 'solo-coder',
         tier_name: selectedTier?.name || 'Solo Coder Pass',
-        amount: selectedTier?.price || 299,
+        amount: selectedTier?.price || 1000,
         payment_status: 'PENDING_UTR',
         full_name: formData.fullName.trim(),
         email: formData.email.trim(),
@@ -474,7 +462,7 @@ export default function RegistrationModal({
   // UPI details configuration
   const activeUpiId = (settings.upiId || '8010086323@fam').trim();
   const displayPayeeName = (settings.payeeName || 'Club Data Decoder, Department of Data Science, Smt. Chandibai Himathmal Mansukhani College').trim();
-  const passPrice = selectedTier?.price || 299;
+  const passPrice = selectedTier?.price || 1000;
 
   // Clean parameters adhering to NPCI specifications
   const cleanPayeeName = 'TechAstra 2026';
@@ -896,9 +884,7 @@ export default function RegistrationModal({
         )}
 
         {/* Modal Body */}
-        <div className={`p-4 sm:p-6 overflow-y-auto flex-1 transition-all duration-300 ${
-          isOpeningSoon && modalMode === 'register' ? 'filter blur-[7px] opacity-40 select-none pointer-events-none' : ''
-        }`}>
+        <div className="p-4 sm:p-6 overflow-y-auto flex-1 transition-all duration-300">
           
           {/* ========================================================================= */}
           {/* MODE: RETRIEVE PASS (Safety net for users who paid and closed tab)       */}
@@ -1681,48 +1667,6 @@ export default function RegistrationModal({
           )}
 
         </div>
-
-        {/* Blurred "Registration Opening Soon" Overlay (Only when registrationOpen is set to false in Admin) */}
-        {isOpeningSoon && modalMode === 'register' && (
-          <div className="absolute inset-0 z-30 flex items-center justify-center bg-white/70 backdrop-blur-md p-6">
-            <div className="max-w-md w-full text-center space-y-4 p-6 sm:p-8 rounded-3xl bg-white border border-slate-200/90 shadow-2xl">
-              <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-blue-50 border border-blue-200 text-blue-700 text-xs font-mono font-bold">
-                <Sparkles className="w-3.5 h-3.5 text-blue-600" />
-                <span>TECHASTRA 2026 REGISTRATIONS</span>
-              </div>
-
-              <h3 className="text-2xl sm:text-4xl font-chakra font-black tracking-tight text-slate-900 uppercase">
-                REGISTRATION OPENING SOON
-              </h3>
-
-              <p className="text-xs sm:text-sm text-slate-600 font-mono leading-relaxed max-w-sm mx-auto">
-                Delegate pass bookings, hackathon squad slot allocations, and payment settlements will go live shortly once official dates are announced.
-              </p>
-
-              <div className="p-3 rounded-2xl bg-amber-50 border border-amber-200 text-[11px] font-mono text-amber-900 flex items-center justify-center gap-2">
-                <Clock className="w-4 h-4 text-amber-600 shrink-0" />
-                <span>Slots will be allocated on a first-come, first-served basis.</span>
-              </div>
-
-              <div className="pt-2 flex flex-col sm:flex-row items-center justify-center gap-2">
-                <button
-                  type="button"
-                  onClick={() => setIsOpeningSoon(false)}
-                  className="w-full sm:w-auto px-6 py-3 rounded-2xl bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-500 hover:to-indigo-500 text-white font-chakra text-xs font-bold tracking-wider uppercase shadow-lg transition-all cursor-pointer flex items-center justify-center gap-1.5"
-                >
-                  <span>Proceed to Registration Form →</span>
-                </button>
-                <button
-                  type="button"
-                  onClick={onClose}
-                  className="w-full sm:w-auto px-6 py-3 rounded-2xl bg-slate-100 hover:bg-slate-200 text-slate-700 font-chakra text-xs font-bold tracking-wider uppercase transition-all cursor-pointer"
-                >
-                  Return to Site
-                </button>
-              </div>
-            </div>
-          </div>
-        )}
 
       </div>
 

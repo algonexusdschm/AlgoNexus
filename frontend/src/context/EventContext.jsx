@@ -99,7 +99,16 @@ export function EventProvider({ children }) {
   const [pricingTiers, setPricingTiers] = useState(() => {
     try {
       const saved = localStorage.getItem(STORAGE_KEYS.TIERS);
-      return saved ? JSON.parse(saved) : REGISTRATION_TIERS;
+      if (saved) {
+        const parsed = JSON.parse(saved);
+        if (Array.isArray(parsed) && parsed.length > 0) {
+          return REGISTRATION_TIERS.map(def => {
+            const match = parsed.find(t => t.id === def.id);
+            return match ? { ...match, price: def.price } : def;
+          });
+        }
+      }
+      return REGISTRATION_TIERS;
     } catch {
       return REGISTRATION_TIERS;
     }
@@ -337,10 +346,10 @@ export function EventProvider({ children }) {
         const mapped = data.map(r => ({
           id: r.id,
           ticketId: r.ticket_id,
-          amountPaid: Number(r.amount) || 299,
-          passType: r.tier_name || 'Solo Coder Pass',
+          amountPaid: Number(r.amount) || 1000,
+          passType: r.tier_name || 'Hackathon Squad Pass',
           paymentStatus: r.payment_status || 'PENDING_VERIFICATION',
-          tier: { id: r.tier_id, name: r.tier_name, price: Number(r.amount) || 299 },
+          tier: { id: r.tier_id, name: r.tier_name, price: Number(r.amount) || 1000 },
           attendee: {
             fullName: r.full_name,
             email: r.email,
@@ -673,7 +682,7 @@ export function EventProvider({ children }) {
         ticket_id: registrationToSave.ticketId,
         tier_id: registrationToSave.tier?.id || 'solo-coder',
         tier_name: registrationToSave.tier?.name || 'Solo Coder Pass',
-        amount: registrationToSave.amountPaid || registrationToSave.tier?.price || 299,
+        amount: registrationToSave.amountPaid || registrationToSave.tier?.price || 1000,
         payment_status: registrationToSave.paymentStatus || 'PENDING_VERIFICATION',
         full_name: registrationToSave.attendee?.fullName || 'Student',
         email: registrationToSave.attendee?.email || '',

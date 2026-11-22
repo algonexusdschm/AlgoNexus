@@ -24,10 +24,10 @@ export default function PricingSection({ onSelectTier }) {
           </p>
         </div>
 
-        {/* Relative Container for Blurred Cards + Announcing Soon Overlay */}
-        <div className="relative">
-          {/* Blurred Background Cards */}
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-8 items-stretch filter blur-[7px] opacity-60 select-none pointer-events-none scale-[0.99] transition-all">
+        {/* Active Delegate Passes Container */}
+        <div>
+          {/* Active Interactive Passes Cards */}
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-8 items-stretch transition-all">
             {pricingTiers.map((tier) => {
               const isSquad = tier.popular;
               const isVIP = tier.id === 'all-access';
@@ -67,7 +67,7 @@ export default function PricingSection({ onSelectTier }) {
                       <span className="text-xs text-slate-500 font-normal">/ {tier.type === 'team' ? 'team pass' : 'individual'}</span>
                     </div>
 
-                    {/* Features List (No Green!) */}
+                    {/* Features List */}
                     <ul className="mt-6 space-y-3 text-xs font-mono text-slate-600">
                       {tier.features.map((feat, idx) => (
                         <li key={idx} className="flex items-start gap-2.5">
@@ -95,33 +95,6 @@ export default function PricingSection({ onSelectTier }) {
                 </div>
               );
             })}
-          </div>
-
-          {/* Floating "Announcing Soon" Holographic Card */}
-          <div className="absolute inset-0 flex flex-col items-center justify-center p-4 z-20">
-            <div className="w-full max-w-lg p-6 sm:p-10 rounded-3xl bg-white/95 border-2 border-blue-500 shadow-2xl text-center space-y-4">
-              <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-blue-50 border border-blue-200 text-blue-700 text-xs font-mono font-bold tracking-wider uppercase">
-                <Sparkles className="w-4 h-4 text-blue-600 animate-pulse" />
-                <span>DELEGATE PASSES & REGISTRATIONS</span>
-              </div>
-              <h3 className="text-3xl sm:text-5xl font-chakra font-black tracking-tight text-slate-900 uppercase">
-                ANNOUNCING SOON
-              </h3>
-              <p className="text-xs sm:text-sm text-slate-600 font-mono leading-relaxed max-w-md mx-auto">
-                Official passes, early-bird rates, and squad registration slots will be announced soon. Stay tuned!
-              </p>
-              <div className="pt-2 flex flex-wrap items-center justify-center gap-3">
-                <button
-                  type="button"
-                  onClick={() => onSelectTier(pricingTiers[0])}
-                  className="px-6 py-3 rounded-2xl bg-gradient-to-r from-sky-600 via-blue-600 to-indigo-600 hover:from-sky-500 hover:to-indigo-500 text-white font-chakra text-xs font-bold tracking-wider uppercase inline-flex items-center gap-2 shadow-lg shadow-blue-500/25 cursor-pointer transition-all hover:scale-105 active:scale-95"
-                >
-                  <span className="w-2 h-2 rounded-full bg-amber-300 animate-ping" />
-                  <span>VIEW PASS & REGISTRATION STATUS</span>
-                  <ArrowRight className="w-3.5 h-3.5" />
-                </button>
-              </div>
-            </div>
           </div>
         </div>
 

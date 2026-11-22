@@ -43,7 +43,7 @@ export default async function handler(req, res) {
         bankName: bankName || '',
         verifiedAt: paymentStatus === 'PAID' ? new Date().toISOString() : null,
         submittedAt: new Date().toISOString(),
-        amountPaid: registrationData?.amount || 299,
+        amountPaid: registrationData?.amount || 1000,
         passType: registrationData?.passType || 'General Pass',
         attendee: {
           fullName: registrationData?.fullName || 'Participant',

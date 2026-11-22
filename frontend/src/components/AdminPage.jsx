@@ -74,9 +74,9 @@ export default function AdminPage({ onBackToWebsite }) {
 
   // Pass Prices Form State
   const [pricesForm, setPricesForm] = useState({
-    solo: pricingTiers.find(t => t.id === 'solo-coder')?.price || 299,
-    squad: pricingTiers.find(t => t.id === 'hackathon-squad')?.price || 799,
-    vip: pricingTiers.find(t => t.id === 'all-access-vip')?.price || 1299
+    solo: pricingTiers.find(t => t.id === 'solo-coder')?.price || 1000,
+    squad: pricingTiers.find(t => t.id === 'hackathon-squad')?.price || 1000,
+    vip: pricingTiers.find(t => t.id === 'all-access-vip' || t.id === 'all-access')?.price || 1000
   });
 
   // Keep admin forms in sync whenever cloud Supabase settings finish loading
@@ -119,9 +119,9 @@ export default function AdminPage({ onBackToWebsite }) {
   useEffect(() => {
     if (pricingTiers && pricingTiers.length > 0) {
       setPricesForm({
-        solo: pricingTiers.find(t => t.id === 'solo-coder')?.price || 299,
-        squad: pricingTiers.find(t => t.id === 'hackathon-squad')?.price || 799,
-        vip: pricingTiers.find(t => t.id === 'all-access-vip')?.price || 1299
+        solo: pricingTiers.find(t => t.id === 'solo-coder')?.price || 1000,
+        squad: pricingTiers.find(t => t.id === 'hackathon-squad')?.price || 1000,
+        vip: pricingTiers.find(t => t.id === 'all-access-vip' || t.id === 'all-access')?.price || 1000
       });
     }
   }, [pricingTiers]);
@@ -310,9 +310,9 @@ export default function AdminPage({ onBackToWebsite }) {
 
     // Also update pricing tiers
     const updatedTiers = pricingTiers.map(t => {
-      if (t.id === 'solo-coder') return { ...t, price: Number(pricesForm.solo) || 299 };
-      if (t.id === 'hackathon-squad') return { ...t, price: Number(pricesForm.squad) || 799 };
-      if (t.id === 'all-access-vip') return { ...t, price: Number(pricesForm.vip) || 1299 };
+      if (t.id === 'solo-coder') return { ...t, price: Number(pricesForm.solo) || 1000 };
+      if (t.id === 'hackathon-squad') return { ...t, price: Number(pricesForm.squad) || 1000 };
+      if (t.id === 'all-access-vip' || t.id === 'all-access') return { ...t, price: Number(pricesForm.vip) || 1000 };
       return t;
     });
 

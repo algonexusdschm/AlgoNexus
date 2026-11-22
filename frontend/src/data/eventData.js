@@ -189,55 +189,59 @@ export const EVENT_TRACKS = [
 
 export const REGISTRATION_TIERS = [
   {
+    id: "hackathon-squad",
+    name: "Hackathon Squad Pass (Team 2-4)",
+    badge: "Flagship Hackathon",
+    price: 1000,
+    currency: "INR",
+    type: "team",
+    features: [
+      "Guaranteed Entry to 48-Hour Flagship Hackathon",
+      "Covers entire team of up to 4 members (Flat ₹1,000 / squad pass)",
+      "Midnight Meals, Energy Drinks, Lunch & Snacks",
+      "Direct 1-on-1 Mentorship from Leading AI & Data Science Industry Experts",
+      "Eligible for ₹1,00,000+ Cash Prize Pool & Track Awards",
+      "High-Speed Campus Wi-Fi & AI Developer Sandbox Access",
+      "Official Verified Participation Certificates & Swag Kits"
+    ],
+    popular: true,
+    color: "from-blue-600 to-indigo-600"
+  },
+  {
     id: "solo-coder",
     name: "Solo Innovator Pass",
-    badge: "Individual Participant",
-    price: 299,
+    badge: "Solo Participant",
+    price: 1000,
     currency: "INR",
     type: "individual",
     features: [
       "Access to all AI in EduTech Keynotes & Workstations",
       "Participate in Individual Hackathon Sprint & Code Duels",
+      "Team Formation Mixer on Day 1 to form or join a squad",
       "High-Speed Campus Wi-Fi & AI Compute Credits",
-      "Free Lunch, Refreshments & Energy Drinks",
+      "Free Lunch, Midnight Snacks & Energy Drinks",
       "Verified Certificate of Participation & Digital Badge"
     ],
     popular: false,
-    color: "from-blue-600 to-cyan-500"
-  },
-  {
-    id: "hackathon-squad",
-    name: "Hackathon Squad Pass (Team of 2-4)",
-    badge: "Flagship Hackathon",
-    price: 799,
-    currency: "INR",
-    type: "team",
-    features: [
-      "Full 48-Hour Hackathon Access for 2 to 4 Members",
-      "Eligibility for ₹1,00,000 Cash Prize Pool Across All Tracks",
-      "Dedicated Team Table, Power Stations & Hardware Sandbox",
-      "1-on-1 Mentorship from Leading AI & Data Science Industry Experts",
-      "Food, Late-Night Snacks, Swag Kits & Official Delegate ID Cards"
-    ],
-    popular: true,
-    color: "from-indigo-600 to-blue-600"
+    color: "from-cyan-600 to-blue-600"
   },
   {
     id: "all-access",
-    name: "VIP Research & Innovator Pass",
-    badge: "All-Inclusive Elite",
-    price: 1299,
+    name: "All-Access Delegate VIP Pass",
+    badge: "VIP Experience",
+    price: 1000,
     currency: "INR",
     type: "team",
     features: [
-      "Squad Access (2-4 Members) with Priority Seating & Fast-Track Check-in",
+      "Everything in Hackathon Squad Pass (Up to 4 members)",
+      "VIP Front-Row Seating at Keynotes & Fireside Chats",
       "Exclusive Round-Table with AI Startup Founders & EduTech VCs",
-      "Premium Hardware Sandbox & Cloud GPU Sandbox Access",
-      "Exclusive TechAstra 2026 AI Innovator Hoodies & Swag Kit",
-      "Direct Interview & Internship Fast-Track with Hiring Partners"
+      "Direct 1-on-1 Mentorship & Industry Jury Feedback",
+      "Fast-Track Gate Check-in & Priority Wi-Fi Zone",
+      "VIP Certificate of Excellence & Special Commendation"
     ],
     popular: false,
-    color: "from-emerald-600 to-teal-500"
+    color: "from-indigo-600 to-purple-600"
   }
 ];
 
