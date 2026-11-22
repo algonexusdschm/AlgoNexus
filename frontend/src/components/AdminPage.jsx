@@ -74,9 +74,7 @@ export default function AdminPage({ onBackToWebsite }) {
 
   // Pass Prices Form State
   const [pricesForm, setPricesForm] = useState({
-    solo: pricingTiers.find(t => t.id === 'solo-coder')?.price || 1000,
-    squad: pricingTiers.find(t => t.id === 'hackathon-squad')?.price || 1000,
-    vip: pricingTiers.find(t => t.id === 'all-access-vip' || t.id === 'all-access')?.price || 1000
+    squad: pricingTiers.find(t => t.id === 'hackathon-squad')?.price || 1000
   });
 
   // Keep admin forms in sync whenever cloud Supabase settings finish loading
@@ -119,9 +117,7 @@ export default function AdminPage({ onBackToWebsite }) {
   useEffect(() => {
     if (pricingTiers && pricingTiers.length > 0) {
       setPricesForm({
-        solo: pricingTiers.find(t => t.id === 'solo-coder')?.price || 1000,
-        squad: pricingTiers.find(t => t.id === 'hackathon-squad')?.price || 1000,
-        vip: pricingTiers.find(t => t.id === 'all-access-vip' || t.id === 'all-access')?.price || 1000
+        squad: pricingTiers.find(t => t.id === 'hackathon-squad')?.price || 1000
       });
     }
   }, [pricingTiers]);
@@ -310,10 +306,7 @@ export default function AdminPage({ onBackToWebsite }) {
 
     // Also update pricing tiers
     const updatedTiers = pricingTiers.map(t => {
-      if (t.id === 'solo-coder') return { ...t, price: Number(pricesForm.solo) || 1000 };
-      if (t.id === 'hackathon-squad') return { ...t, price: Number(pricesForm.squad) || 1000 };
-      if (t.id === 'all-access-vip' || t.id === 'all-access') return { ...t, price: Number(pricesForm.vip) || 1000 };
-      return t;
+      return { ...t, price: Number(pricesForm.squad) || 1000 };
     });
 
     await updatePricingTiers(updatedTiers);
@@ -1111,36 +1104,17 @@ export default function AdminPage({ onBackToWebsite }) {
                   Pass Registration Fees (₹ INR)
                 </span>
                 
-                <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
-                  <div>
-                    <label className="block text-xs font-medium text-slate-600 mb-1">Solo Hacker Pass (₹)</label>
-                    <input
-                      type="number"
-                      value={pricesForm.solo}
-                      onChange={(e) => setPricesForm({ ...pricesForm, solo: e.target.value })}
-                      className="w-full px-3.5 py-2 rounded-xl bg-white border border-slate-200 text-slate-900 font-mono font-bold text-sm focus:border-blue-500"
-                    />
-                  </div>
-
-                  <div>
-                    <label className="block text-xs font-medium text-slate-600 mb-1">Hackathon Squad Pass (₹)</label>
-                    <input
-                      type="number"
-                      value={pricesForm.squad}
-                      onChange={(e) => setPricesForm({ ...pricesForm, squad: e.target.value })}
-                      className="w-full px-3.5 py-2 rounded-xl bg-white border border-slate-200 text-slate-900 font-mono font-bold text-sm focus:border-blue-500"
-                    />
-                  </div>
-
-                  <div>
-                    <label className="block text-xs font-medium text-slate-600 mb-1">VIP Delegate Pass (₹)</label>
-                    <input
-                      type="number"
-                      value={pricesForm.vip}
-                      onChange={(e) => setPricesForm({ ...pricesForm, vip: e.target.value })}
-                      className="w-full px-3.5 py-2 rounded-xl bg-white border border-slate-200 text-slate-900 font-mono font-bold text-sm focus:border-blue-500"
-                    />
-                  </div>
+                <div>
+                  <label className="block text-xs font-medium text-slate-600 mb-1">Hackathon Squad Pass Fee (₹) [Flat Team of 2-4 Members]</label>
+                  <input
+                    type="number"
+                    value={pricesForm.squad}
+                    onChange={(e) => setPricesForm({ ...pricesForm, squad: e.target.value, solo: e.target.value, vip: e.target.value })}
+                    className="w-full px-3.5 py-2.5 rounded-xl bg-white border border-slate-200 text-slate-900 font-mono font-bold text-sm focus:border-blue-500"
+                  />
+                  <p className="text-[11px] text-slate-500 font-mono mt-1.5">
+                    Single registration charge covering the entire squad (2 to 4 members).
+                  </p>
                 </div>
               </div>
 

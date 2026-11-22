@@ -374,8 +374,8 @@ export default function RegistrationModal({
 
       supabase.from('registrations').insert({
         ticket_id: genTicketId,
-        tier_id: selectedTier?.id || 'solo-coder',
-        tier_name: selectedTier?.name || 'Solo Coder Pass',
+        tier_id: selectedTier?.id || 'hackathon-squad',
+        tier_name: selectedTier?.name || 'Hackathon Squad Pass (Team 2-4)',
         amount: selectedTier?.price || 1000,
         payment_status: 'PENDING_UTR',
         full_name: formData.fullName.trim(),
@@ -774,7 +774,7 @@ export default function RegistrationModal({
               <p className="text-[11px] text-slate-500 font-mono">
                 {modalMode === 'retrieve' 
                   ? 'Find and reprint your confirmed delegate ticket'
-                  : (step === 1 ? 'Attendee Details & Competition Track' : 'Official Direct UPI Settlement')}
+                  : (step === 1 ? 'Squad Lead & Team Member Details' : 'Official Direct UPI Settlement')}
               </p>
             </div>
           </div>
@@ -974,31 +974,22 @@ export default function RegistrationModal({
             /* ========================================================================= */
             <form onSubmit={handleNext} className="space-y-4">
               
-              {/* Pass Tier Picker */}
-              <div>
-                <label className="block text-xs font-bold uppercase tracking-wider text-slate-600 mb-2 font-mono">
-                  [SELECT EXPEDITION PASS]
-                </label>
-                <div className="grid grid-cols-1 sm:grid-cols-3 gap-2">
-                  {pricingTiers.map((tier) => (
-                    <button
-                      type="button"
-                      key={tier.id}
-                      onClick={() => {
-                        setSelectedTier(tier);
-                        if (errorMessage) setErrorMessage('');
-                      }}
-                      className={`p-3 text-left border rounded-2xl transition-all ${
-                        selectedTier.id === tier.id
-                          ? 'bg-blue-50/80 border-blue-500 text-slate-900 shadow-sm ring-2 ring-blue-500/20'
-                          : 'bg-slate-50/60 border-slate-200 text-slate-600 hover:border-slate-300 hover:bg-slate-100/60'
-                      }`}
-                    >
-                      <div className="font-chakra font-bold text-xs truncate">{tier.name}</div>
-                      <div className="text-base font-chakra font-extrabold text-blue-600 mt-1">₹{tier.price}</div>
-                      <div className="text-[10px] text-slate-500 font-mono mt-0.5 truncate">{tier.description || 'Full Hackathon Access'}</div>
-                    </button>
-                  ))}
+              {/* Single Flagship Squad Pass Card */}
+              <div className="p-3.5 rounded-2xl bg-gradient-to-r from-blue-50/90 via-white to-indigo-50/90 border border-blue-200/90 flex items-center justify-between shadow-sm">
+                <div>
+                  <div className="flex items-center gap-2">
+                    <span className="text-[10px] font-mono font-bold px-2 py-0.5 rounded-full bg-blue-100 text-blue-800 border border-blue-200">
+                      {selectedTier?.badge || 'Flagship Pass'}
+                    </span>
+                    <span className="font-chakra font-bold text-xs text-slate-900">{selectedTier?.name || 'Hackathon Squad Pass (Team 2-4)'}</span>
+                  </div>
+                  <p className="text-[11px] text-slate-500 font-mono mt-0.5">
+                    Covers entire squad of 2 to 4 members • 48-Hour Hackathon
+                  </p>
+                </div>
+                <div className="text-right font-mono">
+                  <span className="text-[10px] text-slate-400 block font-chakra font-semibold uppercase">TOTAL FEE</span>
+                  <span className="text-xl font-chakra font-black text-blue-600">₹{selectedTier?.price || 1000}</span>
                 </div>
               </div>
 
@@ -1007,7 +998,7 @@ export default function RegistrationModal({
                 <div>
                   <label className="block text-xs font-semibold text-slate-700 mb-1 flex items-center gap-1.5">
                     <User className="w-3.5 h-3.5 text-blue-600" />
-                    <span>Full Name *</span>
+                    <span>Team Lead Name *</span>
                   </label>
                   <input
                     type="text"
@@ -1022,7 +1013,7 @@ export default function RegistrationModal({
                 <div>
                   <label className="block text-xs font-semibold text-slate-700 mb-1 flex items-center gap-1.5">
                     <Mail className="w-3.5 h-3.5 text-blue-600" />
-                    <span>Email Address *</span>
+                    <span>Lead Email Address *</span>
                   </label>
                   <input
                     type="email"
@@ -1067,27 +1058,8 @@ export default function RegistrationModal({
                 </div>
               </div>
 
-              {/* Primary Track Choice */}
-              <div>
-                <label className="block text-xs font-semibold text-slate-700 mb-1 flex items-center gap-1.5">
-                  <Compass className="w-3.5 h-3.5 text-blue-600" />
-                  <span>Preferred Competition Track</span>
-                </label>
-                <select
-                  name="track"
-                  value={formData.track}
-                  onChange={handleChange}
-                  className="w-full px-3.5 py-2.5 rounded-xl bg-slate-50 border border-slate-200 text-slate-900 text-sm focus:outline-none focus:bg-white focus:border-blue-500"
-                >
-                  {EVENT_TRACKS.map(t => (
-                    <option key={t.id} value={t.name}>{t.name} ({t.prize})</option>
-                  ))}
-                </select>
-              </div>
-
-              {/* Team Information if Team Pass */}
-              {selectedTier.type === 'team' && (
-                <div className="p-4 rounded-2xl bg-indigo-50/50 border border-indigo-200 space-y-3">
+              {/* Team Information */}
+              <div className="p-4 rounded-2xl bg-indigo-50/50 border border-indigo-200 space-y-3">
                   <div className="flex items-center gap-2 text-indigo-900 text-xs font-bold uppercase tracking-wider">
                     <Users className="w-4 h-4 text-indigo-600" />
                     <span>Hackathon Squad Details (Team 2 to 4)</span>
@@ -1141,7 +1113,6 @@ export default function RegistrationModal({
                     </div>
                   </div>
                 </div>
-              )}
 
               {/* Next Button */}
               <div className="pt-2 flex justify-end">

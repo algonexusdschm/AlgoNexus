@@ -191,7 +191,7 @@ export const REGISTRATION_TIERS = [
   {
     id: "hackathon-squad",
     name: "Hackathon Squad Pass (Team 2-4)",
-    badge: "Flagship Hackathon",
+    badge: "Flagship Squad Pass",
     price: 1000,
     currency: "INR",
     type: "team",
@@ -206,42 +206,6 @@ export const REGISTRATION_TIERS = [
     ],
     popular: true,
     color: "from-blue-600 to-indigo-600"
-  },
-  {
-    id: "solo-coder",
-    name: "Solo Innovator Pass",
-    badge: "Solo Participant",
-    price: 1000,
-    currency: "INR",
-    type: "individual",
-    features: [
-      "Access to all AI in EduTech Keynotes & Workstations",
-      "Participate in Individual Hackathon Sprint & Code Duels",
-      "Team Formation Mixer on Day 1 to form or join a squad",
-      "High-Speed Campus Wi-Fi & AI Compute Credits",
-      "Free Lunch, Midnight Snacks & Energy Drinks",
-      "Verified Certificate of Participation & Digital Badge"
-    ],
-    popular: false,
-    color: "from-cyan-600 to-blue-600"
-  },
-  {
-    id: "all-access",
-    name: "All-Access Delegate VIP Pass",
-    badge: "VIP Experience",
-    price: 1000,
-    currency: "INR",
-    type: "team",
-    features: [
-      "Everything in Hackathon Squad Pass (Up to 4 members)",
-      "VIP Front-Row Seating at Keynotes & Fireside Chats",
-      "Exclusive Round-Table with AI Startup Founders & EduTech VCs",
-      "Direct 1-on-1 Mentorship & Industry Jury Feedback",
-      "Fast-Track Gate Check-in & Priority Wi-Fi Zone",
-      "VIP Certificate of Excellence & Special Commendation"
-    ],
-    popular: false,
-    color: "from-indigo-600 to-purple-600"
   }
 ];
 

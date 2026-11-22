@@ -21,7 +21,7 @@ const HACKATHON_STEPS = [
   {
     step: '01',
     title: 'INNOVATOR ENROLLMENT',
-    desc: 'Register as a solo coder or form an innovator squad (2 to 4 members). Pick your primary AI in EduTech challenge track.',
+    desc: 'Form an innovator squad (2 to 4 members) and register for the flagship 48-Hour AI in EduTech hackathon challenge.',
     accent: 'blue'
   },
   {

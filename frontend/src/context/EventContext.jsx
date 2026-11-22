@@ -680,8 +680,8 @@ export function EventProvider({ children }) {
     try {
       await supabase.from('registrations').insert({
         ticket_id: registrationToSave.ticketId,
-        tier_id: registrationToSave.tier?.id || 'solo-coder',
-        tier_name: registrationToSave.tier?.name || 'Solo Coder Pass',
+        tier_id: registrationToSave.tier?.id || 'hackathon-squad',
+        tier_name: registrationToSave.tier?.name || 'Hackathon Squad Pass',
         amount: registrationToSave.amountPaid || registrationToSave.tier?.price || 1000,
         payment_status: registrationToSave.paymentStatus || 'PENDING_VERIFICATION',
         full_name: registrationToSave.attendee?.fullName || 'Student',
