@@ -63,12 +63,17 @@ export default function PricingSection({ onSelectTier }) {
 
                   {/* Features List */}
                   <ul className="mt-6 space-y-3.5 text-xs font-mono text-slate-700">
-                    {tier.features.map((feat, idx) => (
-                      <li key={idx} className="flex items-start gap-2.5">
-                        <Check className="w-4 h-4 text-blue-600 shrink-0 mt-0.5" />
-                        <span>{feat}</span>
-                      </li>
-                    ))}
+                    {tier.features.map((feat, idx) => {
+                      const cleanFeat = feat
+                        .replace(/₹?2\.5\s*[Ll]\+?/g, '₹1,00,000')
+                        .replace(/₹?2,50,000\+?/g, '₹1,00,000');
+                      return (
+                        <li key={idx} className="flex items-start gap-2.5">
+                          <Check className="w-4 h-4 text-blue-600 shrink-0 mt-0.5" />
+                          <span>{cleanFeat}</span>
+                        </li>
+                      );
+                    })}
                   </ul>
                 </div>
 

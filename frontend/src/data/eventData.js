@@ -201,7 +201,7 @@ export const REGISTRATION_TIERS = [
       "Covers entire team of up to 4 members (Flat ₹1,000 / squad pass)",
       "Midnight Meals, Energy Drinks, Lunch & Snacks",
       "Direct 1-on-1 Mentorship from Leading AI & Data Science Industry Experts",
-      "Eligible for ₹1,00,000+ Cash Prize Pool & Track Awards",
+      "Eligible for ₹1,00,000 Grand Cash Prize Pool & Awards",
       "High-Speed Campus Wi-Fi & AI Developer Sandbox Access",
       "Official Verified Participation Certificates & Swag Kits"
     ],

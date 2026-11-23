@@ -83,7 +83,7 @@ export default function AdminPage({ onBackToWebsite }) {
     registrationOpen: eventSettings.registrationOpen ?? true,
     targetDate: eventSettings.targetDate || '2026-10-16T09:00:00+05:30',
     venue: eventSettings.venue || 'Auditorium & Tech Hub, Main Campus',
-    prizePool: eventSettings.prizePool || '₹2,50,000+',
+    prizePool: (eventSettings.prizePool && !String(eventSettings.prizePool).includes('2.5') && !String(eventSettings.prizePool).includes('2,50,000')) ? eventSettings.prizePool : '₹1,00,000',
     edition: eventSettings.edition || '4th National Edition'
   });
 
@@ -123,7 +123,7 @@ export default function AdminPage({ onBackToWebsite }) {
         registrationOpen: eventSettings.registrationOpen ?? true,
         targetDate: eventSettings.targetDate || '2026-10-16T09:00:00+05:30',
         venue: eventSettings.venue || 'Auditorium & Tech Hub, Main Campus',
-        prizePool: eventSettings.prizePool || '₹2,50,000+',
+        prizePool: (eventSettings.prizePool && !String(eventSettings.prizePool).includes('2.5') && !String(eventSettings.prizePool).includes('2,50,000')) ? eventSettings.prizePool : '₹1,00,000',
         edition: eventSettings.edition || '4th National Edition'
       }));
     }

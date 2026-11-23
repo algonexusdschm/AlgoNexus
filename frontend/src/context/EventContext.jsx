@@ -79,7 +79,14 @@ export function EventProvider({ children }) {
   const [eventSettings, setEventSettings] = useState(() => {
     try {
       const saved = localStorage.getItem(STORAGE_KEYS.SETTINGS);
-      return saved ? JSON.parse(saved) : EVENT_DETAILS;
+      if (saved) {
+        const parsed = JSON.parse(saved);
+        const safePrize = (parsed.prizePool && !parsed.prizePool.includes('2.5') && !parsed.prizePool.includes('2,50,000'))
+          ? parsed.prizePool
+          : '₹1,00,000';
+        return { ...EVENT_DETAILS, ...parsed, prizePool: safePrize };
+      }
+      return EVENT_DETAILS;
     } catch {
       return EVENT_DETAILS;
     }
@@ -104,7 +111,7 @@ export function EventProvider({ children }) {
         if (Array.isArray(parsed) && parsed.length > 0) {
           return REGISTRATION_TIERS.map(def => {
             const match = parsed.find(t => t.id === def.id);
-            return match ? { ...match, price: def.price } : def;
+            return match ? { ...def, price: match.price || def.price } : def;
           });
         }
       }
@@ -273,7 +280,7 @@ export function EventProvider({ children }) {
             datesAnnounced: isAnnounced,
             targetDate: (data.target_date !== null && data.target_date !== undefined) ? data.target_date : prev.targetDate,
             venue: (data.venue !== null && data.venue !== undefined && data.venue !== '') ? data.venue : prev.venue,
-            prizePool: (data.prize_pool !== null && data.prize_pool !== undefined && data.prize_pool !== '') ? data.prize_pool : prev.prizePool
+            prizePool: (data.prize_pool !== null && data.prize_pool !== undefined && data.prize_pool !== '' && !String(data.prize_pool).includes('2.5') && !String(data.prize_pool).includes('2,50,000')) ? data.prize_pool : '₹1,00,000'
           };
           try {
             localStorage.setItem(STORAGE_KEYS.SETTINGS, JSON.stringify(mapped));
