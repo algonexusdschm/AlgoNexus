@@ -18,10 +18,21 @@ const AdminPage = lazy(() => import('./components/AdminPage'));
 
 function MainEventApp() {
   const { pricingTiers } = useEvent();
+  const isAdminRoute = () => {
+    const path = (window.location.pathname || '').toLowerCase();
+    const hash = (window.location.hash || '').toLowerCase();
+    return (
+      path === '/admin' ||
+      path === '/admin/' ||
+      path.endsWith('/admin') ||
+      path.endsWith('/admin/') ||
+      hash === '#admin' ||
+      hash.startsWith('#admin')
+    );
+  };
+
   const [currentRoute, setCurrentRoute] = useState(() => {
-    const path = window.location.pathname.toLowerCase();
-    const hash = window.location.hash.toLowerCase();
-    return (path === '/admin' || hash === '#admin') ? 'admin' : 'event';
+    return isAdminRoute() ? 'admin' : 'event';
   });
 
   const [isRegisterOpen, setIsRegisterOpen] = useState(false);
@@ -39,9 +50,7 @@ function MainEventApp() {
   // Sync routing on popstate / hashchange
   useEffect(() => {
     const handleRouteChange = () => {
-      const path = window.location.pathname.toLowerCase();
-      const hash = window.location.hash.toLowerCase();
-      if (path === '/admin' || hash === '#admin') {
+      if (isAdminRoute()) {
         setCurrentRoute('admin');
       } else {
         setCurrentRoute('event');
@@ -57,13 +66,19 @@ function MainEventApp() {
   }, []);
 
   const navigateToAdmin = () => {
-    window.history.pushState({}, '', '/admin');
+    try {
+      window.history.pushState({}, '', '/admin');
+    } catch {}
+    window.location.hash = 'admin';
     setCurrentRoute('admin');
     window.scrollTo(0, 0);
   };
 
   const navigateToEvent = () => {
-    window.history.pushState({}, '', '/');
+    try {
+      window.history.pushState({}, '', '/');
+    } catch {}
+    window.location.hash = '';
     setCurrentRoute('event');
     window.scrollTo(0, 0);
   };

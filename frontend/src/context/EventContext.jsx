@@ -1,4 +1,4 @@
-import React, { createContext, useContext, useState, useEffect, useRef } from 'react';
+import React, { createContext, useContext, useState, useEffect, useRef, useCallback } from 'react';
 import { EVENT_DETAILS, REGISTRATION_TIERS, PAST_YEAR_GALLERY, EVENT_TRACKS } from '../data/eventData';
 import { supabase, uploadImageToSupabase } from '../lib/supabaseClient';
 
@@ -879,8 +879,8 @@ export function EventProvider({ children }) {
       console.warn('Supabase cloud passcode check notice:', err);
     }
 
-    // 1. Check if Event Head (matches active master passcode)
-    if (trimmed === activeHeadPass) {
+    // 1. Check if Event Head (matches active master passcode, case-insensitive)
+    if (trimmed === activeHeadPass || trimmed.toLowerCase() === activeHeadPass.toLowerCase()) {
       const headUser = {
         id: 'head-001',
         name: 'Department of Data Science - Event Head',
@@ -895,9 +895,10 @@ export function EventProvider({ children }) {
       return { success: true, user: headUser };
     }
 
-    // 2. Check if matches any active committee member (excluding event head)
+    // 2. Check if matches any active committee member (excluding event head, case-insensitive)
     const matchedMember = activeMembers.find(
-      m => !m.isEventHead && m.id !== 'head-001' && m.status === 'Active' && m.passcode === trimmed
+      m => !m.isEventHead && m.id !== 'head-001' && m.status === 'Active' && 
+           (m.passcode === trimmed || (m.passcode && m.passcode.toLowerCase() === trimmed.toLowerCase()))
     );
     if (matchedMember) {
       const memberUser = {
@@ -920,7 +921,7 @@ export function EventProvider({ children }) {
     };
   };
 
-  const logoutAdmin = () => {
+  const logoutAdmin = useCallback(() => {
     setIsAdminAuthenticated(false);
     setCurrentAdminUser(null);
     try {
@@ -929,7 +930,7 @@ export function EventProvider({ children }) {
       sessionStorage.removeItem(STORAGE_KEYS.ADMIN_AUTH);
       sessionStorage.removeItem(STORAGE_KEYS.CURRENT_ADMIN_USER);
     } catch {}
-  };
+  }, []);
 
   // Team Member Management (Event Head exclusive - fully synced with Supabase)
   const addTeamMember = async (memberData) => {

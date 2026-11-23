@@ -45,12 +45,17 @@ export default function AdminPage({ onBackToWebsite }) {
   const [showNewMasterPass, setShowNewMasterPass] = useState(false);
   const [showNewMemberPass, setShowNewMemberPass] = useState(false);
 
-  // Auto-lock admin console immediately whenever leaving the admin portal
+  // Auto-lock admin console strictly when unmounting (leaving the admin portal)
+  const logoutAdminRef = React.useRef(logoutAdmin);
+  useEffect(() => {
+    logoutAdminRef.current = logoutAdmin;
+  }, [logoutAdmin]);
+
   useEffect(() => {
     return () => {
-      logoutAdmin();
+      logoutAdminRef.current?.();
     };
-  }, [logoutAdmin]);
+  }, []);
 
   // Payment & Bank Form State
   const [paymentForm, setPaymentForm] = useState({
