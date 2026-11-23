@@ -4,10 +4,11 @@ import {
   Download, Search, Eye, AlertCircle, Save, ExternalLink, ArrowLeft, 
   Users, IndianRupee, Calendar, MapPin, Sparkles, Trophy, Trash2, Copy,
   Crown, UserPlus, UserCheck, Key, EyeOff, UserX, CheckCircle2, ShieldAlert, Edit2,
-  Ticket, Phone, Mail, MessageSquare
+  Ticket, Phone, Mail, MessageSquare, Camera
 } from 'lucide-react';
 import { useEvent } from '../context/EventContext';
 import TicketModal from './TicketModal';
+import CameraQrScannerModal from './CameraQrScannerModal';
 
 export default function AdminPage({ onBackToWebsite }) {
   const { 
@@ -143,6 +144,7 @@ export default function AdminPage({ onBackToWebsite }) {
   const [scanMessage, setScanMessage] = useState(null);
   const [viewScreenshotModal, setViewScreenshotModal] = useState(null);
   const [selectedTicketForPass, setSelectedTicketForPass] = useState(null);
+  const [isQrScannerOpen, setIsQrScannerOpen] = useState(false);
 
   // Member Management State
   const [isAddMemberModalOpen, setIsAddMemberModalOpen] = useState(false);
@@ -1207,16 +1209,26 @@ export default function AdminPage({ onBackToWebsite }) {
                   </div>
                   <div>
                     <h4 className="text-sm font-bold text-slate-900 font-chakra uppercase tracking-wide">
-                      Gate Entry Desk: Verify by Unique Pass Number
+                      Gate Entry Desk: Verify by Unique Pass Number or QR Scanner
                     </h4>
                     <p className="text-[11px] text-slate-500">
-                      Enter the attendee's Unique Pass Number (e.g. TECH26-ZL1NC or ZL1NC), or their registered 10-digit mobile number.
+                      Enter the attendee's Unique Pass Number / Mobile Number, or scan their pass QR code using your camera.
                     </p>
                   </div>
                 </div>
-                <span className="text-[10px] font-mono font-bold px-2.5 py-1 rounded-full bg-blue-50 text-blue-700 border border-blue-200">
-                  MANUAL ENTRY DESK
-                </span>
+                <div className="flex items-center gap-2">
+                  <button
+                    type="button"
+                    onClick={() => setIsQrScannerOpen(true)}
+                    className="px-3.5 py-1.5 rounded-xl bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 text-white font-chakra text-xs font-bold flex items-center gap-1.5 transition-all shadow-sm cursor-pointer"
+                  >
+                    <Camera className="w-3.5 h-3.5" />
+                    <span>Scan QR Code</span>
+                  </button>
+                  <span className="text-[10px] font-mono font-bold px-2.5 py-1 rounded-full bg-blue-50 text-blue-700 border border-blue-200">
+                    MANUAL & QR
+                  </span>
+                </div>
               </div>
 
               <form onSubmit={(e) => { e.preventDefault(); handleGateCheckIn(manualTicketInput); }} className="flex flex-col sm:flex-row items-center gap-2.5">
@@ -1229,14 +1241,25 @@ export default function AdminPage({ onBackToWebsite }) {
                     className="w-full px-4 py-3 rounded-xl bg-slate-50 border border-slate-200 text-slate-900 text-sm font-mono focus:bg-white focus:border-blue-500 uppercase placeholder:normal-case placeholder:text-xs"
                   />
                 </div>
-                <button
-                  type="submit"
-                  disabled={!manualTicketInput.trim()}
-                  className="w-full sm:w-auto px-6 py-3 rounded-xl bg-gradient-to-r from-blue-600 via-indigo-600 to-sky-600 hover:opacity-95 text-white font-chakra font-bold text-xs uppercase transition-all shadow-md shadow-blue-500/20 shrink-0 cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2"
-                >
-                  <Check className="w-4 h-4" />
-                  <span>Verify & Admit Entry</span>
-                </button>
+                <div className="flex items-center gap-2 w-full sm:w-auto">
+                  <button
+                    type="submit"
+                    disabled={!manualTicketInput.trim()}
+                    className="flex-1 sm:flex-none px-6 py-3 rounded-xl bg-gradient-to-r from-blue-600 via-indigo-600 to-sky-600 hover:opacity-95 text-white font-chakra font-bold text-xs uppercase transition-all shadow-md shadow-blue-500/20 shrink-0 cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2"
+                  >
+                    <Check className="w-4 h-4" />
+                    <span>Verify & Admit</span>
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => setIsQrScannerOpen(true)}
+                    className="px-4 py-3 rounded-xl bg-slate-100 hover:bg-slate-200 text-slate-700 border border-slate-200 font-chakra font-bold text-xs uppercase transition-all shrink-0 cursor-pointer flex items-center justify-center gap-1.5"
+                    title="Open Camera QR Scanner"
+                  >
+                    <Camera className="w-4 h-4 text-blue-600" />
+                    <span className="hidden sm:inline">Camera QR</span>
+                  </button>
+                </div>
               </form>
 
               {/* Verified Attendee Quick Card */}
@@ -2183,6 +2206,18 @@ export default function AdminPage({ onBackToWebsite }) {
           ticket={selectedTicketForPass}
           isOpen={Boolean(selectedTicketForPass)}
           onClose={() => setSelectedTicketForPass(null)}
+        />
+      )}
+
+      {/* Live Camera QR Code Scanner Modal */}
+      {isQrScannerOpen && (
+        <CameraQrScannerModal
+          isOpen={isQrScannerOpen}
+          onClose={() => setIsQrScannerOpen(false)}
+          onScanSuccess={(decodedText) => {
+            setIsQrScannerOpen(false);
+            handleGateCheckIn(decodedText);
+          }}
         />
       )}
 
