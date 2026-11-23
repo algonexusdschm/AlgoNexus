@@ -343,31 +343,48 @@ export function EventProvider({ children }) {
         .order('created_at', { ascending: false });
 
       if (data && !error && data.length > 0) {
-        const mapped = data.map(r => ({
-          id: r.id,
-          ticketId: r.ticket_id,
-          amountPaid: Number(r.amount) || 1000,
-          passType: r.tier_name || 'Hackathon Squad Pass',
-          paymentStatus: r.payment_status || 'PENDING_VERIFICATION',
-          tier: { id: r.tier_id, name: r.tier_name, price: Number(r.amount) || 1000 },
-          attendee: {
-            fullName: r.full_name,
-            email: r.email,
-            phone: r.phone,
-            college: r.college,
-            github: r.github || '',
-            teamName: r.team_name || '',
-            teamMembers: r.team_members ? r.team_members.split(', ') : [],
-            track: r.track || 'General'
-          },
-          paymentMethod: r.payment_method,
-          utrNumber: r.utr_number || '',
-          paymentScreenshot: r.payment_screenshot || '',
-          bankName: r.bank_name || '',
-          checkedIn: r.checked_in || false,
-          checkedInAt: r.checked_in_at || null,
-          createdAt: r.created_at
-        }));
+        const mapped = data.map(r => {
+          let status = 'PENDING_VERIFICATION';
+          if (r.bank_name === 'STATUS:PAID' || r.bank_name === 'PAID') {
+            status = 'PAID';
+          } else if (r.bank_name?.startsWith('STATUS:')) {
+            status = r.bank_name.replace('STATUS:', '');
+          }
+
+          let parsedTeamMembers = [];
+          if (r.team_members) {
+            parsedTeamMembers = r.team_members.split(', ').map(m => {
+              const parts = m.split(': ');
+              return parts.length === 2 ? { role: parts[0], name: parts[1] } : { role: 'Member', name: m };
+            });
+          }
+
+          return {
+            id: r.id,
+            ticketId: r.ticket_id,
+            amountPaid: Number(r.amount) || 1000,
+            passType: r.tier_name || 'Hackathon Squad Pass',
+            paymentStatus: status,
+            tier: { id: r.tier_id, name: r.tier_name, price: Number(r.amount) || 1000 },
+            attendee: {
+              fullName: r.full_name,
+              email: r.email,
+              phone: r.phone,
+              college: r.college,
+              github: r.github || '',
+              teamName: r.team_name || '',
+              teamMembers: parsedTeamMembers.length > 0 ? parsedTeamMembers : (r.team_members ? r.team_members.split(', ') : []),
+              track: r.track || 'General'
+            },
+            paymentMethod: r.payment_method,
+            utrNumber: r.utr_number || '',
+            paymentScreenshot: r.payment_screenshot || '',
+            bankName: r.bank_name || '',
+            checkedIn: r.checked_in || false,
+            checkedInAt: r.checked_in_at || null,
+            createdAt: r.created_at
+          };
+        });
         setRegistrations(mapped);
         try {
           localStorage.setItem(STORAGE_KEYS.REGISTRATIONS, JSON.stringify(mapped));
@@ -678,28 +695,51 @@ export function EventProvider({ children }) {
 
     // 1. Insert into Supabase registrations table
     try {
-      await supabase.from('registrations').insert({
+      const generatedId = (typeof crypto !== 'undefined' && crypto.randomUUID) 
+        ? crypto.randomUUID() 
+        : ('reg-' + Date.now() + '-' + Math.random().toString(36).substring(2, 9));
+      
+      const statusValue = registrationToSave.paymentStatus || 'PENDING_VERIFICATION';
+
+      // Format team members into clean string representation
+      let teamMembersStr = '';
+      if (Array.isArray(registrationToSave.attendee?.teamMembers)) {
+        teamMembersStr = registrationToSave.attendee.teamMembers.map(m => {
+          if (typeof m === 'object' && m !== null) {
+            return m.name ? `${m.role ? m.role + ': ' : ''}${m.name}` : JSON.stringify(m);
+          }
+          return String(m);
+        }).filter(Boolean).join(', ');
+      } else if (typeof registrationToSave.attendee?.teamMembers === 'string') {
+        teamMembersStr = registrationToSave.attendee.teamMembers;
+      }
+
+      const supabasePayload = {
+        id: registrationToSave.id || generatedId,
         ticket_id: registrationToSave.ticketId,
         tier_id: registrationToSave.tier?.id || 'hackathon-squad',
         tier_name: registrationToSave.tier?.name || 'Hackathon Squad Pass',
         amount: registrationToSave.amountPaid || registrationToSave.tier?.price || 1000,
-        payment_status: registrationToSave.paymentStatus || 'PENDING_VERIFICATION',
-        full_name: registrationToSave.attendee?.fullName || 'Student',
+        full_name: registrationToSave.attendee?.fullName || 'Participant',
         email: registrationToSave.attendee?.email || '',
         phone: registrationToSave.attendee?.phone || '',
         college: registrationToSave.attendee?.college || '',
         github: registrationToSave.attendee?.github || '',
         team_name: registrationToSave.attendee?.teamName || '',
-        team_members: Array.isArray(registrationToSave.attendee?.teamMembers)
-          ? registrationToSave.attendee.teamMembers.join(', ')
-          : (registrationToSave.attendee?.teamMembers || ''),
+        team_members: teamMembersStr,
         track: registrationToSave.attendee?.track || 'General AI/Hack',
-        payment_method: registrationToSave.paymentMethod || 'UPI QR',
+        payment_method: registrationToSave.paymentMethod || 'UPI_QR',
         utr_number: registrationToSave.utrNumber || '',
         payment_screenshot: finalReceiptImage || '',
-        bank_name: registrationToSave.bankName || '',
+        bank_name: `STATUS:${statusValue}`,
         checked_in: false
-      });
+      };
+
+      const { error: insertErr } = await supabase.from('registrations').insert(supabasePayload);
+      if (insertErr) {
+        console.warn('Supabase insert notice, attempting upsert:', insertErr);
+        await supabase.from('registrations').upsert(supabasePayload, { onConflict: 'ticket_id' });
+      }
     } catch (err) {
       console.warn('Supabase registration insert notice:', err);
     }
@@ -769,7 +809,7 @@ export function EventProvider({ children }) {
     try {
       await supabase
         .from('registrations')
-        .update({ payment_status: 'PAID', verified_at: new Date().toISOString() })
+        .update({ bank_name: 'STATUS:PAID' })
         .eq('ticket_id', ticketId);
     } catch (e) {
       console.warn('Supabase verifyRegistrationPayment error:', e);

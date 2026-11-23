@@ -364,34 +364,6 @@ export default function RegistrationModal({
     // 1. Save draft session locally
     saveSession(2, formData, selectedTier, genTicketId);
 
-    // 2. Silently push draft record to Supabase in the background
-    try {
-      const teamMembers = selectedTier.type === 'team' ? [
-        { role: 'Team Lead', name: formData.fullName.trim(), email: formData.email.trim(), phone: formData.phone.trim() },
-        ...(formData.member2.trim() ? [{ role: 'Member 2', name: formData.member2.trim() }] : []),
-        ...(formData.member3.trim() ? [{ role: 'Member 3', name: formData.member3.trim() }] : []),
-        ...(formData.member4.trim() ? [{ role: 'Member 4', name: formData.member4.trim() }] : [])
-      ] : [];
-
-      supabase.from('registrations').insert({
-        ticket_id: genTicketId,
-        tier_id: selectedTier?.id || 'hackathon-squad',
-        tier_name: selectedTier?.name || 'Hackathon Squad Pass (Team 2-4)',
-        amount: selectedTier?.price || 1000,
-        payment_status: 'PENDING_UTR',
-        full_name: formData.fullName.trim(),
-        email: formData.email.trim(),
-        phone: formData.phone.trim(),
-        college: formData.college.trim(),
-        track: formData.track,
-        team_name: formData.teamName?.trim() || '',
-        team_members: Array.isArray(teamMembers) ? teamMembers.map(m => m.name).join(', ') : '',
-        payment_method: 'UPI_INTENT',
-        utr_number: 'PENDING',
-        checked_in: false
-      }).then(() => {}).catch(() => {});
-    } catch (e) {}
-
     setStep(2);
     setErrorMessage('');
   };
@@ -705,7 +677,9 @@ export default function RegistrationModal({
             ticketId: row.ticket_id,
             orderId: row.order_id || `ORD-${row.id}`,
             paymentId: row.utr_number || `PAY-${row.id}`,
-            paymentStatus: row.payment_status || 'PAID',
+            paymentStatus: (row.bank_name === 'STATUS:PAID' || row.bank_name === 'PAID') 
+              ? 'PAID' 
+              : (row.bank_name?.startsWith('STATUS:') ? row.bank_name.replace('STATUS:', '') : (row.payment_status || 'PENDING_VERIFICATION')),
             paymentMethod: row.payment_method || 'UPI_QR',
             utrNumber: row.utr_number,
             paymentScreenshot: row.payment_screenshot,
