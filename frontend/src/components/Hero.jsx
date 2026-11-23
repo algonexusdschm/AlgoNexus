@@ -82,11 +82,11 @@ export default function Hero({ onOpenRegister }) {
           </button>
 
           <a
-            href="#tracks"
+            href="#roadmap"
             className="w-full sm:w-auto px-6 sm:px-10 py-3.5 sm:py-4 rounded-2xl bg-white hover:bg-slate-50 border border-slate-300 text-slate-800 font-chakra font-bold tracking-wider text-xs sm:text-base shadow-md hover:shadow-lg transition-all flex items-center justify-center gap-2 cursor-pointer text-center"
           >
             <Layers className="w-5 h-5 text-blue-600 shrink-0" />
-            <span>EXPLORE CHALLENGE TRACKS</span>
+            <span>EXPLORE ROADMAP</span>
           </a>
         </div>
 
@@ -102,7 +102,7 @@ export default function Hero({ onOpenRegister }) {
             </div>
             <div>
               <div className="text-sm font-chakra font-black text-slate-900">{EVENT_DETAILS.prizePool} Cash Pool</div>
-              <div className="text-xs text-slate-500 font-mono">Prizes for all AI Tracks</div>
+              <div className="text-xs text-slate-500 font-mono">Grand Cash Prizes & Trophies</div>
             </div>
           </div>
 

@@ -44,7 +44,7 @@ export default function Announcement({ onOpenRegister }) {
                 <span className="px-3.5 py-1 bg-blue-50 border border-blue-200 text-blue-700 text-xs font-mono font-bold uppercase rounded-full">
                   NATIONAL EDITION
                 </span>
-                <span className="text-xs text-slate-500 font-mono">₹1,00,000 Cash Pool Across All Tracks</span>
+                <span className="text-xs text-slate-500 font-mono">₹1,00,000 Total Flagship Cash Pool</span>
               </div>
 
               <h3 className="text-2xl sm:text-4xl font-chakra font-black text-slate-900 leading-tight">

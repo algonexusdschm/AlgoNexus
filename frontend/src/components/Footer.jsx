@@ -70,7 +70,7 @@ export default function Footer({ onOpenRegister, onOpenAdmin }) {
               Navigation
             </h4>
             <ul className="space-y-2.5 text-xs font-mono">
-              <li><a href="#tracks" className="hover:text-blue-600 transition-colors">AI Innovation Tracks</a></li>
+              <li><a href="#roadmap" className="hover:text-blue-600 transition-colors">Hackathon Roadmap</a></li>
               <li><a href="#announcement" className="hover:text-blue-600 transition-colors">Official Announcement</a></li>
               <li><a href="#gallery" className="hover:text-blue-600 transition-colors">Event Memories</a></li>
               <li><a href="#passes" className="hover:text-blue-600 transition-colors">Delegate Passes</a></li>

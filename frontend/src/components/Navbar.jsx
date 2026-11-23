@@ -33,9 +33,9 @@ export default function Navbar({ onOpenRegister, onOpenAdmin }) {
 
           {/* Desktop Nav Links */}
           <div className="hidden md:flex items-center space-x-6 text-xs font-mono font-semibold text-slate-600">
-            <a href="#tracks" className="hover:text-blue-600 text-blue-600 transition-colors flex items-center gap-1.5 font-bold">
+            <a href="#roadmap" className="hover:text-blue-600 text-blue-600 transition-colors flex items-center gap-1.5 font-bold">
               <span className="w-1.5 h-1.5 rounded-full bg-blue-600 animate-pulse" />
-              <span>AI Tracks</span>
+              <span>Roadmap</span>
             </a>
             <a href="#announcement" className="hover:text-blue-600 transition-colors">Announcement</a>
             <a href="#gallery" className="hover:text-blue-600 transition-colors">Memories</a>
@@ -79,11 +79,11 @@ export default function Navbar({ onOpenRegister, onOpenAdmin }) {
       {mobileMenuOpen && (
         <div className="md:hidden bg-white border-b border-slate-200 px-4 pt-3 pb-6 space-y-3 font-mono font-semibold text-xs text-slate-700">
           <a
-            href="#tracks"
+            href="#roadmap"
             onClick={() => setMobileMenuOpen(false)}
             className="block py-2 hover:text-blue-600"
           >
-            AI Tracks & Roadmap
+            Hackathon Roadmap
           </a>
           <a
             href="#announcement"

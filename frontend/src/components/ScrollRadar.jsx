@@ -3,7 +3,7 @@ import { ChevronUp } from 'lucide-react';
 
 const SECTORS = [
   { id: 'hero', name: '01 // TECHASTRA WORLD', short: '01' },
-  { id: 'tracks', name: '02 // 5 TECH PILLARS', short: '02' },
+  { id: 'roadmap', name: '02 // 48H ROADMAP', short: '02' },
   { id: 'announcement', name: '03 // 48-HR ROADMAP', short: '03' },
   { id: 'gallery', name: '04 // MEMORIES VAULT', short: '04' },
   { id: 'passes', name: '05 // DELEGATE PASSES', short: '05' },
