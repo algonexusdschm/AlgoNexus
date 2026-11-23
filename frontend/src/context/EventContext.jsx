@@ -363,9 +363,12 @@ export function EventProvider({ children }) {
             });
           }
 
+          const fallbackTicketId = r.ticket_id || `TECH26-${String(r.id || '').replace(/-/g, '').slice(0, 5).toUpperCase()}`;
+
           return {
             id: r.id,
-            ticketId: r.ticket_id,
+            ticketId: fallbackTicketId,
+            orderId: r.utr_number || fallbackTicketId,
             amountPaid: Number(r.amount) || 1000,
             passType: r.tier_name || 'Hackathon Squad Pass',
             paymentStatus: status,
@@ -769,8 +772,14 @@ export function EventProvider({ children }) {
 
   // Gate Check-In synced with Supabase
   const checkInAttendee = async (ticketId) => {
+    if (!ticketId) return false;
+    const target = String(ticketId).trim().replace(/^https?:\/\/.*\/verify\//i, '').toUpperCase();
+    if (!target) return false;
+
     const updated = registrations.map(reg => {
-      if (reg.ticketId.toUpperCase() === ticketId.toUpperCase()) {
+      const curTicketId = String(reg.ticketId || reg.ticket_id || reg.id || '').trim().toUpperCase();
+      const curId = String(reg.id || '').trim().toUpperCase();
+      if (curTicketId === target || curId === target) {
         return { ...reg, checkedIn: true, checkedInAt: new Date().toISOString() };
       }
       return reg;
@@ -785,21 +794,28 @@ export function EventProvider({ children }) {
       await supabase
         .from('registrations')
         .update({ checked_in: true, checked_in_at: new Date().toISOString() })
-        .eq('ticket_id', ticketId);
+        .or(`ticket_id.eq.${target},id.eq.${target}`);
     } catch (e) {}
 
     try {
-      await fetch(`/api/check-in/${ticketId}`, { 
+      await fetch(`/api/check-in/${target}`, { 
         method: 'POST',
         headers: getAdminHeaders()
       });
     } catch (e) {}
+    return true;
   };
 
   // Verify & Approve Pending Registration Payment (Organizer Exclusive)
   const verifyRegistrationPayment = async (ticketId) => {
+    if (!ticketId) return false;
+    const target = String(ticketId).trim().replace(/^https?:\/\/.*\/verify\//i, '').toUpperCase();
+    if (!target) return false;
+
     const updated = registrations.map(reg => {
-      if (reg.ticketId.toUpperCase() === ticketId.toUpperCase()) {
+      const curTicketId = String(reg.ticketId || reg.ticket_id || reg.id || '').trim().toUpperCase();
+      const curId = String(reg.id || '').trim().toUpperCase();
+      if (curTicketId === target || curId === target) {
         return { ...reg, paymentStatus: 'PAID', verifiedAt: new Date().toISOString() };
       }
       return reg;
@@ -814,14 +830,14 @@ export function EventProvider({ children }) {
       await supabase
         .from('registrations')
         .update({ bank_name: 'STATUS:PAID' })
-        .eq('ticket_id', ticketId);
+        .or(`ticket_id.eq.${target},id.eq.${target}`);
     } catch (e) {
       console.warn('Supabase verifyRegistrationPayment error:', e);
     }
 
     // Update in backend
     try {
-      await fetch(`/api/registrations/${ticketId}/verify`, {
+      await fetch(`/api/registrations/${target}/verify`, {
         method: 'PATCH',
         headers: getAdminHeaders()
       });

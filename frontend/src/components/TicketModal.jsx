@@ -363,7 +363,7 @@ export default function TicketModal({ ticket, isOpen, onClose }) {
         <div class="qr-info">
           <div class="qr-title">OFFICIAL CHECK-IN SCANNER</div>
           <div class="qr-desc">Present at Entry Desk with College ID & Govt. ID</div>
-          <div class="qr-meta">Order Ref: ${ticket.orderId} • Helpline: +91 9604449724</div>
+          <div class="qr-meta">Order Ref: ${ticket.orderId || ticket.utrNumber || ticket.ticketId} • Helpline: +91 9604449724</div>
         </div>
         <div class="qr-box">
           ${qrSvg}
@@ -540,7 +540,7 @@ Helpline: +91 9604449724`;
               <div className="space-y-1 font-mono">
                 <span className="text-[10px] text-slate-500 uppercase tracking-wider block font-bold">OFFICIAL CHECK-IN SCANNER</span>
                 <p className="text-xs text-slate-700">Present at Entry Desk with College ID & Govt. ID</p>
-                <div className="text-[10px] text-slate-400">Order Ref: {ticket.orderId} • Helpline: +91 9604449724</div>
+                <div className="text-[10px] text-slate-400">Order Ref: {ticket.orderId || ticket.utrNumber || ticket.ticketId} • Helpline: +91 9604449724</div>
               </div>
 
               <div id="pass-qr-code" className="p-2 bg-white rounded-xl border border-slate-200 shadow-sm shrink-0">

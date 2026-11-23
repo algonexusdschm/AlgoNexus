@@ -334,8 +334,9 @@ export default function AdminPage({ onBackToWebsite }) {
   // Gate Scanner Action
   const handleGateCheckIn = (ticketId) => {
     if (!ticketId) return;
-    checkInAttendee(ticketId.trim());
-    setScanMessage({ success: true, text: `Ticket ${ticketId.toUpperCase()} Checked In Successfully!` });
+    const cleanId = String(ticketId).trim();
+    checkInAttendee(cleanId);
+    setScanMessage({ success: true, text: `Ticket ${cleanId.toUpperCase()} Checked In Successfully!` });
     setManualTicketInput('');
     setTimeout(() => setScanMessage(null), 3000);
   };
@@ -343,20 +344,26 @@ export default function AdminPage({ onBackToWebsite }) {
   // Verify Payment Action
   const handleVerifyAttendeePayment = async (ticketId) => {
     if (!ticketId) return;
-    await verifyRegistrationPayment(ticketId);
-    setScanMessage({ success: true, text: `Payment Approved & Confirmed for ${ticketId.toUpperCase()}!` });
+    const cleanId = String(ticketId).trim();
+    await verifyRegistrationPayment(cleanId);
+    setScanMessage({ success: true, text: `Payment Approved & Confirmed for ${cleanId.toUpperCase()}!` });
     setTimeout(() => setScanMessage(null), 3500);
   };
 
   // Generate & View Official Delegate Pass (Organizer Function)
   const handleGeneratePass = async (reg) => {
     if (!reg) return;
-    let ticketToDisplay = { ...reg };
+    const safeTicketId = reg.ticketId || reg.id || `TECH26-${Math.random().toString(36).substring(2, 7).toUpperCase()}`;
+    let ticketToDisplay = { 
+      ...reg,
+      ticketId: safeTicketId,
+      orderId: reg.orderId || reg.utrNumber || safeTicketId
+    };
     if (reg.paymentStatus !== 'PAID') {
-      await verifyRegistrationPayment(reg.ticketId);
+      await verifyRegistrationPayment(safeTicketId);
       ticketToDisplay.paymentStatus = 'PAID';
       ticketToDisplay.verifiedAt = new Date().toISOString();
-      setScanMessage({ success: true, text: `Payment Approved & Official Pass Generated for ${reg.ticketId.toUpperCase()}!` });
+      setScanMessage({ success: true, text: `Payment Approved & Official Pass Generated for ${safeTicketId.toUpperCase()}!` });
       setTimeout(() => setScanMessage(null), 3500);
     }
     setSelectedTicketForPass(ticketToDisplay);
@@ -1356,7 +1363,7 @@ export default function AdminPage({ onBackToWebsite }) {
 
                               {reg.paymentStatus !== 'PAID' && (
                                 <button
-                                  onClick={() => handleVerifyAttendeePayment(reg.ticketId)}
+                                  onClick={() => handleVerifyAttendeePayment(reg.ticketId || reg.id)}
                                   className="px-2.5 py-1.5 rounded-lg bg-emerald-600 text-white hover:bg-emerald-700 text-[10px] font-bold flex items-center gap-1 transition-all shadow-sm cursor-pointer"
                                   title="Approve participant payment"
                                 >
@@ -1367,7 +1374,7 @@ export default function AdminPage({ onBackToWebsite }) {
 
                               {!reg.checkedIn && (
                                 <button
-                                  onClick={() => handleGateCheckIn(reg.ticketId)}
+                                  onClick={() => handleGateCheckIn(reg.ticketId || reg.id)}
                                   className="px-2.5 py-1.5 rounded-lg bg-slate-100 hover:bg-slate-200 text-slate-700 text-[10px] font-semibold transition-all border border-slate-200 cursor-pointer"
                                 >
                                   Check In
