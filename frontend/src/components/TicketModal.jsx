@@ -361,8 +361,9 @@ export default function TicketModal({ ticket, isOpen, onClose }) {
 
       <div class="footer-section">
         <div class="qr-info">
-          <div class="qr-title">OFFICIAL CHECK-IN SCANNER</div>
-          <div class="qr-desc">Present at Entry Desk with College ID & Govt. ID</div>
+          <div class="qr-title">UNIQUE PASS NUMBER</div>
+          <div style="font-size: 16px; font-weight: 800; color: #1d4ed8; letter-spacing: 0.05em; margin: 3px 0;">${ticket.ticketId}</div>
+          <div class="qr-desc">Present this Unique Pass Number at college entry gate with College & Govt ID.</div>
           <div class="qr-meta">Order Ref: ${ticket.orderId || ticket.utrNumber || ticket.ticketId} • Helpline: +91 9604449724</div>
         </div>
         <div class="qr-box">
@@ -535,11 +536,12 @@ Helpline: +91 9604449724`;
               <div className="w-3 h-6 bg-white border-l-2 border-slate-200 -mr-6 rounded-l-full" />
             </div>
 
-            {/* QR Code and Gate Scanner section */}
+            {/* Unique Pass Number & Gate Entry Desk Section */}
             <div className="flex items-center justify-between pt-1">
               <div className="space-y-1 font-mono">
-                <span className="text-[10px] text-slate-500 uppercase tracking-wider block font-bold">OFFICIAL CHECK-IN SCANNER</span>
-                <p className="text-xs text-slate-700">Present at Entry Desk with College ID & Govt. ID</p>
+                <span className="text-[10px] text-slate-500 uppercase tracking-wider block font-bold">UNIQUE PASS NUMBER</span>
+                <div className="text-base font-extrabold text-blue-700 tracking-wider font-mono">{ticket.ticketId}</div>
+                <p className="text-xs text-slate-700">Present this Unique Pass Number at the entry gate desk with College & Govt ID</p>
                 <div className="text-[10px] text-slate-400">Order Ref: {ticket.orderId || ticket.utrNumber || ticket.ticketId} • Helpline: +91 9604449724</div>
               </div>
 

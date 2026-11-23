@@ -331,14 +331,34 @@ export default function AdminPage({ onBackToWebsite }) {
     setTimeout(() => setSaveSuccessMsg(''), 4000);
   };
 
-  // Gate Scanner Action
-  const handleGateCheckIn = (ticketId) => {
-    if (!ticketId) return;
-    const cleanId = String(ticketId).trim();
-    checkInAttendee(cleanId);
-    setScanMessage({ success: true, text: `Ticket ${cleanId.toUpperCase()} Checked In Successfully!` });
-    setManualTicketInput('');
-    setTimeout(() => setScanMessage(null), 3000);
+  // Gate Desk Action: Verify & Admit Attendee by Unique Pass Number, Short Code, or Mobile No
+  const [gateVerifiedAttendee, setGateVerifiedAttendee] = useState(null);
+
+  const handleGateCheckIn = async (query) => {
+    if (!query || !query.trim()) return;
+    const cleanQuery = query.trim();
+    const res = await checkInAttendee(cleanQuery);
+    if (res && res.success) {
+      setGateVerifiedAttendee(res.attendee);
+      if (res.alreadyCheckedIn) {
+        setScanMessage({ 
+          success: true, 
+          isWarning: true,
+          text: `⚠️ Pass Already Checked In! ${res.attendee.attendee?.fullName || 'Attendee'} (${res.attendee.ticketId}) was already admitted at the gate.` 
+        });
+      } else {
+        setScanMessage({ 
+          success: true, 
+          text: `✅ Gate Entry Confirmed for ${res.attendee.attendee?.fullName || 'Attendee'} (${res.attendee.ticketId}) • ${res.attendee.attendee?.college || 'College'}!` 
+        });
+      }
+      setManualTicketInput('');
+    } else {
+      setScanMessage({ 
+        success: false, 
+        text: res?.error || `No attendee found matching "${cleanQuery}". Please verify the Unique Pass Number or Mobile Number.` 
+      });
+    }
   };
 
   // Verify Payment Action
@@ -1178,33 +1198,107 @@ export default function AdminPage({ onBackToWebsite }) {
         {activeTab === 'registrations' && (
           <div className="space-y-6">
             
-            {/* Quick Gate Desk Check-in Scanner */}
-            <div className="bg-white p-4 rounded-2xl border border-slate-200 shadow-sm flex flex-col sm:flex-row items-center gap-3">
-              <div className="flex items-center gap-2 text-blue-700 text-xs font-bold uppercase tracking-wider shrink-0 font-chakra">
-                <QrCode className="w-4 h-4 text-blue-600" />
-                <span>Gate Desk Check-in Scanner:</span>
+            {/* Gate Desk: Unique Number Pass Verification & Check-In */}
+            <div className="bg-white p-5 rounded-3xl border border-slate-200 shadow-sm space-y-4">
+              <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-2 border-b border-slate-100 pb-3">
+                <div className="flex items-center gap-2.5">
+                  <div className="w-9 h-9 rounded-2xl bg-blue-50 text-blue-600 flex items-center justify-center border border-blue-200 shadow-sm">
+                    <Key className="w-4 h-4 text-blue-600" />
+                  </div>
+                  <div>
+                    <h4 className="text-sm font-bold text-slate-900 font-chakra uppercase tracking-wide">
+                      Gate Entry Desk: Verify by Unique Pass Number
+                    </h4>
+                    <p className="text-[11px] text-slate-500">
+                      Enter the attendee's Unique Pass Number (e.g. TECH26-ZL1NC or ZL1NC), or their registered 10-digit mobile number.
+                    </p>
+                  </div>
+                </div>
+                <span className="text-[10px] font-mono font-bold px-2.5 py-1 rounded-full bg-blue-50 text-blue-700 border border-blue-200">
+                  MANUAL ENTRY DESK
+                </span>
               </div>
-              <input
-                type="text"
-                placeholder="Enter or scan Ticket ID (e.g. TECH26-XXXX)"
-                value={manualTicketInput}
-                onChange={(e) => setManualTicketInput(e.target.value)}
-                className="flex-1 px-3.5 py-2 rounded-xl bg-slate-50 border border-slate-200 text-slate-900 text-xs font-mono focus:bg-white focus:border-blue-500"
-              />
-              <button
-                onClick={() => handleGateCheckIn(manualTicketInput)}
-                className="px-5 py-2 rounded-xl bg-blue-600 text-white font-bold text-xs shrink-0 hover:bg-blue-700 transition-colors shadow-sm"
-              >
-                Verify & Check In
-              </button>
+
+              <form onSubmit={(e) => { e.preventDefault(); handleGateCheckIn(manualTicketInput); }} className="flex flex-col sm:flex-row items-center gap-2.5">
+                <div className="relative flex-1 w-full">
+                  <input
+                    type="text"
+                    placeholder="Enter Unique Pass Number (e.g. TECH26-ZL1NC or ZL1NC) or 10-digit Mobile..."
+                    value={manualTicketInput}
+                    onChange={(e) => setManualTicketInput(e.target.value)}
+                    className="w-full px-4 py-3 rounded-xl bg-slate-50 border border-slate-200 text-slate-900 text-sm font-mono focus:bg-white focus:border-blue-500 uppercase placeholder:normal-case placeholder:text-xs"
+                  />
+                </div>
+                <button
+                  type="submit"
+                  disabled={!manualTicketInput.trim()}
+                  className="w-full sm:w-auto px-6 py-3 rounded-xl bg-gradient-to-r from-blue-600 via-indigo-600 to-sky-600 hover:opacity-95 text-white font-chakra font-bold text-xs uppercase transition-all shadow-md shadow-blue-500/20 shrink-0 cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2"
+                >
+                  <Check className="w-4 h-4" />
+                  <span>Verify & Admit Entry</span>
+                </button>
+              </form>
+
+              {/* Verified Attendee Quick Card */}
+              {gateVerifiedAttendee && (
+                <div className="p-4 rounded-2xl bg-slate-50 border border-slate-200 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 text-xs font-mono">
+                  <div className="space-y-1">
+                    <div className="flex items-center gap-2">
+                      <span className="font-extrabold text-slate-900 text-sm">{gateVerifiedAttendee.attendee?.fullName}</span>
+                      <span className="text-[11px] font-bold text-blue-700 px-2 py-0.5 rounded bg-blue-100">{gateVerifiedAttendee.ticketId}</span>
+                      <span className={`text-[10px] font-bold px-2 py-0.5 rounded-full border ${gateVerifiedAttendee.paymentStatus === 'PAID' ? 'bg-emerald-50 text-emerald-700 border-emerald-200' : 'bg-amber-50 text-amber-700 border-amber-200'}`}>
+                        {gateVerifiedAttendee.paymentStatus === 'PAID' ? 'PAID / VERIFIED' : 'PENDING PAYMENT'}
+                      </span>
+                    </div>
+                    <div className="text-slate-600 text-[11px]">
+                      {gateVerifiedAttendee.attendee?.college} • {gateVerifiedAttendee.passType} {gateVerifiedAttendee.attendee?.teamName ? `• Squad: ${gateVerifiedAttendee.attendee.teamName}` : ''}
+                    </div>
+                    <div className="text-[10px] text-slate-500">
+                      📞 {gateVerifiedAttendee.attendee?.phone || 'N/A'} • Gate Status: <strong className="text-emerald-700 font-bold">Checked In</strong>
+                    </div>
+                  </div>
+
+                  <div className="flex items-center gap-2 shrink-0">
+                    <button
+                      type="button"
+                      onClick={() => handleGeneratePass(gateVerifiedAttendee)}
+                      className="px-3 py-1.5 rounded-xl bg-white hover:bg-slate-100 border border-slate-200 text-blue-700 font-bold text-xs flex items-center gap-1.5 transition-all shadow-sm"
+                    >
+                      <Ticket className="w-3.5 h-3.5" />
+                      <span>View Delegate Pass</span>
+                    </button>
+                    <button
+                      type="button"
+                      onClick={() => setGateVerifiedAttendee(null)}
+                      className="px-2.5 py-1.5 rounded-xl text-slate-400 hover:text-slate-600 hover:bg-slate-200 transition-all text-xs"
+                      title="Clear"
+                    >
+                      ✕ Clear
+                    </button>
+                  </div>
+                </div>
+              )}
             </div>
 
             {scanMessage && (
-              <div className={`p-3 rounded-xl text-xs flex items-center justify-between ${
-                scanMessage.success ? 'bg-blue-50 text-blue-800 border border-blue-200' : 'bg-rose-50 text-rose-800 border border-rose-200'
+              <div className={`p-3.5 rounded-2xl text-xs flex items-center justify-between shadow-sm ${
+                scanMessage.isWarning 
+                  ? 'bg-amber-50 text-amber-900 border border-amber-200'
+                  : scanMessage.success 
+                    ? 'bg-emerald-50 text-emerald-900 border border-emerald-200' 
+                    : 'bg-rose-50 text-rose-900 border border-rose-200'
               }`}>
-                <span>{scanMessage.text}</span>
-                <button onClick={() => setScanMessage(null)} className="underline ml-4">Dismiss</button>
+                <div className="flex items-center gap-2">
+                  {scanMessage.isWarning ? (
+                    <AlertCircle className="w-4 h-4 text-amber-600 shrink-0" />
+                  ) : scanMessage.success ? (
+                    <CheckCircle2 className="w-4 h-4 text-emerald-600 shrink-0" />
+                  ) : (
+                    <AlertCircle className="w-4 h-4 text-rose-600 shrink-0" />
+                  )}
+                  <span className="font-medium">{scanMessage.text}</span>
+                </div>
+                <button onClick={() => setScanMessage(null)} className="underline ml-4 font-bold text-[11px] cursor-pointer">Dismiss</button>
               </div>
             )}
 
@@ -1214,7 +1308,7 @@ export default function AdminPage({ onBackToWebsite }) {
                 <Search className="w-4 h-4 text-slate-400 absolute left-3 top-1/2 -translate-y-1/2" />
                 <input
                   type="text"
-                  placeholder="Search attendee, ticket ID, UTR, college..."
+                  placeholder="Search Unique Pass No, Name, Mobile, UTR..."
                   value={search}
                   onChange={(e) => setSearch(e.target.value)}
                   className="w-full pl-9 pr-4 py-2.5 rounded-xl bg-white border border-slate-200 text-slate-900 text-xs placeholder-slate-400 shadow-sm focus:border-blue-500"
@@ -1237,7 +1331,7 @@ export default function AdminPage({ onBackToWebsite }) {
                 <table className="w-full text-left text-xs text-slate-700">
                   <thead className="bg-slate-50 text-slate-500 uppercase tracking-wider font-mono border-b border-slate-200">
                     <tr>
-                      <th className="p-3.5">Ticket ID</th>
+                      <th className="p-3.5">Unique Pass No</th>
                       <th className="p-3.5">Attendee (Name, Email & Mobile)</th>
                       <th className="p-3.5">College & Track</th>
                       <th className="p-3.5">Pass & Method</th>

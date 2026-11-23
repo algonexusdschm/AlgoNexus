@@ -770,20 +770,47 @@ export function EventProvider({ children }) {
     return registrationToSave;
   };
 
-  // Gate Check-In synced with Supabase
-  const checkInAttendee = async (ticketId) => {
-    if (!ticketId) return false;
-    const target = String(ticketId).trim().replace(/^https?:\/\/.*\/verify\//i, '').toUpperCase();
-    if (!target) return false;
+  // Gate Desk Verification & Check-In by Unique Pass Number, Short Code, Mobile No, or UTR
+  const checkInAttendee = async (query) => {
+    if (!query) return { success: false, error: 'Please enter a Unique Pass Number or Mobile Number.' };
+    const raw = String(query).trim().replace(/^https?:\/\/.*\/verify\//i, '');
+    const cleanDigits = raw.replace(/\D/g, '');
+    const target = raw.toUpperCase();
+
+    let matchedReg = null;
+    let wasAlreadyCheckedIn = false;
 
     const updated = registrations.map(reg => {
-      const curTicketId = String(reg.ticketId || reg.ticket_id || reg.id || '').trim().toUpperCase();
-      const curId = String(reg.id || '').trim().toUpperCase();
-      if (curTicketId === target || curId === target) {
-        return { ...reg, checkedIn: true, checkedInAt: new Date().toISOString() };
+      const regTicketId = String(reg.ticketId || reg.ticket_id || '').trim().toUpperCase();
+      const regId = String(reg.id || '').trim().toUpperCase();
+      const regPhone = String(reg.attendee?.phone || '').replace(/\D/g, '');
+      const regUtr = String(reg.utrNumber || '').trim().toUpperCase();
+
+      const isMatch = 
+        (regTicketId && (regTicketId === target || regTicketId.endsWith(target) || target.endsWith(regTicketId))) ||
+        (regId && regId === target) ||
+        (cleanDigits.length >= 10 && regPhone && regPhone.endsWith(cleanDigits.slice(-10))) ||
+        (target.length >= 6 && regUtr && regUtr === target);
+
+      if (isMatch && !matchedReg) {
+        wasAlreadyCheckedIn = Boolean(reg.checkedIn);
+        matchedReg = { 
+          ...reg, 
+          checkedIn: true, 
+          checkedInAt: reg.checkedInAt || new Date().toISOString() 
+        };
+        return matchedReg;
       }
       return reg;
     });
+
+    if (!matchedReg) {
+      return { 
+        success: false, 
+        error: `No attendee found matching "${query}". Please check the Unique Pass Number or 10-digit mobile number.` 
+      };
+    }
+
     setRegistrations(updated);
     try {
       localStorage.setItem(STORAGE_KEYS.REGISTRATIONS, JSON.stringify(updated));
@@ -791,19 +818,25 @@ export function EventProvider({ children }) {
 
     // Update in Supabase
     try {
+      const dbMatchId = matchedReg.ticketId || matchedReg.id;
       await supabase
         .from('registrations')
-        .update({ checked_in: true, checked_in_at: new Date().toISOString() })
-        .or(`ticket_id.eq.${target},id.eq.${target}`);
+        .update({ checked_in: true, checked_in_at: matchedReg.checkedInAt })
+        .or(`ticket_id.eq.${dbMatchId},id.eq.${dbMatchId}`);
     } catch (e) {}
 
     try {
-      await fetch(`/api/check-in/${target}`, { 
+      await fetch(`/api/check-in/${matchedReg.ticketId || matchedReg.id}`, { 
         method: 'POST',
         headers: getAdminHeaders()
       });
     } catch (e) {}
-    return true;
+
+    return { 
+      success: true, 
+      attendee: matchedReg,
+      alreadyCheckedIn: wasAlreadyCheckedIn
+    };
   };
 
   // Verify & Approve Pending Registration Payment (Organizer Exclusive)
