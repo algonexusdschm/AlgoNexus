@@ -124,14 +124,8 @@ export function EventProvider({ children }) {
     }
   });
 
-  // 5. Admin Authentication & Role Management
-  const [isAdminAuthenticated, setIsAdminAuthenticated] = useState(() => {
-    try {
-      return localStorage.getItem(STORAGE_KEYS.ADMIN_AUTH) === 'true';
-    } catch {
-      return false;
-    }
-  });
+  // 5. Admin Authentication & Role Management (Strictly in-memory: auto-locks on refresh or leaving)
+  const [isAdminAuthenticated, setIsAdminAuthenticated] = useState(false);
 
   // 6. Event Head Master Passcode
   const [headPasscode, setHeadPasscode] = useState(() => {
@@ -152,26 +146,36 @@ export function EventProvider({ children }) {
     }
   });
 
-  // 8. Current Logged-in Admin User
-  const [currentAdminUser, setCurrentAdminUser] = useState(() => {
+  // 8. Current Logged-in Admin User (Strictly in-memory: auto-locks on refresh or leaving)
+  const [currentAdminUser, setCurrentAdminUser] = useState(null);
+
+  // Auto-lock admin on initial mount or window unload/pagehide
+  useEffect(() => {
     try {
-      const saved = localStorage.getItem(STORAGE_KEYS.CURRENT_ADMIN_USER);
-      if (saved) return JSON.parse(saved);
-      // Fallback if already authenticated
-      if (localStorage.getItem(STORAGE_KEYS.ADMIN_AUTH) === 'true') {
-        return {
-          name: 'Department of Data Science - Event Head',
-          role: 'Event Head / Lead Organizer',
-          email: 'algonexusdschm@gmail.com',
-          isEventHead: true,
-          permissions: ['all']
-        };
-      }
-      return null;
-    } catch {
-      return null;
-    }
-  });
+      localStorage.removeItem(STORAGE_KEYS.ADMIN_AUTH);
+      localStorage.removeItem(STORAGE_KEYS.CURRENT_ADMIN_USER);
+      sessionStorage.removeItem(STORAGE_KEYS.ADMIN_AUTH);
+      sessionStorage.removeItem(STORAGE_KEYS.CURRENT_ADMIN_USER);
+    } catch {}
+
+    const handleLockOnLeave = () => {
+      setIsAdminAuthenticated(false);
+      setCurrentAdminUser(null);
+      try {
+        localStorage.removeItem(STORAGE_KEYS.ADMIN_AUTH);
+        localStorage.removeItem(STORAGE_KEYS.CURRENT_ADMIN_USER);
+        sessionStorage.removeItem(STORAGE_KEYS.ADMIN_AUTH);
+        sessionStorage.removeItem(STORAGE_KEYS.CURRENT_ADMIN_USER);
+      } catch {}
+    };
+
+    window.addEventListener('beforeunload', handleLockOnLeave);
+    window.addEventListener('pagehide', handleLockOnLeave);
+    return () => {
+      window.removeEventListener('beforeunload', handleLockOnLeave);
+      window.removeEventListener('pagehide', handleLockOnLeave);
+    };
+  }, []);
 
   // Shared Broadcast Channel reference for instant cross-device/browser sync
   const syncChannelRef = useRef(null);
@@ -887,8 +891,7 @@ export function EventProvider({ children }) {
       };
       setIsAdminAuthenticated(true);
       setCurrentAdminUser(headUser);
-      localStorage.setItem(STORAGE_KEYS.ADMIN_AUTH, 'true');
-      localStorage.setItem(STORAGE_KEYS.CURRENT_ADMIN_USER, JSON.stringify(headUser));
+      // Strictly in-memory: no localStorage storage so refresh or leave auto-locks
       return { success: true, user: headUser };
     }
 
@@ -907,8 +910,7 @@ export function EventProvider({ children }) {
       };
       setIsAdminAuthenticated(true);
       setCurrentAdminUser(memberUser);
-      localStorage.setItem(STORAGE_KEYS.ADMIN_AUTH, 'true');
-      localStorage.setItem(STORAGE_KEYS.CURRENT_ADMIN_USER, JSON.stringify(memberUser));
+      // Strictly in-memory: no localStorage storage so refresh or leave auto-locks
       return { success: true, user: memberUser };
     }
 
@@ -921,8 +923,12 @@ export function EventProvider({ children }) {
   const logoutAdmin = () => {
     setIsAdminAuthenticated(false);
     setCurrentAdminUser(null);
-    localStorage.removeItem(STORAGE_KEYS.ADMIN_AUTH);
-    localStorage.removeItem(STORAGE_KEYS.CURRENT_ADMIN_USER);
+    try {
+      localStorage.removeItem(STORAGE_KEYS.ADMIN_AUTH);
+      localStorage.removeItem(STORAGE_KEYS.CURRENT_ADMIN_USER);
+      sessionStorage.removeItem(STORAGE_KEYS.ADMIN_AUTH);
+      sessionStorage.removeItem(STORAGE_KEYS.CURRENT_ADMIN_USER);
+    } catch {}
   };
 
   // Team Member Management (Event Head exclusive - fully synced with Supabase)

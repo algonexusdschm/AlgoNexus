@@ -45,6 +45,13 @@ export default function AdminPage({ onBackToWebsite }) {
   const [showNewMasterPass, setShowNewMasterPass] = useState(false);
   const [showNewMemberPass, setShowNewMemberPass] = useState(false);
 
+  // Auto-lock admin console immediately whenever leaving the admin portal
+  useEffect(() => {
+    return () => {
+      logoutAdmin();
+    };
+  }, [logoutAdmin]);
+
   // Payment & Bank Form State
   const [paymentForm, setPaymentForm] = useState({
     upiId: paymentSettings.upiId || '8010086323@fam',
@@ -489,7 +496,10 @@ export default function AdminPage({ onBackToWebsite }) {
 
           <div className="mt-6 pt-6 border-t border-slate-200 text-center">
             <button
-              onClick={onBackToWebsite}
+              onClick={() => {
+                logoutAdmin();
+                onBackToWebsite();
+              }}
               className="text-xs text-slate-500 hover:text-slate-900 flex items-center justify-center gap-1.5 mx-auto font-medium"
             >
               <ArrowLeft className="w-3.5 h-3.5" />
@@ -538,7 +548,10 @@ export default function AdminPage({ onBackToWebsite }) {
           )}
 
           <button
-            onClick={onBackToWebsite}
+            onClick={() => {
+              logoutAdmin();
+              onBackToWebsite();
+            }}
             className="px-3.5 py-1.5 rounded-xl bg-blue-50 hover:bg-blue-100 text-blue-700 border border-blue-200 text-xs font-semibold flex items-center gap-1.5 transition-all"
           >
             <span>View Public Website</span>

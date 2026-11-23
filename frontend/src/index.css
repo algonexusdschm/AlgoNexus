@@ -414,8 +414,7 @@
     width: 100% !important;
     height: auto !important;
     min-height: 0 !important;
-    max-height: 100% !important;
-    overflow: hidden !important;
+    overflow: visible !important;
     background: #ffffff !important;
     color: #0f172a !important;
     margin: 0 !important;
@@ -424,14 +423,9 @@
     print-color-adjust: exact !important;
   }
 
-  body * {
-    visibility: hidden !important;
-  }
-
-  /* Completely exclude background elements, canvases, overlays */
-  nav, footer, main, canvas, #interactive-canvas, .no-print {
+  /* Completely exclude background elements, canvases, overlays and collapse their space */
+  nav, footer, main, header, canvas, #interactive-canvas, .no-print {
     display: none !important;
-    visibility: hidden !important;
   }
 
   /* Make only the single printable ticket visible and properly sized */
@@ -441,12 +435,12 @@
   }
 
   #printable-ticket {
-    position: fixed !important;
+    position: absolute !important;
     left: 0 !important;
     top: 0 !important;
     right: 0 !important;
     width: 100% !important;
-    max-width: 190mm !important;
+    max-width: 180mm !important;
     margin: 0 auto !important;
     padding: 0 !important;
     border: none !important;

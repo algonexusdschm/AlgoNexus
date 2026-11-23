@@ -21,89 +21,6 @@ export default function TicketModal({ ticket, isOpen, onClose }) {
 
   if (!isOpen || !ticket) return null;
 
-  const handlePrint = () => {
-    const printCard = document.getElementById('printable-ticket-card');
-    if (!printCard) {
-      window.print();
-      return;
-    }
-
-    // Isolate into a single-page printable iframe to guarantee exactly 1 page
-    const iframe = document.createElement('iframe');
-    iframe.style.position = 'fixed';
-    iframe.style.right = '0';
-    iframe.style.bottom = '0';
-    iframe.style.width = '0';
-    iframe.style.height = '0';
-    iframe.style.border = '0';
-    document.body.appendChild(iframe);
-
-    const doc = iframe.contentWindow.document;
-    doc.open();
-    doc.write(`
-      <!DOCTYPE html>
-      <html>
-        <head>
-          <title>TechAstra 2026 - Delegate Pass (${ticket.ticketId})</title>
-          <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;600;700;800&family=Chakra+Petch:wght@600;700;800&display=swap">
-          <style>
-            @page {
-              size: A4 portrait;
-              margin: 10mm;
-            }
-            * {
-              box-sizing: border-box;
-              margin: 0;
-              padding: 0;
-              -webkit-print-color-adjust: exact !important;
-              print-color-adjust: exact !important;
-            }
-            html, body {
-              width: 100%;
-              height: 100%;
-              background: #ffffff;
-              color: #0f172a;
-              font-family: 'Plus Jakarta Sans', system-ui, -apple-system, sans-serif;
-            }
-            .font-mono { font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace; }
-            .font-chakra { font-family: 'Chakra Petch', sans-serif; }
-            .ticket-card-print {
-              max-width: 660px;
-              margin: 0 auto;
-              padding: 24px;
-              border: 1.5px solid #0284c7;
-              border-radius: 16px;
-              background: #f8fafc;
-              page-break-inside: avoid;
-              break-inside: avoid;
-            }
-          </style>
-          ${Array.from(document.querySelectorAll('link[rel="stylesheet"], style')).map(s => s.outerHTML).join('\\n')}
-        </head>
-        <body style="padding: 12px; background: white;">
-          <div class="ticket-card-print">
-            ${printCard.innerHTML}
-          </div>
-        </body>
-      </html>
-    `);
-    doc.close();
-
-    iframe.contentWindow.focus();
-    setTimeout(() => {
-      try {
-        iframe.contentWindow.print();
-      } catch (e) {
-        window.print();
-      }
-      setTimeout(() => {
-        try {
-          document.body.removeChild(iframe);
-        } catch (e) {}
-      }, 1000);
-    }, 400);
-  };
-
   const attendeePhone = (ticket.attendee?.phone || '').replace(/[^0-9]/g, '').slice(-10);
   const attendeeEmail = ticket.attendee?.email || '';
   const attendeeName = ticket.attendee?.fullName || 'Participant';
@@ -126,6 +43,352 @@ export default function TicketModal({ ticket, isOpen, onClose }) {
     return [];
   };
   const teamMembersList = getTeamMembersList();
+
+  const handlePrint = () => {
+    const qrSvg = document.getElementById('pass-qr-code')?.innerHTML || '';
+
+    // Create a dedicated hidden iframe with 100% self-contained styling for guaranteed 1-page print
+    const iframe = document.createElement('iframe');
+    iframe.style.position = 'fixed';
+    iframe.style.right = '0';
+    iframe.style.bottom = '0';
+    iframe.style.width = '0';
+    iframe.style.height = '0';
+    iframe.style.border = '0';
+    document.body.appendChild(iframe);
+
+    const doc = iframe.contentWindow.document;
+    doc.open();
+    doc.write(`<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <title>TechAstra 2026 - Delegate Pass (${ticket.ticketId})</title>
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Chakra+Petch:wght@600;700;800&display=swap">
+  <style>
+    @page {
+      size: A4 portrait;
+      margin: 8mm;
+    }
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      -webkit-print-color-adjust: exact !important;
+      print-color-adjust: exact !important;
+    }
+    html, body {
+      width: 100%;
+      height: 100%;
+      background: #ffffff;
+      color: #0f172a;
+      font-family: 'Plus Jakarta Sans', system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+      font-size: 13px;
+      line-height: 1.4;
+    }
+    .page-wrap {
+      padding: 4mm 0;
+      display: flex;
+      justify-content: center;
+    }
+    .ticket-card {
+      width: 100%;
+      max-width: 650px;
+      margin: 0 auto;
+      padding: 22px 24px;
+      border: 1.5px solid #cbd5e1;
+      border-radius: 16px;
+      background: #f8fafc;
+      page-break-inside: avoid;
+      break-inside: avoid;
+    }
+    .header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      border-bottom: 1.5px solid #e2e8f0;
+      padding-bottom: 14px;
+      margin-bottom: 16px;
+    }
+    .logo-container {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+    .logo-img {
+      height: 44px;
+      width: auto;
+      object-fit: contain;
+    }
+    .title-tech {
+      font-family: 'Chakra Petch', sans-serif;
+      font-weight: 800;
+      font-size: 19px;
+      color: #0f172a;
+      letter-spacing: 0.05em;
+    }
+    .title-tech span {
+      color: #2563eb;
+    }
+    .dept-sub {
+      font-size: 10px;
+      color: #64748b;
+      font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+      margin-top: 2px;
+    }
+    .badge-status {
+      font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+      font-size: 11px;
+      font-weight: 700;
+      padding: 4px 12px;
+      border-radius: 9999px;
+      text-transform: uppercase;
+      border: 1px solid ${isPaid ? '#bfdbfe' : '#fde68a'};
+      background: ${isPaid ? '#eff6ff' : '#fffbeb'};
+      color: ${isPaid ? '#1d4ed8' : '#b45309'};
+      display: inline-block;
+    }
+    .ticket-id {
+      font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+      font-size: 13px;
+      font-weight: 700;
+      color: #1d4ed8;
+      margin-top: 4px;
+      text-align: right;
+    }
+    .grid-details {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 12px 18px;
+      margin-bottom: 14px;
+      font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+    }
+    .field-label {
+      font-size: 9px;
+      font-weight: 700;
+      color: #94a3b8;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      margin-bottom: 2px;
+    }
+    .field-val-bold {
+      font-size: 13px;
+      font-weight: 700;
+      color: #0f172a;
+    }
+    .field-val-blue {
+      font-size: 13px;
+      font-weight: 700;
+      color: #2563eb;
+    }
+    .field-val-sub {
+      font-size: 11px;
+      color: #475569;
+      margin-top: 2px;
+      word-break: break-word;
+    }
+    .squad-box {
+      background: #ffffff;
+      border: 1px solid #e2e8f0;
+      border-radius: 12px;
+      padding: 12px 14px;
+      margin-bottom: 12px;
+      font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+    }
+    .squad-header {
+      display: flex;
+      justify-content: space-between;
+      border-bottom: 1px solid #f1f5f9;
+      padding-bottom: 6px;
+      margin-bottom: 8px;
+    }
+    .members-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 6px 12px;
+    }
+    .member-item {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      font-size: 11px;
+      color: #334155;
+    }
+    .dot-lead {
+      width: 6px;
+      height: 6px;
+      border-radius: 50%;
+      background: #2563eb;
+      flex-shrink: 0;
+    }
+    .dot-mem {
+      width: 6px;
+      height: 6px;
+      border-radius: 50%;
+      background: #94a3b8;
+      flex-shrink: 0;
+    }
+    .note-box {
+      background: #fffbeb;
+      border: 1px solid #fde68a;
+      border-radius: 10px;
+      padding: 10px 14px;
+      margin-bottom: 12px;
+      font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+      display: flex;
+      gap: 8px;
+      align-items: flex-start;
+      color: #78350f;
+    }
+    .note-tag {
+      font-weight: 800;
+      font-size: 10px;
+      background: #fef3c7;
+      border: 1px solid #fcd34d;
+      padding: 2px 6px;
+      border-radius: 4px;
+      flex-shrink: 0;
+    }
+    .note-text {
+      font-size: 11px;
+      font-weight: 600;
+      line-height: 1.35;
+    }
+    .perforated {
+      border-top: 2px dashed #cbd5e1;
+      margin: 12px 0;
+    }
+    .footer-section {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding-top: 2px;
+    }
+    .qr-info {
+      font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+    }
+    .qr-title {
+      font-size: 10px;
+      font-weight: 700;
+      color: #64748b;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+    }
+    .qr-desc {
+      font-size: 11px;
+      color: #334155;
+      margin: 2px 0;
+    }
+    .qr-meta {
+      font-size: 10px;
+      color: #94a3b8;
+    }
+    .qr-box {
+      background: #ffffff;
+      padding: 6px;
+      border: 1px solid #e2e8f0;
+      border-radius: 10px;
+      flex-shrink: 0;
+    }
+  </style>
+</head>
+<body>
+  <div class="page-wrap">
+    <div class="ticket-card">
+      <div class="header">
+        <div class="logo-container">
+          <img src="${window.location.origin}/techastra-logo.png" alt="TechAstra" class="logo-img" onerror="this.style.display='none'">
+          <div>
+            <div class="title-tech">TECH<span>ASTRA</span> 2026</div>
+            <div class="dept-sub">DEPT OF DATA SCIENCE • SMT. CHM COLLEGE</div>
+          </div>
+        </div>
+        <div>
+          <div class="badge-status">${isPaid ? 'CONFIRMED' : 'PENDING'}</div>
+          <div class="ticket-id">${ticket.ticketId}</div>
+        </div>
+      </div>
+
+      <div class="grid-details">
+        <div>
+          <div class="field-label">ATTENDEE / LEAD</div>
+          <div class="field-val-bold">${attendeeName}</div>
+          <div class="field-val-sub">${ticket.attendee?.college || 'N/A'}</div>
+        </div>
+        <div>
+          <div class="field-label">PASS TIER</div>
+          <div class="field-val-blue">${ticket.passType}</div>
+          <div class="field-val-sub">${ticket.attendee?.track || 'General Track'}</div>
+        </div>
+        <div>
+          <div class="field-label">REGISTERED CONTACT</div>
+          <div class="field-val-bold">${ticket.attendee?.phone || 'N/A'}</div>
+          <div class="field-val-sub">${ticket.attendee?.email || ''}</div>
+        </div>
+        <div>
+          <div class="field-label">CAMPUS VENUE & DATES</div>
+          <div class="field-val-bold">${eventSettings.dates}</div>
+          <div class="field-val-sub">${eventSettings.venue}</div>
+        </div>
+      </div>
+
+      <div class="squad-box">
+        <div class="squad-header">
+          <span style="font-size: 10px; font-weight: 700; color: #94a3b8; text-transform: uppercase;">TEAM SQUAD</span>
+          <span style="font-weight: 700; color: #1d4ed8; font-size: 12px;">${ticket.attendee?.teamName || 'Solo / Squad'}</span>
+        </div>
+        <div style="font-size: 9px; font-weight: 700; color: #94a3b8; text-transform: uppercase; margin-bottom: 6px;">TEAM MEMBERS:</div>
+        <div class="members-grid">
+          <div class="member-item">
+            <span class="dot-lead"></span>
+            <span style="font-weight: 700;">Leader: ${attendeeName}</span>
+          </div>
+          ${teamMembersList.filter(m => !m.toLowerCase().includes(attendeeName.toLowerCase())).map(m => `
+            <div class="member-item">
+              <span class="dot-mem"></span>
+              <span>${m}</span>
+            </div>
+          `).join('')}
+        </div>
+      </div>
+
+      <div class="note-box">
+        <span class="note-tag">⚠️ NOTE:</span>
+        <span class="note-text">Every member should carry Govt. verified ID proof and ID card provided by their college.</span>
+      </div>
+
+      <div class="perforated"></div>
+
+      <div class="footer-section">
+        <div class="qr-info">
+          <div class="qr-title">OFFICIAL CHECK-IN SCANNER</div>
+          <div class="qr-desc">Present at Entry Desk with College ID & Govt. ID</div>
+          <div class="qr-meta">Order Ref: ${ticket.orderId} • Helpline: +91 9604449724</div>
+        </div>
+        <div class="qr-box">
+          ${qrSvg}
+        </div>
+      </div>
+    </div>
+  </div>
+</body>
+</html>`);
+    doc.close();
+
+    setTimeout(() => {
+      iframe.contentWindow.focus();
+      try {
+        iframe.contentWindow.print();
+      } catch (e) {
+        window.print();
+      }
+      setTimeout(() => {
+        try {
+          document.body.removeChild(iframe);
+        } catch (e) {}
+      }, 1500);
+    }, 400);
+  };
 
   const shareText = `*TechAstra 2026 Official Delegate Pass*
 Ticket ID: ${ticket.ticketId}
@@ -280,7 +543,7 @@ Helpline: +91 9604449724`;
                 <div className="text-[10px] text-slate-400">Order Ref: {ticket.orderId} • Helpline: +91 9604449724</div>
               </div>
 
-              <div className="p-2 bg-white rounded-xl border border-slate-200 shadow-sm shrink-0">
+              <div id="pass-qr-code" className="p-2 bg-white rounded-xl border border-slate-200 shadow-sm shrink-0">
                 <QRCodeSVG
                   value={`https://techastra.college/verify/${ticket.ticketId}`}
                   size={72}
