@@ -26,7 +26,8 @@ export default function PricingSection({ onSelectTier }) {
 
         {/* Centered Single Squad Pass Card */}
         <div className="max-w-xl mx-auto">
-          {pricingTiers.map((tier) => {
+          {(pricingTiers || []).map((tier) => {
+            if (!tier) return null;
             return (
               <div
                 key={tier.id}
@@ -58,13 +59,13 @@ export default function PricingSection({ onSelectTier }) {
                   </div>
 
                   <p className="text-xs text-slate-600 font-mono mt-2 pb-4 border-b border-slate-100">
-                    Just ₹250 to ₹500 per member. Flat ₹1,000 for your entire hackathon squad!
+                    Just ₹250 to ₹500 per member. Flat ₹1,00,000 Prize Pool • Flat ₹1,000 for your entire squad!
                   </p>
 
                   {/* Features List */}
                   <ul className="mt-6 space-y-3.5 text-xs font-mono text-slate-700">
-                    {tier.features.map((feat, idx) => {
-                      const cleanFeat = feat
+                    {(tier.features || []).map((feat, idx) => {
+                      const cleanFeat = String(feat || '')
                         .replace(/₹?2\.5\s*[Ll]\+?/g, '₹1,00,000')
                         .replace(/₹?2,50,000\+?/g, '₹1,00,000');
                       return (

@@ -71,7 +71,7 @@ function MainEventApp() {
   });
 
   const [isRegisterOpen, setIsRegisterOpen] = useState(false);
-  const [selectedTier, setSelectedTier] = useState(pricingTiers[0]);
+  const [selectedTier, setSelectedTier] = useState(() => (pricingTiers && pricingTiers.length > 0 ? pricingTiers[0] : null));
   const [issuedTicket, setIssuedTicket] = useState(null);
   const [isTicketOpen, setIsTicketOpen] = useState(false);
 
