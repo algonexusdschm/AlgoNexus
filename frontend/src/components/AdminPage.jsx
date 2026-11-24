@@ -4,7 +4,7 @@ import {
   Download, Search, Eye, AlertCircle, Save, ExternalLink, ArrowLeft, 
   Users, IndianRupee, Calendar, MapPin, Sparkles, Trophy, Trash2, Copy,
   Crown, UserPlus, UserCheck, Key, EyeOff, UserX, CheckCircle2, ShieldAlert, Edit2,
-  Ticket, Phone, Mail, MessageSquare, Camera
+  Ticket, Phone, Mail, MessageSquare, Camera, Share2
 } from 'lucide-react';
 import { useEvent } from '../context/EventContext';
 import TicketModal from './TicketModal';
