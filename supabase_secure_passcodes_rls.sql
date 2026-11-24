@@ -91,3 +91,11 @@ $$;
 
 -- Grant public execute permission on the secure login function
 GRANT EXECUTE ON FUNCTION public.verify_admin_passcode(TEXT) TO anon, authenticated, service_role;
+
+-- =========================================================================
+-- 7. ENFORCE UTR DEDUPLICATION (PREVENTS REUSING SAME UPI TRANSACTION ID)
+-- =========================================================================
+CREATE UNIQUE INDEX IF NOT EXISTS idx_registrations_utr_unique 
+ON public.registrations (utr_number) 
+WHERE utr_number IS NOT NULL AND utr_number != '';
+
