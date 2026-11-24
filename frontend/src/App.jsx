@@ -11,6 +11,41 @@ import AiUniverse3D from './components/AiUniverse3D';
 import ScrollRadar from './components/ScrollRadar';
 import { EventProvider, useEvent } from './context/EventContext';
 
+class ModalErrorBoundary extends React.Component {
+  constructor(props) {
+    super(props);
+    this.state = { hasError: false };
+  }
+  static getDerivedStateFromError() {
+    return { hasError: true };
+  }
+  componentDidCatch(error, errorInfo) {
+    console.error('Modal error caught by boundary:', error, errorInfo);
+  }
+  render() {
+    if (this.state.hasError) {
+      return (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-slate-900/60 backdrop-blur-md p-4">
+          <div className="bg-white p-6 rounded-2xl max-w-sm w-full text-center space-y-4 shadow-xl border border-slate-200">
+            <h4 className="text-base font-bold text-slate-900">Registration Modal Notice</h4>
+            <p className="text-xs text-slate-600">A temporary loading error occurred. Please try opening the registration again.</p>
+            <button
+              onClick={() => {
+                this.setState({ hasError: false });
+                this.props.onReset?.();
+              }}
+              className="px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-xl font-bold text-xs"
+            >
+              Close
+            </button>
+          </div>
+        </div>
+      );
+    }
+    return this.props.children;
+  }
+}
+
 // Lazy-loaded heavy modules for optimal initial load speed
 const RegistrationModal = lazy(() => import('./components/RegistrationModal'));
 const TicketModal = lazy(() => import('./components/TicketModal'));
@@ -151,25 +186,27 @@ function MainEventApp() {
         onOpenAdmin={navigateToAdmin}
       />
 
-      {/* Interactive Modals (Lazy Loaded on Demand) */}
-      <Suspense fallback={null}>
-        {isRegisterOpen && (
-          <RegistrationModal
-            isOpen={isRegisterOpen}
-            initialTier={selectedTier}
-            onClose={() => setIsRegisterOpen(false)}
-            onPaymentSuccess={handlePaymentSuccess}
-          />
-        )}
+      {/* Interactive Modals (Lazy Loaded on Demand with Crash Protection) */}
+      <ModalErrorBoundary onReset={() => { setIsRegisterOpen(false); setIsTicketOpen(false); }}>
+        <Suspense fallback={null}>
+          {isRegisterOpen && (
+            <RegistrationModal
+              isOpen={isRegisterOpen}
+              initialTier={selectedTier}
+              onClose={() => setIsRegisterOpen(false)}
+              onPaymentSuccess={handlePaymentSuccess}
+            />
+          )}
 
-        {isTicketOpen && issuedTicket && (
-          <TicketModal
-            ticket={issuedTicket}
-            isOpen={isTicketOpen}
-            onClose={() => setIsTicketOpen(false)}
-          />
-        )}
-      </Suspense>
+          {isTicketOpen && issuedTicket && (
+            <TicketModal
+              ticket={issuedTicket}
+              isOpen={isTicketOpen}
+              onClose={() => setIsTicketOpen(false)}
+            />
+          )}
+        </Suspense>
+      </ModalErrorBoundary>
     </div>
   );
 }

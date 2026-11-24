@@ -540,8 +540,6 @@ export default function RegistrationModal({
         ...(formData.member4.trim() ? [{ role: 'Member 4', name: formData.member4.trim() }] : [])
       ] : [];
 
-      const finalScreenshot = screenshotUrl || additionalData.screenshot || screenshotPreview;
-
       const payload = {
         razorpay_order_id: `ORD_${orderRef}`,
         razorpay_payment_id: finalUtr,
