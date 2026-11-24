@@ -10,6 +10,7 @@ import Footer from './components/Footer';
 import AiUniverse3D from './components/AiUniverse3D';
 import ScrollRadar from './components/ScrollRadar';
 import { EventProvider, useEvent } from './context/EventContext';
+import { supabase } from './lib/supabaseClient';
 
 class ModalErrorBoundary extends React.Component {
   constructor(props) {
@@ -52,7 +53,7 @@ const TicketModal = lazy(() => import('./components/TicketModal'));
 const AdminPage = lazy(() => import('./components/AdminPage'));
 
 function MainEventApp() {
-  const { pricingTiers } = useEvent();
+  const { pricingTiers, registrations } = useEvent();
   const isAdminRoute = () => {
     const path = (window.location.pathname || '').toLowerCase();
     const hash = (window.location.hash || '').toLowerCase();
@@ -81,6 +82,93 @@ function MainEventApp() {
       localStorage.removeItem('algonexus_checkout_session');
     } catch {}
   }, []);
+
+  // Auto-detect & open Pass Link when attendee visits via WhatsApp/Email link
+  useEffect(() => {
+    const checkPassInUrl = async () => {
+      try {
+        const url = new URL(window.location.href);
+        const searchPass = url.searchParams.get('pass') || url.searchParams.get('ticket') || url.searchParams.get('id');
+        let ticketId = searchPass;
+
+        if (!ticketId) {
+          const hash = window.location.hash || '';
+          if (hash.startsWith('#pass=') || hash.startsWith('#verify=')) {
+            ticketId = hash.split('=')[1];
+          } else if (hash.startsWith('#pass/') || hash.startsWith('#verify/')) {
+            ticketId = hash.split('/')[1];
+          }
+        }
+
+        if (!ticketId) {
+          const pathname = window.location.pathname || '';
+          const match = pathname.match(/\/verify\/([^/]+)/i);
+          if (match) {
+            ticketId = match[1];
+          }
+        }
+
+        if (!ticketId) return;
+        ticketId = decodeURIComponent(ticketId).trim();
+        if (!ticketId) return;
+
+        // 1. Try in-memory registrations list first
+        const matchedLocal = registrations.find(r => 
+          (r.ticketId && r.ticketId.toUpperCase() === ticketId.toUpperCase()) ||
+          (r.id && String(r.id) === ticketId)
+        );
+
+        if (matchedLocal) {
+          setIssuedTicket(matchedLocal);
+          setIsTicketOpen(true);
+          return;
+        }
+
+        // 2. Fetch directly from Supabase
+        const { data, error } = await supabase
+          .from('registrations')
+          .select('*')
+          .or(`ticket_id.ilike.${ticketId},id.eq.${ticketId}`)
+          .maybeSingle();
+
+        if (data && !error) {
+          const formatted = {
+            id: data.id,
+            ticketId: data.ticket_id || ticketId,
+            orderId: data.utr_number || data.ticket_id,
+            amountPaid: Number(data.amount) || 1000,
+            passType: data.tier_name || 'Hackathon Squad Pass',
+            paymentStatus: (data.bank_name === 'STATUS:PAID' || data.bank_name === 'PAID') ? 'PAID' : 'PENDING_VERIFICATION',
+            attendee: {
+              fullName: data.full_name,
+              email: data.email,
+              phone: data.phone,
+              college: data.college,
+              track: data.track || 'General AI/Hack',
+              teamName: data.team_name || '',
+              teamMembers: data.team_members ? data.team_members.split(', ') : []
+            },
+            utrNumber: data.utr_number || '',
+            checkedIn: data.checked_in || false,
+            checkedInAt: data.checked_in_at || null,
+            createdAt: data.created_at
+          };
+          setIssuedTicket(formatted);
+          setIsTicketOpen(true);
+        }
+      } catch (err) {
+        console.warn('Pass URL auto-detect notice:', err);
+      }
+    };
+
+    checkPassInUrl();
+    window.addEventListener('popstate', checkPassInUrl);
+    window.addEventListener('hashchange', checkPassInUrl);
+    return () => {
+      window.removeEventListener('popstate', checkPassInUrl);
+      window.removeEventListener('hashchange', checkPassInUrl);
+    };
+  }, [registrations]);
 
   // Sync routing on popstate / hashchange
   useEffect(() => {
