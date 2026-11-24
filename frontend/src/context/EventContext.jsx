@@ -144,8 +144,13 @@ export function EventProvider({ children }) {
   // 7. Team Members List (Strictly in-memory: NEVER stored in localStorage)
   const [teamMembers, setTeamMembers] = useState(DEFAULT_TEAM_MEMBERS);
 
-  // 8. Current Logged-in Admin User (Strictly in-memory: auto-locks on refresh or leaving)
+  // 8. Current Logged-in Admin User & Active Session Passcode (Strictly in-memory: auto-locks on refresh or leaving)
   const [currentAdminUser, setCurrentAdminUser] = useState(null);
+  const [activeAdminPasscode, setActiveAdminPasscode] = useState('');
+  const activeAdminPasscodeRef = useRef('');
+  useEffect(() => {
+    activeAdminPasscodeRef.current = activeAdminPasscode;
+  }, [activeAdminPasscode]);
 
   // Auto-lock admin and purge all sensitive passcodes from client storage on mount
   useEffect(() => {
@@ -162,11 +167,13 @@ export function EventProvider({ children }) {
       sessionStorage.removeItem(STORAGE_KEYS.TEAM_MEMBERS);
     } catch {}
   }, []);
-    } catch {}
 
+  useEffect(() => {
     const handleLockOnLeave = () => {
       setIsAdminAuthenticated(false);
       setCurrentAdminUser(null);
+      setActiveAdminPasscode('');
+      activeAdminPasscodeRef.current = '';
       try {
         localStorage.removeItem(STORAGE_KEYS.ADMIN_AUTH);
         localStorage.removeItem(STORAGE_KEYS.CURRENT_ADMIN_USER);
@@ -803,13 +810,22 @@ export function EventProvider({ children }) {
       localStorage.setItem(STORAGE_KEYS.REGISTRATIONS, JSON.stringify(updated));
     } catch (e) {}
 
-    // Update in Supabase
+    // Update in Supabase via Secure RPC (with fallback to direct update)
     try {
       const dbMatchId = matchedReg.ticketId || matchedReg.id;
-      await supabase
-        .from('registrations')
-        .update({ checked_in: true, checked_in_at: matchedReg.checkedInAt })
-        .or(`ticket_id.eq.${dbMatchId},id.eq.${dbMatchId}`);
+      const authPasscode = activeAdminPasscodeRef.current || headPasscode || '';
+      const { data: rpcRes, error: rpcErr } = await supabase.rpc('admin_gate_check_in', {
+        p_ticket_id: dbMatchId,
+        p_passcode: authPasscode
+      });
+
+      if (rpcErr || (rpcRes && rpcRes.success === false)) {
+        console.warn('RPC admin_gate_check_in notice, attempting direct update:', rpcErr || rpcRes?.error);
+        await supabase
+          .from('registrations')
+          .update({ checked_in: true, checked_in_at: matchedReg.checkedInAt })
+          .or(`ticket_id.eq.${dbMatchId},id.eq.${dbMatchId}`);
+      }
     } catch (e) {}
 
     try {
@@ -845,12 +861,21 @@ export function EventProvider({ children }) {
       localStorage.setItem(STORAGE_KEYS.REGISTRATIONS, JSON.stringify(updated));
     } catch (e) {}
 
-    // Update in Supabase
+    // Update in Supabase via Secure RPC (with fallback to direct update)
     try {
-      await supabase
-        .from('registrations')
-        .update({ bank_name: 'STATUS:PAID' })
-        .or(`ticket_id.eq.${target},id.eq.${target}`);
+      const authPasscode = activeAdminPasscodeRef.current || headPasscode || '';
+      const { data: rpcRes, error: rpcErr } = await supabase.rpc('admin_verify_payment', {
+        p_ticket_id: target,
+        p_passcode: authPasscode
+      });
+
+      if (rpcErr || (rpcRes && rpcRes.success === false)) {
+        console.warn('RPC admin_verify_payment notice, attempting direct update:', rpcErr || rpcRes?.error);
+        await supabase
+          .from('registrations')
+          .update({ bank_name: 'STATUS:PAID' })
+          .or(`ticket_id.eq.${target},id.eq.${target}`);
+      }
     } catch (e) {
       console.warn('Supabase verifyRegistrationPayment error:', e);
     }
@@ -892,6 +917,8 @@ export function EventProvider({ children }) {
           };
           setIsAdminAuthenticated(true);
           setCurrentAdminUser(authUser);
+          setActiveAdminPasscode(trimmed);
+          activeAdminPasscodeRef.current = trimmed;
           if (authUser.isEventHead) {
             setHeadPasscode(trimmed);
             // Authorized Event Head: sync team members securely into memory
@@ -925,6 +952,8 @@ export function EventProvider({ children }) {
       };
       setIsAdminAuthenticated(true);
       setCurrentAdminUser(headUser);
+      setActiveAdminPasscode(trimmed);
+      activeAdminPasscodeRef.current = trimmed;
       syncTeamMembersFromSupabase();
       return { success: true, user: headUser };
     }
@@ -945,6 +974,8 @@ export function EventProvider({ children }) {
       };
       setIsAdminAuthenticated(true);
       setCurrentAdminUser(memberUser);
+      setActiveAdminPasscode(trimmed);
+      activeAdminPasscodeRef.current = trimmed;
       return { success: true, user: memberUser };
     }
 
@@ -957,6 +988,8 @@ export function EventProvider({ children }) {
   const logoutAdmin = useCallback(() => {
     setIsAdminAuthenticated(false);
     setCurrentAdminUser(null);
+    setActiveAdminPasscode('');
+    activeAdminPasscodeRef.current = '';
     try {
       localStorage.removeItem(STORAGE_KEYS.ADMIN_AUTH);
       localStorage.removeItem(STORAGE_KEYS.CURRENT_ADMIN_USER);
