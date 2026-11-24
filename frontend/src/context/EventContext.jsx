@@ -1107,16 +1107,6 @@ export function EventProvider({ children }) {
     }
     return true;
   };
-    try {
-      await supabase
-        .from('team_members')
-        .update({ passcode: trimmed })
-        .eq('is_event_head', true);
-    } catch (err) {
-      console.warn('Supabase updateHeadPasscode error:', err);
-    }
-    return true;
-  };
 
   return (
     <EventContext.Provider value={{

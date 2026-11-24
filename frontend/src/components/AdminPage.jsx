@@ -363,13 +363,22 @@ export default function AdminPage({ onBackToWebsite }) {
     }
   };
 
-  // Verify Payment Action
+  // Verify Payment Action & Open Share Pass Dialog
   const handleVerifyAttendeePayment = async (ticketId) => {
     if (!ticketId) return;
     const cleanId = String(ticketId).trim();
     await verifyRegistrationPayment(cleanId);
     setScanMessage({ success: true, text: `Payment Approved & Confirmed for ${cleanId.toUpperCase()}!` });
     setTimeout(() => setScanMessage(null), 3500);
+
+    // Automatically open the Pass modal so organizer can directly 1-click share PDF to WhatsApp
+    const regObj = registrations.find(r => 
+      (r.ticketId && r.ticketId.toUpperCase() === cleanId.toUpperCase()) || 
+      (r.id && String(r.id) === cleanId)
+    );
+    if (regObj) {
+      handleGeneratePass({ ...regObj, paymentStatus: 'PAID' });
+    }
   };
 
   // Generate & View Official Delegate Pass (Organizer Function)
@@ -1477,6 +1486,17 @@ export default function AdminPage({ onBackToWebsite }) {
                                 <Ticket className="w-3 h-3 text-white" />
                                 <span>{reg.paymentStatus === 'PAID' ? 'View Pass' : 'Generate Pass'}</span>
                               </button>
+
+                              {reg.paymentStatus === 'PAID' && (
+                                <button
+                                  onClick={() => handleGeneratePass(reg)}
+                                  className="px-2.5 py-1.5 rounded-lg bg-emerald-50 hover:bg-emerald-100 text-emerald-700 border border-emerald-300 text-[10px] font-bold flex items-center gap-1 transition-all shadow-sm cursor-pointer"
+                                  title="Share Official PDF Pass directly to WhatsApp or native apps"
+                                >
+                                  <Share2 className="w-3 h-3 text-emerald-600" />
+                                  <span>Share PDF</span>
+                                </button>
+                              )}
 
                               {reg.paymentStatus !== 'PAID' && (
                                 <button

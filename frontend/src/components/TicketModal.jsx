@@ -1,13 +1,42 @@
 import React, { useEffect, useState } from 'react';
-import { X, CheckCircle2, Clock, Printer, ShieldCheck, Calendar, MapPin, Sparkles, Building2, Phone, Mail, MessageSquare, Share2, Copy, Check, QrCode } from 'lucide-react';
+import { X, CheckCircle2, Clock, Printer, ShieldCheck, Calendar, MapPin, Sparkles, Building2, Phone, Mail, MessageSquare, Share2, Copy, Check, QrCode, FileText, Loader2, Image as ImageIcon } from 'lucide-react';
 import { QRCodeSVG } from 'qrcode.react';
 import confetti from 'canvas-confetti';
 import { useEvent } from '../context/EventContext';
+import { sharePassPdfDirectly, sharePassImageDirectly } from '../utils/passShare';
 
 export default function TicketModal({ ticket, isOpen, onClose }) {
   const { eventSettings } = useEvent();
   const isPaid = ticket?.paymentStatus === 'PAID';
   const [copied, setCopied] = useState(false);
+  const [isSharingPdf, setIsSharingPdf] = useState(false);
+  const [isSharingImg, setIsSharingImg] = useState(false);
+
+  const handleSharePdf = async () => {
+    if (isSharingPdf) return;
+    setIsSharingPdf(true);
+    try {
+      const cardEl = document.getElementById('printable-ticket-card');
+      await sharePassPdfDirectly(cardEl, ticket);
+    } catch (err) {
+      console.error('Error sharing PDF:', err);
+    } finally {
+      setIsSharingPdf(false);
+    }
+  };
+
+  const handleShareImage = async () => {
+    if (isSharingImg) return;
+    setIsSharingImg(true);
+    try {
+      const cardEl = document.getElementById('printable-ticket-card');
+      await sharePassImageDirectly(cardEl, ticket);
+    } catch (err) {
+      console.error('Error sharing Image:', err);
+    } finally {
+      setIsSharingImg(false);
+    }
+  };
 
   useEffect(() => {
     if (isOpen && isPaid) {
@@ -661,41 +690,83 @@ Helpline: +91 9604449724`;
             </div>
           </div>
 
-          {/* Quick Share Bar for WhatsApp and Email (Hidden in print) */}
-          <div className="flex items-center gap-2 no-print">
-            {attendeePhone && (
-              <a
-                href={`https://wa.me/91${attendeePhone}?text=${encodeURIComponent(`Hi ${attendeeName}, here are your TechAstra 2026 registration details:\nUnique Pass Number: ${ticket.ticketId}\nPass: ${ticket.passType}\nStatus: ${isPaid ? 'Confirmed' : 'Pending Verification'}\nHelpline: +91 9604449724`)}`}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="flex-1 py-2.5 px-3 rounded-xl bg-emerald-950/60 hover:bg-emerald-900/60 border border-emerald-500/30 text-emerald-300 font-mono text-xs font-bold flex items-center justify-center gap-1.5 transition-all"
-              >
-                <MessageSquare className="w-3.5 h-3.5 text-emerald-400" />
-                <span>Share WhatsApp</span>
-              </a>
-            )}
-            {attendeeEmail && (
-              <a
-                href={`mailto:${attendeeEmail}?subject=${encodeURIComponent(`TechAstra 2026 Pass - ${ticket.ticketId}`)}&body=${encodeURIComponent(`Hello ${attendeeName},\n\nYour TechAstra 2026 delegate pass details:\nUnique Pass Number: ${ticket.ticketId}\nPass: ${ticket.passType}\nStatus: ${isPaid ? 'Confirmed' : 'Pending Verification'}\nVenue: Smt. Chandibai Himathmal Mansukhani College\n\nFor any queries, contact support at +91 9604449724.\n\nRegards,\nTechAstra Organizing Team`)}`}
-                className="flex-1 py-2.5 px-3 rounded-xl bg-blue-950/60 hover:bg-blue-900/60 border border-blue-500/30 text-blue-300 font-mono text-xs font-bold flex items-center justify-center gap-1.5 transition-all"
-              >
-                <Mail className="w-3.5 h-3.5 text-blue-400" />
-                <span>Share Email</span>
-              </a>
-            )}
+          {/* Primary Share Action: Direct PDF Document to WhatsApp / Mobile Sheet */}
+          <div className="space-y-2 no-print">
             <button
               type="button"
-              onClick={handleCopyDetails}
-              className="py-2.5 px-3 rounded-xl bg-slate-800 hover:bg-slate-700 border border-slate-700 text-slate-300 font-mono text-xs font-bold flex items-center justify-center gap-1.5 transition-all cursor-pointer"
-              title="Copy pass details"
+              onClick={handleSharePdf}
+              disabled={isSharingPdf || isSharingImg}
+              className="w-full py-3.5 px-4 rounded-2xl bg-gradient-to-r from-emerald-600 via-teal-600 to-emerald-700 hover:from-emerald-500 hover:to-teal-600 text-white font-chakra font-black text-xs uppercase tracking-wider flex items-center justify-center gap-2 shadow-lg shadow-emerald-500/25 hover:shadow-emerald-500/40 active:scale-[0.99] transition-all cursor-pointer disabled:opacity-50"
+              title="Generate and share official PDF directly to WhatsApp or native device apps"
             >
-              {copied ? <Check className="w-3.5 h-3.5 text-emerald-400" /> : <Copy className="w-3.5 h-3.5" />}
-              <span>{copied ? 'Copied' : 'Copy'}</span>
+              {isSharingPdf ? (
+                <>
+                  <Loader2 className="w-4 h-4 animate-spin text-white" />
+                  <span>PREPARING OFFICIAL PASS PDF...</span>
+                </>
+              ) : (
+                <>
+                  <FileText className="w-4 h-4 text-emerald-200" />
+                  <span>SHARE PASS PDF DIRECTLY (WHATSAPP)</span>
+                </>
+              )}
             </button>
+
+            {/* Quick Share Options */}
+            <div className="grid grid-cols-2 sm:grid-cols-4 gap-2">
+              <button
+                type="button"
+                onClick={handleShareImage}
+                disabled={isSharingPdf || isSharingImg}
+                className="py-2.5 px-2 rounded-xl bg-slate-900 hover:bg-slate-800 border border-slate-800 text-slate-300 font-mono text-[11px] font-bold flex items-center justify-center gap-1.5 transition-all cursor-pointer"
+                title="Share high-res pass image card"
+              >
+                {isSharingImg ? <Loader2 className="w-3.5 h-3.5 animate-spin" /> : <ImageIcon className="w-3.5 h-3.5 text-sky-400" />}
+                <span>Share Image</span>
+              </button>
+
+              {attendeePhone ? (
+                <a
+                  href={`https://wa.me/91${attendeePhone}?text=${encodeURIComponent(`Hi ${attendeeName}, here are your TechAstra 2026 registration details:\nUnique Pass Number: ${ticket.ticketId}\nPass: ${ticket.passType}\nStatus: ${isPaid ? 'Confirmed' : 'Pending Verification'}\nLive Pass: https://algonexus.tech/verify/${ticket.ticketId}\nHelpline: +91 9604449724`)}`}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="py-2.5 px-2 rounded-xl bg-emerald-950/60 hover:bg-emerald-900/60 border border-emerald-500/30 text-emerald-300 font-mono text-[11px] font-bold flex items-center justify-center gap-1.5 transition-all"
+                  title="Open chat on WhatsApp"
+                >
+                  <MessageSquare className="w-3.5 h-3.5 text-emerald-400" />
+                  <span>Chat Link</span>
+                </a>
+              ) : (
+                <span className="py-2.5 px-2 rounded-xl bg-slate-900 border border-slate-800 text-slate-500 font-mono text-[11px] text-center">No Phone</span>
+              )}
+
+              {attendeeEmail ? (
+                <a
+                  href={`mailto:${attendeeEmail}?subject=${encodeURIComponent(`TechAstra 2026 Pass - ${ticket.ticketId}`)}&body=${encodeURIComponent(`Hello ${attendeeName},\n\nYour TechAstra 2026 delegate pass details:\nUnique Pass Number: ${ticket.ticketId}\nPass: ${ticket.passType}\nStatus: ${isPaid ? 'Confirmed' : 'Pending Verification'}\nVenue: Smt. Chandibai Himathmal Mansukhani College\n\nLive Pass URL: https://algonexus.tech/verify/${ticket.ticketId}\n\nFor any queries, contact support at +91 9604449724.\n\nRegards,\nTechAstra Organizing Team`)}`}
+                  className="py-2.5 px-2 rounded-xl bg-blue-950/60 hover:bg-blue-900/60 border border-blue-500/30 text-blue-300 font-mono text-[11px] font-bold flex items-center justify-center gap-1.5 transition-all"
+                  title="Draft confirmation email"
+                >
+                  <Mail className="w-3.5 h-3.5 text-blue-400" />
+                  <span>Send Email</span>
+                </a>
+              ) : (
+                <span className="py-2.5 px-2 rounded-xl bg-slate-900 border border-slate-800 text-slate-500 font-mono text-[11px] text-center">No Email</span>
+              )}
+
+              <button
+                type="button"
+                onClick={handleCopyDetails}
+                className="py-2.5 px-2 rounded-xl bg-slate-900 hover:bg-slate-800 border border-slate-800 text-slate-300 font-mono text-[11px] font-bold flex items-center justify-center gap-1.5 transition-all cursor-pointer"
+                title="Copy pass details"
+              >
+                {copied ? <Check className="w-3.5 h-3.5 text-emerald-400" /> : <Copy className="w-3.5 h-3.5" />}
+                <span>{copied ? 'Copied' : 'Copy Text'}</span>
+              </button>
+            </div>
           </div>
 
           {/* Action CTAs (Hidden in print) */}
-          <div className="flex items-center gap-3 no-print">
+          <div className="flex items-center gap-3 no-print pt-1">
             <button
               onClick={handlePrint}
               className="flex-1 py-3.5 rounded-2xl bg-gradient-to-r from-sky-600 via-blue-600 to-indigo-600 text-white font-chakra font-bold text-xs uppercase flex items-center justify-center gap-2 shadow-lg shadow-blue-500/25 hover:opacity-95 transition-all cursor-pointer"
