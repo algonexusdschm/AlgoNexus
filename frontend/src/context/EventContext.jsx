@@ -133,36 +133,35 @@ export function EventProvider({ children }) {
 
   // 5. Admin Authentication & Role Management (Strictly in-memory: auto-locks on refresh or leaving)
   const [isAdminAuthenticated, setIsAdminAuthenticated] = useState(false);
+  const isAdminAuthenticatedRef = useRef(false);
+  useEffect(() => {
+    isAdminAuthenticatedRef.current = isAdminAuthenticated;
+  }, [isAdminAuthenticated]);
 
-  // 6. Event Head Master Passcode
-  const [headPasscode, setHeadPasscode] = useState(() => {
-    try {
-      return localStorage.getItem(STORAGE_KEYS.HEAD_PASSCODE) || DEFAULT_HEAD_PASSCODE;
-    } catch {
-      return DEFAULT_HEAD_PASSCODE;
-    }
-  });
+  // 6. Event Head Master Passcode (Strictly in-memory: NEVER stored in localStorage)
+  const [headPasscode, setHeadPasscode] = useState(DEFAULT_HEAD_PASSCODE);
 
-  // 7. Team Members List
-  const [teamMembers, setTeamMembers] = useState(() => {
-    try {
-      const saved = localStorage.getItem(STORAGE_KEYS.TEAM_MEMBERS);
-      return saved ? JSON.parse(saved) : DEFAULT_TEAM_MEMBERS;
-    } catch {
-      return DEFAULT_TEAM_MEMBERS;
-    }
-  });
+  // 7. Team Members List (Strictly in-memory: NEVER stored in localStorage)
+  const [teamMembers, setTeamMembers] = useState(DEFAULT_TEAM_MEMBERS);
 
   // 8. Current Logged-in Admin User (Strictly in-memory: auto-locks on refresh or leaving)
   const [currentAdminUser, setCurrentAdminUser] = useState(null);
 
-  // Auto-lock admin on initial mount or window unload/pagehide
+  // Auto-lock admin and purge all sensitive passcodes from client storage on mount
   useEffect(() => {
     try {
       localStorage.removeItem(STORAGE_KEYS.ADMIN_AUTH);
       localStorage.removeItem(STORAGE_KEYS.CURRENT_ADMIN_USER);
+      localStorage.removeItem(STORAGE_KEYS.HEAD_PASSCODE);
+      localStorage.removeItem(STORAGE_KEYS.TEAM_MEMBERS);
+      localStorage.removeItem('algonexus_head_passcode');
+      localStorage.removeItem('algonexus_team_members');
       sessionStorage.removeItem(STORAGE_KEYS.ADMIN_AUTH);
       sessionStorage.removeItem(STORAGE_KEYS.CURRENT_ADMIN_USER);
+      sessionStorage.removeItem(STORAGE_KEYS.HEAD_PASSCODE);
+      sessionStorage.removeItem(STORAGE_KEYS.TEAM_MEMBERS);
+    } catch {}
+  }, []);
     } catch {}
 
     const handleLockOnLeave = () => {
@@ -307,7 +306,7 @@ export function EventProvider({ children }) {
     } catch (err) {}
   };
 
-  // 3. Fetch & Sync Committee Members & Passcodes from Supabase
+  // 3. Fetch & Sync Committee Members from Supabase (Only when authorized organizer is active)
   const syncTeamMembersFromSupabase = async () => {
     try {
       const { data, error } = await supabase
@@ -327,17 +326,12 @@ export function EventProvider({ children }) {
           status: m.status || 'Active',
           addedAt: m.added_at ? m.added_at.split('T')[0] : '2026'
         }));
+        // Strictly in-memory: NEVER write passcodes to localStorage
         setTeamMembers(mapped);
-        try {
-          localStorage.setItem(STORAGE_KEYS.TEAM_MEMBERS, JSON.stringify(mapped));
-        } catch (e) {}
 
         const headMember = mapped.find(m => m.isEventHead || m.id === 'head-001');
         if (headMember && headMember.passcode) {
           setHeadPasscode(headMember.passcode);
-          try {
-            localStorage.setItem(STORAGE_KEYS.HEAD_PASSCODE, headMember.passcode);
-          } catch (e) {}
         }
         return mapped;
       }
@@ -409,10 +403,9 @@ export function EventProvider({ children }) {
 
   // Mount real-time broadcast channel, postgres changes, and window focus listeners
   useEffect(() => {
-    // Initial fetch from cloud
+    // Initial fetch from cloud (Only public data: Payment & Event settings & Registrations)
     syncPaymentSettingsFromSupabase();
     syncEventSettingsFromSupabase();
-    syncTeamMembersFromSupabase();
     syncRegistrationsFromSupabase();
 
     // 1. Supabase Broadcast Channel: Instant sub-second sync across all devices, links & tabs
@@ -446,16 +439,7 @@ export function EventProvider({ children }) {
       .on('broadcast', { event: 'HEAD_PASSCODE_UPDATED' }, ({ payload }) => {
         if (payload?.passcode) {
           setHeadPasscode(payload.passcode);
-          try {
-            localStorage.setItem(STORAGE_KEYS.HEAD_PASSCODE, payload.passcode);
-          } catch (e) {}
-          setTeamMembers(prev => {
-            const updated = prev.map(m => (m.isEventHead || m.id === 'head-001') ? { ...m, passcode: payload.passcode } : m);
-            try {
-              localStorage.setItem(STORAGE_KEYS.TEAM_MEMBERS, JSON.stringify(updated));
-            } catch (e) {}
-            return updated;
-          });
+          setTeamMembers(prev => prev.map(m => (m.isEventHead || m.id === 'head-001') ? { ...m, passcode: payload.passcode } : m));
         }
       })
       .on('broadcast', { event: 'PRICING_TIERS_UPDATED' }, ({ payload }) => {
@@ -467,7 +451,9 @@ export function EventProvider({ children }) {
         }
       })
       .on('broadcast', { event: 'TEAM_UPDATED' }, () => {
-        syncTeamMembersFromSupabase();
+        if (isAdminAuthenticatedRef.current) {
+          syncTeamMembersFromSupabase();
+        }
       })
       .on('broadcast', { event: 'REGISTRATIONS_UPDATED' }, () => {
         syncRegistrationsFromSupabase();
@@ -476,7 +462,7 @@ export function EventProvider({ children }) {
 
     syncChannelRef.current = broadcastChannel;
 
-    // 2. Fallback Postgres Changes channels
+    // 2. Fallback Postgres Changes channels for public tables
     const paymentChannel = supabase
       .channel('payment_settings_pg_sync')
       .on('postgres_changes', { event: '*', schema: 'public', table: 'payment_settings' }, () => {
@@ -491,19 +477,13 @@ export function EventProvider({ children }) {
       })
       .subscribe();
 
-    const teamChannel = supabase
-      .channel('team_members_pg_sync')
-      .on('postgres_changes', { event: '*', schema: 'public', table: 'team_members' }, () => {
-        syncTeamMembersFromSupabase();
-      })
-      .subscribe();
-
     // 3. Tab Focus & Network Online Auto-Refresh
-    // When switching tabs or unlocking a phone, immediately re-verify credentials & data from cloud
     const handleReSync = () => {
       syncPaymentSettingsFromSupabase();
       syncEventSettingsFromSupabase();
-      syncTeamMembersFromSupabase();
+      if (isAdminAuthenticatedRef.current) {
+        syncTeamMembersFromSupabase();
+      }
       syncRegistrationsFromSupabase();
     };
 
@@ -894,48 +874,46 @@ export function EventProvider({ children }) {
       return { success: false, error: 'Please enter a passcode.' };
     }
 
-    // Always fetch latest team credentials directly from Supabase Cloud to ensure cross-device sync
+    // 1. SECURE SERVER-SIDE RPC CHECK (Passcode is verified on PostgreSQL; ZERO PASSCODES EXPOSED TO BROWSER)
+    try {
+      const { data: rpcResult, error: rpcError } = await supabase.rpc('verify_admin_passcode', {
+        entered_passcode: trimmed
+      });
+
+      if (!rpcError && rpcResult && typeof rpcResult === 'object') {
+        if (rpcResult.success && rpcResult.user) {
+          const authUser = {
+            id: rpcResult.user.id,
+            name: rpcResult.user.name,
+            role: rpcResult.user.role,
+            email: rpcResult.user.email || '',
+            isEventHead: Boolean(rpcResult.user.isEventHead),
+            permissions: rpcResult.user.permissions || (rpcResult.user.isEventHead ? ['all'] : ['registrations', 'checkin'])
+          };
+          setIsAdminAuthenticated(true);
+          setCurrentAdminUser(authUser);
+          if (authUser.isEventHead) {
+            setHeadPasscode(trimmed);
+            // Authorized Event Head: sync team members securely into memory
+            syncTeamMembersFromSupabase();
+          }
+          return { success: true, user: authUser };
+        } else if (rpcResult.success === false) {
+          return { 
+            success: false, 
+            error: rpcResult.error || 'Invalid Passcode! Please check credentials.' 
+          };
+        }
+      }
+    } catch (rpcErr) {
+      console.warn('Supabase RPC check notice (falling back):', rpcErr);
+    }
+
+    // 2. SAFE IN-MEMORY FALLBACK (Used only before SQL migration is executed in Supabase)
     let activeHeadPass = headPasscode || DEFAULT_HEAD_PASSCODE;
     let activeMembers = teamMembers || DEFAULT_TEAM_MEMBERS;
 
-    try {
-      const { data: cloudMembers, error } = await supabase
-        .from('team_members')
-        .select('*')
-        .order('added_at', { ascending: true });
-
-      if (cloudMembers && !error && cloudMembers.length > 0) {
-        const mapped = cloudMembers.map(m => ({
-          id: m.id,
-          name: m.name,
-          email: m.email || '',
-          role: m.role,
-          passcode: m.passcode,
-          isEventHead: m.is_event_head || false,
-          permissions: m.permissions || ['registrations', 'checkin'],
-          status: m.status || 'Active',
-          addedAt: m.added_at ? m.added_at.split('T')[0] : '2026'
-        }));
-        activeMembers = mapped;
-        setTeamMembers(mapped);
-        try {
-          localStorage.setItem(STORAGE_KEYS.TEAM_MEMBERS, JSON.stringify(mapped));
-        } catch (e) {}
-
-        const headMember = mapped.find(m => m.isEventHead || m.id === 'head-001');
-        if (headMember && headMember.passcode) {
-          activeHeadPass = headMember.passcode;
-          setHeadPasscode(headMember.passcode);
-          try {
-            localStorage.setItem(STORAGE_KEYS.HEAD_PASSCODE, headMember.passcode);
-          } catch (e) {}
-        }
-      }
-    } catch (err) {
-      console.warn('Supabase cloud passcode check notice:', err);
-    }
-
-    // 1. Check if Event Head (matches active master passcode, case-insensitive)
+    // Check if Event Head (matches active master passcode, case-insensitive)
     if (trimmed === activeHeadPass || trimmed.toLowerCase() === activeHeadPass.toLowerCase()) {
       const headUser = {
         id: 'head-001',
@@ -947,11 +925,11 @@ export function EventProvider({ children }) {
       };
       setIsAdminAuthenticated(true);
       setCurrentAdminUser(headUser);
-      // Strictly in-memory: no localStorage storage so refresh or leave auto-locks
+      syncTeamMembersFromSupabase();
       return { success: true, user: headUser };
     }
 
-    // 2. Check if matches any active committee member (excluding event head, case-insensitive)
+    // Check if matches any active committee member (excluding event head, case-insensitive)
     const matchedMember = activeMembers.find(
       m => !m.isEventHead && m.id !== 'head-001' && m.status === 'Active' && 
            (m.passcode === trimmed || (m.passcode && m.passcode.toLowerCase() === trimmed.toLowerCase()))
@@ -967,7 +945,6 @@ export function EventProvider({ children }) {
       };
       setIsAdminAuthenticated(true);
       setCurrentAdminUser(memberUser);
-      // Strictly in-memory: no localStorage storage so refresh or leave auto-locks
       return { success: true, user: memberUser };
     }
 
@@ -1003,11 +980,6 @@ export function EventProvider({ children }) {
     };
     const updated = [...teamMembers, newMember];
     setTeamMembers(updated);
-    try {
-      localStorage.setItem(STORAGE_KEYS.TEAM_MEMBERS, JSON.stringify(updated));
-    } catch (e) {
-      console.warn('Error saving team members locally:', e);
-    }
 
     // Broadcast change immediately
     broadcastChange('TEAM_UPDATED');
@@ -1033,17 +1005,9 @@ export function EventProvider({ children }) {
   const updateTeamMember = async (id, updatedFields) => {
     const updated = teamMembers.map(m => m.id === id ? { ...m, ...updatedFields } : m);
     setTeamMembers(updated);
-    try {
-      localStorage.setItem(STORAGE_KEYS.TEAM_MEMBERS, JSON.stringify(updated));
-    } catch (e) {
-      console.warn('Error updating team member locally:', e);
-    }
 
     if (updatedFields.passcode && (updatedFields.isEventHead || id === 'head-001')) {
       setHeadPasscode(updatedFields.passcode);
-      try {
-        localStorage.setItem(STORAGE_KEYS.HEAD_PASSCODE, updatedFields.passcode);
-      } catch (e) {}
     }
 
     // Broadcast change immediately
@@ -1072,11 +1036,6 @@ export function EventProvider({ children }) {
     }
     const updated = teamMembers.filter(m => m.id !== id);
     setTeamMembers(updated);
-    try {
-      localStorage.setItem(STORAGE_KEYS.TEAM_MEMBERS, JSON.stringify(updated));
-    } catch (e) {
-      console.warn('Error removing team member locally:', e);
-    }
 
     // Broadcast change immediately
     broadcastChange('TEAM_UPDATED');
@@ -1094,16 +1053,10 @@ export function EventProvider({ children }) {
     const trimmed = (newPasscode || '').trim();
     if (!trimmed) return false;
     setHeadPasscode(trimmed);
-    try {
-      localStorage.setItem(STORAGE_KEYS.HEAD_PASSCODE, trimmed);
-    } catch (e) {}
 
     // Update in local team members state
     setTeamMembers(prev => {
       const next = prev.map(m => (m.isEventHead || m.id === 'head-001') ? { ...m, passcode: trimmed } : m);
-      try {
-        localStorage.setItem(STORAGE_KEYS.TEAM_MEMBERS, JSON.stringify(next));
-      } catch (e) {}
       return next;
     });
 
@@ -1111,6 +1064,16 @@ export function EventProvider({ children }) {
     broadcastChange('HEAD_PASSCODE_UPDATED', { passcode: trimmed });
 
     // Persist to Supabase Cloud so all devices sync instantly
+    try {
+      await supabase
+        .from('team_members')
+        .update({ passcode: trimmed })
+        .eq('is_event_head', true);
+    } catch (err) {
+      console.warn('Supabase updateHeadPasscode error:', err);
+    }
+    return true;
+  };
     try {
       await supabase
         .from('team_members')
