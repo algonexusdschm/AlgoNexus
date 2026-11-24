@@ -508,11 +508,14 @@ export function EventProvider({ children }) {
 
     return () => {
       if (syncChannelRef.current) {
-        supabase.removeChannel(syncChannelRef.current);
+        try { supabase.removeChannel(syncChannelRef.current); } catch {}
       }
-      supabase.removeChannel(paymentChannel);
-      supabase.removeChannel(eventChannel);
-      supabase.removeChannel(teamChannel);
+      if (paymentChannel) {
+        try { supabase.removeChannel(paymentChannel); } catch {}
+      }
+      if (eventChannel) {
+        try { supabase.removeChannel(eventChannel); } catch {}
+      }
       window.removeEventListener('focus', handleReSync);
       window.removeEventListener('online', handleReSync);
       document.removeEventListener('visibilitychange', handleVisibilityChange);
