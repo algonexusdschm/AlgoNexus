@@ -767,17 +767,52 @@ export function EventProvider({ children }) {
     return registrationToSave;
   };
 
+  // Extract clean Ticket ID / Pass identifier from any scanned QR URL or raw text
+  const extractPassIdentifier = (input) => {
+    const str = String(input || '').trim();
+    if (!str) return '';
+
+    if (/^https?:\/\//i.test(str) || str.includes('?pass=') || str.includes('#pass') || str.includes('/verify/')) {
+      try {
+        const urlObj = new URL(str.startsWith('http') ? str : `https://dummy.local/${str.replace(/^\/+/, '')}`);
+        const paramPass = urlObj.searchParams.get('pass') || urlObj.searchParams.get('ticket') || urlObj.searchParams.get('id');
+        if (paramPass) return decodeURIComponent(paramPass).trim();
+
+        const hash = urlObj.hash || '';
+        if (hash.includes('=')) {
+          const val = hash.split('=')[1];
+          if (val) return decodeURIComponent(val).trim();
+        } else if (hash.includes('/')) {
+          const val = hash.split('/').pop();
+          if (val) return decodeURIComponent(val).trim();
+        }
+
+        const verifyMatch = urlObj.pathname.match(/\/verify\/([^/]+)/i);
+        if (verifyMatch && verifyMatch[1]) {
+          return decodeURIComponent(verifyMatch[1]).trim();
+        }
+      } catch {
+        const passMatch = str.match(/[?&#](?:pass|ticket|id)=([^&#]+)/i);
+        if (passMatch && passMatch[1]) return decodeURIComponent(passMatch[1]).trim();
+        const verifyMatch = str.match(/\/verify\/([^/?#]+)/i);
+        if (verifyMatch && verifyMatch[1]) return decodeURIComponent(verifyMatch[1]).trim();
+      }
+    }
+
+    return str;
+  };
+
   // Gate Desk Verification & Check-In by Unique Pass Number, Short Code, Mobile No, or UTR
   const checkInAttendee = async (query) => {
     if (!query) return { success: false, error: 'Please enter a Unique Pass Number or Mobile Number.' };
-    const raw = String(query).trim().replace(/^https?:\/\/.*\/verify\//i, '');
+    const raw = extractPassIdentifier(query);
     const cleanDigits = raw.replace(/\D/g, '');
     const target = raw.toUpperCase();
 
     let matchedReg = null;
     let wasAlreadyCheckedIn = false;
 
-    const updated = registrations.map(reg => {
+    let updated = registrations.map(reg => {
       const regTicketId = String(reg.ticketId || reg.ticket_id || '').trim().toUpperCase();
       const regId = String(reg.id || '').trim().toUpperCase();
       const regPhone = String(reg.attendee?.phone || '').replace(/\D/g, '');
@@ -801,10 +836,59 @@ export function EventProvider({ children }) {
       return reg;
     });
 
+    // Fallback: If not found in local memory, query Supabase directly
+    if (!matchedReg) {
+      try {
+        const { data: sbRows, error: sbErr } = await supabase
+          .from('registrations')
+          .select('*')
+          .or(`ticket_id.ilike.%${raw}%,utr_number.ilike.${raw}${cleanDigits.length >= 10 ? `,phone.ilike.%${cleanDigits.slice(-10)}%` : ''}`)
+          .limit(1);
+
+        if (!sbErr && sbRows && sbRows.length > 0) {
+          const r = sbRows[0];
+          const status = (r.bank_name === 'STATUS:PAID' || r.bank_name === 'PAID')
+            ? 'PAID'
+            : (r.bank_name?.startsWith('STATUS:') ? r.bank_name.replace('STATUS:', '') : 'PENDING_VERIFICATION');
+
+          wasAlreadyCheckedIn = Boolean(r.checked_in);
+          matchedReg = {
+            id: r.id,
+            ticketId: r.ticket_id || `TECH26-${String(r.id || '').replace(/-/g, '').slice(0, 5).toUpperCase()}`,
+            orderId: r.utr_number || r.ticket_id,
+            amountPaid: Number(r.amount) || 1000,
+            passType: r.tier_name || 'Hackathon Squad Pass',
+            paymentStatus: status,
+            tier: { id: r.tier_id, name: r.tier_name, price: Number(r.amount) || 1000 },
+            attendee: {
+              fullName: r.full_name,
+              email: r.email,
+              phone: r.phone,
+              college: r.college,
+              github: r.github || '',
+              teamName: r.team_name || '',
+              teamMembers: r.team_members ? r.team_members.split(', ') : [],
+              track: r.track || 'General'
+            },
+            paymentMethod: r.payment_method,
+            utrNumber: r.utr_number || '',
+            paymentScreenshot: r.payment_screenshot || '',
+            bankName: r.bank_name || '',
+            checkedIn: true,
+            checkedInAt: r.checked_in_at || new Date().toISOString(),
+            createdAt: r.created_at
+          };
+          updated = [matchedReg, ...updated];
+        }
+      } catch (err) {
+        console.warn('Supabase fallback lookup in checkInAttendee failed:', err);
+      }
+    }
+
     if (!matchedReg) {
       return { 
         success: false, 
-        error: `No attendee found matching "${query}". Please check the Unique Pass Number or 10-digit mobile number.` 
+        error: `No attendee found matching "${raw}". Please check the Unique Pass Number or 10-digit mobile number.` 
       };
     }
 
@@ -848,7 +932,7 @@ export function EventProvider({ children }) {
   // Verify & Approve Pending Registration Payment (Organizer Exclusive)
   const verifyRegistrationPayment = async (ticketId) => {
     if (!ticketId) return false;
-    const target = String(ticketId).trim().replace(/^https?:\/\/.*\/verify\//i, '').toUpperCase();
+    const target = extractPassIdentifier(ticketId).toUpperCase();
     if (!target) return false;
 
     const updated = registrations.map(reg => {
